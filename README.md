@@ -15,6 +15,16 @@ A Java application which helps people to manage their apartment.
 1. Download the Project to local drive
 2. Run `gradlew assemble`
 
+## Building docker images
+
+### Building and running `discovery-service`
+
+```shell
+cd ./discovery-service
+docker build --build-arg JAR_FILE=build/libs/*.jar -t jmprathab/myhome-discovery-service .
+docker container run -d -p 8010:8010 jmprathab/myhome-discovery-service
+```
+
 ## Authors
 
 * [Prathab Murugan](https://github.com/jmprathab)
@@ -36,3 +46,4 @@ Feel free to contribute to the project. Please make sure to follow the below lis
 This project relies on the following projects
 
 * Spring Framework
+* Docker
