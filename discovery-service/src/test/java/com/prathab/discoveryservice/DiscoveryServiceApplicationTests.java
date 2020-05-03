@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package com.prathab.userservice.controllers.models.response;
+package com.prathab.discoveryservice;
 
-import com.prathab.userservice.controllers.models.request.CreateUserRequest;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-/**
- * Response model for create user request.
- *
- * @see CreateUserRequest
- */
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class CreateUserResponse {
-  private String userId;
-  private String name;
-  private String email;
+@SpringBootTest
+class DiscoveryServiceApplicationTests {
+
+  @Test
+  void contextLoads() {
+  }
 }

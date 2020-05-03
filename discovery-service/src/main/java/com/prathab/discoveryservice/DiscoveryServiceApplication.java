@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-package com.prathab.userservice.controllers.models.response;
+package com.prathab.discoveryservice;
 
-import com.prathab.userservice.controllers.models.request.CreateUserRequest;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
-/**
- * Response model for create user request.
- *
- * @see CreateUserRequest
- */
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class CreateUserResponse {
-  private String userId;
-  private String name;
-  private String email;
+@SpringBootApplication
+@EnableEurekaServer
+public class DiscoveryServiceApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(DiscoveryServiceApplication.class, args);
+  }
 }
