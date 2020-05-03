@@ -5,7 +5,7 @@ server:
   port: "${PORT:0}"
 spring:
   application:
-    name: usersservice
+    name: user-service
   devtools:
     restart:
       enabled: true
@@ -25,26 +25,7 @@ eureka:
   instance:
     instance-id: "${spring.application.name}:${spring.application.instance_id:${random.value}}"
 
-###############################################################################
-# Spring Actuator
-###############################################################################
-management:
-  endpoints:
-    web:
-      exposure:
-        include: mappings
-
 ---
-###############################################################################
-# RabbitMQ for config server
-###############################################################################
-spring:
-  rabbitmq:
-    host: localhost
-    password: guest
-    port: 5672
-    username: guest
-
 ###############################################################################
 # Spring Security
 ###############################################################################
