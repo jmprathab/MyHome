@@ -9,11 +9,11 @@ A Java application which helps people to manage their apartment.
 
 * Gradle
 * Java 11 (JDK)
+* Docker (Optional for running services inside container)
 
 ## Installing
 
 1. Download the Project to local drive
-2. Run `gradlew assemble`
 
 ## Building docker images
 
@@ -21,6 +21,7 @@ A Java application which helps people to manage their apartment.
 
 ```shell
 cd ./discovery-service
+gradlew assemble
 docker build --build-arg JAR_FILE=build/libs/*.jar -t jmprathab/myhome-discovery-service .
 docker container run -d -p 8010:8010 jmprathab/myhome-discovery-service
 ```
