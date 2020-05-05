@@ -9,11 +9,12 @@ A Java application which helps people to manage their apartment.
 
 * Gradle
 * Java 11 (JDK)
-* Docker (Optional for running services inside container)
+* Docker for running services inside container (Optional)
 
 ## Installing
 
 1. Download the Project to local drive
+2. Run `gradlew assemble`
 
 ## Building docker images
 
