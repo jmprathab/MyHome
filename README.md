@@ -9,23 +9,21 @@ A Java application which helps people to manage their apartment.
 
 * Gradle
 * Java 11 (JDK)
-* Docker for running services inside container (Optional)
+* Docker for running services inside container (You can also run it without docker)
 
 ## Installing
 
 1. Download the Project to local drive
 2. Run `gradlew assemble`
 
-## Building docker images
-
-### Building and running `discovery-service`
+## Running using Docker
 
 ```shell
-cd ./discovery-service
-gradlew assemble
-docker build --build-arg JAR_FILE=build/libs/*.jar -t jmprathab/myhome-discovery-service .
-docker container run -d -p 8010:8010 jmprathab/myhome-discovery-service
+docker-compose build
+docker-compose up
 ```
+
+All required ports are mapped to localhost. REST API is accessible via port 8011(i.e, gateway-service)
 
 ## Authors
 

@@ -632,4 +632,9 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/java,linux,macos,gradle,windows,eclipse,intellij,firebase,visualstudio
-/src/main/resources/hunt-my-home-firebase-adminsdk-krs3t-12118f6590.json
+*.DS_Store
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
+.DS_Store
