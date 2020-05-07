@@ -3,7 +3,11 @@
 # Edit at https://www.gitignore.io/?templates=java,linux,macos,gradle,windows,eclipse,intellij,firebase,visualstudio
 
 ### Custom stuff###
-src/main/resources/*.json
+*.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
+/start-services.sh
 
 ### Eclipse ###
 .metadata
@@ -632,9 +636,3 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/java,linux,macos,gradle,windows,eclipse,intellij,firebase,visualstudio
-*.DS_Store
-.DS_Store
-._.DS_Store
-**/.DS_Store
-**/._.DS_Store
-.DS_Store

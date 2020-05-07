@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-rootProject.name = 'MyHome'
-include 'api-gateway-service'
-include 'discovery-service'
-include 'user-service'
-include 'community-service'
+package com.prathab.communityservice;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+
+@SpringBootApplication
+@EnableEurekaClient
+public class CommunityServiceApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(CommunityServiceApplication.class, args);
+  }
+}

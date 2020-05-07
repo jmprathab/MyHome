@@ -14,8 +14,21 @@
  * limitations under the License.
  */
 
-rootProject.name = 'MyHome'
-include 'api-gateway-service'
-include 'discovery-service'
-include 'user-service'
-include 'community-service'
+package com.prathab.communityservice.controllers.models.request;
+
+import javax.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class CreateCommunityRequest {
+  @NotBlank
+  private String name;
+  @NotBlank
+  private String district;
+}

@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-rootProject.name = 'MyHome'
-include 'api-gateway-service'
-include 'discovery-service'
-include 'user-service'
-include 'community-service'
+package com.prathab.communityservice.dto.mapper;
+
+import com.prathab.communityservice.domain.Community;
+import com.prathab.communityservice.dto.CommunityDto;
+import org.mapstruct.Mapper;
+
+@Mapper
+public interface CommunityMapper {
+  CommunityDto communityToCommunityDto(Community community);
+
+  Community communityDtoToCommunity(CommunityDto communityDto);
+}

@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-rootProject.name = 'MyHome'
-include 'api-gateway-service'
-include 'discovery-service'
-include 'user-service'
-include 'community-service'
+package com.prathab.communityservice.repositories;
+
+import com.prathab.communityservice.domain.Community;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface CommunityRepository extends CrudRepository<Community, Long> {
+}

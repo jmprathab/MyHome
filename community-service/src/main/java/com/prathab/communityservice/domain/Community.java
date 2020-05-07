@@ -14,8 +14,28 @@
  * limitations under the License.
  */
 
-rootProject.name = 'MyHome'
-include 'api-gateway-service'
-include 'discovery-service'
-include 'user-service'
-include 'community-service'
+package com.prathab.communityservice.domain;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * Entity identifying a valid user in the service.
+ */
+@AllArgsConstructor
+@Getter
+@NoArgsConstructor
+@Setter
+@Entity
+public class Community extends BaseEntity {
+  @Column(nullable = false)
+  private String name;
+  @Column(unique = true, nullable = false)
+  private String communityId;
+  @Column(nullable = false)
+  private String district;
+}

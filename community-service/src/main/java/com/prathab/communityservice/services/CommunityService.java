@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-rootProject.name = 'MyHome'
-include 'api-gateway-service'
-include 'discovery-service'
-include 'user-service'
-include 'community-service'
+package com.prathab.communityservice.services;
+
+import com.prathab.communityservice.dto.CommunityDto;
+
+public interface CommunityService {
+  CommunityDto createCommunity(CommunityDto communityDto);
+}
