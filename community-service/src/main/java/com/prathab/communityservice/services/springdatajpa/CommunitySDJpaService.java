@@ -16,10 +16,13 @@
 
 package com.prathab.communityservice.services.springdatajpa;
 
+import com.prathab.communityservice.domain.Community;
 import com.prathab.communityservice.dto.CommunityDto;
 import com.prathab.communityservice.dto.mapper.CommunityMapper;
 import com.prathab.communityservice.repositories.CommunityRepository;
 import com.prathab.communityservice.services.CommunityService;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,6 +46,12 @@ public class CommunitySDJpaService implements CommunityService {
     var savedCommunity = communityRepository.save(community);
     log.trace("saved community with id[{}] to repository", savedCommunity.getId());
     return communityMapper.communityToCommunityDto(savedCommunity);
+  }
+
+  @Override public Set<CommunityDto> listAll() {
+    var communityListSet = new HashSet<Community>();
+    communityRepository.findAll().forEach(communityListSet::add);
+    return communityMapper.communitySetToCommunityDtoSet(communityListSet);
   }
 
   private String generateUniqueCommunityId() {

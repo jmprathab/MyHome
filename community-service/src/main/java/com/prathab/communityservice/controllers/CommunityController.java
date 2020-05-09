@@ -19,7 +19,9 @@ package com.prathab.communityservice.controllers;
 import com.prathab.communityservice.controllers.models.mapper.CommunityApiMapper;
 import com.prathab.communityservice.controllers.models.request.CreateCommunityRequest;
 import com.prathab.communityservice.controllers.models.response.CreateCommunityResponse;
+import com.prathab.communityservice.controllers.models.response.GetCommunityDetailsResponse;
 import com.prathab.communityservice.services.CommunityService;
+import java.util.Set;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -64,5 +66,17 @@ public class CommunityController {
     var createdCommunityResponse =
         communityApiMapper.communityDtoToCreateCommunityResponse(createdCommunityDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdCommunityResponse);
+  }
+
+  @GetMapping(
+      path = "/communities",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<Set<GetCommunityDetailsResponse>> listAllCommunity() {
+    log.trace("Received request to list all community");
+    var communityDetails = communityService.listAll();
+    var communityDetailsResponse =
+        communityApiMapper.communityDtoSetToGetCommunityDetailsResponse(communityDetails);
+    return ResponseEntity.status(HttpStatus.OK).body(communityDetailsResponse);
   }
 }

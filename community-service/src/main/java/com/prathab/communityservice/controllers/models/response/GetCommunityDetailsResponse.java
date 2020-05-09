@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package com.prathab.communityservice.services;
+package com.prathab.communityservice.controllers.models.response;
 
-import com.prathab.communityservice.dto.CommunityDto;
-import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public interface CommunityService {
-  CommunityDto createCommunity(CommunityDto communityDto);
-
-  Set<CommunityDto> listAll();
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class GetCommunityDetailsResponse {
+  private String communityId;
+  private String name;
+  private String district;
 }
