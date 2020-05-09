@@ -17,8 +17,10 @@
 package com.prathab.communityservice.services.springdatajpa;
 
 import com.prathab.communityservice.domain.Community;
+import com.prathab.communityservice.domain.CommunityAdmin;
 import com.prathab.communityservice.dto.CommunityDto;
 import com.prathab.communityservice.dto.mapper.CommunityMapper;
+import com.prathab.communityservice.repositories.CommunityAdminRepository;
 import com.prathab.communityservice.repositories.CommunityRepository;
 import com.prathab.communityservice.services.CommunityService;
 import java.util.HashSet;
@@ -31,12 +33,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CommunitySDJpaService implements CommunityService {
   private final CommunityRepository communityRepository;
+  private final CommunityAdminRepository communityAdminRepository;
   private final CommunityMapper communityMapper;
 
   public CommunitySDJpaService(
       CommunityRepository communityRepository,
+      CommunityAdminRepository communityAdminRepository,
       CommunityMapper communityMapper) {
     this.communityRepository = communityRepository;
+    this.communityAdminRepository = communityAdminRepository;
     this.communityMapper = communityMapper;
   }
 
@@ -56,6 +61,21 @@ public class CommunitySDJpaService implements CommunityService {
 
   @Override public Community getCommunityDetailsById(String communityId) {
     return communityRepository.findByCommunityId(communityId);
+  }
+
+  @Override public Community addAdminsToCommunity(String communityId, Set<String> admins) {
+    var community = communityRepository.findByCommunityId(communityId);
+
+    var savedAdminSet = new HashSet<CommunityAdmin>();
+    admins.forEach(s -> {
+      var admin = new CommunityAdmin();
+      admin.setAdminId(s);
+      admin.getCommunities().add(community);
+      savedAdminSet.add(communityAdminRepository.save(admin));
+    });
+
+    community.getAdmins().addAll(savedAdminSet);
+    return communityRepository.save(community);
   }
 
   private String generateUniqueCommunityId() {

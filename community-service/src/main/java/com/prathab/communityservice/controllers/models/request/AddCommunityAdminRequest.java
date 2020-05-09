@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package com.prathab.communityservice.repositories;
+package com.prathab.communityservice.controllers.models.request;
 
-import com.prathab.communityservice.domain.CommunityAdmin;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import java.util.HashSet;
+import java.util.Set;
+import javax.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Repository
-public interface CommunityAdminRepository extends CrudRepository<CommunityAdmin, Long> {
-  CommunityAdmin findByAdminId(String adminId);
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class AddCommunityAdminRequest {
+  @NotEmpty
+  private Set<String> admins = new HashSet<>();
 }

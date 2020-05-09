@@ -17,12 +17,16 @@
 package com.prathab.communityservice.controllers;
 
 import com.prathab.communityservice.controllers.models.mapper.CommunityApiMapper;
+import com.prathab.communityservice.controllers.models.request.AddCommunityAdminRequest;
 import com.prathab.communityservice.controllers.models.request.CreateCommunityRequest;
+import com.prathab.communityservice.controllers.models.response.AddCommunityAdminResponse;
 import com.prathab.communityservice.controllers.models.response.CreateCommunityResponse;
 import com.prathab.communityservice.controllers.models.response.GetAdminDetailsResponse;
 import com.prathab.communityservice.controllers.models.response.GetCommunityDetailsResponse;
+import com.prathab.communityservice.domain.CommunityAdmin;
 import com.prathab.communityservice.services.CommunityService;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -106,5 +110,22 @@ public class CommunityController {
     var getAdminDetailsResponseSet =
         communityApiMapper.communityAdminSetToGetAdminDetailsResponseSet(adminDetails);
     return ResponseEntity.status(HttpStatus.OK).body(getAdminDetailsResponseSet);
+  }
+
+  @PostMapping(
+      path = "/communities/{communityId}/admins",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<AddCommunityAdminResponse> addCommunityAdmin(
+      @PathVariable String communityId, @Valid @RequestBody
+      AddCommunityAdminRequest request) {
+    log.trace("Received request to add admin to community with id[{}]", communityId);
+    var community = communityService.addAdminsToCommunity(communityId, request.getAdmins());
+    var response = new AddCommunityAdminResponse();
+    var adminsSet =
+        community.getAdmins().stream().map(CommunityAdmin::getAdminId).collect(Collectors.toSet());
+    response.setAdmins(adminsSet);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 }
