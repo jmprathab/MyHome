@@ -1,0 +1,256 @@
+{
+	"info": {
+		"_postman_id": "b4ef077d-99d1-4280-8123-811c9627c8b2",
+		"name": "MyHome",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\" : \"Test User\",\n\t\"email\" : \"testuser@myhome.com\",\n\t\"password\" : \"testpassword\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/user-service/users",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"user-service",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\" : \"testuser@myhome.com\",\n\t\"password\" : \"testpassword\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/user-service/users/login",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"user-service",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Status check with Auth",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/user-service/users/status",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"user-service",
+						"users",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create community",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test community\",\n    \"district\": \"Test district\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/community-service/communities",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"community-service",
+						"communities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all community",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/community-service/communities",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"community-service",
+						"communities"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List detail of a community",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/community-service/communities/{{COMMUNITY_ID}}",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"community-service",
+						"communities",
+						"{{COMMUNITY_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List admins of a community",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/community-service/communities/{{COMMUNITY_ID}}/admins",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"community-service",
+						"communities",
+						"{{COMMUNITY_ID}}",
+						"admins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add admins to community",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"admins\": [\n        \"first-admin-user-id\",\n        \"second-admin-user-id\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/community-service/communities/{{COMMUNITY_ID}}/admins",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"community-service",
+						"communities",
+						"{{COMMUNITY_ID}}",
+						"admins"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

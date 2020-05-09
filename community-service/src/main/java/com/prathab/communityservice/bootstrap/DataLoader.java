@@ -44,7 +44,7 @@ public class DataLoader implements CommandLineRunner {
     // Persist community to repo
     var communityName = "MyHome default community";
     var communityDistrict = "MyHome default community district";
-    var communityId = UUID.randomUUID().toString();
+    var communityId = "default-community-id-for-testing";
     var community = new Community();
     community.setName(communityName);
     community.setDistrict(communityDistrict);

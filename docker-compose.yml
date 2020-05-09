@@ -39,10 +39,21 @@ services:
     container_name: "myhome-user-service"
     networks:
       - myhome
-    expose:
-      - "80"
-    ports:
-      - "80:80"
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://myhome-discovery-service:8010/eureka
+      - gateway.ip=myhome-api-gateway-service
+    depends_on:
+      - api-gateway-service
+      - discovery-service
+
+  community-service:
+    image: jmprathab/myhome-community-service:${TAG:-latest}
+    build:
+      context: community-service
+      dockerfile: Dockerfile
+    container_name: "myhome-community-service"
+    networks:
+      - myhome
     environment:
       - eureka.client.serviceUrl.defaultZone=http://myhome-discovery-service:8010/eureka
       - gateway.ip=myhome-api-gateway-service
