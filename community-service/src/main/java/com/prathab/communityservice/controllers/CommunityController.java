@@ -19,6 +19,7 @@ package com.prathab.communityservice.controllers;
 import com.prathab.communityservice.controllers.models.mapper.CommunityApiMapper;
 import com.prathab.communityservice.controllers.models.request.CreateCommunityRequest;
 import com.prathab.communityservice.controllers.models.response.CreateCommunityResponse;
+import com.prathab.communityservice.controllers.models.response.GetAdminDetailsResponse;
 import com.prathab.communityservice.controllers.models.response.GetCommunityDetailsResponse;
 import com.prathab.communityservice.services.CommunityService;
 import java.util.Set;
@@ -63,9 +64,9 @@ public class CommunityController {
       CreateCommunityRequest request) {
     log.trace("Received create community request");
     var requestCommunityDto = communityApiMapper.createCommunityRequestToCommunityDto(request);
-    var createdCommunityDto = communityService.createCommunity(requestCommunityDto);
+    var createdCommunity = communityService.createCommunity(requestCommunityDto);
     var createdCommunityResponse =
-        communityApiMapper.communityDtoToCreateCommunityResponse(createdCommunityDto);
+        communityApiMapper.communityToCreateCommunityResponse(createdCommunity);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdCommunityResponse);
   }
 
@@ -77,7 +78,7 @@ public class CommunityController {
     log.trace("Received request to list all community");
     var communityDetails = communityService.listAll();
     var communityDetailsResponse =
-        communityApiMapper.communityDtoSetToGetCommunityDetailsResponseSet(communityDetails);
+        communityApiMapper.communitySetToGetCommunityDetailsResponseSet(communityDetails);
     return ResponseEntity.status(HttpStatus.OK).body(communityDetailsResponse);
   }
 
@@ -90,7 +91,20 @@ public class CommunityController {
     log.trace("Received request to get details about community with id[{}]", communityId);
     var communityDetails = communityService.getCommunityDetailsById(communityId);
     var communityDetailsResponse =
-        communityApiMapper.communityDtoToGetCommunityDetailsResponse(communityDetails);
+        communityApiMapper.communityToGetCommunityDetailsResponse(communityDetails);
     return ResponseEntity.status(HttpStatus.OK).body(communityDetailsResponse);
+  }
+
+  @GetMapping(
+      path = "/communities/{communityId}/admins",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<Set<GetAdminDetailsResponse>> listCommunityAdmins(
+      @PathVariable String communityId) {
+    log.trace("Received request to list all admins of community with id[{}]", communityId);
+    var adminDetails = communityService.getCommunityDetailsById(communityId).getAdmins();
+    var getAdminDetailsResponseSet =
+        communityApiMapper.communityAdminSetToGetAdminDetailsResponseSet(adminDetails);
+    return ResponseEntity.status(HttpStatus.OK).body(getAdminDetailsResponseSet);
   }
 }

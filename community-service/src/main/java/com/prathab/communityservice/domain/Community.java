@@ -16,8 +16,12 @@
 
 package com.prathab.communityservice.domain;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +36,11 @@ import lombok.Setter;
 @Setter
 @Entity
 public class Community extends BaseEntity {
+  @ManyToMany(fetch = FetchType.EAGER)
+  /*@JoinTable(name = "community_admins",
+      joinColumns = @JoinColumn(name = "community_id"),
+      inverseJoinColumns = @JoinColumn(name = "admin_id"))*/
+  private Set<CommunityAdmin> admins = new HashSet<>();
   @Column(nullable = false)
   private String name;
   @Column(unique = true, nullable = false)

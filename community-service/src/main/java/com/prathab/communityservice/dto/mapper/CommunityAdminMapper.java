@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package com.prathab.communityservice.services;
+package com.prathab.communityservice.dto.mapper;
 
-import com.prathab.communityservice.domain.Community;
-import com.prathab.communityservice.dto.CommunityDto;
-import java.util.Set;
+import com.prathab.communityservice.domain.CommunityAdmin;
+import com.prathab.communityservice.dto.CommunityAdminDto;
+import org.mapstruct.Mapper;
 
-public interface CommunityService {
-  Community createCommunity(CommunityDto communityDto);
+@Mapper
+public interface CommunityAdminMapper {
+  CommunityAdmin communityAdminDtoToCommunityAdmin(CommunityAdminDto communityAdminDto);
 
-  Set<Community> listAll();
-
-  Community getCommunityDetailsById(String communityId);
+  CommunityAdminDto communityAdminToCommunityAdminDto(CommunityAdmin communityAdmin);
 }

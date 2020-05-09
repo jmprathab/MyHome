@@ -18,7 +18,10 @@ package com.prathab.communityservice.controllers.models.mapper;
 
 import com.prathab.communityservice.controllers.models.request.CreateCommunityRequest;
 import com.prathab.communityservice.controllers.models.response.CreateCommunityResponse;
+import com.prathab.communityservice.controllers.models.response.GetAdminDetailsResponse;
 import com.prathab.communityservice.controllers.models.response.GetCommunityDetailsResponse;
+import com.prathab.communityservice.domain.Community;
+import com.prathab.communityservice.domain.CommunityAdmin;
 import com.prathab.communityservice.dto.CommunityDto;
 import java.util.Set;
 import org.mapstruct.Mapper;
@@ -34,4 +37,16 @@ public interface CommunityApiMapper {
 
   GetCommunityDetailsResponse communityDtoToGetCommunityDetailsResponse(
       CommunityDto communityDtoSet);
+
+  GetCommunityDetailsResponse communityToGetCommunityDetailsResponse(Community community);
+
+  Set<GetCommunityDetailsResponse> communitySetToGetCommunityDetailsResponseSet(
+      Set<Community> communitySet);
+
+  CreateCommunityResponse communityToCreateCommunityResponse(Community community);
+
+  GetAdminDetailsResponse communityAdminToGetAdminDetailsResponse(CommunityAdmin communityAdmin);
+
+  Set<GetAdminDetailsResponse> communityAdminSetToGetAdminDetailsResponseSet(
+      Set<CommunityAdmin> communityAdminSet);
 }

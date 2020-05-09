@@ -16,6 +16,7 @@
 
 package com.prathab.communityservice.dto;
 
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,4 +31,5 @@ public class CommunityDto {
   private String communityId;
   private String name;
   private String district;
+  private Set<CommunityAdminDto> admins;
 }

@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package com.prathab.communityservice.services;
+package com.prathab.communityservice.repositories;
 
-import com.prathab.communityservice.domain.Community;
-import com.prathab.communityservice.dto.CommunityDto;
-import java.util.Set;
+import com.prathab.communityservice.domain.CommunityAdmin;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface CommunityService {
-  Community createCommunity(CommunityDto communityDto);
-
-  Set<Community> listAll();
-
-  Community getCommunityDetailsById(String communityId);
+@Repository
+public interface CommunityAdminRepository extends CrudRepository<CommunityAdmin, Long> {
 }

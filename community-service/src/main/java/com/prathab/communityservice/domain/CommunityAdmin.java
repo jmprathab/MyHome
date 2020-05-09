@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
-package com.prathab.communityservice.services;
+package com.prathab.communityservice.domain;
 
-import com.prathab.communityservice.domain.Community;
-import com.prathab.communityservice.dto.CommunityDto;
+import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public interface CommunityService {
-  Community createCommunity(CommunityDto communityDto);
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class CommunityAdmin extends BaseEntity {
 
-  Set<Community> listAll();
-
-  Community getCommunityDetailsById(String communityId);
+  @Column(nullable = false)
+  @ManyToMany(mappedBy = "admins")
+  private Set<Community> communities = new HashSet<>();
+  @Column(nullable = false)
+  private String adminId;
 }

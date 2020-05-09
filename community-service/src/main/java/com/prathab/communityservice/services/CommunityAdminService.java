@@ -17,13 +17,8 @@
 package com.prathab.communityservice.services;
 
 import com.prathab.communityservice.domain.Community;
-import com.prathab.communityservice.dto.CommunityDto;
-import java.util.Set;
+import com.prathab.communityservice.dto.CommunityAdminDto;
 
-public interface CommunityService {
-  Community createCommunity(CommunityDto communityDto);
-
-  Set<Community> listAll();
-
-  Community getCommunityDetailsById(String communityId);
+public interface CommunityAdminService {
+  Community addCommunityAdmin(String communityId, CommunityAdminDto communityAdminDto);
 }

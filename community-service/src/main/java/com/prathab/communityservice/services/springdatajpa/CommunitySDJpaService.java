@@ -40,23 +40,22 @@ public class CommunitySDJpaService implements CommunityService {
     this.communityMapper = communityMapper;
   }
 
-  @Override public CommunityDto createCommunity(CommunityDto communityDto) {
+  @Override public Community createCommunity(CommunityDto communityDto) {
     communityDto.setCommunityId(generateUniqueCommunityId());
     var community = communityMapper.communityDtoToCommunity(communityDto);
     var savedCommunity = communityRepository.save(community);
     log.trace("saved community with id[{}] to repository", savedCommunity.getId());
-    return communityMapper.communityToCommunityDto(savedCommunity);
+    return savedCommunity;
   }
 
-  @Override public Set<CommunityDto> listAll() {
+  @Override public Set<Community> listAll() {
     var communityListSet = new HashSet<Community>();
     communityRepository.findAll().forEach(communityListSet::add);
-    return communityMapper.communitySetToCommunityDtoSet(communityListSet);
+    return communityListSet;
   }
 
-  @Override public CommunityDto getCommunityDetailsById(String communityId) {
-    var communityDetail = communityRepository.findByCommunityId(communityId);
-    return communityMapper.communityToCommunityDto(communityDetail);
+  @Override public Community getCommunityDetailsById(String communityId) {
+    return communityRepository.findByCommunityId(communityId);
   }
 
   private String generateUniqueCommunityId() {
