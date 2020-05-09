@@ -54,6 +54,11 @@ public class CommunitySDJpaService implements CommunityService {
     return communityMapper.communitySetToCommunityDtoSet(communityListSet);
   }
 
+  @Override public CommunityDto getCommunityDetailsById(String communityId) {
+    var communityDetail = communityRepository.findByCommunityId(communityId);
+    return communityMapper.communityToCommunityDto(communityDetail);
+  }
+
   private String generateUniqueCommunityId() {
     return UUID.randomUUID().toString();
   }

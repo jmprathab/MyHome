@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -76,7 +77,20 @@ public class CommunityController {
     log.trace("Received request to list all community");
     var communityDetails = communityService.listAll();
     var communityDetailsResponse =
-        communityApiMapper.communityDtoSetToGetCommunityDetailsResponse(communityDetails);
+        communityApiMapper.communityDtoSetToGetCommunityDetailsResponseSet(communityDetails);
+    return ResponseEntity.status(HttpStatus.OK).body(communityDetailsResponse);
+  }
+
+  @GetMapping(
+      path = "/communities/{communityId}",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<GetCommunityDetailsResponse> listCommunityDetails(
+      @PathVariable String communityId) {
+    log.trace("Received request to get details about community with id[{}]", communityId);
+    var communityDetails = communityService.getCommunityDetailsById(communityId);
+    var communityDetailsResponse =
+        communityApiMapper.communityDtoToGetCommunityDetailsResponse(communityDetails);
     return ResponseEntity.status(HttpStatus.OK).body(communityDetailsResponse);
   }
 }

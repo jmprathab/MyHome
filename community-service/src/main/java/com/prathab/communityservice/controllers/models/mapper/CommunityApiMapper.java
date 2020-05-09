@@ -27,12 +27,11 @@ import org.mapstruct.Mapper;
 public interface CommunityApiMapper {
   CommunityDto createCommunityRequestToCommunityDto(CreateCommunityRequest request);
 
-  CreateCommunityRequest communityDtoToCreateCommunityRequest(CommunityDto communityDto);
-
-  CommunityDto createCommunityResponseToCommunityDto(CreateCommunityResponse response);
-
   CreateCommunityResponse communityDtoToCreateCommunityResponse(CommunityDto communityDto);
 
-  Set<GetCommunityDetailsResponse> communityDtoSetToGetCommunityDetailsResponse(
+  Set<GetCommunityDetailsResponse> communityDtoSetToGetCommunityDetailsResponseSet(
       Set<CommunityDto> communityDtoSet);
+
+  GetCommunityDetailsResponse communityDtoToGetCommunityDetailsResponse(
+      CommunityDto communityDtoSet);
 }

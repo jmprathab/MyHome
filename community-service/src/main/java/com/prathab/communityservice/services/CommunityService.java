@@ -23,4 +23,6 @@ public interface CommunityService {
   CommunityDto createCommunity(CommunityDto communityDto);
 
   Set<CommunityDto> listAll();
+
+  CommunityDto getCommunityDetailsById(String communityId);
 }
