@@ -14,9 +14,25 @@
  * limitations under the License.
  */
 
-rootProject.name = 'MyHome'
-include 'api-gateway-service'
-include 'discovery-service'
-include 'user-service'
-include 'community-service'
-include 'house-service'
+package com.prathab.homeservice.domain;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class House extends BaseEntity {
+  @Column(nullable = false)
+  private String communityId;
+  @Column(unique = true, nullable = false)
+  private String houseId;
+  @Column(nullable = false)
+  private String name;
+}

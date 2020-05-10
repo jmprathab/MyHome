@@ -14,9 +14,23 @@
  * limitations under the License.
  */
 
-rootProject.name = 'MyHome'
-include 'api-gateway-service'
-include 'discovery-service'
-include 'user-service'
-include 'community-service'
-include 'house-service'
+package com.prathab.homeservice.controllers.models.request;
+
+import javax.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * Do you think it is weird to get a request body as part of GET? Yeah, I too feel the same. But,
+ * stay with me until I refactor this.
+ */
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class ListAllHouseRequestBody {
+  @NotBlank
+  private String communityId;
+}

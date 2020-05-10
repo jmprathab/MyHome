@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-rootProject.name = 'MyHome'
-include 'api-gateway-service'
-include 'discovery-service'
-include 'user-service'
-include 'community-service'
-include 'house-service'
+package com.prathab.homeservice.controllers.models.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class HouseDetailResponse {
+  private String communityId;
+  private String houseId;
+  private String name;
+}

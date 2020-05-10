@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-rootProject.name = 'MyHome'
-include 'api-gateway-service'
-include 'discovery-service'
-include 'user-service'
-include 'community-service'
-include 'house-service'
+package com.prathab.homeservice.services;
+
+import com.prathab.homeservice.controllers.dto.HouseDto;
+import com.prathab.homeservice.domain.House;
+import java.util.Set;
+
+public interface HouseService {
+  House addHouse(HouseDto houseDto);
+
+  Set<House> findAllHouses();
+}
