@@ -1,9 +1,10 @@
 version: '3.0'
 
 services:
-  discovery-service:
+  myhome-service:
     image: jmprathab/myhome-service:${TAG:-latest}
     build:
+      context: .
       dockerfile: Dockerfile
     container_name: "myhome-service"
     networks:

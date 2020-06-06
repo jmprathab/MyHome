@@ -23,7 +23,7 @@ docker-compose build
 docker-compose up
 ```
 
-All required ports are mapped to localhost. REST API is accessible via port 80
+All required ports are mapped to localhost. REST API is accessible via port 8080
 
 ## Authors
 
