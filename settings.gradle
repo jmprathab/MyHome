@@ -16,7 +16,6 @@
 
 rootProject.name = 'MyHome'
 include 'api-gateway-service'
-include 'discovery-service'
 include 'user-service'
 include 'community-service'
 include 'house-service'

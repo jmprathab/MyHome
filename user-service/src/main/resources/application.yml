@@ -15,16 +15,6 @@ spring:
       settings:
         web-allow-others: true
 
-###############################################################################
-# Eureka Client
-###############################################################################
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: "http://localhost:8010/eureka"
-  instance:
-    instance-id: "${spring.application.name}:${spring.application.instance_id:${random.value}}"
-
 ---
 ###############################################################################
 # Spring Security
