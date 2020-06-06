@@ -14,4 +14,19 @@
  * limitations under the License.
  */
 
-rootProject.name = 'myhome-service'
+package com.prathab.communityservice.dto.mapper;
+import com.prathab.communityservice.domain.Community;
+import com.prathab.communityservice.dto.CommunityDto;
+import java.util.Set;
+import org.mapstruct.Mapper;
+
+@Mapper
+public interface CommunityMapper {
+  CommunityDto communityToCommunityDto(Community community);
+
+  Community communityDtoToCommunity(CommunityDto communityDto);
+
+  Set<CommunityDto> communitySetToCommunityDtoSet(Set<Community> communitySet);
+
+  Set<Community> communityDtoSetToCommunitySet(Set<CommunityDto> communityDtoSet);
+}

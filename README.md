@@ -9,7 +9,7 @@ A Java application which helps people to manage their apartment.
 
 * Gradle
 * Java 11 (JDK)
-* Docker for running services inside container (You can also run it without docker)
+* Docker for running service inside container (You can also run it without docker)
 
 ## Installing
 
@@ -23,7 +23,7 @@ docker-compose build
 docker-compose up
 ```
 
-All required ports are mapped to localhost. REST API is accessible via port 8011(i.e, gateway-service)
+All required ports are mapped to localhost. REST API is accessible via port 80
 
 ## Authors
 

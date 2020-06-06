@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b4ef077d-99d1-4280-8123-811c9627c8b2",
+		"_postman_id": "e4a2a158-5537-410c-bd5f-1ed7ef73f670",
 		"name": "MyHome",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -20,14 +20,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/user-service/users",
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/users",
 					"protocol": "http",
 					"host": [
 						"{{GATEWAY_IP}}"
 					],
 					"port": "{{GATEWAY_PORT}}",
 					"path": [
-						"user-service",
 						"users"
 					]
 				}
@@ -49,14 +48,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/user-service/users/login",
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/users/login",
 					"protocol": "http",
 					"host": [
 						"{{GATEWAY_IP}}"
 					],
 					"port": "{{GATEWAY_PORT}}",
 					"path": [
-						"user-service",
 						"users",
 						"login"
 					]
@@ -76,14 +74,13 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/user-service/users/status",
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/users/status",
 					"protocol": "http",
 					"host": [
 						"{{GATEWAY_IP}}"
 					],
 					"port": "{{GATEWAY_PORT}}",
 					"path": [
-						"user-service",
 						"users",
 						"status"
 					]
@@ -112,14 +109,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/community-service/communities",
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities",
 					"protocol": "http",
 					"host": [
 						"{{GATEWAY_IP}}"
 					],
 					"port": "{{GATEWAY_PORT}}",
 					"path": [
-						"community-service",
 						"communities"
 					]
 				}
@@ -138,14 +134,13 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/community-service/communities",
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities",
 					"protocol": "http",
 					"host": [
 						"{{GATEWAY_IP}}"
 					],
 					"port": "{{GATEWAY_PORT}}",
 					"path": [
-						"community-service",
 						"communities"
 					],
 					"query": [
@@ -171,14 +166,13 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/community-service/communities/{{COMMUNITY_ID}}",
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}",
 					"protocol": "http",
 					"host": [
 						"{{GATEWAY_IP}}"
 					],
 					"port": "{{GATEWAY_PORT}}",
 					"path": [
-						"community-service",
 						"communities",
 						"{{COMMUNITY_ID}}"
 					]
@@ -198,14 +192,13 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/community-service/communities/{{COMMUNITY_ID}}/admins",
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/admins",
 					"protocol": "http",
 					"host": [
 						"{{GATEWAY_IP}}"
 					],
 					"port": "{{GATEWAY_PORT}}",
 					"path": [
-						"community-service",
 						"communities",
 						"{{COMMUNITY_ID}}",
 						"admins"
@@ -235,14 +228,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/community-service/communities/{{COMMUNITY_ID}}/admins",
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/admins",
 					"protocol": "http",
 					"host": [
 						"{{GATEWAY_IP}}"
 					],
 					"port": "{{GATEWAY_PORT}}",
 					"path": [
-						"community-service",
 						"communities",
 						"{{COMMUNITY_ID}}",
 						"admins"
