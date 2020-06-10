@@ -242,6 +242,69 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "List houses of a community",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/houses",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"communities",
+						"{{COMMUNITY_ID}}",
+						"houses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add house to community",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"house\": {\n        \"houseId\": \"default-house-id-for-testing\",\n        \"name\": \"Default House Name\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/houses",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"communities",
+						"{{COMMUNITY_ID}}",
+						"houses"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}

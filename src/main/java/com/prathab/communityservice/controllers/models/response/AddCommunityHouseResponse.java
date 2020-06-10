@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package com.prathab.communityservice.services;
+package com.prathab.communityservice.controllers.models.response;
 
-import com.prathab.communityservice.domain.Community;
-import com.prathab.communityservice.domain.CommunityHouse;
-import com.prathab.communityservice.dto.CommunityDto;
-import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public interface CommunityService {
-  Community createCommunity(CommunityDto communityDto);
-
-  Set<Community> listAll();
-
-  Community getCommunityDetailsById(String communityId);
-
-  Community addAdminsToCommunity(String communityId, Set<String> admins);
-
-  String addHouseToCommunity(String communityId, CommunityHouse house);
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class AddCommunityHouseResponse {
+  private String houseId;
 }

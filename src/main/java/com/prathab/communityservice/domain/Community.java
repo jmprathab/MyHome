@@ -22,6 +22,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,6 +42,9 @@ public class Community extends CommunityBaseEntity {
       joinColumns = @JoinColumn(name = "community_id"),
       inverseJoinColumns = @JoinColumn(name = "admin_id"))*/
   private Set<CommunityAdmin> admins = new HashSet<>();
+
+  @OneToMany
+  private Set<CommunityHouse> houses = new HashSet<>();
   @Column(nullable = false)
   private String name;
   @Column(unique = true, nullable = false)

@@ -18,11 +18,14 @@ package com.prathab.communityservice.controllers;
 
 import com.prathab.communityservice.controllers.models.mapper.CommunityApiMapper;
 import com.prathab.communityservice.controllers.models.request.AddCommunityAdminRequest;
+import com.prathab.communityservice.controllers.models.request.AddCommunityHouseRequest;
 import com.prathab.communityservice.controllers.models.request.CreateCommunityRequest;
 import com.prathab.communityservice.controllers.models.response.AddCommunityAdminResponse;
+import com.prathab.communityservice.controllers.models.response.AddCommunityHouseResponse;
 import com.prathab.communityservice.controllers.models.response.CreateCommunityResponse;
 import com.prathab.communityservice.controllers.models.response.GetAdminDetailsResponse;
 import com.prathab.communityservice.controllers.models.response.GetCommunityDetailsResponse;
+import com.prathab.communityservice.controllers.models.response.GetHouseDetailsResponse;
 import com.prathab.communityservice.domain.CommunityAdmin;
 import com.prathab.communityservice.services.CommunityService;
 import java.util.Set;
@@ -112,6 +115,21 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.OK).body(getAdminDetailsResponseSet);
   }
 
+  @GetMapping(
+      path = "/communities/{communityId}/houses",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
+      @PathVariable String communityId) {
+    log.trace("Received request to list all houses of community with id[{}]", communityId);
+    var houseDetails = communityService.getCommunityDetailsById(communityId).getHouses();
+    var getHouseDetailsResponseSet =
+        communityApiMapper.communityHouseSetToCommunityHouseDtoSet(houseDetails);
+    var response = new GetHouseDetailsResponse();
+    response.setHouses(getHouseDetailsResponseSet);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
   @PostMapping(
       path = "/communities/{communityId}/admins",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -126,6 +144,23 @@ public class CommunityController {
     var adminsSet =
         community.getAdmins().stream().map(CommunityAdmin::getAdminId).collect(Collectors.toSet());
     response.setAdmins(adminsSet);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
+
+  @PostMapping(
+      path = "/communities/{communityId}/houses",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<AddCommunityHouseResponse> addCommunityHouse(
+      @PathVariable String communityId, @Valid @RequestBody
+      AddCommunityHouseRequest request) {
+    log.trace("Received request to add house to community with id[{}]", communityId);
+
+    var communityHouse = communityApiMapper.communityHouseDtoToCommunityHouse(request.getHouse());
+    var houseId = communityService.addHouseToCommunity(communityId, communityHouse);
+    var response = new AddCommunityHouseResponse();
+    response.setHouseId(houseId);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 }

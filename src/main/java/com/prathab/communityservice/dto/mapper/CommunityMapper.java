@@ -15,6 +15,7 @@
  */
 
 package com.prathab.communityservice.dto.mapper;
+
 import com.prathab.communityservice.domain.Community;
 import com.prathab.communityservice.dto.CommunityDto;
 import java.util.Set;

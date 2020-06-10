@@ -18,9 +18,11 @@ package com.prathab.communityservice.services.springdatajpa;
 
 import com.prathab.communityservice.domain.Community;
 import com.prathab.communityservice.domain.CommunityAdmin;
+import com.prathab.communityservice.domain.CommunityHouse;
 import com.prathab.communityservice.dto.CommunityDto;
 import com.prathab.communityservice.dto.mapper.CommunityMapper;
 import com.prathab.communityservice.repositories.CommunityAdminRepository;
+import com.prathab.communityservice.repositories.CommunityHouseRepository;
 import com.prathab.communityservice.repositories.CommunityRepository;
 import com.prathab.communityservice.services.CommunityService;
 import java.util.HashSet;
@@ -35,18 +37,21 @@ public class CommunitySDJpaService implements CommunityService {
   private final CommunityRepository communityRepository;
   private final CommunityAdminRepository communityAdminRepository;
   private final CommunityMapper communityMapper;
+  private final CommunityHouseRepository communityHouseRepository;
 
   public CommunitySDJpaService(
       CommunityRepository communityRepository,
       CommunityAdminRepository communityAdminRepository,
-      CommunityMapper communityMapper) {
+      CommunityMapper communityMapper,
+      CommunityHouseRepository communityHouseRepository) {
     this.communityRepository = communityRepository;
     this.communityAdminRepository = communityAdminRepository;
     this.communityMapper = communityMapper;
+    this.communityHouseRepository = communityHouseRepository;
   }
 
   @Override public Community createCommunity(CommunityDto communityDto) {
-    communityDto.setCommunityId(generateUniqueCommunityId());
+    communityDto.setCommunityId(generateUniqueId());
     var community = communityMapper.communityDtoToCommunity(communityDto);
     var savedCommunity = communityRepository.save(community);
     log.trace("saved community with id[{}] to repository", savedCommunity.getId());
@@ -78,7 +83,20 @@ public class CommunitySDJpaService implements CommunityService {
     return communityRepository.save(community);
   }
 
-  private String generateUniqueCommunityId() {
+  // Returns houseId which was added to the community
+  @Override public String addHouseToCommunity(String communityId, CommunityHouse house) {
+    house.setHouseId(generateUniqueId());
+    var community = communityRepository.findByCommunityId(communityId);
+
+    house.setCommunity(community);
+    var savedHouse = communityHouseRepository.save(house);
+
+    community.getHouses().add(savedHouse);
+    communityRepository.save(community);
+    return savedHouse.getHouseId();
+  }
+
+  private String generateUniqueId() {
     return UUID.randomUUID().toString();
   }
 }

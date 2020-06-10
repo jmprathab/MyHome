@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package com.prathab.communityservice.services;
+package com.prathab.communityservice.controllers.models.request;
 
-import com.prathab.communityservice.domain.Community;
-import com.prathab.communityservice.dto.CommunityAdminDto;
+import com.prathab.communityservice.controllers.dto.CommunityHouseDto;
+import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public interface CommunityAdminService {
-  Community addCommunityAdmin(String communityId, CommunityAdminDto communityAdminDto);
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class AddCommunityHouseRequest {
+  @NotNull
+  private CommunityHouseDto house;
 }

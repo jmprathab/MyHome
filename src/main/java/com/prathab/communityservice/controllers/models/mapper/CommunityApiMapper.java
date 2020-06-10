@@ -16,12 +16,14 @@
 
 package com.prathab.communityservice.controllers.models.mapper;
 
+import com.prathab.communityservice.controllers.dto.CommunityHouseDto;
 import com.prathab.communityservice.controllers.models.request.CreateCommunityRequest;
 import com.prathab.communityservice.controllers.models.response.CreateCommunityResponse;
 import com.prathab.communityservice.controllers.models.response.GetAdminDetailsResponse;
 import com.prathab.communityservice.controllers.models.response.GetCommunityDetailsResponse;
 import com.prathab.communityservice.domain.Community;
 import com.prathab.communityservice.domain.CommunityAdmin;
+import com.prathab.communityservice.domain.CommunityHouse;
 import com.prathab.communityservice.dto.CommunityDto;
 import java.util.Set;
 import org.mapstruct.Mapper;
@@ -49,4 +51,14 @@ public interface CommunityApiMapper {
 
   Set<GetAdminDetailsResponse> communityAdminSetToGetAdminDetailsResponseSet(
       Set<CommunityAdmin> communityAdminSet);
+
+  CommunityHouse communityHouseDtoToCommunityHouse(CommunityHouseDto communityHouseDto);
+
+  CommunityHouseDto communityHouseToCommunityHouseDto(CommunityHouse communityHouse);
+
+  Set<CommunityHouseDto> communityHouseSetToCommunityHouseDtoSet(
+      Set<CommunityHouse> communityHouse);
+
+  Set<CommunityHouse> communityHouseDtoSetToCommunityHouseSet(
+      Set<CommunityHouseDto> communityHouseDto);
 }
