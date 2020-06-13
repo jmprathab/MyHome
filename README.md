@@ -37,7 +37,7 @@ This project is licensed under the Apache License - see the [LICENSE.md](LICENSE
 
 Feel free to contribute to the project. Please make sure to follow the below list before contributing.
 
-* Read CODE_OF_CONDUCT.md
+* Read `CODE_OF_CONDUCT.md`
 * This project uses coding style from https://github.com/square/java-code-styles
 * Make sure all test cases pass before requesting for a PR.
 
