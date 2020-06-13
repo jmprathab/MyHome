@@ -62,11 +62,11 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .authenticated()
         .and()
         .addFilter(getAuthenticationFilter())
-        .addFilter(new MyAuthorizationFilter(authenticationManager(), environment));
+        .addFilter(new MyHomeAuthorizationFilter(authenticationManager(), environment));
   }
 
   private Filter getAuthenticationFilter() throws Exception {
-    var authFilter = new MyAuthenticationFilter(objectMapper, appUserDetailsService, environment,
+    var authFilter = new MyHomeAuthenticationFilter(objectMapper, appUserDetailsService, environment,
         authenticationManager());
     authFilter.setFilterProcessesUrl(environment.getProperty("api.login.url.path"));
     return authFilter;

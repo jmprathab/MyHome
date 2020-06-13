@@ -18,8 +18,8 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.mapper.CommunityMapper;
-import com.myhome.domain.Community;
 import com.myhome.domain.CommunityAdmin;
+import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.repositories.CommunityAdminRepository;
 import com.myhome.repositories.CommunityHouseRepository;
@@ -79,7 +79,7 @@ public class CommunitySDJpaService implements CommunityService {
       savedAdminSet.add(communityAdminRepository.save(admin));
     });
 
-    community.getAdmins().addAll(savedAdminSet);
+    community.getCommunityAdmins().addAll(savedAdminSet);
     return communityRepository.save(community);
   }
 

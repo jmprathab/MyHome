@@ -22,5 +22,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommunityAdminRepository extends CrudRepository<CommunityAdmin, Long> {
-  CommunityAdmin findByAdminId(String adminId);
+
 }

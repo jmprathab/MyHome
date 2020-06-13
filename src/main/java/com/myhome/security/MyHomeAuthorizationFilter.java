@@ -29,11 +29,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-public class MyAuthorizationFilter extends BasicAuthenticationFilter {
+public class MyHomeAuthorizationFilter extends BasicAuthenticationFilter {
 
   private final Environment environment;
 
-  public MyAuthorizationFilter(
+  public MyHomeAuthorizationFilter(
       AuthenticationManager authenticationManager,
       Environment environment) {
     super(authenticationManager);

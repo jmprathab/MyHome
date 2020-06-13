@@ -16,7 +16,7 @@ import lombok.Setter;
 public class CommunityHouse extends BaseEntity {
   @ManyToOne
   private Community community;
-  @Column(nullable = false)
+  @Column(unique = true, nullable = false)
   private String name;
   @Column(nullable = false)
   private String houseId;

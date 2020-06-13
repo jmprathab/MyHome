@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommunityHouseRepository extends CrudRepository<CommunityHouse, Long> {
-  CommunityHouse findByHouseId(String houseId);
+
 }

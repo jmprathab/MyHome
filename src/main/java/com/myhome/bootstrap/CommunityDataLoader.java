@@ -16,8 +16,8 @@
 
 package com.myhome.bootstrap;
 
-import com.myhome.domain.Community;
 import com.myhome.domain.CommunityAdmin;
+import com.myhome.domain.Community;
 import com.myhome.repositories.CommunityAdminRepository;
 import com.myhome.repositories.CommunityRepository;
 import java.util.UUID;
@@ -59,7 +59,7 @@ class CommunityDataLoader implements CommandLineRunner {
     var savedCommunityAdmin = communityAdminRepository.save(communityAdmin);
 
     // Update community with the saved admin
-    savedCommunity.getAdmins().add(savedCommunityAdmin);
+    savedCommunity.getCommunityAdmins().add(savedCommunityAdmin);
     communityRepository.save(savedCommunity);
   }
 }

@@ -40,12 +40,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * Custom {@link UsernamePasswordAuthenticationFilter} for catering to service need. Generates JWT
  * token as a response for Login request.
  */
-public class MyAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
   private final ObjectMapper objectMapper;
   private final Environment environment;
   private final AppUserDetailsService appUserDetailsService;
 
-  public MyAuthenticationFilter(ObjectMapper objectMapper,
+  public MyHomeAuthenticationFilter(ObjectMapper objectMapper,
       AppUserDetailsService appUserDetailsService, Environment environment,
       AuthenticationManager authenticationManager) {
     super.setAuthenticationManager(authenticationManager);

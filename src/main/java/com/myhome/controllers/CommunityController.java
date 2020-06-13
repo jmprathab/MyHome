@@ -109,7 +109,7 @@ public class CommunityController {
   public ResponseEntity<Set<GetAdminDetailsResponse>> listCommunityAdmins(
       @PathVariable String communityId) {
     log.trace("Received request to list all admins of community with id[{}]", communityId);
-    var adminDetails = communityService.getCommunityDetailsById(communityId).getAdmins();
+    var adminDetails = communityService.getCommunityDetailsById(communityId).getCommunityAdmins();
     var getAdminDetailsResponseSet =
         communityApiMapper.communityAdminSetToGetAdminDetailsResponseSet(adminDetails);
     return ResponseEntity.status(HttpStatus.OK).body(getAdminDetailsResponseSet);
@@ -142,7 +142,7 @@ public class CommunityController {
     var community = communityService.addAdminsToCommunity(communityId, request.getAdmins());
     var response = new AddCommunityAdminResponse();
     var adminsSet =
-        community.getAdmins().stream().map(CommunityAdmin::getAdminId).collect(Collectors.toSet());
+        community.getCommunityAdmins().stream().map(CommunityAdmin::getAdminId).collect(Collectors.toSet());
     response.setAdmins(adminsSet);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
