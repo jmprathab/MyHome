@@ -27,6 +27,9 @@ spring:
   devtools:
     restart:
       enabled: true
+  h2.console:
+    enabled: true
+    settings.web-allow-others: true
 
 ###############################################################################
 # Custom properties
@@ -39,10 +42,6 @@ api:
     url:
       path: "/users"
   h2console:
-    console:
-      enabled: true
-      settings:
-        web-allow-others: true
     url:
       path: "/h2-console/**"
 
@@ -52,9 +51,6 @@ authorization:
       name: "Authorization"
       prefix: "Bearer"
 
-###############################################################################
-# Custom Properties
-###############################################################################
 token:
   expiration_time: 864000000
   secret: "sgahjsdhfjahsdfhjkahjsdfyquiwuhekrjkhsjkdfakjhskdfhiauwehriqwekrhkhknfdkkanskdfkakshdfhuqiwheuriqjwkefkahksdhfkaskdhfkhuiquhweurihqjwkerjqhkwhekfhkanksdnkfakhsdkfhiiqiwherqjowjeorjoqweoriewoq"
