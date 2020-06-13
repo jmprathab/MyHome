@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class MemberDto {
+public class HouseMemberDto {
   private String memberId;
   private String name;
 }

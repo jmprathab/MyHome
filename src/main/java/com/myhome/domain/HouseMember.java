@@ -1,11 +1,8 @@
 package com.myhome.domain;
 
-import java.util.HashSet;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,13 +13,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CommunityHouse extends BaseEntity {
-  @ManyToOne
-  private Community community;
+public class HouseMember extends BaseEntity {
+
+  @Column(nullable = false, unique = true)
+  private String memberId;
+
   @Column(nullable = false)
   private String name;
-  @Column(unique = true, nullable = false)
-  private String houseId;
-  @OneToMany
-  private Set<HouseMember> houseMembers = new HashSet<>();
+
+  @ManyToOne
+  private CommunityHouse communityHouse;
 }

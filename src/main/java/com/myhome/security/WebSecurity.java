@@ -66,8 +66,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   }
 
   private Filter getAuthenticationFilter() throws Exception {
-    var authFilter = new MyHomeAuthenticationFilter(objectMapper, appUserDetailsService, environment,
-        authenticationManager());
+    var authFilter =
+        new MyHomeAuthenticationFilter(objectMapper, appUserDetailsService, environment,
+            authenticationManager());
     authFilter.setFilterProcessesUrl(environment.getProperty("api.login.url.path"));
     return authFilter;
   }
