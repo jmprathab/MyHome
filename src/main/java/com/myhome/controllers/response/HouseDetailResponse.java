@@ -16,7 +16,7 @@
 
 package com.myhome.controllers.response;
 
-import com.myhome.controllers.dto.HouseDto;
+import com.myhome.controllers.dto.CommunityHouseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,5 +27,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class HouseDetailResponse {
-  private HouseDto house;
+  private CommunityHouseDto house;
 }

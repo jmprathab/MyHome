@@ -16,29 +16,61 @@
 
 package com.myhome.controllers;
 
-import com.myhome.controllers.dto.MemberDto;
+import com.myhome.controllers.dto.HouseMemberDto;
+import com.myhome.controllers.dto.mapper.HouseMemberMapper;
+import com.myhome.controllers.request.AddHouseMemberRequest;
+import com.myhome.repositories.CommunityHouseRepository;
+import com.myhome.services.HouseService;
 import java.util.Set;
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
 public class HouseController {
+  private final CommunityHouseRepository communityHouseRepository;
+  private final HouseMemberMapper houseMemberMapper;
+  private final HouseService houseService;
+
+  public HouseController(CommunityHouseRepository communityHouseRepository,
+      HouseMemberMapper houseMemberMapper, HouseService houseService) {
+    this.communityHouseRepository = communityHouseRepository;
+    this.houseMemberMapper = houseMemberMapper;
+    this.houseService = houseService;
+  }
 
   @GetMapping(
+      path = "/houses/{houseId}/members",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<Set<HouseMemberDto>> listAllMembersOfHouse(
+      @PathVariable String houseId) {
+    log.trace("Received request to list all members of the house with id[{}]", houseId);
+    var houseMembers = communityHouseRepository.findByHouseId(houseId).getHouseMembers();
+    var responseSet = houseMemberMapper.houseMemberSetToHouseMemberDtoSet(houseMembers);
+    return ResponseEntity.status(HttpStatus.OK).body(responseSet);
+  }
+
+  // Returns Member Id which was created.
+  @PostMapping(
       path = "/houses/{houseId}/members",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
       consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<Set<MemberDto>> listAllMembersOfHouse(
-      @PathVariable String houseId) {
-    log.trace("Received request to list all members of the house with id[{}]", houseId);
-    // TODO Complete this implementation
-    return ResponseEntity.status(HttpStatus.OK).body(null);
+  public ResponseEntity<String> addHouseMember(
+      @PathVariable String houseId, @Valid @RequestBody AddHouseMemberRequest request) {
+    log.trace("Received request to add member to the house with id[{}]", houseId);
+
+    var member = houseMemberMapper.houseMemberDtoToHouseMember(request.getMember());
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(houseService.addHouseMember(houseId, member).getMemberId());
   }
 }

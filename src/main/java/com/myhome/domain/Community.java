@@ -38,7 +38,7 @@ import lombok.Setter;
 @Entity
 public class Community extends BaseEntity {
   @ManyToMany(fetch = FetchType.EAGER)
-  private Set<CommunityAdmin> communityAdmins = new HashSet<>();
+  private Set<CommunityAdmin> admins = new HashSet<>();
   @OneToMany
   private Set<CommunityHouse> houses = new HashSet<>();
   @Column(nullable = false)
