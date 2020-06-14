@@ -20,8 +20,9 @@ import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.CommunityHouseDto;
 import com.myhome.controllers.request.CreateCommunityRequest;
 import com.myhome.controllers.response.CreateCommunityResponse;
-import com.myhome.controllers.response.GetAdminDetailsResponse;
 import com.myhome.controllers.response.GetCommunityDetailsResponse;
+import com.myhome.controllers.response.GetHouseDetailsResponse;
+import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
@@ -32,18 +33,19 @@ import org.mapstruct.Mapper;
 public interface CommunityApiMapper {
   CommunityDto createCommunityRequestToCommunityDto(CreateCommunityRequest request);
 
-  GetCommunityDetailsResponse communityToGetCommunityDetailsResponse(Community community);
+  GetCommunityDetailsResponse.Community communityToRestApiResponseCommunity(
+      Community community);
 
-  Set<GetCommunityDetailsResponse> communitySetToGetCommunityDetailsResponseSet(
+  Set<GetCommunityDetailsResponse.Community> communitySetToRestApiResponseCommunitySet(
       Set<Community> communitySet);
 
   CreateCommunityResponse communityToCreateCommunityResponse(Community community);
 
-  Set<GetAdminDetailsResponse> communityAdminSetToGetAdminDetailsResponseSet(
+  Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSetToRestApiResponseCommunityAdminSet(
       Set<CommunityAdmin> communityAdminSet);
 
   CommunityHouse communityHouseDtoToCommunityHouse(CommunityHouseDto communityHouseDto);
 
-  Set<CommunityHouseDto> communityHouseSetToCommunityHouseDtoSet(
+  Set<GetHouseDetailsResponse.CommunityHouse> communityHouseSetToRestApiResponseCommunityHouseSet(
       Set<CommunityHouse> communityHouse);
 }

@@ -1,6 +1,5 @@
 package com.myhome.controllers.response;
 
-import com.myhome.controllers.dto.CommunityHouseDto;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,5 +11,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetHouseDetailsResponse {
-  private Set<CommunityHouseDto> houses;
+  private Set<CommunityHouse> houses;
+
+  @AllArgsConstructor
+  @NoArgsConstructor
+  @Getter
+  @Setter
+  public static class CommunityHouse {
+    private String houseId;
+    private String name;
+  }
 }

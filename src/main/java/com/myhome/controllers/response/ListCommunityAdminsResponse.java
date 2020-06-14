@@ -16,6 +16,7 @@
 
 package com.myhome.controllers.response;
 
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class GetAdminDetailsResponse {
-  private String adminId;
+public class ListCommunityAdminsResponse {
+  private Set<CommunityAdmin> admins;
+
+  @Getter
+  @Setter
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class CommunityAdmin {
+    private String adminId;
+  }
 }

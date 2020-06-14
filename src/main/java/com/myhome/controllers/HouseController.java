@@ -55,6 +55,9 @@ public class HouseController {
   )
   public ResponseEntity<Set<HouseMemberDto>> listAllMembersOfHouse(
       @PathVariable String houseId) {
+
+    // TODO Result should not be a collection. Instead return an object.
+
     log.trace("Received request to list all members of the house with id[{}]", houseId);
     var houseMembers = communityHouseRepository.findByHouseId(houseId).getHouseMembers();
     var responseSet = houseMemberMapper.houseMemberSetToHouseMemberDtoSet(houseMembers);
@@ -69,6 +72,9 @@ public class HouseController {
   )
   public ResponseEntity<String> addHouseMember(
       @PathVariable String houseId, @Valid @RequestBody AddHouseMemberRequest request) {
+
+    // TODO Request object should take a collection as input
+
     log.trace("Received request to add member to the house with id[{}]", houseId);
 
     var member = houseMemberMapper.houseMemberDtoToHouseMember(request.getMember());

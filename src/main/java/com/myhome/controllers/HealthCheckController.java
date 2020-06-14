@@ -9,7 +9,7 @@ public class HealthCheckController {
 
   @Operation(description = "Endpoint to know if the server is healthy")
   @GetMapping("/status")
-  public String statusCheck(){
+  public String statusCheck() {
     return "Application is healthy";
   }
 }
