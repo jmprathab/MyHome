@@ -32,6 +32,15 @@ spring:
     settings.web-allow-others: true
 
 ###############################################################################
+# Spring doc
+###############################################################################
+springdoc:
+  api-docs:
+    path: "/docs/api-docs"
+  swagger-ui:
+    path: "/docs/swagger-ui.html"
+
+###############################################################################
 # Custom properties
 ###############################################################################
 api:
@@ -44,6 +53,12 @@ api:
   h2console:
     url:
       path: "/h2-console/**"
+  docs:
+    url:
+      path: "/docs/**"
+  status:
+    url:
+      path: "/status/**"
 
 authorization:
   token:

@@ -28,6 +28,7 @@ import com.myhome.controllers.response.GetCommunityDetailsResponse;
 import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.domain.CommunityAdmin;
 import com.myhome.services.CommunityService;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -57,11 +58,7 @@ public class CommunityController {
     this.communityApiMapper = communityApiMapper;
   }
 
-  @GetMapping("/communities/status")
-  public String status() {
-    return "Working";
-  }
-
+  @Operation(description = "Create a new community")
   @PostMapping(
       path = "/communities",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -77,6 +74,7 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.CREATED).body(createdCommunityResponse);
   }
 
+  @Operation(description = "List all communities which are registered")
   @GetMapping(
       path = "/communities",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
@@ -89,6 +87,7 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.OK).body(communityDetailsResponse);
   }
 
+  @Operation(description = "Get details about the community given a community id")
   @GetMapping(
       path = "/communities/{communityId}",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
@@ -102,6 +101,7 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.OK).body(communityDetailsResponse);
   }
 
+  @Operation(description = "List all admins of the community given a community id")
   @GetMapping(
       path = "/communities/{communityId}/admins",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
@@ -115,6 +115,7 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.OK).body(getAdminDetailsResponseSet);
   }
 
+  @Operation(description = "List all houses of the community given a community id")
   @GetMapping(
       path = "/communities/{communityId}/houses",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
@@ -130,6 +131,7 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
+  @Operation(description = "Add a new admin to the community given a community id")
   @PostMapping(
       path = "/communities/{communityId}/admins",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -147,6 +149,7 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
+  @Operation(description = "Add a new house to the community given a community id")
   @PostMapping(
       path = "/communities/{communityId}/houses",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},

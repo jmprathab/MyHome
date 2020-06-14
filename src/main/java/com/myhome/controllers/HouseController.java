@@ -21,6 +21,7 @@ import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.request.AddHouseMemberRequest;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,7 @@ public class HouseController {
     this.houseService = houseService;
   }
 
+  @Operation(description = "List all members of the house given a house id")
   @GetMapping(
       path = "/houses/{houseId}/members",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
@@ -59,7 +61,7 @@ public class HouseController {
     return ResponseEntity.status(HttpStatus.OK).body(responseSet);
   }
 
-  // Returns Member Id which was created.
+  @Operation(description = "Add new member to the house given a house id. Responds with member id")
   @PostMapping(
       path = "/houses/{houseId}/members",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},

@@ -43,6 +43,7 @@ ext {
   set('mapstructVersion', "1.3.1.Final")
   set('jwtVersion', "0.11.1")
   set('bouncycastleVersion', "1.65")
+  set('openApiVersion', "1.4.1")
 }
 
 dependencies {
@@ -81,6 +82,10 @@ dependencies {
   // Lombok
   compileOnly 'org.projectlombok:lombok'
   annotationProcessor 'org.projectlombok:lombok'
+
+  // Documentation
+  implementation "org.springdoc:springdoc-openapi-ui:${openApiVersion}"
+
 }
 
 dependencyManagement {

@@ -20,6 +20,7 @@ import com.myhome.controllers.mapper.UserApiMapper;
 import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
 import com.myhome.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -45,11 +46,7 @@ public class UserController {
     this.userApiMapper = userApiMapper;
   }
 
-  @GetMapping("/users/status")
-  public String status() {
-    return "Working";
-  }
-
+  @Operation(description = "Create a new user")
   @PostMapping(
       path = "/users",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
