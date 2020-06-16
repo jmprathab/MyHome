@@ -16,13 +16,12 @@
 
 package com.myhome.controllers;
 
-import com.myhome.controllers.dto.HouseMemberDto;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.request.AddHouseMemberRequest;
+import com.myhome.controllers.response.ListHouseMembersResponse;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.Set;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -53,15 +52,16 @@ public class HouseController {
       path = "/houses/{houseId}/members",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<Set<HouseMemberDto>> listAllMembersOfHouse(
+  public ResponseEntity<ListHouseMembersResponse> listAllMembersOfHouse(
       @PathVariable String houseId) {
-
-    // TODO Result should not be a collection. Instead return an object.
 
     log.trace("Received request to list all members of the house with id[{}]", houseId);
     var houseMembers = communityHouseRepository.findByHouseId(houseId).getHouseMembers();
-    var responseSet = houseMemberMapper.houseMemberSetToHouseMemberDtoSet(houseMembers);
-    return ResponseEntity.status(HttpStatus.OK).body(responseSet);
+    var responseSet = houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(houseMembers);
+
+    var response = new ListHouseMembersResponse();
+    response.setMembers(responseSet);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @Operation(description = "Add new member to the house given a house id. Responds with member id")
