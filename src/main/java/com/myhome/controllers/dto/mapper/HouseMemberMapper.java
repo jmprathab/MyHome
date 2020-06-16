@@ -11,5 +11,5 @@ public interface HouseMemberMapper {
   Set<ListHouseMembersResponse.HouseMember> houseMemberSetToRestApiResponseHouseMemberSet(
       Set<HouseMember> houseMemberSet);
 
-  HouseMember houseMemberDtoToHouseMember(HouseMemberDto houseMemberDto);
+  Set<HouseMember> houseMemberDtoSetToHouseMemberSet(Set<HouseMemberDto> houseMemberDtoSet);
 }

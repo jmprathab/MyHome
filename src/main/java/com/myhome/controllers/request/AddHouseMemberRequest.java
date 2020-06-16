@@ -1,6 +1,8 @@
 package com.myhome.controllers.request;
 
 import com.myhome.controllers.dto.HouseMemberDto;
+import java.util.HashSet;
+import java.util.Set;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,5 +15,5 @@ import lombok.Setter;
 @Setter
 public class AddHouseMemberRequest {
   @NotNull
-  private HouseMemberDto member;
+  private Set<HouseMemberDto> members = new HashSet<>();
 }

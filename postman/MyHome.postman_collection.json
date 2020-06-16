@@ -74,14 +74,13 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/users/status",
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/status",
 					"protocol": "http",
 					"host": [
 						"{{GATEWAY_IP}}"
 					],
 					"port": "{{GATEWAY_PORT}}",
 					"path": [
-						"users",
 						"status"
 					]
 				}
@@ -181,33 +180,6 @@
 			"response": []
 		},
 		{
-			"name": "List admins of a community",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer {{AUTH_TOKEN}}",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/admins",
-					"protocol": "http",
-					"host": [
-						"{{GATEWAY_IP}}"
-					],
-					"port": "{{GATEWAY_PORT}}",
-					"path": [
-						"communities",
-						"{{COMMUNITY_ID}}",
-						"admins"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Add admins to community",
 			"request": {
 				"method": "POST",
@@ -244,6 +216,69 @@
 			"response": []
 		},
 		{
+			"name": "List admins of a community",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/admins",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"communities",
+						"{{COMMUNITY_ID}}",
+						"admins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add house to community",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"houses\": [\n        {\n            \"name\": \"Default House Name\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/houses",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"communities",
+						"{{COMMUNITY_ID}}",
+						"houses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "List houses of a community",
 			"request": {
 				"method": "GET",
@@ -271,7 +306,7 @@
 			"response": []
 		},
 		{
-			"name": "Add house to community",
+			"name": "Add members to house",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -283,7 +318,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"house\": {\n        \"houseId\": \"default-house-id-for-testing\",\n        \"name\": \"Default House Name\"\n    }\n}",
+					"raw": "{\n    \"members\": [\n        {\n            \"name\": \"Default Member Name\"\n        }\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -291,16 +326,43 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/houses",
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/houses/{{HOUSE_ID}}/members",
 					"protocol": "http",
 					"host": [
 						"{{GATEWAY_IP}}"
 					],
 					"port": "{{GATEWAY_PORT}}",
 					"path": [
-						"communities",
-						"{{COMMUNITY_ID}}",
-						"houses"
+						"houses",
+						"{{HOUSE_ID}}",
+						"members"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List members of a house",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/houses/{{HOUSE_ID}}/members",
+					"protocol": "http",
+					"host": [
+						"{{GATEWAY_IP}}"
+					],
+					"port": "{{GATEWAY_PORT}}",
+					"path": [
+						"houses",
+						"{{HOUSE_ID}}",
+						"members"
 					]
 				}
 			},

@@ -4,6 +4,8 @@ import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.HouseService;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +24,12 @@ public class HouseSDJpaService implements HouseService {
     return UUID.randomUUID().toString();
   }
 
-  @Override
-  public HouseMember addHouseMember(String houseId, HouseMember houseMember) {
+  @Override public Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers) {
     var communityHouse = communityHouseRepository.findByHouseId(houseId);
-    houseMember.setMemberId(generateUniqueId());
-    houseMember.setCommunityHouse(communityHouse);
-    return houseMemberRepository.save(houseMember);
+    houseMembers.forEach(member -> member.setMemberId(generateUniqueId()));
+    houseMembers.forEach(member -> member.setCommunityHouse(communityHouse));
+    var savedMembers = new HashSet<HouseMember>();
+    houseMemberRepository.saveAll(houseMembers).forEach(savedMembers::add);
+    return savedMembers;
   }
 }

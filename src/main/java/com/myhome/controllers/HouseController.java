@@ -19,9 +19,11 @@ package com.myhome.controllers;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.request.AddHouseMemberRequest;
 import com.myhome.controllers.response.ListHouseMembersResponse;
+import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.Set;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -64,21 +66,20 @@ public class HouseController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @Operation(description = "Add new member to the house given a house id. Responds with member id")
+  @Operation(description = "Add new members to the house given a house id. Responds with member id which were added")
   @PostMapping(
       path = "/houses/{houseId}/members",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
       consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<String> addHouseMember(
+  public ResponseEntity<Set<HouseMember>> addHouseMembers(
       @PathVariable String houseId, @Valid @RequestBody AddHouseMemberRequest request) {
 
-    // TODO Request object should take a collection as input
-
     log.trace("Received request to add member to the house with id[{}]", houseId);
+    var members = houseMemberMapper.houseMemberDtoSetToHouseMemberSet(request.getMembers());
+    var response = houseService.addHouseMembers(houseId, members);
 
-    var member = houseMemberMapper.houseMemberDtoToHouseMember(request.getMember());
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(houseService.addHouseMember(houseId, member).getMemberId());
+        .body(response);
   }
 }

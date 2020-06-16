@@ -1,7 +1,8 @@
 package com.myhome.services;
 
 import com.myhome.domain.HouseMember;
+import java.util.Set;
 
 public interface HouseService {
-  HouseMember addHouseMember(String houseId, HouseMember houseMember);
+  Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers);
 }
