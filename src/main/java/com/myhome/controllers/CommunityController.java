@@ -167,15 +167,13 @@ public class CommunityController {
   public ResponseEntity<AddCommunityHouseResponse> addCommunityHouse(
       @PathVariable String communityId, @Valid @RequestBody
       AddCommunityHouseRequest request) {
-
-    // TODO Replace this with bulk insert API
-
     log.trace("Received request to add house to community with id[{}]", communityId);
 
-    var communityHouse = communityApiMapper.communityHouseDtoToCommunityHouse(request.getHouse());
-    var houseId = communityService.addHouseToCommunity(communityId, communityHouse);
+    var communityHouses =
+        communityApiMapper.communityHouseDtoSetToCommunityHouseSet(request.getHouses());
+    var houseIds = communityService.addHousesToCommunity(communityId, communityHouses);
     var response = new AddCommunityHouseResponse();
-    response.setHouseId(houseId);
+    response.setHouses(houseIds);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 }

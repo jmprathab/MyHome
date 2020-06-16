@@ -17,7 +17,9 @@
 package com.myhome.controllers.request;
 
 import com.myhome.controllers.dto.CommunityHouseDto;
-import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
+import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +30,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AddCommunityHouseRequest {
-  @NotNull
-  private CommunityHouseDto house;
+  @NotEmpty
+  private Set<CommunityHouseDto> houses = new HashSet<>();
 }

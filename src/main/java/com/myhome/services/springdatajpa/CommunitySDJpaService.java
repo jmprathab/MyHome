@@ -84,16 +84,19 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   // Returns houseId which was added to the community
-  @Override public String addHouseToCommunity(String communityId, CommunityHouse house) {
-    house.setHouseId(generateUniqueId());
+  @Override
+  public Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses) {
+    houses.forEach(communityHouse -> communityHouse.setHouseId(generateUniqueId()));
     var community = communityRepository.findByCommunityId(communityId);
-
-    house.setCommunity(community);
-    var savedHouse = communityHouseRepository.save(house);
-
-    community.getHouses().add(savedHouse);
+    houses.forEach(communityHouse -> communityHouse.setCommunity(community));
+    var savedHouses = new HashSet<CommunityHouse>();
+    communityHouseRepository.saveAll(houses).forEach(savedHouses::add);
+    community.getHouses().addAll(savedHouses);
     communityRepository.save(community);
-    return savedHouse.getHouseId();
+
+    var houseIds = new HashSet<String>(savedHouses.size());
+    savedHouses.forEach(communityHouse -> houseIds.add(communityHouse.getHouseId()));
+    return houseIds;
   }
 
   private String generateUniqueId() {

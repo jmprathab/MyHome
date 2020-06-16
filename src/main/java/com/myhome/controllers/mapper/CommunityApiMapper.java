@@ -44,7 +44,8 @@ public interface CommunityApiMapper {
   Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSetToRestApiResponseCommunityAdminSet(
       Set<CommunityAdmin> communityAdminSet);
 
-  CommunityHouse communityHouseDtoToCommunityHouse(CommunityHouseDto communityHouseDto);
+  Set<CommunityHouse> communityHouseDtoSetToCommunityHouseSet(
+      Set<CommunityHouseDto> communityHouseDtoSet);
 
   Set<GetHouseDetailsResponse.CommunityHouse> communityHouseSetToRestApiResponseCommunityHouseSet(
       Set<CommunityHouse> communityHouse);
