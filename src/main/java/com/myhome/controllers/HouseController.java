@@ -18,12 +18,11 @@ package com.myhome.controllers;
 
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.request.AddHouseMemberRequest;
+import com.myhome.controllers.response.AddHouseMemberResponse;
 import com.myhome.controllers.response.ListHouseMembersResponse;
-import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.Set;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -72,13 +71,16 @@ public class HouseController {
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
       consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<Set<HouseMember>> addHouseMembers(
+  public ResponseEntity<AddHouseMemberResponse> addHouseMembers(
       @PathVariable String houseId, @Valid @RequestBody AddHouseMemberRequest request) {
 
     log.trace("Received request to add member to the house with id[{}]", houseId);
     var members = houseMemberMapper.houseMemberDtoSetToHouseMemberSet(request.getMembers());
-    var response = houseService.addHouseMembers(houseId, members);
+    var savedHouseMembers = houseService.addHouseMembers(houseId, members);
 
+    var response = new AddHouseMemberResponse();
+    response.setMembers(
+        houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(response);
   }

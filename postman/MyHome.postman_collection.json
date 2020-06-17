@@ -318,7 +318,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"members\": [\n        {\n            \"name\": \"Default Member Name\"\n        }\n    ]\n}",
+					"raw": "{\n  \"members\": [\n    {\n      \"memberId\": \"test-member-id-for-testing\",\n      \"name\": \"Test member name\"\n    }\n  ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"

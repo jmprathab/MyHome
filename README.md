@@ -23,7 +23,8 @@ docker-compose build
 docker-compose up
 ```
 
-All required ports are mapped to localhost. REST API is accessible via port 8080
+All required ports are mapped to localhost. REST API is accessible via port 8080.
+http://localhost:8080/docs/swagger-ui.html hosts Swagger UI.
 
 ## Authors
 
