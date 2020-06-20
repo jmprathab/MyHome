@@ -397,25 +397,25 @@
 	],
 	"variable": [
 		{
-			"id": "ec7cd00a-1254-49f0-83f0-041b9ebc1267",
+			"id": "6f76e60a-2177-4d45-8f6a-09ba77f350d3",
 			"key": "AUTH_TOKEN",
-			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1MWM4MzE3OC04NjBhLTRiOTMtODMxMS01NGJiZWMxMjk0NDgiLCJleHAiOjE1OTM1NDI3NjV9.rfFEwYY8n2EkITx_aLh7-YzbejW4U1nrOF_D7v9K00QKCiSjos_iBmE-mEU3gyqT7rEdmXWuRLBS0IOxz1jpBQ",
+			"value": "0",
 			"type": "string"
 		},
 		{
-			"id": "d0b58a8a-c211-4c26-a706-b436f6a050d2",
+			"id": "9163c642-38c1-41ff-8e04-1cc9cccfc982",
 			"key": "ENV_URL",
 			"value": "127.0.0.1:8080",
 			"type": "string"
 		},
 		{
-			"id": "e3610212-1cbf-4058-ac78-0444dac74eae",
+			"id": "9cb0ba7e-7aac-49f0-8aad-3e09bd4de2ee",
 			"key": "COMMUNITY_ID",
 			"value": "default-community-id-for-testing",
 			"type": "string"
 		},
 		{
-			"id": "caf6a6ab-1a2e-4a51-991e-32dc4d2fdd9c",
+			"id": "73df181a-eac6-4932-98a4-d25bd555f772",
 			"key": "HOUSE_ID",
 			"value": "default-house-id-for-testing",
 			"type": "string"
