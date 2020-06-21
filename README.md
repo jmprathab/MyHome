@@ -15,6 +15,7 @@ A Java application which helps people to manage their apartment.
 
 1. Download the Project to local drive
 2. Run `gradlew assemble`
+3. Frontend is developed using React and is [here](https://github.com/jmprathab/MyHome-Web)
 
 ## Running using Docker
 
