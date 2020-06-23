@@ -102,4 +102,8 @@ public class CommunitySDJpaService implements CommunityService {
   private String generateUniqueId() {
     return UUID.randomUUID().toString();
   }
+
+  public void deleteHouseFromCommunityByHouseId(String houseId) {
+    communityHouseRepository.deleteByHouseId(houseId);
+  }
 }
