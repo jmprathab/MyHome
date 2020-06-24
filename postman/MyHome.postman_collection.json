@@ -1,7 +1,8 @@
 {
 	"info": {
-		"_postman_id": "e4a2a158-5537-410c-bd5f-1ed7ef73f670",
+		"_postman_id": "5ae20361-f8a0-488a-b221-c3f261305b3b",
 		"name": "MyHome",
+		"description": "# MyHome API Guide\r\n\r\n## Usage\r\n\r\nTo use any API except **Create User and Login User**, you'll need to obtain Authentication Token.\r\n\r\nTo get Authentication Token.\r\n\r\n1. First Create New User with **Create User API**.\r\n2. Login with New user with **New User API**. Login will obtain New Token for user.\r\n\r\nNow you can use other APIs.\r\n\r\n\r\n## Variables\r\n\r\nAll APIs are configured with Postman variables to keep consistensy for static and dynamic values.\r\n\r\n1. **ENV_URL**: This variable hold value for Enviroment URL. e.g. 127.0.0.1:8080 (Default to local environment, with 8080 port), or example.com.\r\n2. **AUTH_TOKEN**: This variable hold authentication token obtained by Login User API, which is used in request header. This is stored each time you use Login User API.\r\n3. **COMMUNITY_ID**: This variable hold default community id created for testing Community related APIs.\r\n4. **HOUSE_ID**: This variable hold default house id created for testing House related APIs.\r\n\r\n\r\nYou can configure your own values for these either by editing in *MyHome > ... (View more actions) > Edit > Variables Tab* or you can create your environment and add variable there. [How to create Environment in Postman] (https://learning.postman.com/docs/postman/variables-and-environments/managing-environments/#creating-environments)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -20,12 +21,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/users",
+					"raw": "http://{{ENV_URL}}/users",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"users"
 					]
@@ -35,6 +35,21 @@
 		},
 		{
 			"name": "Login User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4628dc7d-40ba-468b-8fe9-1c370729b09a",
+						"exec": [
+							"if (pm.response.headers.has(\"token\")) {\r",
+							"    pm.collectionVariables.set(\"AUTH_TOKEN\", pm.response.headers.get(\"token\"))\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -48,12 +63,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/users/login",
+					"raw": "http://{{ENV_URL}}/users/login",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"users",
 						"login"
@@ -74,12 +88,11 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/status",
+					"raw": "http://{{ENV_URL}}/status",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"status"
 					]
@@ -108,12 +121,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities",
+					"raw": "http://{{ENV_URL}}/communities",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"communities"
 					]
@@ -133,12 +145,11 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities",
+					"raw": "http://{{ENV_URL}}/communities",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"communities"
 					],
@@ -165,12 +176,11 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}",
+					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"communities",
 						"{{COMMUNITY_ID}}"
@@ -200,12 +210,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/admins",
+					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/admins",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"communities",
 						"{{COMMUNITY_ID}}",
@@ -227,12 +236,11 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/admins",
+					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/admins",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"communities",
 						"{{COMMUNITY_ID}}",
@@ -263,12 +271,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/houses",
+					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/houses",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"communities",
 						"{{COMMUNITY_ID}}",
@@ -290,12 +297,11 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/communities/{{COMMUNITY_ID}}/houses",
+					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/houses",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"communities",
 						"{{COMMUNITY_ID}}",
@@ -326,12 +332,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/houses/{{HOUSE_ID}}/members",
+					"raw": "http://{{ENV_URL}}/houses/{{HOUSE_ID}}/members",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"houses",
 						"{{HOUSE_ID}}",
@@ -353,12 +358,11 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{GATEWAY_IP}}:{{GATEWAY_PORT}}/houses/{{HOUSE_ID}}/members",
+					"raw": "http://{{ENV_URL}}/houses/{{HOUSE_ID}}/members",
 					"protocol": "http",
 					"host": [
-						"{{GATEWAY_IP}}"
+						"{{ENV_URL}}"
 					],
-					"port": "{{GATEWAY_PORT}}",
 					"path": [
 						"houses",
 						"{{HOUSE_ID}}",
@@ -367,6 +371,54 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "fe523c50-300a-4cc6-b1e2-c8861c9ea2d2",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "7c6674e3-758a-4158-bf8a-a710d5255f82",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "6f76e60a-2177-4d45-8f6a-09ba77f350d3",
+			"key": "AUTH_TOKEN",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"id": "9163c642-38c1-41ff-8e04-1cc9cccfc982",
+			"key": "ENV_URL",
+			"value": "127.0.0.1:8080",
+			"type": "string"
+		},
+		{
+			"id": "9cb0ba7e-7aac-49f0-8aad-3e09bd4de2ee",
+			"key": "COMMUNITY_ID",
+			"value": "default-community-id-for-testing",
+			"type": "string"
+		},
+		{
+			"id": "73df181a-eac6-4932-98a4-d25bd555f772",
+			"key": "HOUSE_ID",
+			"value": "default-house-id-for-testing",
+			"type": "string"
 		}
 	],
 	"protocolProfileBehavior": {}
