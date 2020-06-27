@@ -20,12 +20,15 @@ import com.myhome.domain.Community;
 import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import com.myhome.domain.User;
 import com.myhome.repositories.CommunityAdminRepository;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.HouseMemberRepository;
+import com.myhome.repositories.UserRepository;
 import java.util.UUID;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,16 +37,21 @@ class DataLoader implements CommandLineRunner {
   private final CommunityAdminRepository communityAdminRepository;
   private final CommunityHouseRepository communityHouseRepository;
   private final HouseMemberRepository houseMemberRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final UserRepository userRepository;
 
   public DataLoader(
       CommunityRepository communityRepository,
       CommunityAdminRepository communityAdminRepository,
       CommunityHouseRepository communityHouseRepository,
-      HouseMemberRepository houseMemberRepository) {
+      HouseMemberRepository houseMemberRepository,
+      PasswordEncoder passwordEncoder, UserRepository userRepository) {
     this.communityRepository = communityRepository;
     this.communityAdminRepository = communityAdminRepository;
     this.communityHouseRepository = communityHouseRepository;
     this.houseMemberRepository = houseMemberRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.userRepository = userRepository;
   }
 
   @Override public void run(String... args) throws Exception {
@@ -51,6 +59,8 @@ class DataLoader implements CommandLineRunner {
   }
 
   private void loadData() {
+    // Add user
+    var savedUser = saveUser();
     // Persist community
     var savedCommunity = saveCommunity();
     // Persist admin to repo
@@ -63,6 +73,15 @@ class DataLoader implements CommandLineRunner {
 
     var savedHouseMember = addHouseMember(savedHouse);
     savedHouse = addMemberToHouse(savedHouseMember, savedHouse);
+  }
+
+  private User saveUser() {
+    var user = new User();
+    user.setName("Test");
+    user.setEmail("test@test.com");
+    user.setUserId(UUID.randomUUID().toString());
+    user.setEncryptedPassword(passwordEncoder.encode("testtest"));
+    return userRepository.save(user);
   }
 
   private CommunityHouse addMemberToHouse(HouseMember savedHouseMember, CommunityHouse savedHouse) {
