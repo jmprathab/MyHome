@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package com.myhome.services;
+package com.myhome.controllers.response;
 
-import com.myhome.controllers.dto.UserDto;
+import com.myhome.controllers.request.CreateUserRequest;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
- * Interface for service layer.
+ * Get user details response
+ *
+ * @see GetUserDetailsResponse
  */
-public interface UserService {
-  UserDto createUser(UserDto request);
-
-  UserDto getUserDetails(UserDto request);
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class GetUserDetailsResponse {
+  private String userId;
+  private String name;
+  private String email;
 }

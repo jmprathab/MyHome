@@ -19,6 +19,7 @@ package com.myhome.controllers.mapper;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
+import com.myhome.controllers.response.GetUserDetailsResponse;
 import org.mapstruct.Mapper;
 
 /**
@@ -30,4 +31,6 @@ public interface UserApiMapper {
   UserDto createUserRequestToUserDto(CreateUserRequest createUserRequest);
 
   CreateUserResponse userDtoToCreateUserResponse(UserDto userDto);
+
+  GetUserDetailsResponse userDtoToGetUserDetailsResponse(UserDto userDto);
 }

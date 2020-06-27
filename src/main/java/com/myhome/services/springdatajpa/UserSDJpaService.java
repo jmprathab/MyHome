@@ -50,6 +50,12 @@ public class UserSDJpaService implements UserService {
     return createUserInRepository(request);
   }
 
+  @Override public UserDto getUserDetails(UserDto request) {
+    var userId = request.getUserId();
+    var user = userRepository.findByUserId(userId);
+    return userMapper.userToUserDto(user);
+  }
+
   private UserDto createUserInRepository(UserDto request) {
     var user = userMapper.userDtoToUser(request);
     var savedUser = userRepository.save(user);
