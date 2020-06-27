@@ -17,8 +17,8 @@ public class CorsConfig {
             .allowedOrigins("http://localhost:3000")
             .allowedMethods("*")
             .allowedHeaders("*")
-            .allowCredentials(true)
-            .exposedHeaders("token");
+            .exposedHeaders("token", "userId")
+            .allowCredentials(true);
       }
     };
   }
