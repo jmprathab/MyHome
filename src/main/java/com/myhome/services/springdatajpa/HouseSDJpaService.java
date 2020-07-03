@@ -1,5 +1,6 @@
 package com.myhome.services.springdatajpa;
 
+import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.HouseMemberRepository;
@@ -25,10 +26,10 @@ public class HouseSDJpaService implements HouseService {
   }
 
   @Override public Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers) {
-    var communityHouse = communityHouseRepository.findByHouseId(houseId);
+    CommunityHouse communityHouse = communityHouseRepository.findByHouseId(houseId);
     houseMembers.forEach(member -> member.setMemberId(generateUniqueId()));
     houseMembers.forEach(member -> member.setCommunityHouse(communityHouse));
-    var savedMembers = new HashSet<HouseMember>();
+    Set<HouseMember> savedMembers = new HashSet<HouseMember>();
     houseMemberRepository.saveAll(houseMembers).forEach(savedMembers::add);
     return savedMembers;
   }

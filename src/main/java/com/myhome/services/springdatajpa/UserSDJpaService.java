@@ -18,6 +18,7 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
+import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.UserService;
 import java.util.UUID;
@@ -51,14 +52,14 @@ public class UserSDJpaService implements UserService {
   }
 
   @Override public UserDto getUserDetails(UserDto request) {
-    var userId = request.getUserId();
-    var user = userRepository.findByUserId(userId);
+    String userId = request.getUserId();
+    User user = userRepository.findByUserId(userId);
     return userMapper.userToUserDto(user);
   }
 
   private UserDto createUserInRepository(UserDto request) {
-    var user = userMapper.userDtoToUser(request);
-    var savedUser = userRepository.save(user);
+    User user = userMapper.userDtoToUser(request);
+    User savedUser = userRepository.save(user);
     log.trace("saved user with id[{}] to repository", savedUser.getId());
     return userMapper.userToUserDto(savedUser);
   }

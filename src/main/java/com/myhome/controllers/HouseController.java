@@ -20,6 +20,8 @@ import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.request.AddHouseMemberRequest;
 import com.myhome.controllers.response.AddHouseMemberResponse;
 import com.myhome.controllers.response.ListHouseMembersResponse;
+import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +35,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Set;
 
 @RestController
 @Slf4j
@@ -57,10 +61,10 @@ public class HouseController {
       @PathVariable String houseId) {
 
     log.trace("Received request to list all members of the house with id[{}]", houseId);
-    var houseMembers = communityHouseRepository.findByHouseId(houseId).getHouseMembers();
-    var responseSet = houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(houseMembers);
+    Set<HouseMember> houseMembers = communityHouseRepository.findByHouseId(houseId).getHouseMembers();
+    Set<ListHouseMembersResponse.HouseMember> responseSet = houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(houseMembers);
 
-    var response = new ListHouseMembersResponse();
+    ListHouseMembersResponse response = new ListHouseMembersResponse();
     response.setMembers(responseSet);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
@@ -75,10 +79,10 @@ public class HouseController {
       @PathVariable String houseId, @Valid @RequestBody AddHouseMemberRequest request) {
 
     log.trace("Received request to add member to the house with id[{}]", houseId);
-    var members = houseMemberMapper.houseMemberDtoSetToHouseMemberSet(request.getMembers());
-    var savedHouseMembers = houseService.addHouseMembers(houseId, members);
+    Set<HouseMember> members = houseMemberMapper.houseMemberDtoSetToHouseMemberSet(request.getMembers());
+    Set<HouseMember> savedHouseMembers = houseService.addHouseMembers(houseId, members);
 
-    var response = new AddHouseMemberResponse();
+    AddHouseMemberResponse response = new AddHouseMemberResponse();
     response.setMembers(
         houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
     return ResponseEntity.status(HttpStatus.CREATED)

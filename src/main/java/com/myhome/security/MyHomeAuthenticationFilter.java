@@ -17,6 +17,7 @@
 package com.myhome.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.LoginUserRequest;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -58,7 +59,7 @@ public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFi
       HttpServletResponse response) throws AuthenticationException {
 
     try {
-      var loginUserRequest =
+      LoginUserRequest loginUserRequest =
           objectMapper.readValue(request.getInputStream(), LoginUserRequest.class);
       return getAuthenticationManager().authenticate(
           new UsernamePasswordAuthenticationToken(loginUserRequest.getEmail(),
@@ -72,10 +73,10 @@ public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFi
   protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
       FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
-    var username = ((User) authResult.getPrincipal()).getUsername();
-    var userDto = appUserDetailsService.getUserDetailsByUsername(username);
+    String username = ((User) authResult.getPrincipal()).getUsername();
+    UserDto userDto = appUserDetailsService.getUserDetailsByUsername(username);
 
-    var token = Jwts.builder()
+    String token = Jwts.builder()
         .setSubject(userDto.getUserId())
         .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(
             Objects.requireNonNull(environment.getProperty("token.expiration_time")))))

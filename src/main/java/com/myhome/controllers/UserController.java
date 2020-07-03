@@ -58,9 +58,9 @@ public class UserController {
   )
   public ResponseEntity<CreateUserResponse> signUp(@Valid @RequestBody CreateUserRequest request) {
     log.trace("Received SignUp request");
-    var requestUserDto = userApiMapper.createUserRequestToUserDto(request);
-    var createdUserDto = userService.createUser(requestUserDto);
-    var createdUserResponse = userApiMapper.userDtoToCreateUserResponse(createdUserDto);
+    UserDto requestUserDto = userApiMapper.createUserRequestToUserDto(request);
+    UserDto createdUserDto = userService.createUser(requestUserDto);
+    CreateUserResponse createdUserResponse = userApiMapper.userDtoToCreateUserResponse(createdUserDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUserResponse);
   }
 
@@ -71,10 +71,10 @@ public class UserController {
       @Valid @PathVariable @NonNull String userId) {
     log.trace("Received request to get details of user with Id[{}]", userId);
 
-    var userDto = new UserDto();
+    UserDto userDto = new UserDto();
     userDto.setUserId(userId);
-    var userDetails = userService.getUserDetails(userDto);
-    var response = userApiMapper.userDtoToGetUserDetailsResponse(userDetails);
+    UserDto userDetails = userService.getUserDetails(userDto);
+    GetUserDetailsResponse response = userApiMapper.userDtoToGetUserDetailsResponse(userDetails);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }
