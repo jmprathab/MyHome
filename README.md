@@ -8,7 +8,7 @@ A Java application which helps people to manage their apartment.
 ## Prerequisites
 
 * Gradle
-* Java 11 (JDK)
+* Java 8 (JDK)
 * Docker for running service inside container (You can also run it without docker)
 
 ## Installing
