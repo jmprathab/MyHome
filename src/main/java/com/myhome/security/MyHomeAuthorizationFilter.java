@@ -43,29 +43,29 @@ public class MyHomeAuthorizationFilter extends BasicAuthenticationFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain chain) throws IOException, ServletException {
-    var authHeaderName = environment.getProperty("authorization.token.header.name");
-    var authHeaderPrefix = environment.getProperty("authorization.token.header.prefix");
+    String authHeaderName = environment.getProperty("authorization.token.header.name");
+    String authHeaderPrefix = environment.getProperty("authorization.token.header.prefix");
 
-    var authHeader = request.getHeader(authHeaderName);
+    String authHeader = request.getHeader(authHeaderName);
     if (authHeader == null || !authHeader.startsWith(authHeaderPrefix)) {
       chain.doFilter(request, response);
       return;
     }
 
-    var authentication = getAuthentication(request);
+    UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
     SecurityContextHolder.getContext().setAuthentication(authentication);
     chain.doFilter(request, response);
   }
 
   private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-    var authHeader = request.getHeader(environment.getProperty("authorization.token.header.name"));
+    String authHeader = request.getHeader(environment.getProperty("authorization.token.header.name"));
     if (authHeader == null) {
       return null;
     }
 
-    var token =
+    String token =
         authHeader.replace(environment.getProperty("authorization.token.header.prefix"), "");
-    var userId = Jwts.parser()
+    String userId = Jwts.parser()
         .setSigningKey(environment.getProperty("token.secret"))
         .parseClaimsJws(token)
         .getBody()

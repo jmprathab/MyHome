@@ -43,7 +43,7 @@ public class AppUserDetailsService implements UserDetailsService {
   @Override public UserDetails loadUserByUsername(String username)
       throws UsernameNotFoundException {
 
-    var user = userRepository.findByEmail(username);
+    com.myhome.domain.User user = userRepository.findByEmail(username);
     if (user == null) {
       throw new UsernameNotFoundException(username);
     }
@@ -58,7 +58,7 @@ public class AppUserDetailsService implements UserDetailsService {
   }
 
   public UserDto getUserDetailsByUsername(String username) {
-    var user = userRepository.findByEmail(username);
+    com.myhome.domain.User user = userRepository.findByEmail(username);
     if (user == null) {
       throw new UsernameNotFoundException(username);
     }

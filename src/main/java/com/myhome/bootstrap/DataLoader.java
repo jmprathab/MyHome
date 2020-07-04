@@ -60,23 +60,23 @@ class DataLoader implements CommandLineRunner {
 
   private void loadData() {
     // Add user
-    var savedUser = saveUser();
+    User savedUser = saveUser();
     // Persist community
-    var savedCommunity = saveCommunity();
+    Community savedCommunity = saveCommunity();
     // Persist admin to repo
-    var savedCommunityAdmin = saveCommunityAdmin(savedCommunity);
+    CommunityAdmin savedCommunityAdmin = saveCommunityAdmin(savedCommunity);
     // Update community with the saved admin
     savedCommunity = addAdminToCommunity(savedCommunityAdmin, savedCommunity);
 
-    var savedHouse = addCommunityHouse(savedCommunity);
+    CommunityHouse savedHouse = addCommunityHouse(savedCommunity);
     savedCommunity = addHouseToCommunity(savedHouse, savedCommunity);
 
-    var savedHouseMember = addHouseMember(savedHouse);
+    HouseMember savedHouseMember = addHouseMember(savedHouse);
     savedHouse = addMemberToHouse(savedHouseMember, savedHouse);
   }
 
   private User saveUser() {
-    var user = new User();
+    User user = new User();
     user.setName("Test");
     user.setEmail("test@test.com");
     user.setUserId(UUID.randomUUID().toString());
@@ -90,7 +90,7 @@ class DataLoader implements CommandLineRunner {
   }
 
   private HouseMember addHouseMember(CommunityHouse savedHouse) {
-    var houseMember = new HouseMember();
+    HouseMember houseMember = new HouseMember();
     houseMember.setMemberId(Constants.MEMBER_ID);
     houseMember.setCommunityHouse(savedHouse);
     houseMember.setName(Constants.MEMBER_NAME);
@@ -103,7 +103,7 @@ class DataLoader implements CommandLineRunner {
   }
 
   private CommunityHouse addCommunityHouse(Community savedCommunity) {
-    var house = new CommunityHouse();
+    CommunityHouse house = new CommunityHouse();
     house.setCommunity(savedCommunity);
     house.setHouseId(Constants.HOUSE_ID);
     house.setName(Constants.HOUSE_NAME);
@@ -117,15 +117,15 @@ class DataLoader implements CommandLineRunner {
   }
 
   private CommunityAdmin saveCommunityAdmin(Community savedCommunity) {
-    var communityAdmin = new CommunityAdmin();
-    var adminId = UUID.randomUUID().toString();
+    CommunityAdmin communityAdmin = new CommunityAdmin();
+    String adminId = UUID.randomUUID().toString();
     communityAdmin.setAdminId(adminId);
     communityAdmin.getCommunities().add(savedCommunity);
     return communityAdminRepository.save(communityAdmin);
   }
 
   private Community saveCommunity() {
-    var community = new Community();
+    Community community = new Community();
     community.setName(Constants.COMMUNITY_NAME);
     community.setDistrict(Constants.COMMUNITY_DISTRICT);
     community.setCommunityId(Constants.COMMUNITY_ID);

@@ -16,6 +16,7 @@
 
 package com.myhome.controllers;
 
+import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.mapper.CommunityApiMapper;
 import com.myhome.controllers.request.AddCommunityAdminRequest;
 import com.myhome.controllers.request.AddCommunityHouseRequest;
@@ -26,9 +27,13 @@ import com.myhome.controllers.response.CreateCommunityResponse;
 import com.myhome.controllers.response.GetCommunityDetailsResponse;
 import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListCommunityAdminsResponse;
+import com.myhome.domain.Community;
 import com.myhome.domain.CommunityAdmin;
+import com.myhome.domain.CommunityHouse;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
+
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -66,9 +71,9 @@ public class CommunityController {
   public ResponseEntity<CreateCommunityResponse> createCommunity(@Valid @RequestBody
       CreateCommunityRequest request) {
     log.trace("Received create community request");
-    var requestCommunityDto = communityApiMapper.createCommunityRequestToCommunityDto(request);
-    var createdCommunity = communityService.createCommunity(requestCommunityDto);
-    var createdCommunityResponse =
+    CommunityDto requestCommunityDto = communityApiMapper.createCommunityRequestToCommunityDto(request);
+    Community createdCommunity = communityService.createCommunity(requestCommunityDto);
+    CreateCommunityResponse createdCommunityResponse =
         communityApiMapper.communityToCreateCommunityResponse(createdCommunity);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdCommunityResponse);
   }
@@ -80,11 +85,11 @@ public class CommunityController {
   )
   public ResponseEntity<GetCommunityDetailsResponse> listAllCommunity() {
     log.trace("Received request to list all community");
-    var communityDetails = communityService.listAll();
-    var communityDetailsResponse =
+    Set<Community> communityDetails = communityService.listAll();
+    Set<GetCommunityDetailsResponse.Community> communityDetailsResponse =
         communityApiMapper.communitySetToRestApiResponseCommunitySet(communityDetails);
 
-    var response = new GetCommunityDetailsResponse();
+    GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
     response.getCommunities().addAll(communityDetailsResponse);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
@@ -97,11 +102,11 @@ public class CommunityController {
   public ResponseEntity<GetCommunityDetailsResponse> listCommunityDetails(
       @PathVariable String communityId) {
     log.trace("Received request to get details about community with id[{}]", communityId);
-    var communityDetails = communityService.getCommunityDetailsById(communityId);
-    var communityDetailsResponse =
+    Community communityDetails = communityService.getCommunityDetailsById(communityId);
+    GetCommunityDetailsResponse.Community communityDetailsResponse =
         communityApiMapper.communityToRestApiResponseCommunity(communityDetails);
 
-    var response = new GetCommunityDetailsResponse();
+    GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
     response.getCommunities().add(communityDetailsResponse);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
@@ -114,11 +119,11 @@ public class CommunityController {
   public ResponseEntity<ListCommunityAdminsResponse> listCommunityAdmins(
       @PathVariable String communityId) {
     log.trace("Received request to list all admins of community with id[{}]", communityId);
-    var adminDetails = communityService.getCommunityDetailsById(communityId).getAdmins();
-    var communityAdminSet =
+    Set<CommunityAdmin> adminDetails = communityService.getCommunityDetailsById(communityId).getAdmins();
+    Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSet =
         communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminDetails);
 
-    var response = new ListCommunityAdminsResponse();
+    ListCommunityAdminsResponse response = new ListCommunityAdminsResponse();
     response.getAdmins().addAll(communityAdminSet);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
@@ -131,11 +136,11 @@ public class CommunityController {
   public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
       @PathVariable String communityId) {
     log.trace("Received request to list all houses of community with id[{}]", communityId);
-    var houseDetails = communityService.getCommunityDetailsById(communityId).getHouses();
-    var getHouseDetailsResponseSet =
+    Set<CommunityHouse> houseDetails = communityService.getCommunityDetailsById(communityId).getHouses();
+    Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
         communityApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
-    var response = new GetHouseDetailsResponse();
+    GetHouseDetailsResponse response = new GetHouseDetailsResponse();
     response.setHouses(getHouseDetailsResponseSet);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
@@ -150,9 +155,9 @@ public class CommunityController {
       @PathVariable String communityId, @Valid @RequestBody
       AddCommunityAdminRequest request) {
     log.trace("Received request to add admin to community with id[{}]", communityId);
-    var community = communityService.addAdminsToCommunity(communityId, request.getAdmins());
-    var response = new AddCommunityAdminResponse();
-    var adminsSet =
+    Community community = communityService.addAdminsToCommunity(communityId, request.getAdmins());
+    AddCommunityAdminResponse response = new AddCommunityAdminResponse();
+    Set<String> adminsSet =
         community.getAdmins().stream().map(CommunityAdmin::getAdminId).collect(Collectors.toSet());
     response.setAdmins(adminsSet);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -169,10 +174,10 @@ public class CommunityController {
       AddCommunityHouseRequest request) {
     log.trace("Received request to add house to community with id[{}]", communityId);
 
-    var communityHouses =
+    Set<CommunityHouse> communityHouses =
         communityApiMapper.communityHouseDtoSetToCommunityHouseSet(request.getHouses());
-    var houseIds = communityService.addHousesToCommunity(communityId, communityHouses);
-    var response = new AddCommunityHouseResponse();
+    Set<String> houseIds = communityService.addHousesToCommunity(communityId, communityHouses);
+    AddCommunityHouseResponse response = new AddCommunityHouseResponse();
     response.setHouses(houseIds);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
