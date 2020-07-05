@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Slf4j
@@ -78,7 +79,6 @@ public class CommunitySDJpaService implements CommunityService {
       admin.getCommunities().add(community);
       savedAdminSet.add(communityAdminRepository.save(admin));
     });
-
     community.getAdmins().addAll(savedAdminSet);
     return communityRepository.save(community);
   }
@@ -97,6 +97,26 @@ public class CommunitySDJpaService implements CommunityService {
     Set<String> houseIds = new HashSet<String>(savedHouses.size());
     savedHouses.forEach(communityHouse -> houseIds.add(communityHouse.getHouseId()));
     return houseIds;
+  }
+
+  @Override
+  public Community deleteAdminFromCommunity(String communityId, String adminId) {
+    Community community = communityRepository.findByCommunityId(communityId);
+    Boolean isAdminRemoved = false;
+    if (community != null && !CollectionUtils.isEmpty(community.getAdmins())) {
+      Set<CommunityAdmin> communityAdmins = community.getAdmins();
+      for (CommunityAdmin admin : communityAdmins) {
+        if (admin.getAdminId().equals(adminId)) {
+          communityAdmins.remove(admin);
+          community.setAdmins(communityAdmins);
+          isAdminRemoved = true;
+        }
+      }
+    }
+    if (isAdminRemoved)
+      return communityRepository.save(community);
+
+    return community;
   }
 
   private String generateUniqueId() {
