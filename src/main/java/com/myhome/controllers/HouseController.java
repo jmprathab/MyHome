@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -87,5 +88,20 @@ public class HouseController {
         houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(response);
+  }
+
+  @Operation(description = "Deletion of member associated with a house")
+  @DeleteMapping(
+      path = "/houses/{houseId}/members/{memberId}",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<ListHouseMembersResponse> deleteHouseMember( @PathVariable String houseId, @PathVariable String memberId){
+    log.trace("Received request to delete a member from house with house id[{}] and member id[{}]", houseId, memberId);
+    Set<HouseMember> memberDetails = houseService.deleteMemberFromHouse(houseId, memberId).getHouseMembers();
+    Set<ListHouseMembersResponse.HouseMember> houseMemberSet = houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(memberDetails);
+    ListHouseMembersResponse response = new ListHouseMembersResponse();
+    response.getMembers().addAll(houseMemberSet);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }
