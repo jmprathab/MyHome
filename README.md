@@ -32,6 +32,7 @@ http://localhost:8080/docs/swagger-ui.html hosts Swagger UI.
 * [Prathab Murugan](https://github.com/jmprathab)
 * [Jahir](https://github.com/Zedex7)
 * [Gangadhar](https://github.com/gangadhargo)
+* [mar731](https://github.com/mar731)
 
 ## License
 
