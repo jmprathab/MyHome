@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class HouseSDJpaService implements HouseService {
@@ -32,5 +33,25 @@ public class HouseSDJpaService implements HouseService {
     Set<HouseMember> savedMembers = new HashSet<HouseMember>();
     houseMemberRepository.saveAll(houseMembers).forEach(savedMembers::add);
     return savedMembers;
+  }
+
+  @Override
+  public CommunityHouse deleteMemberFromHouse(String houseId, String memberId) {
+    CommunityHouse communityHouse = communityHouseRepository.findByHouseId(houseId);
+    boolean isMemberRemoved = false;
+    if(communityHouse != null && !CollectionUtils.isEmpty(communityHouse.getHouseMembers())) {
+      Set<HouseMember> houseMembers = communityHouse.getHouseMembers();
+      for(HouseMember member : houseMembers) {
+        if(member.getMemberId().equals(memberId)){
+          houseMembers.remove(member);
+          communityHouse.setHouseMembers(houseMembers);
+          isMemberRemoved = true;
+        }
+      }
+    }
+    if(isMemberRemoved) {
+      return communityHouseRepository.save(communityHouse);
+    }
+    return communityHouse;
   }
 }
