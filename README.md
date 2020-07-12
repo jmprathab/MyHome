@@ -2,6 +2,8 @@
 
 A Java application which helps people to manage their apartment.
 
+Join me at Discord [here](https://discord.gg/CngACKh).
+
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
 ![Java CI with Gradle](https://github.com/jmprathab/MyHome/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=master&event=push)
 
