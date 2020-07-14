@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "5ae20361-f8a0-488a-b221-c3f261305b3b",
+		"_postman_id": "49056aeb-bd66-4647-a98c-e4724e3cf570",
 		"name": "MyHome",
-		"description": "# MyHome API Guide\r\n\r\n## Usage\r\n\r\nTo use any API except **Create User and Login User**, you'll need to obtain Authentication Token.\r\n\r\nTo get Authentication Token.\r\n\r\n1. First Create New User with **Create User API**.\r\n2. Login with New user with **New User API**. Login will obtain New Token for user.\r\n\r\nNow you can use other APIs.\r\n\r\n\r\n## Variables\r\n\r\nAll APIs are configured with Postman variables to keep consistensy for static and dynamic values.\r\n\r\n1. **ENV_URL**: This variable hold value for Enviroment URL. e.g. 127.0.0.1:8080 (Default to local environment, with 8080 port), or example.com.\r\n2. **AUTH_TOKEN**: This variable hold authentication token obtained by Login User API, which is used in request header. This is stored each time you use Login User API.\r\n3. **COMMUNITY_ID**: This variable hold default community id created for testing Community related APIs.\r\n4. **HOUSE_ID**: This variable hold default house id created for testing House related APIs.\r\n\r\n\r\nYou can configure your own values for these either by editing in *MyHome > ... (View more actions) > Edit > Variables Tab* or you can create your environment and add variable there. [How to create Environment in Postman] (https://learning.postman.com/docs/postman/variables-and-environments/managing-environments/#creating-environments)",
+		"description": "# MyHome API Guide\r\n\r\n## Usage\r\n\r\nTo use any API except **Create User and Login User**, you'll need to obtain Authentication Token.\r\n\r\nTo get Authentication Token.\r\n\r\n1. First Create New User with **Create User API**.\r\n2. Login with New user with **New User API**. Login will obtain New Token for user.\r\n\r\nNow you can use other APIs.\r\n\r\n\r\n## Variables\r\n\r\nAll APIs are configured with Postman variables to keep consistensy for static and dynamic values.\r\n\r\n1. **ENV_URL**: This variable hold value for Enviroment URL. e.g. 127.0.0.1:8080 (Default to local environment, with 8080 port), or example.com.\r\n2. **AUTH_TOKEN**: This variable hold authentication token obtained by Login User API, which is used in request header. This is stored each time you use Login User API.\r\n3. **COMMUNITY_ID**: This variable hold default community id created for testing Community related APIs.\r\n4. **HOUSE_ID**: This variable hold default house id created for testing House related APIs.\r\n5. **USER_ID**: This variable hold userId obtained by Login User API. This is stored each tiem you use Login User API.\r\n\r\n\r\nYou can configure your own values for these either by editing in *MyHome > ... (View more actions) > Edit > Variables Tab* or you can create your environment and add variable there. [How to create Environment in Postman] (https://learning.postman.com/docs/postman/variables-and-environments/managing-environments/#creating-environments)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -39,10 +39,13 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "4628dc7d-40ba-468b-8fe9-1c370729b09a",
+						"id": "698f6836-865c-4a22-a9b9-ba0b9bfdeae0",
 						"exec": [
 							"if (pm.response.headers.has(\"token\")) {\r",
 							"    pm.collectionVariables.set(\"AUTH_TOKEN\", pm.response.headers.get(\"token\"))\r",
+							"}\r",
+							"if (pm.response.headers.has(\"userId\")) {\r",
+							"    pm.collectionVariables.set(\"USER_ID\", pm.response.headers.get(\"userId\"))\r",
 							"}\r",
 							""
 						],
@@ -101,6 +104,38 @@
 			"response": []
 		},
 		{
+			"name": "List details of a user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{ENV_URL}}/users/{{USER_ID}}",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"users",
+						"{{USER_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create community",
 			"request": {
 				"method": "POST",
@@ -113,7 +148,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"Test community\",\n    \"district\": \"Test district\"\n}",
+					"raw": "{\n    \"name\": \"Test community\",\n    \"district\": \"Test district\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -377,7 +412,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "fe523c50-300a-4cc6-b1e2-c8861c9ea2d2",
+				"id": "489adef1-450a-4460-9f3c-84d9de3a1ba7",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -387,7 +422,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "7c6674e3-758a-4158-bf8a-a710d5255f82",
+				"id": "bcd6ffef-6055-4ed7-a586-0e1ad878d8e5",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -397,28 +432,29 @@
 	],
 	"variable": [
 		{
-			"id": "6f76e60a-2177-4d45-8f6a-09ba77f350d3",
+			"id": "2050be14-c9f2-4233-b222-c013121781ff",
 			"key": "AUTH_TOKEN",
-			"value": "0",
-			"type": "string"
+			"value": "0"
 		},
 		{
-			"id": "9163c642-38c1-41ff-8e04-1cc9cccfc982",
+			"id": "adbf0040-50e4-4309-a59f-197b106e9072",
 			"key": "ENV_URL",
-			"value": "127.0.0.1:8080",
-			"type": "string"
+			"value": "127.0.0.1:8080"
 		},
 		{
-			"id": "9cb0ba7e-7aac-49f0-8aad-3e09bd4de2ee",
+			"id": "7c53897b-6028-4a3d-aed9-00c9983f93fa",
 			"key": "COMMUNITY_ID",
-			"value": "default-community-id-for-testing",
-			"type": "string"
+			"value": "default-community-id-for-testing"
 		},
 		{
-			"id": "73df181a-eac6-4932-98a4-d25bd555f772",
+			"id": "3050d614-0131-4cf6-8fa7-ee7db5eb7240",
 			"key": "HOUSE_ID",
-			"value": "default-house-id-for-testing",
-			"type": "string"
+			"value": "default-house-id-for-testing"
+		},
+		{
+			"id": "5dcbab0e-4cc9-4f89-aab3-980e9a9c7381",
+			"key": "USER_ID",
+			"value": "default-user-id-for-testing"
 		}
 	],
 	"protocolProfileBehavior": {}

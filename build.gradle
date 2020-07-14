@@ -86,7 +86,6 @@ dependencies {
 
   // Documentation
   implementation "org.springdoc:springdoc-openapi-ui:${openApiVersion}"
-
 }
 
 dependencyManagement {

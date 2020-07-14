@@ -16,7 +16,6 @@
 
 package com.myhome.controllers.response;
 
-import com.myhome.controllers.request.CreateUserRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -32,7 +32,6 @@ import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
-
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -40,7 +39,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * REST Controller which provides endpoints for managing community
@@ -67,7 +71,8 @@ public class CommunityController {
   public ResponseEntity<CreateCommunityResponse> createCommunity(@Valid @RequestBody
       CreateCommunityRequest request) {
     log.trace("Received create community request");
-    CommunityDto requestCommunityDto = communityApiMapper.createCommunityRequestToCommunityDto(request);
+    CommunityDto requestCommunityDto =
+        communityApiMapper.createCommunityRequestToCommunityDto(request);
     Community createdCommunity = communityService.createCommunity(requestCommunityDto);
     CreateCommunityResponse createdCommunityResponse =
         communityApiMapper.communityToCreateCommunityResponse(createdCommunity);
@@ -115,7 +120,8 @@ public class CommunityController {
   public ResponseEntity<ListCommunityAdminsResponse> listCommunityAdmins(
       @PathVariable String communityId) {
     log.trace("Received request to list all admins of community with id[{}]", communityId);
-    Set<CommunityAdmin> adminDetails = communityService.getCommunityDetailsById(communityId).getAdmins();
+    Set<CommunityAdmin> adminDetails =
+        communityService.getCommunityDetailsById(communityId).getAdmins();
     Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSet =
         communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminDetails);
 
@@ -132,7 +138,8 @@ public class CommunityController {
   public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
       @PathVariable String communityId) {
     log.trace("Received request to list all houses of community with id[{}]", communityId);
-    Set<CommunityHouse> houseDetails = communityService.getCommunityDetailsById(communityId).getHouses();
+    Set<CommunityHouse> houseDetails =
+        communityService.getCommunityDetailsById(communityId).getHouses();
     Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
         communityApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
@@ -180,15 +187,19 @@ public class CommunityController {
 
   @Operation(description = "Deletion of admin associated with a community")
   @DeleteMapping(
-          path = "/community/{communityId}/admin/{adminId}",
-          produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-          consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+      path = "/community/{communityId}/admin/{adminId}",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<ListCommunityAdminsResponse> deleteAdminFromCommunity(@PathVariable String communityId, @PathVariable String adminId) {
-    log.trace("Received request to delete an admin from community with community id[{}] and admin id[{}]", communityId, adminId);
-    Set<CommunityAdmin> adminDetails = communityService.deleteAdminFromCommunity(communityId, adminId).getAdmins();
+  public ResponseEntity<ListCommunityAdminsResponse> deleteAdminFromCommunity(
+      @PathVariable String communityId, @PathVariable String adminId) {
+    log.trace(
+        "Received request to delete an admin from community with community id[{}] and admin id[{}]",
+        communityId, adminId);
+    Set<CommunityAdmin> adminDetails =
+        communityService.deleteAdminFromCommunity(communityId, adminId).getAdmins();
     Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSet =
-            communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminDetails);
+        communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminDetails);
     ListCommunityAdminsResponse response = new ListCommunityAdminsResponse();
     response.getAdmins().addAll(communityAdminSet);
     return ResponseEntity.status(HttpStatus.OK).body(response);

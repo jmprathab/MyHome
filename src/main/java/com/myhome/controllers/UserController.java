@@ -60,13 +60,13 @@ public class UserController {
     log.trace("Received SignUp request");
     UserDto requestUserDto = userApiMapper.createUserRequestToUserDto(request);
     UserDto createdUserDto = userService.createUser(requestUserDto);
-    CreateUserResponse createdUserResponse = userApiMapper.userDtoToCreateUserResponse(createdUserDto);
+    CreateUserResponse createdUserResponse =
+        userApiMapper.userDtoToCreateUserResponse(createdUserDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUserResponse);
   }
 
   @GetMapping(path = "/users/{userId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<GetUserDetailsResponse> getUserDetails(
       @Valid @PathVariable @NonNull String userId) {
     log.trace("Received request to get details of user with Id[{}]", userId);
