@@ -17,12 +17,17 @@
 package com.myhome.services;
 
 import com.myhome.controllers.dto.UserDto;
+import com.myhome.domain.User;
+
+import java.util.Set;
 
 /**
  * Interface for service layer.
  */
 public interface UserService {
   UserDto createUser(UserDto request);
+
+  Set<User> listAll();
 
   UserDto getUserDetails(UserDto request);
 }

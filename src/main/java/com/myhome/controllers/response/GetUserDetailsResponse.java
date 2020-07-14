@@ -21,6 +21,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Get user details response
  *
@@ -31,7 +34,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetUserDetailsResponse {
-  private String userId;
-  private String name;
-  private String email;
+  private Set<GetUserDetailsResponse.User> users = new HashSet<>();
+
+  @Getter
+  @Setter
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class User {
+    private String userId;
+    private String name;
+    private String email;
+  }
 }
