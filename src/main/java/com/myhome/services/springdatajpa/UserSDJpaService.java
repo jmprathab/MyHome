@@ -18,7 +18,6 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
-import com.myhome.domain.Community;
 import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.UserService;
