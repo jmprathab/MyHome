@@ -18,7 +18,6 @@ package com.myhome.services;
 
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.domain.Community;
-import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
 import java.util.Set;
 

@@ -113,8 +113,9 @@ public class CommunitySDJpaService implements CommunityService {
         }
       }
     }
-    if (isAdminRemoved)
+    if (isAdminRemoved) {
       return communityRepository.save(community);
+    }
 
     return community;
   }
