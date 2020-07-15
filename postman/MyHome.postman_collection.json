@@ -104,6 +104,30 @@
 			"response": []
 		},
 		{
+			"name": "List all users",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/users",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "List details of a user",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true

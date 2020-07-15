@@ -21,6 +21,9 @@ import com.myhome.controllers.dto.mapper.UserMapper;
 import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.UserService;
+
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,6 +52,12 @@ public class UserSDJpaService implements UserService {
     generateUniqueUserId(request);
     encryptUserPassword(request);
     return createUserInRepository(request);
+  }
+
+  @Override public Set<User> listAll() {
+    Set<User> userListSet = new HashSet<>();
+    userRepository.findAll().forEach(userListSet::add);
+    return userListSet;
   }
 
   @Override public UserDto getUserDetails(UserDto request) {
