@@ -44,5 +44,6 @@ public class GetUserDetailsResponse {
     private String userId;
     private String name;
     private String email;
+    private Set<String> communityIds;
   }
 }
