@@ -24,6 +24,8 @@ import com.myhome.controllers.response.GetUserDetailsResponse;
 import com.myhome.domain.User;
 import com.myhome.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.NonNull;
@@ -80,6 +82,10 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
+  @Operation(description = "Get details of a user given userId"
+      , responses = {@ApiResponse(responseCode = "404", description = "If userId is invalid"),
+      @ApiResponse(responseCode = "200",
+          description = "If userId is valid. Response body has the details ")})
   @GetMapping(path = "/users/{userId}",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<GetUserDetailsResponse.User> getUserDetails(
@@ -88,9 +94,12 @@ public class UserController {
 
     UserDto userDto = new UserDto();
     userDto.setUserId(userId);
-    UserDto userDetails = userService.getUserDetails(userDto);
+    Optional<UserDto> userDetails = userService.getUserDetails(userDto);
+    if (!userDetails.isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
     GetUserDetailsResponse.User response =
-        userApiMapper.userDtoToGetUserDetailsResponse(userDetails);
+        userApiMapper.userDtoToGetUserDetailsResponse(userDetails.get());
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }
