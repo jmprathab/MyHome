@@ -20,12 +20,11 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.UserApiMapper;
 import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
-import com.myhome.controllers.response.GetCommunityDetailsResponse;
 import com.myhome.controllers.response.GetUserDetailsResponse;
-import com.myhome.domain.Community;
 import com.myhome.domain.User;
 import com.myhome.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.Set;
 import javax.validation.Valid;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +36,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Set;
 
 /**
  * Controller for facilitating user actions.
@@ -76,13 +73,12 @@ public class UserController {
     log.trace("Received request to list all users");
     Set<User> userDetails = userService.listAll();
     Set<GetUserDetailsResponse.User> userDetailsResponse =
-            userApiMapper.userSetToRestApiResponseUserSet(userDetails);
+        userApiMapper.userSetToRestApiResponseUserSet(userDetails);
 
     GetUserDetailsResponse response = new GetUserDetailsResponse();
     response.getUsers().addAll(userDetailsResponse);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
-
 
   @GetMapping(path = "/users/{userId}",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -93,7 +89,8 @@ public class UserController {
     UserDto userDto = new UserDto();
     userDto.setUserId(userId);
     UserDto userDetails = userService.getUserDetails(userDto);
-    GetUserDetailsResponse.User response = userApiMapper.userDtoToGetUserDetailsResponse(userDetails);
+    GetUserDetailsResponse.User response =
+        userApiMapper.userDtoToGetUserDetailsResponse(userDetails);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

@@ -19,13 +19,10 @@ package com.myhome.controllers.mapper;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
-import com.myhome.controllers.response.GetCommunityDetailsResponse;
 import com.myhome.controllers.response.GetUserDetailsResponse;
-import com.myhome.domain.Community;
 import com.myhome.domain.User;
-import org.mapstruct.Mapper;
-
 import java.util.Set;
+import org.mapstruct.Mapper;
 
 /**
  * Interface to automatic conversion by Mapstruct
@@ -36,7 +33,7 @@ public interface UserApiMapper {
   UserDto createUserRequestToUserDto(CreateUserRequest createUserRequest);
 
   Set<GetUserDetailsResponse.User> userSetToRestApiResponseUserSet(
-          Set<User> userSet);
+      Set<User> userSet);
 
   CreateUserResponse userDtoToCreateUserResponse(UserDto userDto);
 

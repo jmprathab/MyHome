@@ -32,6 +32,8 @@ import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -185,24 +187,23 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
-  @Operation(description = "Deletion of admin associated with a community")
+  @Operation(description = "Deletion of admin associated with a community"
+      , responses = {@ApiResponse(responseCode = "204", description = "If admin was removed"),
+      @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
   @DeleteMapping(
-      path = "/community/{communityId}/admin/{adminId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+      path = "/communities/{communityId}/admins/{adminId}"
   )
-  public ResponseEntity<ListCommunityAdminsResponse> deleteAdminFromCommunity(
+  public ResponseEntity<Void> deleteAdminFromCommunity(
       @PathVariable String communityId, @PathVariable String adminId) {
     log.trace(
         "Received request to delete an admin from community with community id[{}] and admin id[{}]",
         communityId, adminId);
-    Set<CommunityAdmin> adminDetails =
-        communityService.deleteAdminFromCommunity(communityId, adminId).getAdmins();
-    Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSet =
-        communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminDetails);
-    ListCommunityAdminsResponse response = new ListCommunityAdminsResponse();
-    response.getAdmins().addAll(communityAdminSet);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    Optional<Community> community = communityService.deleteAdminFromCommunity(communityId, adminId);
+    if (community.isPresent()) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 }
 

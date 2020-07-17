@@ -26,11 +26,11 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @Slf4j
@@ -100,24 +100,20 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override
-  public Community deleteAdminFromCommunity(String communityId, String adminId) {
-    Community community = communityRepository.findByCommunityId(communityId);
-    Boolean isAdminRemoved = false;
-    if (community != null && !CollectionUtils.isEmpty(community.getAdmins())) {
-      Set<CommunityAdmin> communityAdmins = community.getAdmins();
-      for (CommunityAdmin admin : communityAdmins) {
-        if (admin.getAdminId().equals(adminId)) {
-          communityAdmins.remove(admin);
-          community.setAdmins(communityAdmins);
-          isAdminRemoved = true;
-        }
-      }
+  public Optional<Community> deleteAdminFromCommunity(String communityId, String adminId) {
+    final Community community = communityRepository.findByCommunityId(communityId);
+    if (community == null || community.getAdmins().isEmpty()) {
+      return Optional.empty();
     }
-    if (isAdminRemoved) {
-      return communityRepository.save(community);
+    Set<CommunityAdmin> communityAdmins = community.getAdmins();
+    boolean removed =
+        communityAdmins.removeIf(communityAdmin -> communityAdmin.getAdminId().equals(adminId));
+    if (!removed) {
+      return Optional.empty();
     }
-
-    return community;
+    community.setAdmins(communityAdmins);
+    Community savedCommunity = communityRepository.save(community);
+    return Optional.of(savedCommunity);
   }
 
   private String generateUniqueId() {

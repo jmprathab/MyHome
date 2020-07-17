@@ -24,15 +24,14 @@ import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
 import com.myhome.services.UserService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 /**
  * Implements {@link UserService} and uses Spring Data JPA repository to does its work.
@@ -73,7 +72,11 @@ public class UserSDJpaService implements UserService {
     User user = userRepository.findByUserId(userId);
 
     Set<String> communityIds = communityService.listAll().stream().filter(c -> {
-      return c.getAdmins().stream().map(CommunityAdmin::getAdminId).collect(Collectors.toSet()).contains(userId);
+      return c.getAdmins()
+          .stream()
+          .map(CommunityAdmin::getAdminId)
+          .collect(Collectors.toSet())
+          .contains(userId);
     }).map(Community::getCommunityId).collect(Collectors.toSet());
 
     UserDto userDto = userMapper.userToUserDto(user);
