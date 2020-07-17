@@ -21,36 +21,39 @@ import com.myhome.controllers.mapper.CommunityApiMapper;
 import com.myhome.controllers.request.AddCommunityAdminRequest;
 import com.myhome.controllers.request.AddCommunityHouseRequest;
 import com.myhome.controllers.request.CreateCommunityRequest;
-
-import com.myhome.controllers.response.*;
+import com.myhome.controllers.response.AddCommunityAdminResponse;
+import com.myhome.controllers.response.AddCommunityHouseResponse;
+import com.myhome.controllers.response.CreateCommunityResponse;
+import com.myhome.controllers.response.GetCommunityDetailsResponse;
+import com.myhome.controllers.response.GetHouseDetailsResponse;
+import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
-
 import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.services.CommunityService;
-import com.myhome.services.springdatajpa.CommunitySDJpaService;
 import io.swagger.v3.oas.annotations.Operation;
-
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.Optional;
 import java.util.Set;
-
 import java.util.stream.Collectors;
 import javax.validation.Valid;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.web.bind.annotation.*;
 /**
  * REST Controller which provides endpoints for managing community
  */
 @RestController
 @Slf4j
 public class CommunityController {
-
   private final CommunityService communityService;
   private final CommunityApiMapper communityApiMapper;
 
@@ -183,21 +186,6 @@ public class CommunityController {
     response.setHouses(houseIds);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
-  
-  @Operation(description = "Deletion of house from the community given a community id and a house id")
-  @DeleteMapping(
-      path = "/communities/{communityId}/houses/{houseId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<Void> deleteCommunityHouse(
-      @PathVariable String communityId, @PathVariable String houseId
-  ) {
-    communityService.deleteHouseFromCommunityByHouseId(houseId);
-    log.trace("Received request to delete house with id[{}] from community with id[{}]", houseId,
-        communityId);
-    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-  }
 
   @Operation(description = "Deletion of admin associated with a community"
       , responses = {@ApiResponse(responseCode = "204", description = "If admin was removed"),
@@ -218,4 +206,3 @@ public class CommunityController {
     }
   }
 }
-
