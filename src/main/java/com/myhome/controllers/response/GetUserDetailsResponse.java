@@ -14,19 +14,35 @@
  * limitations under the License.
  */
 
-package com.myhome.services;
+package com.myhome.controllers.response;
 
-import com.myhome.controllers.dto.UserDto;
-import com.myhome.domain.User;
+import java.util.HashSet;
 import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
- * Interface for service layer.
+ * Get user details response
+ *
+ * @see GetUserDetailsResponse
  */
-public interface UserService {
-  UserDto createUser(UserDto request);
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class GetUserDetailsResponse {
+  private Set<GetUserDetailsResponse.User> users = new HashSet<>();
 
-  Set<User> listAll();
-
-  UserDto getUserDetails(UserDto request);
+  @Getter
+  @Setter
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class User {
+    private String userId;
+    private String name;
+    private String email;
+    private Set<String> communityIds;
+  }
 }

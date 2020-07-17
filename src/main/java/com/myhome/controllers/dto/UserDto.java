@@ -16,6 +16,7 @@
 
 package com.myhome.controllers.dto;
 
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,4 +33,5 @@ public class UserDto {
   private String email;
   private String password;
   private String encryptedPassword;
+  private Set<String> communityIds;
 }

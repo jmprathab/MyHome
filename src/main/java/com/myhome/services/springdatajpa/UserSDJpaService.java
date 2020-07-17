@@ -18,10 +18,18 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
+import com.myhome.domain.Community;
+import com.myhome.domain.CommunityAdmin;
+import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
+import com.myhome.services.CommunityService;
 import com.myhome.services.UserService;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +43,9 @@ public class UserSDJpaService implements UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
   private final PasswordEncoder passwordEncoder;
+
+  @Autowired
+  private CommunityService communityService;
 
   public UserSDJpaService(UserRepository userRepository,
       UserMapper userMapper,
@@ -50,9 +61,32 @@ public class UserSDJpaService implements UserService {
     return createUserInRepository(request);
   }
 
+  @Override public Set<User> listAll() {
+    Set<User> userListSet = new HashSet<>();
+    userRepository.findAll().forEach(userListSet::add);
+    return userListSet;
+  }
+
+  @Override public UserDto getUserDetails(UserDto request) {
+    String userId = request.getUserId();
+    User user = userRepository.findByUserId(userId);
+
+    Set<String> communityIds = communityService.listAll().stream().filter(c -> {
+      return c.getAdmins()
+          .stream()
+          .map(CommunityAdmin::getAdminId)
+          .collect(Collectors.toSet())
+          .contains(userId);
+    }).map(Community::getCommunityId).collect(Collectors.toSet());
+
+    UserDto userDto = userMapper.userToUserDto(user);
+    userDto.setCommunityIds(communityIds);
+    return userDto;
+  }
+
   private UserDto createUserInRepository(UserDto request) {
-    var user = userMapper.userDtoToUser(request);
-    var savedUser = userRepository.save(user);
+    User user = userMapper.userDtoToUser(request);
+    User savedUser = userRepository.save(user);
     log.trace("saved user with id[{}] to repository", savedUser.getId());
     return userMapper.userToUserDto(savedUser);
   }

@@ -26,6 +26,7 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -52,14 +53,14 @@ public class CommunitySDJpaService implements CommunityService {
 
   @Override public Community createCommunity(CommunityDto communityDto) {
     communityDto.setCommunityId(generateUniqueId());
-    var community = communityMapper.communityDtoToCommunity(communityDto);
-    var savedCommunity = communityRepository.save(community);
+    Community community = communityMapper.communityDtoToCommunity(communityDto);
+    Community savedCommunity = communityRepository.save(community);
     log.trace("saved community with id[{}] to repository", savedCommunity.getId());
     return savedCommunity;
   }
 
   @Override public Set<Community> listAll() {
-    var communityListSet = new HashSet<Community>();
+    Set communityListSet = new HashSet<Community>();
     communityRepository.findAll().forEach(communityListSet::add);
     return communityListSet;
   }
@@ -69,16 +70,15 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override public Community addAdminsToCommunity(String communityId, Set<String> admins) {
-    var community = communityRepository.findByCommunityId(communityId);
+    Community community = communityRepository.findByCommunityId(communityId);
 
-    var savedAdminSet = new HashSet<CommunityAdmin>();
+    Set<CommunityAdmin> savedAdminSet = new HashSet<CommunityAdmin>();
     admins.forEach(s -> {
-      var admin = new CommunityAdmin();
+      CommunityAdmin admin = new CommunityAdmin();
       admin.setAdminId(s);
       admin.getCommunities().add(community);
       savedAdminSet.add(communityAdminRepository.save(admin));
     });
-
     community.getAdmins().addAll(savedAdminSet);
     return communityRepository.save(community);
   }
@@ -87,16 +87,33 @@ public class CommunitySDJpaService implements CommunityService {
   @Override
   public Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses) {
     houses.forEach(communityHouse -> communityHouse.setHouseId(generateUniqueId()));
-    var community = communityRepository.findByCommunityId(communityId);
+    Community community = communityRepository.findByCommunityId(communityId);
     houses.forEach(communityHouse -> communityHouse.setCommunity(community));
-    var savedHouses = new HashSet<CommunityHouse>();
+    Set<CommunityHouse> savedHouses = new HashSet<CommunityHouse>();
     communityHouseRepository.saveAll(houses).forEach(savedHouses::add);
     community.getHouses().addAll(savedHouses);
     communityRepository.save(community);
 
-    var houseIds = new HashSet<String>(savedHouses.size());
+    Set<String> houseIds = new HashSet<String>(savedHouses.size());
     savedHouses.forEach(communityHouse -> houseIds.add(communityHouse.getHouseId()));
     return houseIds;
+  }
+
+  @Override
+  public Optional<Community> deleteAdminFromCommunity(String communityId, String adminId) {
+    final Community community = communityRepository.findByCommunityId(communityId);
+    if (community == null || community.getAdmins().isEmpty()) {
+      return Optional.empty();
+    }
+    Set<CommunityAdmin> communityAdmins = community.getAdmins();
+    boolean removed =
+        communityAdmins.removeIf(communityAdmin -> communityAdmin.getAdminId().equals(adminId));
+    if (!removed) {
+      return Optional.empty();
+    }
+    community.setAdmins(communityAdmins);
+    Community savedCommunity = communityRepository.save(community);
+    return Optional.of(savedCommunity);
   }
 
   private String generateUniqueId() {

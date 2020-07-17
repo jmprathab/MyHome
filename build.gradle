@@ -22,8 +22,8 @@ plugins {
 }
 
 group = 'com.prathab'
-version = '1.0.0'
-sourceCompatibility = '11'
+version = '2.0.0'
+sourceCompatibility = '8'
 
 configurations {
   developmentOnly
@@ -86,7 +86,6 @@ dependencies {
 
   // Documentation
   implementation "org.springdoc:springdoc-openapi-ui:${openApiVersion}"
-
 }
 
 dependencyManagement {

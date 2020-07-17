@@ -16,16 +16,23 @@
 
 package com.myhome.controllers;
 
+import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.UserApiMapper;
 import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
+import com.myhome.controllers.response.GetUserDetailsResponse;
+import com.myhome.domain.User;
 import com.myhome.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.Set;
 import javax.validation.Valid;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,9 +60,37 @@ public class UserController {
   )
   public ResponseEntity<CreateUserResponse> signUp(@Valid @RequestBody CreateUserRequest request) {
     log.trace("Received SignUp request");
-    var requestUserDto = userApiMapper.createUserRequestToUserDto(request);
-    var createdUserDto = userService.createUser(requestUserDto);
-    var createdUserResponse = userApiMapper.userDtoToCreateUserResponse(createdUserDto);
+    UserDto requestUserDto = userApiMapper.createUserRequestToUserDto(request);
+    UserDto createdUserDto = userService.createUser(requestUserDto);
+    CreateUserResponse createdUserResponse =
+        userApiMapper.userDtoToCreateUserResponse(createdUserDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUserResponse);
+  }
+
+  @GetMapping(path = "/users",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+  public ResponseEntity<GetUserDetailsResponse> listAllUsers() {
+    log.trace("Received request to list all users");
+    Set<User> userDetails = userService.listAll();
+    Set<GetUserDetailsResponse.User> userDetailsResponse =
+        userApiMapper.userSetToRestApiResponseUserSet(userDetails);
+
+    GetUserDetailsResponse response = new GetUserDetailsResponse();
+    response.getUsers().addAll(userDetailsResponse);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @GetMapping(path = "/users/{userId}",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+  public ResponseEntity<GetUserDetailsResponse.User> getUserDetails(
+      @Valid @PathVariable @NonNull String userId) {
+    log.trace("Received request to get details of user with Id[{}]", userId);
+
+    UserDto userDto = new UserDto();
+    userDto.setUserId(userId);
+    UserDto userDetails = userService.getUserDetails(userDto);
+    GetUserDetailsResponse.User response =
+        userApiMapper.userDtoToGetUserDetailsResponse(userDetails);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

@@ -2,19 +2,24 @@
 
 A Java application which helps people to manage their apartment.
 
-![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
+Join us at Discord [here](https://discord.gg/CngACKh).
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 ![Java CI with Gradle](https://github.com/jmprathab/MyHome/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=master&event=push)
+[![Discord](https://img.shields.io/discord/731769161361129523?label=discord)](https://discord.gg/CngACKh)
+[![Good First Issue](https://img.shields.io/github/issues-raw/jmprathab/MyHome/good%20first%20issue?label=beginner%20friendly%20issues)](https://github.com/jmprathab/MyHome/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22+label%3Aup-for-grabs)
 
 ## Prerequisites
 
 * Gradle
-* Java 11 (JDK)
+* Java 8 (JDK)
 * Docker for running service inside container (You can also run it without docker)
 
 ## Installing
 
 1. Download the Project to local drive
 2. Run `gradlew assemble`
+3. Frontend is developed using React and is [here](https://github.com/jmprathab/MyHome-Web)
 
 ## Running using Docker
 
@@ -26,9 +31,12 @@ docker-compose up
 All required ports are mapped to localhost. REST API is accessible via port 8080.
 http://localhost:8080/docs/swagger-ui.html hosts Swagger UI.
 
-## Authors
+## Contributors
 
 * [Prathab Murugan](https://github.com/jmprathab)
+* [Jahir](https://github.com/Zedex7)
+* [Gangadhar](https://github.com/gangadhargo)
+* [mar731](https://github.com/mar731)
 
 ## License
 

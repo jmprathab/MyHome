@@ -47,7 +47,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   }
 
   @Override protected void configure(HttpSecurity http) throws Exception {
-    http.csrf().disable();
+    http.cors().and().csrf().disable();
     http.headers().frameOptions().disable();
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -62,6 +62,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .permitAll()
         .antMatchers(HttpMethod.POST, environment.getProperty("api.login.url.path"))
         .permitAll()
+        .antMatchers(HttpMethod.OPTIONS, "/**")
+        .permitAll()
         .anyRequest()
         .authenticated()
         .and()
@@ -70,7 +72,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   }
 
   private Filter getAuthenticationFilter() throws Exception {
-    var authFilter =
+    MyHomeAuthenticationFilter authFilter =
         new MyHomeAuthenticationFilter(objectMapper, appUserDetailsService, environment,
             authenticationManager());
     authFilter.setFilterProcessesUrl(environment.getProperty("api.login.url.path"));
