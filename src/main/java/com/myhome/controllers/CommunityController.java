@@ -174,7 +174,7 @@ public class CommunityController {
 
     @Operation(description = "Delete a house from the community given a community id and a house id")
     @DeleteMapping(
-            path = "/communities/{communityId}/deleteHouse/{houseId}",
+            path = "/communities/{communityId}/houses/{houseId}",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
