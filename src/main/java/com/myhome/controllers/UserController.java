@@ -21,8 +21,12 @@ import com.myhome.controllers.mapper.UserApiMapper;
 import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
 import com.myhome.controllers.response.GetUserDetailsResponse;
+import com.myhome.domain.User;
 import com.myhome.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.Optional;
+import java.util.Set;
 import javax.validation.Valid;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -60,21 +64,42 @@ public class UserController {
     log.trace("Received SignUp request");
     UserDto requestUserDto = userApiMapper.createUserRequestToUserDto(request);
     UserDto createdUserDto = userService.createUser(requestUserDto);
-    CreateUserResponse createdUserResponse = userApiMapper.userDtoToCreateUserResponse(createdUserDto);
+    CreateUserResponse createdUserResponse =
+        userApiMapper.userDtoToCreateUserResponse(createdUserDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUserResponse);
   }
 
+  @GetMapping(path = "/users",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+  public ResponseEntity<GetUserDetailsResponse> listAllUsers() {
+    log.trace("Received request to list all users");
+    Set<User> userDetails = userService.listAll();
+    Set<GetUserDetailsResponse.User> userDetailsResponse =
+        userApiMapper.userSetToRestApiResponseUserSet(userDetails);
+
+    GetUserDetailsResponse response = new GetUserDetailsResponse();
+    response.getUsers().addAll(userDetailsResponse);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @Operation(description = "Get details of a user given userId"
+      , responses = {@ApiResponse(responseCode = "404", description = "If userId is invalid"),
+      @ApiResponse(responseCode = "200",
+          description = "If userId is valid. Response body has the details ")})
   @GetMapping(path = "/users/{userId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<GetUserDetailsResponse> getUserDetails(
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+  public ResponseEntity<GetUserDetailsResponse.User> getUserDetails(
       @Valid @PathVariable @NonNull String userId) {
     log.trace("Received request to get details of user with Id[{}]", userId);
 
     UserDto userDto = new UserDto();
     userDto.setUserId(userId);
-    UserDto userDetails = userService.getUserDetails(userDto);
-    GetUserDetailsResponse response = userApiMapper.userDtoToGetUserDetailsResponse(userDetails);
+    Optional<UserDto> userDetails = userService.getUserDetails(userDto);
+    if (!userDetails.isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+    GetUserDetailsResponse.User response =
+        userApiMapper.userDtoToGetUserDetailsResponse(userDetails.get());
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

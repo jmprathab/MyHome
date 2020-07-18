@@ -18,8 +18,8 @@ package com.myhome.services;
 
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.domain.Community;
-import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
+import java.util.Optional;
 import java.util.Set;
 
 public interface CommunityService {
@@ -33,7 +33,7 @@ public interface CommunityService {
 
   Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses);
 
-  Community deleteAdminFromCommunity(String communityId, String adminId);
-
   Set<Community> deleteCommunity(String communityId);
+
+  Optional<Community> deleteAdminFromCommunity(String communityId, String adminId);
 }

@@ -58,7 +58,8 @@ public class MyHomeAuthorizationFilter extends BasicAuthenticationFilter {
   }
 
   private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-    String authHeader = request.getHeader(environment.getProperty("authorization.token.header.name"));
+    String authHeader =
+        request.getHeader(environment.getProperty("authorization.token.header.name"));
     if (authHeader == null) {
       return null;
     }

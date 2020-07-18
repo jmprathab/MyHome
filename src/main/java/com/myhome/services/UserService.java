@@ -17,6 +17,9 @@
 package com.myhome.services;
 
 import com.myhome.controllers.dto.UserDto;
+import com.myhome.domain.User;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Interface for service layer.
@@ -24,5 +27,7 @@ import com.myhome.controllers.dto.UserDto;
 public interface UserService {
   UserDto createUser(UserDto request);
 
-  UserDto getUserDetails(UserDto request);
+  Set<User> listAll();
+
+  Optional<UserDto> getUserDetails(UserDto request);
 }

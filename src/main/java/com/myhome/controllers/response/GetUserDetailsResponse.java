@@ -16,7 +16,8 @@
 
 package com.myhome.controllers.response;
 
-import com.myhome.controllers.request.CreateUserRequest;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetUserDetailsResponse {
-  private String userId;
-  private String name;
-  private String email;
+  private Set<GetUserDetailsResponse.User> users = new HashSet<>();
+
+  @Getter
+  @Setter
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class User {
+    private String userId;
+    private String name;
+    private String email;
+    private Set<String> communityIds;
+  }
 }

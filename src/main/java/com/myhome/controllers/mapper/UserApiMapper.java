@@ -20,6 +20,8 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
 import com.myhome.controllers.response.GetUserDetailsResponse;
+import com.myhome.domain.User;
+import java.util.Set;
 import org.mapstruct.Mapper;
 
 /**
@@ -30,7 +32,10 @@ public interface UserApiMapper {
 
   UserDto createUserRequestToUserDto(CreateUserRequest createUserRequest);
 
+  Set<GetUserDetailsResponse.User> userSetToRestApiResponseUserSet(
+      Set<User> userSet);
+
   CreateUserResponse userDtoToCreateUserResponse(UserDto userDto);
 
-  GetUserDetailsResponse userDtoToGetUserDetailsResponse(UserDto userDto);
+  GetUserDetailsResponse.User userDtoToGetUserDetailsResponse(UserDto userDto);
 }
