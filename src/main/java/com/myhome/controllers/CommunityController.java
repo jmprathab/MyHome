@@ -187,6 +187,21 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
+  @Operation(description = "Deletion of house from the community given a community id and a house id")
+  @DeleteMapping(
+      path = "/communities/{communityId}/houses/{houseId}"
+  )
+  public ResponseEntity<Void> deleteCommunityHouse(
+      @PathVariable String communityId, @PathVariable String houseId
+  ) {
+    communityService.deleteHouseFromCommunityByHouseId(houseId);
+    communityService.deleteHouseFromCommunityByHouseId(houseId);
+    log.trace(
+        "Received request to delete house with id[{}] from community with id[{}]",
+        houseId, communityId);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
   @Operation(description = "Deletion of admin associated with a community"
       , responses = {@ApiResponse(responseCode = "204", description = "If admin was removed"),
       @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
