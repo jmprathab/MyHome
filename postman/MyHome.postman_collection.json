@@ -310,6 +310,42 @@
 			"response": []
 		},
 		{
+			"name": "Delete admins from a community",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/admins/first-admin-user-id",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"communities",
+						"{{COMMUNITY_ID}}",
+						"admins",
+						"first-admin-user-id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Add house to community",
 			"request": {
 				"method": "POST",
@@ -456,27 +492,27 @@
 	],
 	"variable": [
 		{
-			"id": "2050be14-c9f2-4233-b222-c013121781ff",
+			"id": "e7200c0f-d34a-4266-bf6c-c566e1e4c957",
 			"key": "AUTH_TOKEN",
 			"value": "0"
 		},
 		{
-			"id": "adbf0040-50e4-4309-a59f-197b106e9072",
+			"id": "53f568c2-27c7-487f-8f2f-da5427df1550",
 			"key": "ENV_URL",
 			"value": "127.0.0.1:8080"
 		},
 		{
-			"id": "7c53897b-6028-4a3d-aed9-00c9983f93fa",
+			"id": "b8fefb5c-0b39-4d73-8f59-9410561624a1",
 			"key": "COMMUNITY_ID",
 			"value": "default-community-id-for-testing"
 		},
 		{
-			"id": "3050d614-0131-4cf6-8fa7-ee7db5eb7240",
+			"id": "1d748d3c-2f94-413f-9cf1-42b7112943ba",
 			"key": "HOUSE_ID",
 			"value": "default-house-id-for-testing"
 		},
 		{
-			"id": "5dcbab0e-4cc9-4f89-aab3-980e9a9c7381",
+			"id": "6417ec14-6791-47fa-9216-7822227845c1",
 			"key": "USER_ID",
 			"value": "default-user-id-for-testing"
 		}
