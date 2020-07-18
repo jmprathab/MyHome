@@ -193,5 +193,21 @@ public class CommunityController {
     response.getAdmins().addAll(communityAdminSet);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
+
+  @Operation(description = "Deletion community with given community id")
+  @DeleteMapping(
+          path = "/community/{communityId}",
+          produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+          consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<GetCommunityDetailsResponse> deleteCommunity(@PathVariable String communityId) {
+    log.trace("Received delete community request");
+    Set<Community> communitiesAfterDeletion = communityService.deleteCommunity(communityId);
+    Set<GetCommunityDetailsResponse.Community> communityDetailsResponse =
+            communityApiMapper.communitySetToRestApiResponseCommunitySet(communitiesAfterDeletion);
+    GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
+    response.getCommunities().addAll(communityDetailsResponse);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
 }
 

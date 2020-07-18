@@ -115,8 +115,17 @@ public class CommunitySDJpaService implements CommunityService {
     }
     if (isAdminRemoved)
       return communityRepository.save(community);
-
     return community;
+  }
+
+  @Override
+  public Set<Community> deleteCommunity(String communityId) {
+       Integer isDeleted = communityRepository.deleteByCommunityId(communityId);
+       Set communityListSet = new HashSet<Community>();
+       if(isDeleted == 1){
+         communityRepository.findAll().forEach(communityListSet::add);
+       }
+      return communityListSet;
   }
 
   private String generateUniqueId() {

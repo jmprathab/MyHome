@@ -34,4 +34,6 @@ public interface CommunityService {
   Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses);
 
   Community deleteAdminFromCommunity(String communityId, String adminId);
+
+  Set<Community> deleteCommunity(String communityId);
 }
