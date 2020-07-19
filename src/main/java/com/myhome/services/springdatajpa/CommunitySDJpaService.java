@@ -116,6 +116,11 @@ public class CommunitySDJpaService implements CommunityService {
     return Optional.of(savedCommunity);
   }
 
+  @Override
+  public Integer deleteCommunity(String communityId) {
+    return communityRepository.deleteByCommunityId(communityId);
+  }
+
   private String generateUniqueId() {
     return UUID.randomUUID().toString();
   }

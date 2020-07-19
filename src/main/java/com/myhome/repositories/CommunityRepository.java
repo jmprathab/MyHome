@@ -19,9 +19,13 @@ package com.myhome.repositories;
 import com.myhome.domain.Community;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface CommunityRepository extends CrudRepository<Community, Long> {
 
   Community findByCommunityId(String communityId);
+
+  @Transactional
+  Integer deleteByCommunityId(String communityId);
 }
