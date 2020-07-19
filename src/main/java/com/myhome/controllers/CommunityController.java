@@ -206,20 +206,20 @@ public class CommunityController {
     }
   }
 
-  @Operation(description = "Deletion community with given community id")
+  @Operation(description = "Deletion community with given community id",
+          responses = {@ApiResponse(responseCode = "204", description = "If community was removed"),
+                  @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
   @DeleteMapping(
-          path = "/community/{communityId}",
-          produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-          consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+          path = "/communities/{communityId}"
   )
-  public ResponseEntity<GetCommunityDetailsResponse> deleteCommunity(@PathVariable String communityId) {
+  public ResponseEntity<Void> deleteCommunity(@PathVariable String communityId) {
     log.trace("Received delete community request");
-    Set<Community> communitiesAfterDeletion = communityService.deleteCommunity(communityId);
-    Set<GetCommunityDetailsResponse.Community> communityDetailsResponse =
-            communityApiMapper.communitySetToRestApiResponseCommunitySet(communitiesAfterDeletion);
-    GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
-    response.getCommunities().addAll(communityDetailsResponse);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    Integer isDeleted = communityService.deleteCommunity(communityId);
+    if (isDeleted == 1) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 }
 

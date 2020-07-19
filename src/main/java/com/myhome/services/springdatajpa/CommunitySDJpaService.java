@@ -117,13 +117,8 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override
-  public Set<Community> deleteCommunity(String communityId) {
-       Integer isDeleted = communityRepository.deleteByCommunityId(communityId);
-       Set communityListSet = new HashSet<Community>();
-       if(isDeleted == 1){
-         communityRepository.findAll().forEach(communityListSet::add);
-       }
-      return communityListSet;
+  public Integer deleteCommunity(String communityId) {
+    return communityRepository.deleteByCommunityId(communityId);
   }
 
   private String generateUniqueId() {
