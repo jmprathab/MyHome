@@ -195,7 +195,6 @@ public class CommunityController {
       @PathVariable String communityId, @PathVariable String houseId
   ) {
     communityService.deleteHouseFromCommunityByHouseId(houseId);
-    communityService.deleteHouseFromCommunityByHouseId(houseId);
     log.trace(
         "Received request to delete house with id[{}] from community with id[{}]",
         houseId, communityId);
