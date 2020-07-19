@@ -205,5 +205,21 @@ public class CommunityController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
   }
+
+  @Operation(description = "Deletion community with given community id",
+          responses = {@ApiResponse(responseCode = "204", description = "If community was removed"),
+                  @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
+  @DeleteMapping(
+          path = "/communities/{communityId}"
+  )
+  public ResponseEntity<Void> deleteCommunity(@PathVariable String communityId) {
+    log.trace("Received delete community request");
+    Integer isDeleted = communityService.deleteCommunity(communityId);
+    if (isDeleted == 1) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
 }
 
