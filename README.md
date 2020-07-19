@@ -1,6 +1,6 @@
 # MyHome Application
 
-A Java application which helps people to manage their apartment.
+MyHome helps people to manage their apartment.
 
 Join us at Discord [here](https://discord.gg/CngACKh).
 
@@ -9,13 +9,15 @@ Join us at Discord [here](https://discord.gg/CngACKh).
 [![Discord](https://img.shields.io/discord/731769161361129523?label=discord)](https://discord.gg/CngACKh)
 [![Good First Issue](https://img.shields.io/github/issues-raw/jmprathab/MyHome/good%20first%20issue?label=beginner%20friendly%20issues)](https://github.com/jmprathab/MyHome/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22+label%3Aup-for-grabs)
 
-## Prerequisites
+## Installing
+
+### Prerequisites
 
 * Gradle
 * Java 8 (JDK)
 * Docker for running service inside container (You can also run it without docker)
 
-## Installing
+### Building
 
 1. Download the Project to local drive
 2. Run `gradlew assemble`
@@ -38,17 +40,16 @@ http://localhost:8080/docs/swagger-ui.html hosts Swagger UI.
 * [Gangadhar](https://github.com/gangadhargo)
 * [mar731](https://github.com/mar731)
 
-## License
-
-This project is licensed under the Apache License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Contribution
+## How do I contribute?
 
 Feel free to contribute to the project. Please make sure to follow the below list before contributing.
 
-* Read `CODE_OF_CONDUCT.md`
+* Read `CONTRIBUTING.md`
 * This project uses coding style from https://github.com/square/java-code-styles
-* Make sure all test cases pass before requesting for a PR.
+
+## License
+
+This project is licensed under the Apache License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
