@@ -26,11 +26,17 @@ public class HouseSDJpaService implements HouseService {
     return UUID.randomUUID().toString();
   }
 
+  @Override public Set<CommunityHouse> listAllHouses() {
+    Set<CommunityHouse> communityHouses = new HashSet<>();
+    communityHouseRepository.findAll().forEach(communityHouses::add);
+    return communityHouses;
+  }
+
   @Override public Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers) {
     CommunityHouse communityHouse = communityHouseRepository.findByHouseId(houseId);
     houseMembers.forEach(member -> member.setMemberId(generateUniqueId()));
     houseMembers.forEach(member -> member.setCommunityHouse(communityHouse));
-    Set<HouseMember> savedMembers = new HashSet<HouseMember>();
+    Set<HouseMember> savedMembers = new HashSet<>();
     houseMemberRepository.saveAll(houseMembers).forEach(savedMembers::add);
     return savedMembers;
   }
@@ -53,5 +59,9 @@ public class HouseSDJpaService implements HouseService {
       return communityHouseRepository.save(communityHouse);
     }
     return communityHouse;
+  }
+
+  @Override public CommunityHouse getHouseDetailsById(String houseId) {
+    return communityHouseRepository.findByHouseId(houseId);
   }
 }

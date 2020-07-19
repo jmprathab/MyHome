@@ -224,6 +224,55 @@
 			"response": []
 		},
 		{
+			"name": "List all houses",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/houses",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"houses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List details of a house",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/houses/{{HOUSE_ID}}",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"houses",
+						"{{HOUSE_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "List detail of a community",
 			"request": {
 				"method": "GET",
@@ -492,27 +541,27 @@
 	],
 	"variable": [
 		{
-			"id": "e7200c0f-d34a-4266-bf6c-c566e1e4c957",
+			"id": "49048b83-25ed-4e18-9ddd-650e8c8804eb",
 			"key": "AUTH_TOKEN",
 			"value": "0"
 		},
 		{
-			"id": "53f568c2-27c7-487f-8f2f-da5427df1550",
+			"id": "4a186702-9cff-48f3-ac40-34b9da833c4a",
 			"key": "ENV_URL",
 			"value": "127.0.0.1:8080"
 		},
 		{
-			"id": "b8fefb5c-0b39-4d73-8f59-9410561624a1",
+			"id": "2ae4165d-778f-48d7-b747-2f3dd6b0f40b",
 			"key": "COMMUNITY_ID",
 			"value": "default-community-id-for-testing"
 		},
 		{
-			"id": "1d748d3c-2f94-413f-9cf1-42b7112943ba",
+			"id": "8782b55d-8f5a-492e-869d-f0e3655d6816",
 			"key": "HOUSE_ID",
 			"value": "default-house-id-for-testing"
 		},
 		{
-			"id": "6417ec14-6791-47fa-9216-7822227845c1",
+			"id": "70dd2408-8241-4808-8ae5-fe88f20374e2",
 			"key": "USER_ID",
 			"value": "default-user-id-for-testing"
 		}
