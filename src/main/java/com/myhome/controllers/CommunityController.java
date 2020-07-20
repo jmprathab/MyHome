@@ -207,10 +207,10 @@ public class CommunityController {
   }
 
   @Operation(description = "Deletion community with given community id",
-          responses = {@ApiResponse(responseCode = "204", description = "If community was removed"),
-                  @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
+      responses = {@ApiResponse(responseCode = "204", description = "If community was removed"),
+          @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
   @DeleteMapping(
-          path = "/communities/{communityId}"
+      path = "/communities/{communityId}"
   )
   public ResponseEntity<Void> deleteCommunity(@PathVariable String communityId) {
     log.trace("Received delete community request");

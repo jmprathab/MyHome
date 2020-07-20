@@ -38,6 +38,9 @@ public class HouseSDJpaService implements HouseService {
     houseMembers.forEach(member -> member.setCommunityHouse(communityHouse));
     Set<HouseMember> savedMembers = new HashSet<>();
     houseMemberRepository.saveAll(houseMembers).forEach(savedMembers::add);
+
+    communityHouse.getHouseMembers().addAll(savedMembers);
+    communityHouseRepository.save(communityHouse);
     return savedMembers;
   }
 
