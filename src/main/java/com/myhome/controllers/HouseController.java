@@ -17,9 +17,12 @@
 package com.myhome.controllers;
 
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
+import com.myhome.controllers.mapper.HouseApiMapper;
 import com.myhome.controllers.request.AddHouseMemberRequest;
 import com.myhome.controllers.response.AddHouseMemberResponse;
+import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListHouseMembersResponse;
+import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
@@ -43,12 +46,49 @@ public class HouseController {
   private final CommunityHouseRepository communityHouseRepository;
   private final HouseMemberMapper houseMemberMapper;
   private final HouseService houseService;
+  private final HouseApiMapper houseApiMapper;
 
   public HouseController(CommunityHouseRepository communityHouseRepository,
-      HouseMemberMapper houseMemberMapper, HouseService houseService) {
+      HouseMemberMapper houseMemberMapper, HouseService houseService,
+      HouseApiMapper houseApiMapper) {
     this.communityHouseRepository = communityHouseRepository;
     this.houseMemberMapper = houseMemberMapper;
     this.houseService = houseService;
+    this.houseApiMapper = houseApiMapper;
+  }
+
+  @Operation(description = "List all houses of the community given a community id")
+  @GetMapping(
+      path = "/houses",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<GetHouseDetailsResponse> listAllHouses() {
+    log.trace("Received request to list all houses");
+    Set<CommunityHouse> houseDetails =
+        houseService.listAllHouses();
+    Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
+        houseApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
+
+    GetHouseDetailsResponse response = new GetHouseDetailsResponse();
+    response.setHouses(getHouseDetailsResponseSet);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @Operation(description = "List all houses of the community given a community id")
+  @GetMapping(
+      path = "/houses/{houseId}",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<GetHouseDetailsResponse> getHouseDetails(@PathVariable String houseId) {
+    log.trace("Received request to get details of a house with id[{}]", houseId);
+    CommunityHouse houseDetail =
+        houseService.getHouseDetailsById(houseId);
+    GetHouseDetailsResponse.CommunityHouse getHouseDetailsResponse =
+        houseApiMapper.communityHouseToRestApiResponseCommunityHouse(houseDetail);
+
+    GetHouseDetailsResponse response = new GetHouseDetailsResponse();
+    response.getHouses().add(getHouseDetailsResponse);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @Operation(description = "List all members of the house given a house id")

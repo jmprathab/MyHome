@@ -35,6 +35,8 @@ public interface CommunityService {
 
   void deleteHouseFromCommunityByHouseId(String houseId);
   
+  Integer deleteCommunity(String communityId);
+
   Optional<Community> deleteAdminFromCommunity(String communityId, String adminId);
 
 }

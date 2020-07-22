@@ -25,6 +25,7 @@ import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
 import com.myhome.services.UserService;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -67,21 +68,22 @@ public class UserSDJpaService implements UserService {
     return userListSet;
   }
 
-  @Override public UserDto getUserDetails(UserDto request) {
+  @Override public Optional<UserDto> getUserDetails(UserDto request) {
     String userId = request.getUserId();
     User user = userRepository.findByUserId(userId);
 
-    Set<String> communityIds = communityService.listAll().stream().filter(c -> {
-      return c.getAdmins()
-          .stream()
-          .map(CommunityAdmin::getAdminId)
-          .collect(Collectors.toSet())
-          .contains(userId);
-    }).map(Community::getCommunityId).collect(Collectors.toSet());
+    Set<String> communityIds = communityService.listAll().stream().filter(c -> c.getAdmins()
+        .stream()
+        .map(CommunityAdmin::getAdminId)
+        .collect(Collectors.toSet())
+        .contains(userId)).map(Community::getCommunityId).collect(Collectors.toSet());
 
     UserDto userDto = userMapper.userToUserDto(user);
+    if (userDto == null) {
+      return Optional.empty();
+    }
     userDto.setCommunityIds(communityIds);
-    return userDto;
+    return Optional.of(userDto);
   }
 
   private UserDto createUserInRepository(UserDto request) {

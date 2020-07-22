@@ -18,6 +18,7 @@ package com.myhome.services;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.domain.User;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -28,5 +29,5 @@ public interface UserService {
 
   Set<User> listAll();
 
-  UserDto getUserDetails(UserDto request);
+  Optional<UserDto> getUserDetails(UserDto request);
 }
