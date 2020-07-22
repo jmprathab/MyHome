@@ -29,6 +29,7 @@ public class ControllerTestBase {
   ObjectMapper objectMapper;
   @LocalServerPort
   private int randomPort;
+  private static final String jwtToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyNGI0Mzc5MS02YWY0LTQ5MGYtODYzOS00ZDUyYmJhYjQzNTMiLCJleHAiOjE1OTYyODI4ODl9.ohTsY67FhFp9p79h_rnenHnU6IRxO7-5PojMAhwqNLOM5qlVNSHbpWj-lVTk_fRzk4X-oDcB-o8RP1LZXBI5BQ";
 
   protected <T> ResponseEntity<String> sendRequest(HttpMethod httpMethod, String urlParams, T body){
     String url = String.format("http://localhost:%d/%s", randomPort, urlParams);
@@ -52,6 +53,7 @@ public class ControllerTestBase {
   private HttpHeaders getHttpEntityHeaders() {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setBearerAuth(jwtToken);
     return headers;
   }
 }
