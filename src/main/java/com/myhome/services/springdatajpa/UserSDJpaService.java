@@ -59,7 +59,7 @@ public class UserSDJpaService implements UserService {
     userRepository.findAll().forEach(userListSet::add);
     Stream<User> userStream = userListSet.stream();
     if (start != null) {
-      userStream = userStream.filter(user -> user.getUserId().startsWith(String.valueOf(start)));
+      userStream = userStream.skip(start);
     }
     if (limit != null) {
       userStream = userStream.limit(limit);
