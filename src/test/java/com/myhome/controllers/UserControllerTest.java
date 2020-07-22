@@ -1,10 +1,11 @@
 package com.myhome.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.myhome.controllers.request.CreateUserRequest;
-import com.myhome.controllers.request.LoginUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
+import com.myhome.controllers.response.GetUserDetailsResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -22,14 +23,19 @@ class UserControllerTest extends ControllerTestBase {
   }
 
   @Test
-  @DisplayName("test post /users signUp positive")
-  void signUpPositive() {
+  @DisplayName("test POST /users signUp positive & GET /users specific getUserDetails() positive")
+  void getUserDetailsPositive() {
     CreateUserRequest createUserRequest = getUserRequest();
     ResponseEntity<String> response = sendRequest(HttpMethod.POST, "users", createUserRequest);
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     CreateUserResponse createUserResponse = readValue(response, CreateUserResponse.class);
     assertEquals(testUserName, createUserResponse.getName());
     assertEquals(testUserEmail, createUserResponse.getEmail());
+    response = sendRequest(HttpMethod.GET, String.format("users/%s", createUserResponse.getUserId()), null);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    GetUserDetailsResponse.User getUserDetailsResponse = readValue(response,GetUserDetailsResponse.User.class);
+    assertEquals(testUserName,getUserDetailsResponse.getName());
+    assertEquals(testUserEmail,getUserDetailsResponse.getEmail());
   }
 
   @Test
@@ -46,21 +52,7 @@ class UserControllerTest extends ControllerTestBase {
   void listAllUsersPositive() {
     ResponseEntity<String> response = sendRequest(HttpMethod.GET, "users", null);
     assertEquals(HttpStatus.OK, response.getStatusCode());
-  }
-
-  @Test
-  @DisplayName("test get /users specific getUserDetails() positive")
-  void getUserDetailsPositive() {
-    CreateUserRequest createUserRequest = getUserRequest();
-    ResponseEntity<String> response = sendRequest(HttpMethod.POST, "users", createUserRequest);
-    assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    CreateUserResponse createUserResponse = readValue(response, CreateUserResponse.class);
-    LoginUserRequest loginUserRequest = new LoginUserRequest(createUserResponse.getEmail(),
-        testUserPassword);
-    response = sendRequest(HttpMethod.POST, "users/login", loginUserRequest);
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    response = sendRequest(HttpMethod.GET,
-        String.format("users/%s", createUserResponse.getUserId()), null);
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    GetUserDetailsResponse getUserDetailsResponse = readValue(response, GetUserDetailsResponse.class);
+    assertNotNull(getUserDetailsResponse.getUsers());
   }
 }
