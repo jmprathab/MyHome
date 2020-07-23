@@ -27,7 +27,7 @@ import java.util.Set;
 public interface UserService {
   UserDto createUser(UserDto request);
 
-  Set<User> listAll(Integer limit, Integer start);
+  Set<User> listAll();
 
   Optional<UserDto> getUserDetails(UserDto request);
 }

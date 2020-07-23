@@ -29,9 +29,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,13 +39,22 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class UserSDJpaService implements UserService {
 
   private final UserRepository userRepository;
   private final UserMapper userMapper;
   private final PasswordEncoder passwordEncoder;
-  private final CommunityService communityService;
+
+  @Autowired
+  private CommunityService communityService;
+
+  public UserSDJpaService(UserRepository userRepository,
+      UserMapper userMapper,
+      PasswordEncoder passwordEncoder) {
+    this.userRepository = userRepository;
+    this.userMapper = userMapper;
+    this.passwordEncoder = passwordEncoder;
+  }
 
   @Override public UserDto createUser(UserDto request) {
     generateUniqueUserId(request);
@@ -54,17 +62,10 @@ public class UserSDJpaService implements UserService {
     return createUserInRepository(request);
   }
 
-  @Override public Set<User> listAll(Integer limit, Integer start) {
+  @Override public Set<User> listAll() {
     Set<User> userListSet = new HashSet<>();
     userRepository.findAll().forEach(userListSet::add);
-    Stream<User> userStream = userListSet.stream();
-    if (start != null) {
-      userStream = userStream.skip(start);
-    }
-    if (limit != null) {
-      userStream = userStream.limit(limit);
-    }
-    return userStream.collect(Collectors.toSet());
+    return userListSet;
   }
 
   @Override public Optional<UserDto> getUserDetails(UserDto request) {
