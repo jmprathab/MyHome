@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -44,15 +46,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
   private final UserService userService;
   private final UserApiMapper userApiMapper;
-
-  public UserController(UserService userService,
-      UserApiMapper userApiMapper) {
-    this.userService = userService;
-    this.userApiMapper = userApiMapper;
-  }
 
   @Operation(description = "Create a new user")
   @PostMapping(
@@ -71,9 +68,10 @@ public class UserController {
 
   @GetMapping(path = "/users",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<GetUserDetailsResponse> listAllUsers() {
+  public ResponseEntity<GetUserDetailsResponse> listAllUsers(
+      @RequestParam(required = false) Integer limit, @RequestParam(required = false) Integer start) {
     log.trace("Received request to list all users");
-    Set<User> userDetails = userService.listAll();
+    Set<User> userDetails = userService.listAll(limit, start);
     Set<GetUserDetailsResponse.User> userDetailsResponse =
         userApiMapper.userSetToRestApiResponseUserSet(userDetails);
 
