@@ -83,15 +83,32 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.CREATED).body(createdCommunityResponse);
   }
 
+  /**
+   * List all communities
+   *
+   * @param sort can take either "asc" or "desc" as a value. API returns BAD_REQUEST if param is
+   *             invalid.
+   * @return All communities in the application
+   */
   @Operation(description = "List all communities which are registered")
   @GetMapping(
       path = "/communities",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<GetCommunityDetailsResponse> listAllCommunity() {
+  public ResponseEntity<GetCommunityDetailsResponse> listAllCommunity(
+      @PathVariable(required = false) String sort) {
     log.trace("Received request to list all community");
-    Set<Community> communityDetails = communityService.listAll();
-    Set<GetCommunityDetailsResponse.Community> communityDetailsResponse =
+    if (sort != null) {
+      if (!sort.contentEquals("asc") || !sort.contentEquals("desc")) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      }
+    }
+    if (sort == null) {
+      sort = "asc";
+    }
+
+    List<Community> communityDetails = communityService.listAll(sort);
+    List<GetCommunityDetailsResponse.Community> communityDetailsResponse =
         communityApiMapper.communitySetToRestApiResponseCommunitySet(communityDetails);
 
     GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
@@ -116,24 +133,58 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
+  /**
+   * List all admins of the community given a community id
+   *
+   * @param communityId All admins part of this community id will be filtered.
+   * @param sort        can take either "asc" or "desc" as a value. API returns BAD_REQUEST if param
+   *                    is invalid.
+   * @return All admins inside a community
+   */
   @Operation(description = "List all admins of the community given a community id")
   @GetMapping(
       path = "/communities/{communityId}/admins",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<ListCommunityAdminsResponse> listCommunityAdmins(
-      @PathVariable String communityId) {
+      @PathVariable String communityId, @PathVariable(required = false) String sort) {
     log.trace("Received request to list all admins of community with id[{}]", communityId);
+
+    if (sort != null) {
+      if (!sort.contentEquals("asc") || !sort.contentEquals("desc")) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      }
+    }
+    if (sort == null) {
+      sort = "asc";
+    }
+
     List<CommunityAdmin> adminDetails =
         communityService.getCommunityDetailsById(communityId).getAdmins();
     List<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSet =
         communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminDetails);
 
     ListCommunityAdminsResponse response = new ListCommunityAdminsResponse();
+
+    boolean isAscendingSort = sort.contentEquals("asc");
+    Comparator<ListCommunityAdminsResponse.CommunityAdmin> comparator =
+        isAscendingSort ? Comparator.comparing(
+            ListCommunityAdminsResponse.CommunityAdmin::getAdminId)
+            : Comparator.comparing(ListCommunityAdminsResponse.CommunityAdmin::getAdminId)
+                .reversed();
+    communityAdminSet = communityAdminSet.stream().sorted(comparator).collect(Collectors.toList());
     response.getAdmins().addAll(communityAdminSet);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
+  /**
+   * List all houses of the community given a community id
+   *
+   * @param communityId All houses part of this community id will be filtered.
+   * @param sort        can take either "asc" or "desc" as a value. API returns BAD_REQUEST if param
+   *                    is invalid.
+   * @return All houses inside a community
+   */
   @Operation(description = "List all houses of the community given a community id")
   @GetMapping(
       path = "/communities/{communityId}/houses",

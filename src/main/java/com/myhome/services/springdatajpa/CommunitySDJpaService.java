@@ -25,11 +25,14 @@ import com.myhome.repositories.CommunityAdminRepository;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -60,10 +63,14 @@ public class CommunitySDJpaService implements CommunityService {
     return savedCommunity;
   }
 
-  @Override public Set<Community> listAll() {
-    Set communityListSet = new HashSet<Community>();
+  @Override public List<Community> listAll(String sort) {
+    List<Community> communityListSet = new ArrayList<>();
     communityRepository.findAll().forEach(communityListSet::add);
-    return communityListSet;
+
+    boolean isAscendingSort = sort.contentEquals("asc");
+    Comparator<Community> comparator = isAscendingSort ? Comparator.comparing(Community::getName)
+        : Comparator.comparing(Community::getName).reversed();
+    return communityListSet.stream().sorted(comparator).collect(Collectors.toList());
   }
 
   @Override public Community getCommunityDetailsById(String communityId) {

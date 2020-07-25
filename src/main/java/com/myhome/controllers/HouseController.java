@@ -60,7 +60,14 @@ public class HouseController {
     this.houseApiMapper = houseApiMapper;
   }
 
-  @Operation(description = "List all houses of the community given a community id")
+  /**
+   * Lists all houses registered in the application
+   *
+   * @param sort can take either "asc" or "desc" as a value. API returns BAD_REQUEST if param is
+   *             invalid.
+   * @return All houses registered
+   */
+  @Operation(description = "List all houses in the application")
   @GetMapping(
       path = "/houses",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
@@ -104,6 +111,14 @@ public class HouseController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
+  /**
+   * List all members of the house
+   *
+   * @param houseId Members inside this house will be returned
+   * @param sort    can take either "asc" or "desc" as a value. API returns BAD_REQUEST if param is
+   *                invalid.
+   * @return All members of the house
+   */
   @Operation(description = "List all members of the house given a house id")
   @GetMapping(
       path = "/houses/{houseId}/members",

@@ -19,13 +19,14 @@ package com.myhome.services;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public interface CommunityService {
   Community createCommunity(CommunityDto communityDto);
 
-  Set<Community> listAll();
+  List<Community> listAll(String sort);
 
   Community getCommunityDetailsById(String communityId);
 

@@ -81,7 +81,7 @@ public class UserSDJpaService implements UserService {
     String userId = request.getUserId();
     User user = userRepository.findByUserId(userId);
 
-    Set<String> communityIds = communityService.listAll().stream().filter(c -> c.getAdmins()
+    Set<String> communityIds = communityService.listAll("asc").stream().filter(c -> c.getAdmins()
         .stream()
         .map(CommunityAdmin::getAdminId)
         .collect(Collectors.toSet())

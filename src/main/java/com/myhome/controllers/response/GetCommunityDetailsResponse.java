@@ -16,8 +16,8 @@
 
 package com.myhome.controllers.response;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +28,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetCommunityDetailsResponse {
-  private Set<Community> communities = new HashSet<>();
+  private List<Community> communities = new ArrayList<>();
 
   @Getter
   @Setter

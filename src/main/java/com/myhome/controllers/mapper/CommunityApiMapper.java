@@ -37,8 +37,8 @@ public interface CommunityApiMapper {
   GetCommunityDetailsResponse.Community communityToRestApiResponseCommunity(
       Community community);
 
-  Set<GetCommunityDetailsResponse.Community> communitySetToRestApiResponseCommunitySet(
-      Set<Community> communitySet);
+  List<GetCommunityDetailsResponse.Community> communitySetToRestApiResponseCommunitySet(
+      List<Community> communitySet);
 
   CreateCommunityResponse communityToCreateCommunityResponse(Community community);
 

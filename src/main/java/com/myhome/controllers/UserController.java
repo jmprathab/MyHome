@@ -69,6 +69,13 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUserResponse);
   }
 
+  /**
+   * Return all registered users in the application
+   *
+   * @param sort can take either "asc" or "desc" as a value. API returns BAD_REQUEST if param is
+   *             invalid.
+   * @return All registered users in the application
+   */
   @GetMapping(path = "/users",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<GetUserDetailsResponse> listAllUsers(

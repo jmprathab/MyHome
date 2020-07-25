@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "49056aeb-bd66-4647-a98c-e4724e3cf570",
+		"_postman_id": "42f15962-a94d-4247-8781-a47c5f7e9e06",
 		"name": "MyHome",
 		"description": "# MyHome API Guide\r\n\r\n## Usage\r\n\r\nTo use any API except **Create User and Login User**, you'll need to obtain Authentication Token.\r\n\r\nTo get Authentication Token.\r\n\r\n1. First Create New User with **Create User API**.\r\n2. Login with New user with **New User API**. Login will obtain New Token for user.\r\n\r\nNow you can use other APIs.\r\n\r\n\r\n## Variables\r\n\r\nAll APIs are configured with Postman variables to keep consistensy for static and dynamic values.\r\n\r\n1. **ENV_URL**: This variable hold value for Enviroment URL. e.g. 127.0.0.1:8080 (Default to local environment, with 8080 port), or example.com.\r\n2. **AUTH_TOKEN**: This variable hold authentication token obtained by Login User API, which is used in request header. This is stored each time you use Login User API.\r\n3. **COMMUNITY_ID**: This variable hold default community id created for testing Community related APIs.\r\n4. **HOUSE_ID**: This variable hold default house id created for testing House related APIs.\r\n5. **USER_ID**: This variable hold userId obtained by Login User API. This is stored each tiem you use Login User API.\r\n\r\n\r\nYou can configure your own values for these either by editing in *MyHome > ... (View more actions) > Edit > Variables Tab* or you can create your environment and add variable there. [How to create Environment in Postman] (https://learning.postman.com/docs/postman/variables-and-environments/managing-environments/#creating-environments)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -39,7 +39,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "698f6836-865c-4a22-a9b9-ba0b9bfdeae0",
+						"id": "c18e6646-b4a4-48c0-b828-be8d2428c5de",
 						"exec": [
 							"if (pm.response.headers.has(\"token\")) {\r",
 							"    pm.collectionVariables.set(\"AUTH_TOKEN\", pm.response.headers.get(\"token\"))\r",
@@ -122,6 +122,36 @@
 					],
 					"path": [
 						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all users with sort",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/users?sort=desc",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "desc"
+						}
 					]
 				}
 			},
@@ -224,6 +254,36 @@
 			"response": []
 		},
 		{
+			"name": "List all community with sort",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/communities?sort=desc",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"communities"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "List all houses",
 			"request": {
 				"method": "GET",
@@ -242,6 +302,36 @@
 					],
 					"path": [
 						"houses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all houses with sort",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/houses?sort=desc",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"houses"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "desc"
+						}
 					]
 				}
 			},
@@ -359,6 +449,38 @@
 			"response": []
 		},
 		{
+			"name": "List admins of a community with sort",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/admins?sort=desc",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"communities",
+						"{{COMMUNITY_ID}}",
+						"admins"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Delete admins from a community",
 			"request": {
 				"method": "DELETE",
@@ -456,6 +578,38 @@
 			"response": []
 		},
 		{
+			"name": "List houses of a community with sort",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/houses?sort=desc",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"communities",
+						"{{COMMUNITY_ID}}",
+						"houses"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Add members to house",
 			"request": {
 				"method": "POST",
@@ -515,13 +669,45 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "List members of a house with sort",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/houses/{{HOUSE_ID}}/members?sort=desc",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"houses",
+						"{{HOUSE_ID}}",
+						"members"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "489adef1-450a-4460-9f3c-84d9de3a1ba7",
+				"id": "dfd5c702-724f-44b4-9faf-4d9994a4ef0e",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -531,7 +717,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "bcd6ffef-6055-4ed7-a586-0e1ad878d8e5",
+				"id": "9bf8f395-c25d-423f-94f3-aca2b64a386d",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -541,27 +727,27 @@
 	],
 	"variable": [
 		{
-			"id": "49048b83-25ed-4e18-9ddd-650e8c8804eb",
+			"id": "c114e420-ed6f-4595-8ca9-cc5388092998",
 			"key": "AUTH_TOKEN",
 			"value": "0"
 		},
 		{
-			"id": "4a186702-9cff-48f3-ac40-34b9da833c4a",
+			"id": "621d6584-fd5d-4885-a3f6-d4fdb1924255",
 			"key": "ENV_URL",
 			"value": "127.0.0.1:8080"
 		},
 		{
-			"id": "2ae4165d-778f-48d7-b747-2f3dd6b0f40b",
+			"id": "36b36a60-2a87-4997-9ac2-7e6eb9a6faed",
 			"key": "COMMUNITY_ID",
 			"value": "default-community-id-for-testing"
 		},
 		{
-			"id": "8782b55d-8f5a-492e-869d-f0e3655d6816",
+			"id": "053a83a1-0ae2-4e31-8961-3b2761c0ef80",
 			"key": "HOUSE_ID",
 			"value": "default-house-id-for-testing"
 		},
 		{
-			"id": "70dd2408-8241-4808-8ae5-fe88f20374e2",
+			"id": "47ca400a-7f5e-48f2-a8e6-e38802bbeec4",
 			"key": "USER_ID",
 			"value": "default-user-id-for-testing"
 		}
