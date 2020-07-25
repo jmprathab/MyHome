@@ -18,8 +18,11 @@ package com.myhome.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 /**
  * Entity identifying a valid user in the service.

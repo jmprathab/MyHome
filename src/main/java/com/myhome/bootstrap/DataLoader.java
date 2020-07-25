@@ -16,6 +16,8 @@
 
 package com.myhome.bootstrap;
 
+import com.myhome.controllers.dto.CommunityDto;
+import com.myhome.controllers.dto.UserDto;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
@@ -26,13 +28,28 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.repositories.UserRepository;
+import com.myhome.services.CommunityService;
+import com.myhome.services.HouseService;
+import com.myhome.services.UserService;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 class DataLoader implements CommandLineRunner {
+  private final CommunityService communityService;
+  private final UserService userService;
+  private final HouseService houseService;
   private final CommunityRepository communityRepository;
   private final CommunityAdminRepository communityAdminRepository;
   private final CommunityHouseRepository communityHouseRepository;
@@ -40,25 +57,12 @@ class DataLoader implements CommandLineRunner {
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
 
-  public DataLoader(
-      CommunityRepository communityRepository,
-      CommunityAdminRepository communityAdminRepository,
-      CommunityHouseRepository communityHouseRepository,
-      HouseMemberRepository houseMemberRepository,
-      PasswordEncoder passwordEncoder, UserRepository userRepository) {
-    this.communityRepository = communityRepository;
-    this.communityAdminRepository = communityAdminRepository;
-    this.communityHouseRepository = communityHouseRepository;
-    this.houseMemberRepository = houseMemberRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.userRepository = userRepository;
-  }
-
   @Override public void run(String... args) throws Exception {
+    loadPostmanData();
     loadData();
   }
 
-  private void loadData() {
+  private void loadPostmanData() {
     // Add user
     User savedUser = saveUser();
     // Persist community
@@ -73,6 +77,85 @@ class DataLoader implements CommandLineRunner {
 
     HouseMember savedHouseMember = addHouseMember(savedHouse);
     savedHouse = addMemberToHouse(savedHouseMember, savedHouse);
+  }
+
+  private void loadData() {
+    // Create and add communities
+    for (int i = 1; i <= 50; i++) {
+      CommunityDto dto = new CommunityDto();
+      dto.setName(String.format(TestDataConstants.TEST_COMMUNITY_NAME, i));
+      dto.setDistrict(String.format(TestDataConstants.TEST_COMMUNITY_DISTRICT));
+      communityService.createCommunity(dto);
+    }
+
+    // Create and add users
+    for (int i = 1; i <= 50; i++) {
+      UserDto dto = new UserDto();
+      dto.setEmail(String.format(TestDataConstants.TEST_USER_EMAIL_ID, i));
+      dto.setName(String.format(TestDataConstants.TEST_USER_NAME, i));
+      dto.setPassword(String.format(TestDataConstants.TEST_USER_PASSWORD));
+      userService.createUser(dto);
+    }
+
+    // Fetch first 10 users
+    final Set<String> userNames = new HashSet<>();
+    for (int i = 1; i <= 10; i++) {
+      userNames.add(String.format(TestDataConstants.TEST_USER_EMAIL_ID, i));
+    }
+    Set<String> users = userService.listAll()
+        .stream()
+        .filter(user -> userNames.contains(user.getEmail()))
+        .map(User::getUserId)
+        .collect(Collectors.toSet());
+
+    // Users 1 to 10 are admins of each community.
+    communityService.listAll()
+        .stream()
+        .map(Community::getCommunityId)
+        .forEach(c -> communityService.addAdminsToCommunity(c, users));
+
+    // Add 10 houses to each community
+    Map<String, Set<CommunityHouse>> communityHouseMap = new HashMap<>();
+    Set<Community> communities = communityService.listAll();
+    for (Community community : communities) {
+      Set<CommunityHouse> houses = new HashSet<>();
+      for (int i = 1; i <= 10; i++) {
+        CommunityHouse newHouse = new CommunityHouse();
+        newHouse.setName(String.format(TestDataConstants.TEST_HOUSE_NAME, i));
+        // newHouse.setHouseId(UUID.randomUUID().toString());
+        houses.add(newHouse);
+      }
+      communityHouseMap.put(community.getCommunityId(), houses);
+    }
+    communityHouseMap.forEach(communityService::addHousesToCommunity);
+
+    // Fetch users 11 to 20
+    final Set<String> houseMemberUsers = new HashSet<>();
+    for (int i = 11; i <= 20; i++) {
+      houseMemberUsers.add(String.format(TestDataConstants.TEST_USER_EMAIL_ID, i));
+    }
+    List<User> houseMemberUsersEntity = userService.listAll()
+        .stream()
+        .filter(user -> houseMemberUsers.contains(user.getEmail()))
+        .sorted(Comparator.comparing(User::getName))
+        .collect(Collectors.toList());
+
+    // Add 10 members to each house
+    Map<String, Set<HouseMember>> houseMemberMap = new HashMap<>();
+    Set<CommunityHouse> houses = houseService.listAllHouses();
+    for (CommunityHouse house : houses) {
+      Set<HouseMember> members = new HashSet<>();
+      for (int i = 0; i < 10; i++) {
+        HouseMember newMember = new HouseMember();
+        String name = houseMemberUsersEntity.get(i).getName();
+        String userId = houseMemberUsersEntity.get(i).getUserId();
+        newMember.setName(name);
+        newMember.setMemberId(userId);
+        members.add(newMember);
+      }
+      houseMemberMap.put(house.getHouseId(), members);
+    }
+    houseMemberMap.forEach(houseService::addHouseMembers);
   }
 
   private User saveUser() {
@@ -91,9 +174,9 @@ class DataLoader implements CommandLineRunner {
 
   private HouseMember addHouseMember(CommunityHouse savedHouse) {
     HouseMember houseMember = new HouseMember();
-    houseMember.setMemberId(Constants.MEMBER_ID);
+    houseMember.setMemberId(TestDataConstants.MEMBER_ID);
     houseMember.setCommunityHouse(savedHouse);
-    houseMember.setName(Constants.MEMBER_NAME);
+    houseMember.setName(TestDataConstants.MEMBER_NAME);
     return houseMemberRepository.save(houseMember);
   }
 
@@ -105,8 +188,8 @@ class DataLoader implements CommandLineRunner {
   private CommunityHouse addCommunityHouse(Community savedCommunity) {
     CommunityHouse house = new CommunityHouse();
     house.setCommunity(savedCommunity);
-    house.setHouseId(Constants.HOUSE_ID);
-    house.setName(Constants.HOUSE_NAME);
+    house.setHouseId(TestDataConstants.HOUSE_ID);
+    house.setName(TestDataConstants.HOUSE_NAME);
     return communityHouseRepository.save(house);
   }
 
@@ -126,9 +209,9 @@ class DataLoader implements CommandLineRunner {
 
   private Community saveCommunity() {
     Community community = new Community();
-    community.setName(Constants.COMMUNITY_NAME);
-    community.setDistrict(Constants.COMMUNITY_DISTRICT);
-    community.setCommunityId(Constants.COMMUNITY_ID);
+    community.setName(TestDataConstants.COMMUNITY_NAME);
+    community.setDistrict(TestDataConstants.COMMUNITY_DISTRICT);
+    community.setCommunityId(TestDataConstants.COMMUNITY_ID);
     return communityRepository.save(community);
   }
 }
