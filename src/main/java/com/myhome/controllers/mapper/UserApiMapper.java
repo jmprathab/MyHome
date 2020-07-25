@@ -21,7 +21,7 @@ import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
 import com.myhome.controllers.response.GetUserDetailsResponse;
 import com.myhome.domain.User;
-import java.util.Set;
+import java.util.List;
 import org.mapstruct.Mapper;
 
 /**
@@ -32,8 +32,8 @@ public interface UserApiMapper {
 
   UserDto createUserRequestToUserDto(CreateUserRequest createUserRequest);
 
-  Set<GetUserDetailsResponse.User> userSetToRestApiResponseUserSet(
-      Set<User> userSet);
+  List<GetUserDetailsResponse.User> userSetToRestApiResponseUserSet(
+      List<User> userSet);
 
   CreateUserResponse userDtoToCreateUserResponse(UserDto userDto);
 

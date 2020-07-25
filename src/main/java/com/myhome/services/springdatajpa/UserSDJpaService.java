@@ -24,7 +24,9 @@ import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
 import com.myhome.services.UserService;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -62,10 +64,17 @@ public class UserSDJpaService implements UserService {
     return createUserInRepository(request);
   }
 
-  @Override public Set<User> listAll() {
+  @Override public List<User> listAll(String sort) {
     Set<User> userListSet = new HashSet<>();
     userRepository.findAll().forEach(userListSet::add);
-    return userListSet;
+
+    boolean isAscendingSort = sort.contentEquals("asc");
+    Comparator<User> comparator = isAscendingSort ? Comparator.comparing(User::getName)
+        : Comparator.comparing(User::getName).reversed();
+
+    return userListSet.stream()
+        .sorted(comparator)
+        .collect(Collectors.toList());
   }
 
   @Override public Optional<UserDto> getUserDetails(UserDto request) {

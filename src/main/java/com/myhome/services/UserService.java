@@ -18,8 +18,8 @@ package com.myhome.services;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.domain.User;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Interface for service layer.
@@ -27,7 +27,7 @@ import java.util.Set;
 public interface UserService {
   UserDto createUser(UserDto request);
 
-  Set<User> listAll();
+  List<User> listAll(String sort);
 
   Optional<UserDto> getUserDetails(UserDto request);
 }

@@ -25,8 +25,8 @@ import com.myhome.domain.User;
 import com.myhome.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import javax.validation.Valid;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -71,10 +71,20 @@ public class UserController {
 
   @GetMapping(path = "/users",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<GetUserDetailsResponse> listAllUsers() {
+  public ResponseEntity<GetUserDetailsResponse> listAllUsers(
+      @PathVariable(required = false) String sort) {
     log.trace("Received request to list all users");
-    Set<User> userDetails = userService.listAll();
-    Set<GetUserDetailsResponse.User> userDetailsResponse =
+
+    if (sort != null) {
+      if (!sort.contentEquals("asc") || !sort.contentEquals("desc")) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      }
+    }
+    if (sort == null) {
+      sort = "asc";
+    }
+    List<User> userDetails = userService.listAll(sort);
+    List<GetUserDetailsResponse.User> userDetailsResponse =
         userApiMapper.userSetToRestApiResponseUserSet(userDetails);
 
     GetUserDetailsResponse response = new GetUserDetailsResponse();

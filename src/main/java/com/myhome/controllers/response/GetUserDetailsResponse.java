@@ -16,7 +16,8 @@
 
 package com.myhome.controllers.response;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +34,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetUserDetailsResponse {
-  private Set<GetUserDetailsResponse.User> users = new HashSet<>();
+  private List<User> users = new ArrayList<>();
 
   @Getter
   @Setter
