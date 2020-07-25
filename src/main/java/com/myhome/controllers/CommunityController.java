@@ -140,7 +140,7 @@ public class CommunityController {
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
-      @PathVariable String communityId, @PathVariable String sort) {
+      @PathVariable String communityId, @PathVariable(required = false) String sort) {
     log.trace("Received request to list all houses of community with id[{}]", communityId);
 
     if (sort != null) {

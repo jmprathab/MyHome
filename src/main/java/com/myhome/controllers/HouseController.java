@@ -27,8 +27,10 @@ import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -108,7 +110,16 @@ public class HouseController {
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<ListHouseMembersResponse> listAllMembersOfHouse(
-      @PathVariable String houseId) {
+      @PathVariable String houseId, @PathVariable(required = false) String sort) {
+
+    if (sort != null) {
+      if (!sort.contentEquals("asc") || !sort.contentEquals("desc")) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      }
+    }
+    if (sort == null) {
+      sort = "asc";
+    }
 
     log.trace("Received request to list all members of the house with id[{}]", houseId);
     Set<HouseMember> houseMembers =
@@ -116,8 +127,17 @@ public class HouseController {
     Set<ListHouseMembersResponse.HouseMember> responseSet =
         houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(houseMembers);
 
+    boolean isAscendingSort = sort.contentEquals("asc");
+    Comparator<ListHouseMembersResponse.HouseMember> comparator =
+        isAscendingSort ? Comparator.comparing(ListHouseMembersResponse.HouseMember::getName)
+            : Comparator.comparing(ListHouseMembersResponse.HouseMember::getName).reversed();
+
+    List<ListHouseMembersResponse.HouseMember> sortedMembers =
+        responseSet.stream().sorted(comparator).collect(
+            Collectors.toList());
+
     ListHouseMembersResponse response = new ListHouseMembersResponse();
-    response.setMembers(responseSet);
+    response.setMembers(sortedMembers);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
