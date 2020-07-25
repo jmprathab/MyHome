@@ -5,9 +5,13 @@ import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.HouseService;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -26,10 +30,15 @@ public class HouseSDJpaService implements HouseService {
     return UUID.randomUUID().toString();
   }
 
-  @Override public Set<CommunityHouse> listAllHouses() {
-    Set<CommunityHouse> communityHouses = new HashSet<>();
+  @Override public List<CommunityHouse> listAllHouses(String sort) {
+    List<CommunityHouse> communityHouses = new ArrayList<>();
     communityHouseRepository.findAll().forEach(communityHouses::add);
-    return communityHouses;
+
+    boolean isAscendingSort = sort.contentEquals("asc");
+    Comparator<CommunityHouse> comparator =
+        isAscendingSort ? Comparator.comparing(CommunityHouse::getName)
+            : Comparator.comparing(CommunityHouse::getName).reversed();
+    return communityHouses.stream().sorted(comparator).collect(Collectors.toList());
   }
 
   @Override public Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers) {

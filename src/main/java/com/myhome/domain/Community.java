@@ -16,8 +16,8 @@
 
 package com.myhome.domain;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,9 +38,9 @@ import lombok.Setter;
 @Entity
 public class Community extends BaseEntity {
   @ManyToMany(fetch = FetchType.EAGER)
-  private Set<CommunityAdmin> admins = new HashSet<>();
+  private List<CommunityAdmin> admins = new LinkedList<>();
   @OneToMany
-  private Set<CommunityHouse> houses = new HashSet<>();
+  private List<CommunityHouse> houses = new LinkedList<>();
   @Column(nullable = false)
   private String name;
   @Column(unique = true, nullable = false)

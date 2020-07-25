@@ -26,6 +26,7 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -105,7 +106,7 @@ public class CommunitySDJpaService implements CommunityService {
     if (community == null || community.getAdmins().isEmpty()) {
       return Optional.empty();
     }
-    Set<CommunityAdmin> communityAdmins = community.getAdmins();
+    List<CommunityAdmin> communityAdmins = community.getAdmins();
     boolean removed =
         communityAdmins.removeIf(communityAdmin -> communityAdmin.getAdminId().equals(adminId));
     if (!removed) {

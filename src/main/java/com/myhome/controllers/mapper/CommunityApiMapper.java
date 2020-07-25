@@ -26,6 +26,7 @@ import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
+import java.util.List;
 import java.util.Set;
 import org.mapstruct.Mapper;
 
@@ -41,12 +42,12 @@ public interface CommunityApiMapper {
 
   CreateCommunityResponse communityToCreateCommunityResponse(Community community);
 
-  Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSetToRestApiResponseCommunityAdminSet(
-      Set<CommunityAdmin> communityAdminSet);
+  List<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSetToRestApiResponseCommunityAdminSet(
+      List<CommunityAdmin> communityAdminSet);
 
   Set<CommunityHouse> communityHouseDtoSetToCommunityHouseSet(
       Set<CommunityHouseDto> communityHouseDtoSet);
 
-  Set<GetHouseDetailsResponse.CommunityHouse> communityHouseSetToRestApiResponseCommunityHouseSet(
-      Set<CommunityHouse> communityHouse);
+  List<GetHouseDetailsResponse.CommunityHouse> communityHouseSetToRestApiResponseCommunityHouseSet(
+      List<CommunityHouse> communityHouse);
 }

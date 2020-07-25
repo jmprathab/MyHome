@@ -27,6 +27,7 @@ import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -62,11 +63,21 @@ public class HouseController {
       path = "/houses",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<GetHouseDetailsResponse> listAllHouses() {
+  public ResponseEntity<GetHouseDetailsResponse> listAllHouses(
+      @PathVariable(required = false) String sort) {
     log.trace("Received request to list all houses");
-    Set<CommunityHouse> houseDetails =
-        houseService.listAllHouses();
-    Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
+
+    if (sort != null) {
+      if (!sort.contentEquals("asc") || !sort.contentEquals("desc")) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      }
+    }
+    if (sort == null) {
+      sort = "asc";
+    }
+    List<CommunityHouse> houseDetails =
+        houseService.listAllHouses(sort);
+    List<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
         houseApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
     GetHouseDetailsResponse response = new GetHouseDetailsResponse();

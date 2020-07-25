@@ -33,6 +33,8 @@ import com.myhome.domain.CommunityHouse;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -122,9 +124,9 @@ public class CommunityController {
   public ResponseEntity<ListCommunityAdminsResponse> listCommunityAdmins(
       @PathVariable String communityId) {
     log.trace("Received request to list all admins of community with id[{}]", communityId);
-    Set<CommunityAdmin> adminDetails =
+    List<CommunityAdmin> adminDetails =
         communityService.getCommunityDetailsById(communityId).getAdmins();
-    Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSet =
+    List<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSet =
         communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminDetails);
 
     ListCommunityAdminsResponse response = new ListCommunityAdminsResponse();
@@ -138,13 +140,30 @@ public class CommunityController {
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
-      @PathVariable String communityId) {
+      @PathVariable String communityId, @PathVariable String sort) {
     log.trace("Received request to list all houses of community with id[{}]", communityId);
-    Set<CommunityHouse> houseDetails =
+
+    if (sort != null) {
+      if (!sort.contentEquals("asc") || !sort.contentEquals("desc")) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      }
+    }
+    if (sort == null) {
+      sort = "asc";
+    }
+
+    List<CommunityHouse> houseDetails =
         communityService.getCommunityDetailsById(communityId).getHouses();
-    Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
+    List<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
         communityApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
+    boolean isAscendingSort = sort.contentEquals("asc");
+    Comparator<GetHouseDetailsResponse.CommunityHouse> comparator =
+        isAscendingSort ? Comparator.comparing(GetHouseDetailsResponse.CommunityHouse::getName)
+            : Comparator.comparing(GetHouseDetailsResponse.CommunityHouse::getName).reversed();
+
+    getHouseDetailsResponseSet = getHouseDetailsResponseSet.stream().sorted(comparator).collect(
+        Collectors.toList());
     GetHouseDetailsResponse response = new GetHouseDetailsResponse();
     response.setHouses(getHouseDetailsResponseSet);
     return ResponseEntity.status(HttpStatus.OK).body(response);
