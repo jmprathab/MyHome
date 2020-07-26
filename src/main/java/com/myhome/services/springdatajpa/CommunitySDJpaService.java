@@ -60,7 +60,7 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override public Set<Community> listAll() {
-    Set communityListSet = new HashSet<Community>();
+    Set<Community> communityListSet = new HashSet<>();
     communityRepository.findAll().forEach(communityListSet::add);
     return communityListSet;
   }
@@ -89,12 +89,12 @@ public class CommunitySDJpaService implements CommunityService {
     houses.forEach(communityHouse -> communityHouse.setHouseId(generateUniqueId()));
     Community community = communityRepository.findByCommunityId(communityId);
     houses.forEach(communityHouse -> communityHouse.setCommunity(community));
-    Set<CommunityHouse> savedHouses = new HashSet<CommunityHouse>();
+    Set<CommunityHouse> savedHouses = new HashSet<>();
     communityHouseRepository.saveAll(houses).forEach(savedHouses::add);
     community.getHouses().addAll(savedHouses);
     communityRepository.save(community);
 
-    Set<String> houseIds = new HashSet<String>(savedHouses.size());
+    Set<String> houseIds = new HashSet<>(savedHouses.size());
     savedHouses.forEach(communityHouse -> houseIds.add(communityHouse.getHouseId()));
     return houseIds;
   }
