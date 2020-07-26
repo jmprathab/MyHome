@@ -29,6 +29,8 @@ import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Set;
 import javax.validation.Valid;
+
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -131,22 +133,21 @@ public class HouseController {
         .body(response);
   }
 
-  @Operation(description = "Deletion of member associated with a house")
+  @Operation(description = "Deletion of member associated with a house",
+          responses = {@ApiResponse(responseCode = "204", description = "If house member was removed from house"),
+            @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
   @DeleteMapping(
-      path = "/houses/{houseId}/members/{memberId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+      path = "/houses/{houseId}/members/{memberId}"
   )
-  public ResponseEntity<ListHouseMembersResponse> deleteHouseMember(@PathVariable String houseId,
+  public ResponseEntity<Void> deleteHouseMember(@PathVariable String houseId,
       @PathVariable String memberId) {
     log.trace("Received request to delete a member from house with house id[{}] and member id[{}]",
         houseId, memberId);
-    Set<HouseMember> memberDetails =
-        houseService.deleteMemberFromHouse(houseId, memberId).getHouseMembers();
-    Set<ListHouseMembersResponse.HouseMember> houseMemberSet =
-        houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(memberDetails);
-    ListHouseMembersResponse response = new ListHouseMembersResponse();
-    response.getMembers().addAll(houseMemberSet);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    boolean isMemberDeleted = houseService.deleteMemberFromHouse(houseId, memberId);
+    if(isMemberDeleted) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 }
