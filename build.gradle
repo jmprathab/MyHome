@@ -102,5 +102,5 @@ compileJava {
 }
 
 test {
-  useJUnitPlatform()
+  forkEvery = 1
 }
