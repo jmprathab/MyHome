@@ -52,8 +52,10 @@ public class HouseSDJpaService implements HouseService {
       Set<HouseMember> houseMembers = communityHouse.getHouseMembers();
       for (HouseMember member : houseMembers) {
         if (member.getMemberId().equals(memberId)) {
+          member.setCommunityHouse(null);
+          houseMemberRepository.save(member);
           houseMembers.remove(member);
-          communityHouse.setHouseMembers(houseMembers);
+          communityHouseRepository.save(communityHouse);
           isMemberRemoved = true;
         }
       }
