@@ -54,6 +54,11 @@ public class UserSDJpaService implements UserService {
     return createUserInRepository(request);
   }
 
+  @Override
+  public Set<User> listAll() {
+    return listAll(null, null);
+  }
+
   @Override public Set<User> listAll(Integer limit, Integer start) {
     Set<User> userListSet = new HashSet<>();
     userRepository.findAll().forEach(userListSet::add);
