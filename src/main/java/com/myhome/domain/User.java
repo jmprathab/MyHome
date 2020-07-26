@@ -18,10 +18,8 @@ package com.myhome.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * Entity identifying a valid user in the service.
@@ -32,6 +30,7 @@ import lombok.Setter;
 @Setter
 @Entity
 public class User extends BaseEntity {
+  @NonNull
   private String name;
   @Column(unique = true, nullable = false)
   private String userId;

@@ -33,7 +33,10 @@ public interface CommunityService {
 
   Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses);
 
+  void deleteHouseFromCommunityByHouseId(String houseId);
+  
   Integer deleteCommunity(String communityId);
 
   Optional<Community> deleteAdminFromCommunity(String communityId, String adminId);
+
 }
