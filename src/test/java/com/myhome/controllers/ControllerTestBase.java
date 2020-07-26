@@ -1,10 +1,14 @@
 package com.myhome.controllers;
 
+import static java.util.Optional.ofNullable;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myhome.MyHomeServiceApplication;
+import com.myhome.controllers.request.LoginUserRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +33,7 @@ public class ControllerTestBase {
   ObjectMapper objectMapper;
   @LocalServerPort
   private int randomPort;
-  private static final String jwtToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyNGI0Mzc5MS02YWY0LTQ5MGYtODYzOS00ZDUyYmJhYjQzNTMiLCJleHAiOjE1OTYyODI4ODl9.ohTsY67FhFp9p79h_rnenHnU6IRxO7-5PojMAhwqNLOM5qlVNSHbpWj-lVTk_fRzk4X-oDcB-o8RP1LZXBI5BQ";
+  private String jwtToken;
 
   protected <T> ResponseEntity<String> sendRequest(HttpMethod httpMethod, String urlParams, T body){
     String url = String.format("http://localhost:%d/%s", randomPort, urlParams);
@@ -53,7 +57,13 @@ public class ControllerTestBase {
   private HttpHeaders getHttpEntityHeaders() {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setBearerAuth(jwtToken);
+    ofNullable(jwtToken).ifPresent(headers::setBearerAuth);
     return headers;
+  }
+
+  public void updateJwtToken(LoginUserRequest loginUserRequest) {
+    jwtToken = Objects.requireNonNull(
+        sendRequest(HttpMethod.POST, "users/login", loginUserRequest).getHeaders().get("token"))
+        .get(0);
   }
 }

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.myhome.controllers.request.CreateUserRequest;
+import com.myhome.controllers.request.LoginUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
 import com.myhome.controllers.response.GetUserDetailsResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +32,7 @@ class UserControllerTest extends ControllerTestBase {
     CreateUserResponse createUserResponse = readValue(response, CreateUserResponse.class);
     assertEquals(testUserName, createUserResponse.getName());
     assertEquals(testUserEmail, createUserResponse.getEmail());
+    updateJwtToken(new LoginUserRequest(testUserEmail, testUserPassword));
     response = sendRequest(HttpMethod.GET, String.format("users/%s", createUserResponse.getUserId()), null);
     assertEquals(HttpStatus.OK, response.getStatusCode());
     GetUserDetailsResponse.User getUserDetailsResponse = readValue(response,GetUserDetailsResponse.User.class);
@@ -50,6 +52,8 @@ class UserControllerTest extends ControllerTestBase {
   @Test
   @DisplayName("test get /users listAllUsers() positive")
   void listAllUsersPositive() {
+    sendRequest(HttpMethod.POST, "users", getUserRequest());
+    updateJwtToken(new LoginUserRequest(testUserEmail, testUserPassword));
     ResponseEntity<String> response = sendRequest(HttpMethod.GET, "users", null);
     assertEquals(HttpStatus.OK, response.getStatusCode());
     GetUserDetailsResponse getUserDetailsResponse = readValue(response, GetUserDetailsResponse.class);

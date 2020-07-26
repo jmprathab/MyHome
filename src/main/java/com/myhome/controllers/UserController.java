@@ -69,7 +69,8 @@ public class UserController {
   @GetMapping(path = "/users",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<GetUserDetailsResponse> listAllUsers(
-      @RequestParam(required = false) Integer limit, @RequestParam(required = false) Integer start) {
+      @RequestParam(defaultValue = "200") Integer limit,
+      @RequestParam(defaultValue = "0") Integer start) {
     log.trace("Received request to list all users");
     Set<User> userDetails = userService.listAll(limit, start);
     Set<GetUserDetailsResponse.User> userDetailsResponse =

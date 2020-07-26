@@ -24,14 +24,13 @@ import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
 import com.myhome.services.UserService;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -54,22 +53,12 @@ public class UserSDJpaService implements UserService {
     return createUserInRepository(request);
   }
 
-  @Override
-  public Set<User> listAll() {
-    return listAll(null, null);
+  @Override public Set<User> listAll() {
+    return listAll(200, 0);
   }
 
   @Override public Set<User> listAll(Integer limit, Integer start) {
-    Set<User> userListSet = new HashSet<>();
-    userRepository.findAll().forEach(userListSet::add);
-    Stream<User> userStream = userListSet.stream();
-    if (start != null) {
-      userStream = userStream.skip(start);
-    }
-    if (limit != null) {
-      userStream = userStream.limit(limit);
-    }
-    return userStream.collect(Collectors.toSet());
+    return userRepository.findAll(PageRequest.of(start, limit)).toSet();
   }
 
   @Override public Optional<UserDto> getUserDetails(UserDto request) {
