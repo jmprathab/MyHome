@@ -45,7 +45,7 @@ public class HouseSDJpaService implements HouseService {
   }
 
   @Override
-  public CommunityHouse deleteMemberFromHouse(String houseId, String memberId) {
+  public boolean deleteMemberFromHouse(String houseId, String memberId) {
     CommunityHouse communityHouse = communityHouseRepository.findByHouseId(houseId);
     boolean isMemberRemoved = false;
     if (communityHouse != null && !CollectionUtils.isEmpty(communityHouse.getHouseMembers())) {
@@ -58,10 +58,7 @@ public class HouseSDJpaService implements HouseService {
         }
       }
     }
-    if (isMemberRemoved) {
-      return communityHouseRepository.save(communityHouse);
-    }
-    return communityHouse;
+    return isMemberRemoved;
   }
 
   @Override public CommunityHouse getHouseDetailsById(String houseId) {
