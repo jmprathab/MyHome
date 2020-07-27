@@ -33,6 +33,8 @@ import com.myhome.domain.CommunityHouse;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -105,7 +107,7 @@ public class CommunityController {
   public ResponseEntity<GetCommunityDetailsResponse> listCommunityDetails(
       @PathVariable String communityId) {
     log.trace("Received request to get details about community with id[{}]", communityId);
-    Community communityDetails = communityService.getCommunityDetailsById(communityId);
+    Community communityDetails = communityService.getCommunityDetailsById(communityId).orElse(new Community());
     GetCommunityDetailsResponse.Community communityDetailsResponse =
         communityApiMapper.communityToRestApiResponseCommunity(communityDetails);
 
@@ -123,7 +125,7 @@ public class CommunityController {
       @PathVariable String communityId) {
     log.trace("Received request to list all admins of community with id[{}]", communityId);
     Set<CommunityAdmin> adminDetails =
-        communityService.getCommunityDetailsById(communityId).getAdmins();
+        communityService.getCommunityDetailsById(communityId).orElse(new Community()).getAdmins();
     Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSet =
         communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminDetails);
 
@@ -140,8 +142,7 @@ public class CommunityController {
   public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
       @PathVariable String communityId) {
     log.trace("Received request to list all houses of community with id[{}]", communityId);
-    Set<CommunityHouse> houseDetails =
-        communityService.getCommunityDetailsById(communityId).getHouses();
+    Set<CommunityHouse> houseDetails = communityService.getCommunityDetailsById(communityId).orElse(new Community()).getHouses();
     Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
         communityApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 

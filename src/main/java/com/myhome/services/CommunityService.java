@@ -27,7 +27,7 @@ public interface CommunityService {
 
   Set<Community> listAll();
 
-  Community getCommunityDetailsById(String communityId);
+  Optional<Community> getCommunityDetailsById(String communityId);
 
   Community addAdminsToCommunity(String communityId, Set<String> admins);
 
