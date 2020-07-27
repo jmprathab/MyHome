@@ -9,7 +9,7 @@ public interface HouseService {
 
   Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers);
 
-  CommunityHouse deleteMemberFromHouse(String houseId, String memberId);
+  boolean deleteMemberFromHouse(String houseId, String memberId);
 
   CommunityHouse getHouseDetailsById(String houseId);
 }
