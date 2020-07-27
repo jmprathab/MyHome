@@ -58,8 +58,8 @@ class DataLoader implements CommandLineRunner {
   private final UserRepository userRepository;
 
   @Override public void run(String... args) throws Exception {
-    loadPostmanData();
-    loadData();
+//    loadPostmanData();
+//    loadData();
   }
 
   private void loadPostmanData() {
