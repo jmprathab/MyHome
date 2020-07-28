@@ -21,14 +21,8 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.LoginUserRequest;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Objects;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,6 +30,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import javax.crypto.SecretKey;
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Objects;
 
 /**
  * Custom {@link UsernamePasswordAuthenticationFilter} for catering to service need. Generates JWT
@@ -47,7 +50,8 @@ public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFi
   private final AppUserDetailsService appUserDetailsService;
 
   public MyHomeAuthenticationFilter(ObjectMapper objectMapper,
-      AppUserDetailsService appUserDetailsService, Environment environment,
+      AppUserDetailsService appUserDetailsService,
+      Environment environment,
       AuthenticationManager authenticationManager) {
     super.setAuthenticationManager(authenticationManager);
     this.objectMapper = objectMapper;
@@ -55,7 +59,8 @@ public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFi
     this.environment = environment;
   }
 
-  @Override public Authentication attemptAuthentication(HttpServletRequest request,
+  @Override
+  public Authentication attemptAuthentication(HttpServletRequest request,
       HttpServletResponse response) throws AuthenticationException {
 
     try {
@@ -70,17 +75,24 @@ public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFi
   }
 
   @Override
-  protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-      FilterChain chain, Authentication authResult) throws IOException, ServletException {
+  protected void successfulAuthentication(HttpServletRequest request,
+      HttpServletResponse response,
+      FilterChain chain,
+      Authentication authResult) {
 
     String username = ((User) authResult.getPrincipal()).getUsername();
     UserDto userDto = appUserDetailsService.getUserDetailsByUsername(username);
 
+    final String base64EncodedSecretKey = environment.getProperty("token.secret");
+    final SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(base64EncodedSecretKey));
+    final long expirationTime =
+        Long.parseLong(Objects.requireNonNull(environment.getProperty("token.expiration_time")));
+    final Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
+
     String token = Jwts.builder()
         .setSubject(userDto.getUserId())
-        .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(
-            Objects.requireNonNull(environment.getProperty("token.expiration_time")))))
-        .signWith(SignatureAlgorithm.HS512, environment.getProperty("token.secret"))
+        .setExpiration(expirationDate)
+        .signWith(secretKey, SignatureAlgorithm.HS512)
         .compact();
 
     response.addHeader("token", token);
