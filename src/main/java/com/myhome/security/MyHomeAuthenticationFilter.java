@@ -21,8 +21,6 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.LoginUserRequest;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SigningKeyResolverAdapter;
-import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.security.Keys;
 import java.io.IOException;
 import java.util.Collections;
@@ -39,7 +37,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import java.security.Key;
 
 
 /**
