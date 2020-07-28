@@ -110,9 +110,7 @@ class UserControllerTest {
   void shouldGetUserDetailsSuccessWithNoResults() {
     // given
     String userId = "1";
-    UserDto userDto = new UserDto();
-    userDto.setUserId(userId);
-    given(userService.getUserDetails(userDto))
+    given(userService.getUserDetails(userId))
         .willReturn(Optional.empty());
 
     // when
@@ -121,7 +119,7 @@ class UserControllerTest {
     // then
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertNull(response.getBody());
-    verify(userService).getUserDetails(userDto);
+    verify(userService).getUserDetails(userId);
     verifyNoInteractions(userApiMapper);
   }
 
@@ -137,7 +135,7 @@ class UserControllerTest {
         "email",
         Collections.emptySet()
     );
-    given(userService.getUserDetails(userDto))
+    given(userService.getUserDetails(userId))
         .willReturn(Optional.of(userDto));
     given(userApiMapper.userDtoToGetUserDetailsResponse(userDto))
         .willReturn(expectedResponse);
@@ -148,7 +146,7 @@ class UserControllerTest {
     // then
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(expectedResponse, response.getBody());
-    verify(userService).getUserDetails(userDto);
+    verify(userService).getUserDetails(userId);
     verify(userApiMapper).userDtoToGetUserDetailsResponse(userDto);
   }
 }
