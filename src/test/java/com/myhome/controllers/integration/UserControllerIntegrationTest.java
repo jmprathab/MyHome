@@ -1,4 +1,4 @@
-package com.myhome.controllers;
+package com.myhome.controllers.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -13,7 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-class UserControllerTest extends ControllerTestBase {
+class UserControllerIntegrationTest extends ControllerIntegrationTestBase {
 
   private static final String testUserName = "Test User";
   private static final String testUserEmail = "testuser@myhome.com";
