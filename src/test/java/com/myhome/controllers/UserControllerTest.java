@@ -22,11 +22,15 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 class UserControllerTest {
+
+  private static final String TEST_ID = "1";
+  private static final String TEST_NAME = "name";
+  private static final String TEST_EMAIL = "email@mail.com";
+  private static final String TEST_PASSWORD = "password";
 
   @Mock
   private UserService userService;
@@ -45,12 +49,12 @@ class UserControllerTest {
   @Test
   void shouldSignUpSuccessful() {
     // given
-    CreateUserRequest request = new CreateUserRequest("name", "email", "password");
+    CreateUserRequest request = new CreateUserRequest(TEST_NAME, TEST_EMAIL, TEST_PASSWORD);
     UserDto userDto = new UserDto();
-    userDto.setName("name");
-    userDto.setEmail("email");
-    userDto.setPassword("password");
-    CreateUserResponse createUserResponse = new CreateUserResponse("1", "name", "email");
+    userDto.setName(TEST_NAME);
+    userDto.setEmail(TEST_EMAIL);
+    userDto.setPassword(TEST_PASSWORD);
+    CreateUserResponse createUserResponse = new CreateUserResponse(TEST_ID, TEST_NAME, TEST_EMAIL);
 
     given(userApiMapper.createUserRequestToUserDto(request))
         .willReturn(userDto);
@@ -77,14 +81,14 @@ class UserControllerTest {
     Integer start = 50;
 
     Set<User> users = new HashSet<>();
-    users.add(new User("name", "1", "email", "hash"));
+    users.add(new User(TEST_NAME, TEST_ID, TEST_EMAIL, TEST_PASSWORD));
 
     Set<GetUserDetailsResponse.User> responseUsers = new HashSet<>();
     responseUsers.add(
         new GetUserDetailsResponse.User(
-            "1",
-            "name",
-            "email",
+            TEST_ID,
+            TEST_NAME,
+            TEST_EMAIL,
             Collections.emptySet()
         )
     );
@@ -109,7 +113,7 @@ class UserControllerTest {
   @Test
   void shouldGetUserDetailsSuccessWithNoResults() {
     // given
-    String userId = "1";
+    String userId = TEST_ID;
     given(userService.getUserDetails(userId))
         .willReturn(Optional.empty());
 
@@ -126,13 +130,13 @@ class UserControllerTest {
   @Test
   void shouldGetUserDetailsSuccessWithResults() {
     // given
-    String userId = "1";
+    String userId = TEST_ID;
     UserDto userDto = new UserDto();
     userDto.setUserId(userId);
     GetUserDetailsResponse.User expectedResponse = new GetUserDetailsResponse.User(
-        "1",
-        "name",
-        "email",
+        TEST_ID,
+        TEST_NAME,
+        TEST_EMAIL,
         Collections.emptySet()
     );
     given(userService.getUserDetails(userId))
