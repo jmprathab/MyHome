@@ -19,24 +19,21 @@ package com.myhome.controllers.response;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Get user details response
  *
  * @see GetUserDetailsResponse
  */
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class GetUserDetailsResponse {
   private Set<GetUserDetailsResponse.User> users = new HashSet<>();
 
-  @Getter
-  @Setter
+  @Data
   @AllArgsConstructor
   @NoArgsConstructor
   public static class User {
