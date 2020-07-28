@@ -33,6 +33,12 @@ spring:
     enabled: true
     settings.web-allow-others: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+
 ###############################################################################
 # Spring doc
 ###############################################################################
@@ -61,6 +67,12 @@ api:
   status:
     url:
       path: "/status/**"
+  actuator:
+    url:
+      path: "/actuator"
+  actuators:
+    url:
+      path: "/actuator/**"
 
 authorization:
   token:
