@@ -83,8 +83,11 @@ public class HouseController {
   )
   public ResponseEntity<GetHouseDetailsResponse> getHouseDetails(@PathVariable String houseId) {
     log.trace("Received request to get details of a house with id[{}]", houseId);
+    if (!houseService.getHouseDetailsById(houseId).isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GetHouseDetailsResponse());
+    }
     CommunityHouse houseDetail =
-        houseService.getHouseDetailsById(houseId);
+        houseService.getHouseDetailsById(houseId).get();
     GetHouseDetailsResponse.CommunityHouse getHouseDetailsResponse =
         houseApiMapper.communityHouseToRestApiResponseCommunityHouse(houseDetail);
 
@@ -102,8 +105,11 @@ public class HouseController {
       @PathVariable String houseId) {
 
     log.trace("Received request to list all members of the house with id[{}]", houseId);
+    if (!houseService.getHouseDetailsById(houseId).isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ListHouseMembersResponse());
+    }
     Set<HouseMember> houseMembers =
-        communityHouseRepository.findByHouseId(houseId).getHouseMembers();
+        houseService.getHouseDetailsById(houseId).get().getHouseMembers();
     Set<ListHouseMembersResponse.HouseMember> responseSet =
         houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(houseMembers);
 

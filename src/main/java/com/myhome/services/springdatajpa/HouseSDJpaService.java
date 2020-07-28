@@ -6,6 +6,7 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.HouseService;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -65,7 +66,8 @@ public class HouseSDJpaService implements HouseService {
     return isMemberRemoved;
   }
 
-  @Override public CommunityHouse getHouseDetailsById(String houseId) {
-    return communityHouseRepository.findByHouseId(houseId);
+  @Override public Optional<CommunityHouse> getHouseDetailsById(String houseId) {
+    CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
+    return house == null ? Optional.empty() : Optional.of(house);
   }
 }

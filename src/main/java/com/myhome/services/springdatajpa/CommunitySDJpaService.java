@@ -25,12 +25,14 @@ import com.myhome.repositories.CommunityAdminRepository;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -65,11 +67,13 @@ public class CommunitySDJpaService implements CommunityService {
     return communityListSet;
   }
 
-  @Override public Community getCommunityDetailsById(String communityId) {
-    return communityRepository.findByCommunityId(communityId);
+  @Override public Optional<Community> getCommunityDetailsById(String communityId) {
+    Community community = communityRepository.findByCommunityId(communityId);
+    return community == null ? Optional.empty() : Optional.of(community);
   }
 
   @Override public Community addAdminsToCommunity(String communityId, Set<String> admins) {
+    if (!getCommunityDetailsById(communityId).isPresent()) return new Community();
     Community community = communityRepository.findByCommunityId(communityId);
 
     Set<CommunityAdmin> savedAdminSet = new HashSet<CommunityAdmin>();
@@ -86,7 +90,8 @@ public class CommunitySDJpaService implements CommunityService {
   // Returns houseId which was added to the community
   @Override
   public Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses) {
-    houses.forEach(communityHouse -> communityHouse.setHouseId(generateUniqueId()));
+    if (!getCommunityDetailsById(communityId).isPresent()) return new HashSet<>();
+      houses.forEach(communityHouse -> communityHouse.setHouseId(generateUniqueId()));
     Community community = communityRepository.findByCommunityId(communityId);
     houses.forEach(communityHouse -> communityHouse.setCommunity(community));
     Set<CommunityHouse> savedHouses = new HashSet<>();
@@ -117,7 +122,15 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override
+  @Transactional
   public Integer deleteCommunity(String communityId) {
+
+    getCommunityDetailsById(communityId).ifPresent(community -> {
+      community.getHouses()
+              .stream()
+              .map(CommunityHouse::getHouseId)
+              .forEach(communityHouseRepository::deleteByHouseId);
+    });
     return communityRepository.deleteByCommunityId(communityId);
   }
 
