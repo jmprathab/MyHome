@@ -21,14 +21,11 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.LoginUserRequest;
 import com.myhome.security.jwt.AppJwt;
 import com.myhome.security.jwt.AppJwtEncoderDecoder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Objects;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +82,9 @@ public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFi
     UserDto userDto = userDetailFetcher.getUserDetailsByUsername(username);
 
     LocalDateTime expiration = new Date(System.currentTimeMillis() + Long.parseLong(
-        environment.getProperty("token.expiration_time"))).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        environment.getProperty("token.expiration_time"))).toInstant()
+        .atZone(ZoneId.systemDefault())
+        .toLocalDateTime();
     AppJwt jwt = AppJwt.builder().userId(userDto.getUserId()).expiration(expiration).build();
     String token = appJwtEncoderDecoder.encode(jwt, environment.getProperty("token.secret"));
     response.addHeader("token", token);

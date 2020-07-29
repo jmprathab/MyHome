@@ -25,14 +25,13 @@ import com.myhome.repositories.CommunityAdminRepository;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -91,7 +90,7 @@ public class CommunitySDJpaService implements CommunityService {
   @Override
   public Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses) {
     if (!getCommunityDetailsById(communityId).isPresent()) return new HashSet<>();
-      houses.forEach(communityHouse -> communityHouse.setHouseId(generateUniqueId()));
+    houses.forEach(communityHouse -> communityHouse.setHouseId(generateUniqueId()));
     Community community = communityRepository.findByCommunityId(communityId);
     houses.forEach(communityHouse -> communityHouse.setCommunity(community));
     Set<CommunityHouse> savedHouses = new HashSet<>();
@@ -127,9 +126,9 @@ public class CommunitySDJpaService implements CommunityService {
 
     getCommunityDetailsById(communityId).ifPresent(community -> {
       community.getHouses()
-              .stream()
-              .map(CommunityHouse::getHouseId)
-              .forEach(communityHouseRepository::deleteByHouseId);
+          .stream()
+          .map(CommunityHouse::getHouseId)
+          .forEach(communityHouseRepository::deleteByHouseId);
     });
     return communityRepository.deleteByCommunityId(communityId);
   }
