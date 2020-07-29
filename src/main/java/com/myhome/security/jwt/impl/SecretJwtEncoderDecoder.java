@@ -21,6 +21,7 @@ import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import java.time.ZoneId;
 import java.util.Date;
 import org.springframework.context.annotation.Profile;
@@ -34,8 +35,9 @@ import org.springframework.stereotype.Component;
 public class SecretJwtEncoderDecoder implements AppJwtEncoderDecoder {
 
   @Override public AppJwt decode(String encodedJwt, String secret) {
-    Claims claims = Jwts.parser()
-        .setSigningKey(secret)
+    Claims claims = Jwts.parserBuilder()
+        .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+        .build()
         .parseClaimsJws(encodedJwt)
         .getBody();
     String userId = claims.getSubject();
@@ -48,11 +50,9 @@ public class SecretJwtEncoderDecoder implements AppJwtEncoderDecoder {
 
   @Override public String encode(AppJwt jwt, String secret) {
     Date expiration = Date.from(jwt.getExpiration().atZone(ZoneId.systemDefault()).toInstant());
-
     return Jwts.builder()
         .setSubject(jwt.getUserId())
         .setExpiration(expiration)
-        .signWith(SignatureAlgorithm.HS512, secret)
-        .compact();
+        .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS512).compact();
   }
 }
