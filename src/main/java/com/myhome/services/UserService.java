@@ -31,5 +31,5 @@ public interface UserService {
 
   Set<User> listAll(Integer limit, Integer start);
 
-  Optional<UserDto> getUserDetails(UserDto request);
+  Optional<UserDto> getUserDetails(String userId);
 }

@@ -16,67 +16,157 @@
 
 package com.myhome.controllers;
 
+import com.myhome.controllers.dto.UserDto;
+import com.myhome.controllers.mapper.UserApiMapper;
 import com.myhome.controllers.request.CreateUserRequest;
-import com.myhome.controllers.request.LoginUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
 import com.myhome.controllers.response.GetUserDetailsResponse;
-import org.junit.jupiter.api.DisplayName;
+import com.myhome.domain.User;
+import com.myhome.services.UserService;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpMethod;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
-class UserControllerTest extends ControllerTestBase {
+class UserControllerTest {
 
-  private static final String testUserName = "Test User";
-  private static final String testUserEmail = "testuser@myhome.com";
-  private static final String testUserPassword = "testpassword";
+  private static final String TEST_ID = "1";
+  private static final String TEST_NAME = "name";
+  private static final String TEST_EMAIL = "email@mail.com";
+  private static final String TEST_PASSWORD = "password";
 
-  private static CreateUserRequest getUserRequest() {
-    return new CreateUserRequest(testUserName, testUserEmail, testUserPassword);
+  @Mock
+  private UserService userService;
+
+  @Mock
+  private UserApiMapper userApiMapper;
+
+  @InjectMocks
+  private UserController userController;
+
+  @BeforeEach
+  private void init() {
+    MockitoAnnotations.initMocks(this);
   }
 
   @Test
-  @DisplayName("test POST /users signUp positive & GET /users specific getUserDetails() positive")
-  void getUserDetailsPositive() {
-    CreateUserRequest createUserRequest = getUserRequest();
-    ResponseEntity<String> response = sendRequest(HttpMethod.POST, "users", createUserRequest);
-    assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    CreateUserResponse createUserResponse = readValue(response, CreateUserResponse.class);
-    assertEquals(testUserName, createUserResponse.getName());
-    assertEquals(testUserEmail, createUserResponse.getEmail());
-    updateJwtToken(new LoginUserRequest(testUserEmail, testUserPassword));
-    response =
-        sendRequest(HttpMethod.GET, String.format("users/%s", createUserResponse.getUserId()),
-            null);
+  void shouldSignUpSuccessful() {
+    // given
+    CreateUserRequest request = new CreateUserRequest(TEST_NAME, TEST_EMAIL, TEST_PASSWORD);
+    UserDto userDto = new UserDto();
+    userDto.setName(TEST_NAME);
+    userDto.setEmail(TEST_EMAIL);
+    userDto.setPassword(TEST_PASSWORD);
+    CreateUserResponse createUserResponse = new CreateUserResponse(TEST_ID, TEST_NAME, TEST_EMAIL);
+
+    given(userApiMapper.createUserRequestToUserDto(request))
+        .willReturn(userDto);
+    given(userService.createUser(userDto))
+        .willReturn(userDto);
+    given(userApiMapper.userDtoToCreateUserResponse(userDto))
+        .willReturn(createUserResponse);
+
+    // when
+    ResponseEntity<CreateUserResponse> responseEntity = userController.signUp(request);
+
+    // then
+    assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+    assertEquals(createUserResponse, responseEntity.getBody());
+    verify(userApiMapper).createUserRequestToUserDto(request);
+    verify(userService).createUser(userDto);
+    verify(userApiMapper).userDtoToCreateUserResponse(userDto);
+  }
+
+  @Test
+  void shouldListUsersSuccess() {
+    // given
+    Integer limit = 150;
+    Integer start = 50;
+
+    Set<User> users = new HashSet<>();
+    users.add(new User(TEST_NAME, TEST_ID, TEST_EMAIL, TEST_PASSWORD));
+
+    Set<GetUserDetailsResponse.User> responseUsers = new HashSet<>();
+    responseUsers.add(
+        new GetUserDetailsResponse.User(
+            TEST_ID,
+            TEST_NAME,
+            TEST_EMAIL,
+            Collections.emptySet()
+        )
+    );
+    GetUserDetailsResponse expectedResponse = new GetUserDetailsResponse(responseUsers);
+
+    given(userService.listAll(limit, start))
+        .willReturn(users);
+    given(userApiMapper.userSetToRestApiResponseUserSet(users))
+        .willReturn(responseUsers);
+
+    // when
+    ResponseEntity<GetUserDetailsResponse> responseEntity =
+        userController.listAllUsers(limit, start);
+
+    // then
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    assertEquals(expectedResponse, responseEntity.getBody());
+    verify(userService).listAll(limit, start);
+    verify(userApiMapper).userSetToRestApiResponseUserSet(users);
+  }
+
+  @Test
+  void shouldGetUserDetailsSuccessWithNoResults() {
+    // given
+    String userId = TEST_ID;
+    given(userService.getUserDetails(userId))
+        .willReturn(Optional.empty());
+
+    // when
+    ResponseEntity<GetUserDetailsResponse.User> response = userController.getUserDetails(userId);
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    assertNull(response.getBody());
+    verify(userService).getUserDetails(userId);
+    verifyNoInteractions(userApiMapper);
+  }
+
+  @Test
+  void shouldGetUserDetailsSuccessWithResults() {
+    // given
+    String userId = TEST_ID;
+    UserDto userDto = new UserDto();
+    userDto.setUserId(userId);
+    GetUserDetailsResponse.User expectedResponse = new GetUserDetailsResponse.User(
+        TEST_ID,
+        TEST_NAME,
+        TEST_EMAIL,
+        Collections.emptySet()
+    );
+    given(userService.getUserDetails(userId))
+        .willReturn(Optional.of(userDto));
+    given(userApiMapper.userDtoToGetUserDetailsResponse(userDto))
+        .willReturn(expectedResponse);
+
+    // when
+    ResponseEntity<GetUserDetailsResponse.User> response = userController.getUserDetails(userId);
+
+    // then
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    GetUserDetailsResponse.User getUserDetailsResponse =
-        readValue(response, GetUserDetailsResponse.User.class);
-    assertEquals(testUserName, getUserDetailsResponse.getName());
-    assertEquals(testUserEmail, getUserDetailsResponse.getEmail());
-  }
-
-  @Test
-  @DisplayName("test post /users signUp negative missing name")
-  void signUpNegative() {
-    CreateUserRequest createUserRequest = getUserRequest();
-    createUserRequest.setName(null);
-    ResponseEntity<String> response = sendRequest(HttpMethod.POST, "users", createUserRequest);
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-  }
-
-  @Test
-  @DisplayName("test get /users listAllUsers() positive")
-  void listAllUsersPositive() {
-    sendRequest(HttpMethod.POST, "users", getUserRequest());
-    updateJwtToken(new LoginUserRequest(testUserEmail, testUserPassword));
-    ResponseEntity<String> response = sendRequest(HttpMethod.GET, "users", null);
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    GetUserDetailsResponse getUserDetailsResponse =
-        readValue(response, GetUserDetailsResponse.class);
-    assertNotNull(getUserDetailsResponse.getUsers());
+    assertEquals(expectedResponse, response.getBody());
+    verify(userService).getUserDetails(userId);
+    verify(userApiMapper).userDtoToGetUserDetailsResponse(userDto);
   }
 }

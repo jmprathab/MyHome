@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.myhome.controllers;
+package com.myhome.controllers.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +40,7 @@ import static java.util.Optional.ofNullable;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = {
     MyHomeServiceApplication.class})
-public class ControllerTestBase {
+public class ControllerIntegrationTestBase {
 
   @Autowired
   ObjectMapper objectMapper;
