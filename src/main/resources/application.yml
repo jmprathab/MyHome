@@ -70,7 +70,4 @@ authorization:
 
 token:
   expiration_time: 864000000
-  secret: >
-    sgahjsdhfjahsdfhjkahjsdfyquiwuhekrjkhsjkdfakjhskdfhiauwehriqwekrhkhknfdkkan
-    skdfkakshdfhuqiwheuriqjwkefkahksdhfkaskdhfkhuiquhweurihqjwkerjqhkwhekfhkank
-    sdnkfakhsdkfhiiqiwherqjowjeorjoqweoriewoq
+  secret: "sgahjsdhfjahsdfhjkahjsdfyquiwuhekrjkhsjkdfakjhskdfhiauwehriqwekrhkhknfdkkanskdfkakshdfhuqiwheuriqjwkefkahksdhfkaskdhfkhuiquhweurihqjwkerjqhkwhekfhkanksdnkfakhsdkfhiiqiwherqjowjeorjoqweoriewoq"
