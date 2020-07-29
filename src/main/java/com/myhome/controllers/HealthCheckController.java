@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HealthCheckController {
+  public static final String STATUS_HEALTHY = "Application is healthy";
 
   @Operation(description = "Endpoint to know if the server is healthy")
   @GetMapping("/status")
   public String statusCheck() {
-    return "Application is healthy";
+    return STATUS_HEALTHY;
   }
 }

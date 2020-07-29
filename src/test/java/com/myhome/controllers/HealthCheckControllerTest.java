@@ -26,6 +26,6 @@ class HealthCheckControllerTest {
   void statusCheck() throws Exception {
     mockMvc.perform(get("/status"))
         .andExpect(status().isOk())
-        .andExpect(content().string(containsString("Application is healthy")));
+        .andExpect(content().string(containsString(HealthCheckController.STATUS_HEALTHY)));
   }
 }
