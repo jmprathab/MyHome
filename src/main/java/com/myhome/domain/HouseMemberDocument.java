@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.FetchType;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
@@ -23,7 +21,6 @@ public class HouseMemberDocument extends BaseEntity {
 
     @Lob
     @Column
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] document = new byte[0];
+    private byte[] documentContent = new byte[0];
 
 }
