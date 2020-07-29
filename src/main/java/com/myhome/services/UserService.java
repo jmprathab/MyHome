@@ -29,5 +29,7 @@ public interface UserService {
 
   Set<User> listAll();
 
+  Set<User> listAll(Integer limit, Integer start);
+
   Optional<UserDto> getUserDetails(UserDto request);
 }

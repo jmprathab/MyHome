@@ -6,6 +6,7 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.HouseService;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class HouseSDJpaService implements HouseService {
   }
 
   @Override
-  public CommunityHouse deleteMemberFromHouse(String houseId, String memberId) {
+  public boolean deleteMemberFromHouse(String houseId, String memberId) {
     CommunityHouse communityHouse = communityHouseRepository.findByHouseId(houseId);
     boolean isMemberRemoved = false;
     if (communityHouse != null && !CollectionUtils.isEmpty(communityHouse.getHouseMembers())) {
@@ -54,17 +55,19 @@ public class HouseSDJpaService implements HouseService {
         if (member.getMemberId().equals(memberId)) {
           houseMembers.remove(member);
           communityHouse.setHouseMembers(houseMembers);
+          communityHouseRepository.save(communityHouse);
+          member.setCommunityHouse(null);
+          houseMemberRepository.save(member);
           isMemberRemoved = true;
+          break;
         }
       }
     }
-    if (isMemberRemoved) {
-      return communityHouseRepository.save(communityHouse);
-    }
-    return communityHouse;
+    return isMemberRemoved;
   }
 
-  @Override public CommunityHouse getHouseDetailsById(String houseId) {
-    return communityHouseRepository.findByHouseId(houseId);
+  @Override public Optional<CommunityHouse> getHouseDetailsById(String houseId) {
+    CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
+    return house == null ? Optional.empty() : Optional.of(house);
   }
 }

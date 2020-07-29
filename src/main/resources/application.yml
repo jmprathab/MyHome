@@ -19,6 +19,7 @@
 ###############################################################################
 server:
   port: 8080
+  cors.allowedOrigins: http://localhost:3000
   files:
     maxSizeKBytes: 480
     compressionBorderSizeKBytes: 240

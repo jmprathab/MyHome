@@ -27,16 +27,15 @@ public interface CommunityService {
 
   Set<Community> listAll();
 
-  Community getCommunityDetailsById(String communityId);
+  Optional<Community> getCommunityDetailsById(String communityId);
 
   Community addAdminsToCommunity(String communityId, Set<String> admins);
 
   Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses);
 
   void deleteHouseFromCommunityByHouseId(String houseId);
-  
+
   Integer deleteCommunity(String communityId);
 
   Optional<Community> deleteAdminFromCommunity(String communityId, String adminId);
-
 }

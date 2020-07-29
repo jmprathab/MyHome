@@ -29,6 +29,8 @@ import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Set;
 import javax.validation.Valid;
+
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -81,8 +83,11 @@ public class HouseController {
   )
   public ResponseEntity<GetHouseDetailsResponse> getHouseDetails(@PathVariable String houseId) {
     log.trace("Received request to get details of a house with id[{}]", houseId);
+    if (!houseService.getHouseDetailsById(houseId).isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GetHouseDetailsResponse());
+    }
     CommunityHouse houseDetail =
-        houseService.getHouseDetailsById(houseId);
+        houseService.getHouseDetailsById(houseId).get();
     GetHouseDetailsResponse.CommunityHouse getHouseDetailsResponse =
         houseApiMapper.communityHouseToRestApiResponseCommunityHouse(houseDetail);
 
@@ -100,8 +105,11 @@ public class HouseController {
       @PathVariable String houseId) {
 
     log.trace("Received request to list all members of the house with id[{}]", houseId);
+    if (!houseService.getHouseDetailsById(houseId).isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ListHouseMembersResponse());
+    }
     Set<HouseMember> houseMembers =
-        communityHouseRepository.findByHouseId(houseId).getHouseMembers();
+        houseService.getHouseDetailsById(houseId).get().getHouseMembers();
     Set<ListHouseMembersResponse.HouseMember> responseSet =
         houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(houseMembers);
 
@@ -131,22 +139,21 @@ public class HouseController {
         .body(response);
   }
 
-  @Operation(description = "Deletion of member associated with a house")
+  @Operation(description = "Deletion of member associated with a house",
+          responses = {@ApiResponse(responseCode = "204", description = "If house member was removed from house"),
+            @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
   @DeleteMapping(
-      path = "/houses/{houseId}/members/{memberId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+      path = "/houses/{houseId}/members/{memberId}"
   )
-  public ResponseEntity<ListHouseMembersResponse> deleteHouseMember(@PathVariable String houseId,
+  public ResponseEntity<Void> deleteHouseMember(@PathVariable String houseId,
       @PathVariable String memberId) {
     log.trace("Received request to delete a member from house with house id[{}] and member id[{}]",
         houseId, memberId);
-    Set<HouseMember> memberDetails =
-        houseService.deleteMemberFromHouse(houseId, memberId).getHouseMembers();
-    Set<ListHouseMembersResponse.HouseMember> houseMemberSet =
-        houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(memberDetails);
-    ListHouseMembersResponse response = new ListHouseMembersResponse();
-    response.getMembers().addAll(houseMemberSet);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    boolean isMemberDeleted = houseService.deleteMemberFromHouse(houseId, memberId);
+    if(isMemberDeleted) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 }

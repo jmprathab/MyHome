@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,6 @@ public class CommunityHouse extends BaseEntity {
   private String name;
   @Column(unique = true, nullable = false)
   private String houseId;
-  @OneToMany
+  @OneToMany(fetch = FetchType.EAGER)
   private Set<HouseMember> houseMembers = new HashSet<>();
 }
