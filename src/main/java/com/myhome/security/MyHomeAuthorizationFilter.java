@@ -23,6 +23,8 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import io.jsonwebtoken.security.Keys;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -66,12 +68,12 @@ public class MyHomeAuthorizationFilter extends BasicAuthenticationFilter {
 
     String token =
         authHeader.replace(environment.getProperty("authorization.token.header.prefix"), "");
-    String userId = Jwts.parser()
-        .setSigningKey(environment.getProperty("token.secret"))
+    String userId = Jwts.parserBuilder()
+        .setSigningKey(Keys.hmacShaKeyFor(environment.getProperty("token.secret").getBytes())) //key needed to be changed here to match the one used in MyHomeAuthenticationFilter.successfulAuthentication
+            .build() //the build function is now required to replace deprecated API
         .parseClaimsJws(token)
         .getBody()
         .getSubject();
-
     if (userId == null) {
       return null;
     }

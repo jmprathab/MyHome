@@ -21,6 +21,7 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.LoginUserRequest;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
@@ -36,6 +37,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 /**
  * Custom {@link UsernamePasswordAuthenticationFilter} for catering to service need. Generates JWT
@@ -80,7 +82,8 @@ public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFi
         .setSubject(userDto.getUserId())
         .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(
             Objects.requireNonNull(environment.getProperty("token.expiration_time")))))
-        .signWith(SignatureAlgorithm.HS512, environment.getProperty("token.secret"))
+        .signWith(Keys.hmacShaKeyFor(environment.getProperty("token.secret").getBytes()),
+                SignatureAlgorithm.HS512) //to replace the deprecated API calls, you need to call the signWith(Key, SignatureAlgorithm) method. For this you need to convert the string token to a Key (SecretKey in this case) and this can be done as here
         .compact();
 
     response.addHeader("token", token);
