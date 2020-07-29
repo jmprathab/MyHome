@@ -19,9 +19,13 @@ package com.myhome.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.LoginUserRequest;
+import com.myhome.security.jwt.AppJwt;
+import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
@@ -44,14 +48,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
   private final ObjectMapper objectMapper;
   private final Environment environment;
-  private final AppUserDetailsService appUserDetailsService;
+  private final UserDetailFetcher userDetailFetcher;
+  private final AppJwtEncoderDecoder appJwtEncoderDecoder;
 
   public MyHomeAuthenticationFilter(ObjectMapper objectMapper,
-      AppUserDetailsService appUserDetailsService, Environment environment,
-      AuthenticationManager authenticationManager) {
+      Environment environment,
+      AuthenticationManager authenticationManager,
+      UserDetailFetcher userDetailFetcher,
+      AppJwtEncoderDecoder appJwtEncoderDecoder) {
+    this.appJwtEncoderDecoder = appJwtEncoderDecoder;
     super.setAuthenticationManager(authenticationManager);
+    this.userDetailFetcher = userDetailFetcher;
     this.objectMapper = objectMapper;
-    this.appUserDetailsService = appUserDetailsService;
     this.environment = environment;
   }
 
@@ -74,15 +82,12 @@ public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFi
       FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
     String username = ((User) authResult.getPrincipal()).getUsername();
-    UserDto userDto = appUserDetailsService.getUserDetailsByUsername(username);
+    UserDto userDto = userDetailFetcher.getUserDetailsByUsername(username);
 
-    String token = Jwts.builder()
-        .setSubject(userDto.getUserId())
-        .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(
-            Objects.requireNonNull(environment.getProperty("token.expiration_time")))))
-        .signWith(SignatureAlgorithm.HS512, environment.getProperty("token.secret"))
-        .compact();
-
+    LocalDateTime expiration = new Date(System.currentTimeMillis() + Long.parseLong(
+        environment.getProperty("token.expiration_time"))).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    AppJwt jwt = AppJwt.builder().userId(userDto.getUserId()).expiration(expiration).build();
+    String token = appJwtEncoderDecoder.encode(jwt, environment.getProperty("token.secret"));
     response.addHeader("token", token);
     response.addHeader("userId", userDto.getUserId());
   }
