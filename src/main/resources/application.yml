@@ -23,8 +23,8 @@ server:
   files:
     maxSizeKBytes: 480
     compressionBorderSizeKBytes: 240
-#   percent value
-    compressedImageQuality: 50
+#   float value from 0 to 1
+    compressedImageQuality: 0.5
 
 ###############################################################################
 # Spring

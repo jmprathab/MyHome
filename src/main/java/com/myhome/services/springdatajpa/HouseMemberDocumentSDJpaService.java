@@ -7,6 +7,7 @@ import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.HouseMemberDocumentService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.IIOImage;
@@ -33,7 +34,7 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
     private int maxFileSizeKBytes;
 
     @Value("${server.files.compressedImageQuality}")
-    private int compressedImageQuality;
+    private float compressedImageQuality;
 
     private final HouseMemberRepository houseMemberRepository;
     private final HouseMemberDocumentRepository houseMemberDocumentRepository;
@@ -87,12 +88,12 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
         File memberDocumentFile = createMemberDocumentFile(member);
 
         BufferedImage documentImage = getImageFromMultipartFile(multipartFile);
-        if (multipartFile.getSize() < 1024 * compressionBorderSizeKBytes) {
+        if (multipartFile.getSize() < DataSize.ofKilobytes(compressionBorderSizeKBytes).toBytes()) {
             ImageIO.write(documentImage, "jpg", memberDocumentFile);
         } else {
             compressImageToFile(memberDocumentFile, documentImage);
         }
-        if (memberDocumentFile.length() < 1024 * maxFileSizeKBytes) {
+        if (memberDocumentFile.length() < DataSize.ofKilobytes(maxFileSizeKBytes).toBytes()) {
             addDocumentToHouseMember(memberDocumentFile, member);
             documentCreated = true;
         }
@@ -127,7 +128,7 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
 
             if (param.canWriteCompressed()) {
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                param.setCompressionQuality(compressedImageQuality / 100f);
+                param.setCompressionQuality(compressedImageQuality);
             }
             imageWriter.write(null, new IIOImage(bufferedImage, null, null), param);
             imageWriter.dispose();
