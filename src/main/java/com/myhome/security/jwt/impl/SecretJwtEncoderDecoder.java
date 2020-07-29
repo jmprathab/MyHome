@@ -7,9 +7,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.time.ZoneId;
 import java.util.Date;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("default")
 public class SecretJwtEncoderDecoder implements AppJwtEncoderDecoder {
 
   @Override public AppJwt decode(String encodedJwt, String secret) {

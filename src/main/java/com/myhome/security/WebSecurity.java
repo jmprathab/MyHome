@@ -27,6 +27,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
@@ -34,18 +35,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final Environment environment;
   private final ObjectMapper objectMapper;
-  private final AppUserDetailsService appUserDetailsService;
+  private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
   private final UserDetailFetcher userDetailFetcher;
   private final AppJwtEncoderDecoder appJwtEncoderDecoder;
 
   public WebSecurity(Environment environment,
-      ObjectMapper objectMapper, AppUserDetailsService appUserDetailsService,
+      ObjectMapper objectMapper, UserDetailsService userDetailsService,
       PasswordEncoder passwordEncoder, UserDetailFetcher userDetailFetcher,
       AppJwtEncoderDecoder appJwtEncoderDecoder) {
     this.environment = environment;
     this.objectMapper = objectMapper;
-    this.appUserDetailsService = appUserDetailsService;
+    this.userDetailsService = userDetailsService;
     this.passwordEncoder = passwordEncoder;
     this.userDetailFetcher = userDetailFetcher;
     this.appJwtEncoderDecoder = appJwtEncoderDecoder;
@@ -86,6 +87,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   }
 
   @Override protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(appUserDetailsService).passwordEncoder(passwordEncoder);
+    auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
   }
 }

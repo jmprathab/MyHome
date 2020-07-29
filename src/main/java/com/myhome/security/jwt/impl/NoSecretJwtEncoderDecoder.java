@@ -6,10 +6,10 @@ import java.time.LocalDateTime;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-@Component
 @Profile("test")
+@Component
 public class NoSecretJwtEncoderDecoder implements AppJwtEncoderDecoder {
-  private static final String SEPARATOR = "+";
+  private static final String SEPARATOR = "\\+";
 
   @Override public AppJwt decode(String encodedJwt, String secret) {
     String[] strings = encodedJwt.split(SEPARATOR);
