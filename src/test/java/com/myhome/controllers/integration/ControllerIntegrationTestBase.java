@@ -1,4 +1,4 @@
-package com.myhome.controllers;
+package com.myhome.controllers.integration;
 
 import static java.util.Optional.ofNullable;
 
@@ -25,7 +25,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = {
     MyHomeServiceApplication.class})
-public class ControllerTestBase {
+public class ControllerIntegrationTestBase {
 
   @Autowired
   private TestRestTemplate client;

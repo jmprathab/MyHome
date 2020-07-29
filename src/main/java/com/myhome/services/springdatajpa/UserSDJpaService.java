@@ -61,8 +61,8 @@ public class UserSDJpaService implements UserService {
     return userRepository.findAll(PageRequest.of(start, limit)).toSet();
   }
 
-  @Override public Optional<UserDto> getUserDetails(UserDto request) {
-    String userId = request.getUserId();
+  @Override
+  public Optional<UserDto> getUserDetails(String userId) {
     User user = userRepository.findByUserId(userId);
 
     Set<String> communityIds = communityService.listAll().stream().filter(c -> c.getAdmins()
