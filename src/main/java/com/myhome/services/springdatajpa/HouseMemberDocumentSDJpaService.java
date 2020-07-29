@@ -27,13 +27,13 @@ import java.util.Optional;
 @Service
 public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentService {
 
-    @Value("${server.files.compressionBorderSizeKBytes}")
+    @Value("${files.compressionBorderSizeKBytes}")
     private int compressionBorderSizeKBytes;
 
-    @Value("${server.files.maxSizeKBytes}")
+    @Value("${files.maxSizeKBytes}")
     private int maxFileSizeKBytes;
 
-    @Value("${server.files.compressedImageQuality}")
+    @Value("${files.compressedImageQuality}")
     private float compressedImageQuality;
 
     private final HouseMemberRepository houseMemberRepository;

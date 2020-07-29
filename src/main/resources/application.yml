@@ -20,11 +20,6 @@
 server:
   port: 8080
   cors.allowedOrigins: http://localhost:3000
-  files:
-    maxSizeKBytes: 480
-    compressionBorderSizeKBytes: 240
-#   float value from 0 to 1
-    compressedImageQuality: 0.5
 
 ###############################################################################
 # Spring
@@ -72,6 +67,12 @@ authorization:
     header:
       name: "Authorization"
       prefix: "Bearer"
+
+files:
+  maxSizeKBytes: 480
+  compressionBorderSizeKBytes: 240
+  #   float value from 0 to 1
+  compressedImageQuality: 0.5
 
 token:
   expiration_time: 864000000

@@ -11,7 +11,7 @@ import javax.servlet.MultipartConfigElement;
 @Configuration
 public class FileUploadConfig {
 
-    @Value("${server.files.maxSizeKBytes}")
+    @Value("${files.maxSizeKBytes}")
     private int maxSizeKBytes;
 
     @Bean
