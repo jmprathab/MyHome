@@ -34,76 +34,73 @@ public class HouseMemberDocumentController {
     )
     @GetMapping(
             path = "/members/{memberId}/documents",
-            produces = {MediaType.MULTIPART_FORM_DATA_VALUE}
+            produces = {MediaType.IMAGE_JPEG_VALUE}
     )
     public ResponseEntity<byte[]> getHoseMemberDocument(@PathVariable String memberId) {
         log.trace("Received request to get house member documents");
         Optional<HouseMemberDocument> houseMemberDocumentOptional = houseMemberDocumentService.findHouseMemberDocument(memberId);
 
-        if(houseMemberDocumentOptional.isPresent()) {
-
-            HouseMemberDocument houseMemberDocument = houseMemberDocumentOptional.get();
+        return houseMemberDocumentOptional.map(document -> {
 
             HttpHeaders headers = new HttpHeaders();
-            byte[] content = houseMemberDocument.getDocument();
+            byte[] content = document.getDocumentContent();
 
             headers.setCacheControl(CacheControl.noCache().getHeaderValue());
             headers.setContentType(MediaType.IMAGE_JPEG);
 
-            ContentDisposition contentDisposition = ContentDisposition.builder("inline")
-                    .filename(houseMemberDocument.getDocumentFilename())
+            ContentDisposition contentDisposition = ContentDisposition
+                    .builder("inline")
+                    .filename(document.getDocumentFilename())
                     .build();
 
             headers.setContentDisposition(contentDisposition);
 
             return new ResponseEntity<>(content, headers, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+
+        }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @Operation(description = "Add house member's documents",
             responses = {
                     @ApiResponse(responseCode = "204", description = "if document saved"),
                     @ApiResponse(responseCode = "409", description = "if document save error"),
-                    @ApiResponse(responseCode = "413", description = "if document file too large")
+                    @ApiResponse(responseCode = "413", description = "if document file too large"),
+                    @ApiResponse(responseCode = "404", description = "if params are invalid")
             }
     )
     @PostMapping(
             path = "/members/{memberId}/documents",
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<Void> uploadHoseMemberDocument(
+    public ResponseEntity uploadHoseMemberDocument(
             @PathVariable String memberId, @RequestParam("memberDocument") MultipartFile memberDocument) throws IOException {
         log.trace("Received request to add house member documents");
-        boolean isDocumentSaved = houseMemberDocumentService.createHouseMemberDocument(memberDocument, memberId);
-        if(isDocumentSaved) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+
+        Optional<HouseMemberDocument> houseMemberDocumentOptional = houseMemberDocumentService.createHouseMemberDocument(memberDocument, memberId);
+        return houseMemberDocumentOptional
+                .map(document -> ResponseEntity.status(HttpStatus.NO_CONTENT).build())
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @Operation(description = "Update house member's documents",
             responses = {
                     @ApiResponse(responseCode = "204", description = "if document updated"),
-                    @ApiResponse(responseCode = "409", description = "if document save error"),
-                    @ApiResponse(responseCode = "413", description = "if document file too large")
+                    @ApiResponse(responseCode = "409", description = "if document update error"),
+                    @ApiResponse(responseCode = "413", description = "if document file too large"),
+                    @ApiResponse(responseCode = "404", description = "if params are invalid")
             }
     )
     @PutMapping(
             path = "/members/{memberId}/documents",
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<Void> updateHoseMemberDocument(
+    public ResponseEntity updateHoseMemberDocument(
             @PathVariable String memberId, @RequestParam("memberDocument") MultipartFile memberDocument) throws IOException {
         log.trace("Received request to update house member documents");
-        boolean isDocumentSaved = houseMemberDocumentService.updateHouseMemberDocument(memberDocument, memberId);
-        if(isDocumentSaved) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        Optional<HouseMemberDocument> houseMemberDocumentOptional = houseMemberDocumentService.updateHouseMemberDocument(memberDocument, memberId);
+        return houseMemberDocumentOptional
+                .map(document -> ResponseEntity.status(HttpStatus.NO_CONTENT).build())
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @Operation(
