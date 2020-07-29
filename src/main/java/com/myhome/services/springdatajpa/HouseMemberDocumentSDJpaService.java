@@ -16,11 +16,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.File;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.Optional;
 
@@ -68,53 +64,65 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
     }
 
     @Override
-    public boolean updateHouseMemberDocument(MultipartFile multipartFile, String memberId) throws IOException {
-        return createHouseMemberDocument(multipartFile, memberId);
-    }
-
-    @Override
-    public boolean createHouseMemberDocument(MultipartFile multipartFile, String memberId) throws IOException {
-        boolean documentCreated = false;
+    public Optional<HouseMemberDocument> updateHouseMemberDocument(MultipartFile multipartFile, String memberId) throws IOException {
         HouseMember member = houseMemberRepository.findByMemberId(memberId);
         if (member != null) {
-            documentCreated = tryCreateDocument(multipartFile, member);
+            Optional<HouseMemberDocument> houseMemberDocument = tryCreateDocument(multipartFile, member);
+            houseMemberDocument.ifPresent(document -> {
+                member.setHouseMemberDocument(document);
+                houseMemberRepository.save(member);
+            });
+            return houseMemberDocument;
+        } else {
+            return Optional.empty();
+        }    }
+
+    @Override
+    public Optional<HouseMemberDocument> createHouseMemberDocument(MultipartFile multipartFile, String memberId) throws IOException {
+        HouseMember member = houseMemberRepository.findByMemberId(memberId);
+        if (member != null) {
+            Optional<HouseMemberDocument> houseMemberDocument = tryCreateDocument(multipartFile, member);
+            houseMemberDocument.map(document -> addDocumentToHouseMember(document, member));
+            return houseMemberDocument;
+        } else {
+            return Optional.empty();
         }
-        return documentCreated;
     }
 
-    private boolean tryCreateDocument(MultipartFile multipartFile, HouseMember member) throws IOException {
+    private Optional<HouseMemberDocument> tryCreateDocument(MultipartFile multipartFile, HouseMember member) throws IOException {
 
-        boolean documentCreated = false;
         File memberDocumentFile = createMemberDocumentFile(member);
 
-        BufferedImage documentImage = getImageFromMultipartFile(multipartFile);
-        if (multipartFile.getSize() < DataSize.ofKilobytes(compressionBorderSizeKBytes).toBytes()) {
-            ImageIO.write(documentImage, "jpg", memberDocumentFile);
-        } else {
-            compressImageToFile(memberDocumentFile, documentImage);
+        try {
+            BufferedImage documentImage = getImageFromMultipartFile(multipartFile);
+            if (multipartFile.getSize() < DataSize.ofKilobytes(compressionBorderSizeKBytes).toBytes()) {
+                writeImageToFile(documentImage, memberDocumentFile);
+            } else {
+                compressImageToFile(memberDocumentFile, documentImage);
+            }
+            if (memberDocumentFile.length() < DataSize.ofKilobytes(maxFileSizeKBytes).toBytes()) {
+                HouseMemberDocument houseMemberDocument = saveHouseMemberDocument(memberDocumentFile);
+                return Optional.of(houseMemberDocument);
+            } else {
+                return Optional.empty();
+            }
+        } finally {
+            memberDocumentFile.delete();
         }
-        if (memberDocumentFile.length() < DataSize.ofKilobytes(maxFileSizeKBytes).toBytes()) {
-            addDocumentToHouseMember(memberDocumentFile, member);
-            documentCreated = true;
-        }
-
-        memberDocumentFile.delete();
-        return documentCreated;
     }
 
-    private HouseMember addDocumentToHouseMember(File documentFile, HouseMember member) throws IOException {
-        HouseMemberDocument houseMemberDocument = saveHouseMemberDocument(documentFile);
+    private HouseMember addDocumentToHouseMember(HouseMemberDocument houseMemberDocument, HouseMember member) {
         member.setHouseMemberDocument(houseMemberDocument);
-        member = houseMemberRepository.save(member);
-        return member;
+        return houseMemberRepository.save(member);
     }
 
     private HouseMemberDocument saveHouseMemberDocument(File documentFile) throws IOException {
-        HouseMemberDocument newDocument = new HouseMemberDocument();
-        newDocument.setDocumentFilename(documentFile.getName());
-        newDocument.setDocument(Files.readAllBytes(documentFile.toPath()));
-        newDocument = houseMemberDocumentRepository.save(newDocument);
-        return newDocument;
+        HouseMemberDocument newDocument = new HouseMemberDocument(documentFile.getName(), Files.readAllBytes(documentFile.toPath()));
+        return houseMemberDocumentRepository.save(newDocument);
+    }
+
+    private void writeImageToFile(BufferedImage documentImage, File memberDocumentFile) throws IOException {
+        ImageIO.write(documentImage, "jpg", memberDocumentFile);
     }
 
     private void compressImageToFile(File memberDocumentFile, BufferedImage bufferedImage) throws IOException {

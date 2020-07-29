@@ -10,9 +10,9 @@ public interface HouseMemberDocumentService {
 
     boolean deleteHouseMemberDocument(String memberId);
 
-    boolean updateHouseMemberDocument(MultipartFile multipartFile, String memberId) throws IOException;
-
     Optional<HouseMemberDocument> findHouseMemberDocument(String memberId);
 
-    boolean createHouseMemberDocument(MultipartFile multipartFile, String memberId) throws IOException;
+    Optional<HouseMemberDocument> updateHouseMemberDocument(MultipartFile multipartFile, String memberId) throws IOException;
+
+    Optional<HouseMemberDocument> createHouseMemberDocument(MultipartFile multipartFile, String memberId) throws IOException;
 }
