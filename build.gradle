@@ -19,6 +19,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.9.RELEASE'
   id 'net.researchgate.release' version '2.8.1'
   id 'java'
+  id 'jacoco'
 }
 
 group = 'com.prathab'
@@ -103,4 +104,19 @@ compileJava {
 
 test {
   useJUnitPlatform()
+}
+
+
+// Jacoco
+test.finalizedBy jacocoTestReport
+
+jacocoTestReport {
+  dependsOn {
+    test
+  }
+  reports {
+    xml.enabled false
+    csv.enabled false
+    html.destination file("${buildDir}/jacoco/jacocoHtml")
+  }
 }
