@@ -29,6 +29,8 @@ import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Set;
 import javax.validation.Valid;
+
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -110,7 +112,12 @@ public class HouseController {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @Operation(description = "Add new members to the house given a house id. Responds with member id which were added")
+  @Operation(
+          description = "Add new members to the house given a house id. Responds with member id which were added",
+          responses = {
+                  @ApiResponse(responseCode = "201", description = "If members were added to house"),
+                  @ApiResponse(responseCode = "404", description = "If parameters are invalid")
+          })
   @PostMapping(
       path = "/houses/{houseId}/members",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -124,11 +131,13 @@ public class HouseController {
         houseMemberMapper.houseMemberDtoSetToHouseMemberSet(request.getMembers());
     Set<HouseMember> savedHouseMembers = houseService.addHouseMembers(houseId, members);
 
-    AddHouseMemberResponse response = new AddHouseMemberResponse();
-    response.setMembers(
-        houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(response);
+    if(savedHouseMembers.size() == 0 && request.getMembers().size() != 0) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    } else {
+      AddHouseMemberResponse response = new AddHouseMemberResponse();
+      response.setMembers(houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
+      return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
   }
 
   @Operation(description = "Deletion of member associated with a house")

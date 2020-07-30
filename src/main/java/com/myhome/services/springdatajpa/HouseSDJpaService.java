@@ -34,13 +34,15 @@ public class HouseSDJpaService implements HouseService {
 
   @Override public Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers) {
     CommunityHouse communityHouse = communityHouseRepository.findByHouseId(houseId);
-    houseMembers.forEach(member -> member.setMemberId(generateUniqueId()));
-    houseMembers.forEach(member -> member.setCommunityHouse(communityHouse));
     Set<HouseMember> savedMembers = new HashSet<>();
-    houseMemberRepository.saveAll(houseMembers).forEach(savedMembers::add);
+    if(communityHouse != null) {
+      houseMembers.forEach(member -> member.setMemberId(generateUniqueId()));
+      houseMembers.forEach(member -> member.setCommunityHouse(communityHouse));
+      houseMemberRepository.saveAll(houseMembers).forEach(savedMembers::add);
 
-    communityHouse.getHouseMembers().addAll(savedMembers);
-    communityHouseRepository.save(communityHouse);
+      communityHouse.getHouseMembers().addAll(savedMembers);
+      communityHouseRepository.save(communityHouse);
+    }
     return savedMembers;
   }
 
