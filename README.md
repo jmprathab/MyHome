@@ -33,13 +33,6 @@ docker-compose up
 All required ports are mapped to localhost. REST API is accessible via port 8080.
 http://localhost:8080/docs/swagger-ui.html hosts Swagger UI.
 
-## Contributors
-
-* [Prathab Murugan](https://github.com/jmprathab)
-* [Jahir](https://github.com/Zedex7)
-* [Gangadhar](https://github.com/gangadhargo)
-* [mar731](https://github.com/mar731)
-
 ## How do I contribute?
 
 Feel free to contribute to the project. Please make sure to follow the below list before contributing.
