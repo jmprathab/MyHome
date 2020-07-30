@@ -17,7 +17,9 @@
 package com.myhome.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import javax.servlet.Filter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -26,25 +28,19 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final Environment environment;
   private final ObjectMapper objectMapper;
-  private final AppUserDetailsService appUserDetailsService;
+  private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
-
-  public WebSecurity(Environment environment,
-      ObjectMapper objectMapper,
-      AppUserDetailsService appUserDetailsService,
-      PasswordEncoder passwordEncoder) {
-    this.environment = environment;
-    this.objectMapper = objectMapper;
-    this.appUserDetailsService = appUserDetailsService;
-    this.passwordEncoder = passwordEncoder;
-  }
+  private final UserDetailFetcher userDetailFetcher;
+  private final AppJwtEncoderDecoder appJwtEncoderDecoder;
 
   @Override protected void configure(HttpSecurity http) throws Exception {
     http.cors().and().csrf().disable();
@@ -68,18 +64,19 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .authenticated()
         .and()
         .addFilter(getAuthenticationFilter())
-        .addFilter(new MyHomeAuthorizationFilter(authenticationManager(), environment));
+        .addFilter(new MyHomeAuthorizationFilter(authenticationManager(), environment,
+            appJwtEncoderDecoder));
   }
 
   private Filter getAuthenticationFilter() throws Exception {
     MyHomeAuthenticationFilter authFilter =
-        new MyHomeAuthenticationFilter(objectMapper, appUserDetailsService, environment,
-            authenticationManager());
+        new MyHomeAuthenticationFilter(objectMapper, environment,
+            authenticationManager(), userDetailFetcher, appJwtEncoderDecoder);
     authFilter.setFilterProcessesUrl(environment.getProperty("api.login.url.path"));
     return authFilter;
   }
 
   @Override protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(appUserDetailsService).passwordEncoder(passwordEncoder);
+    auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
   }
 }

@@ -18,14 +18,12 @@ package com.myhome.controllers.dto;
 
 import java.util.Set;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+@Data
 @AllArgsConstructor
-@Getter
 @NoArgsConstructor
-@Setter
 public class UserDto {
   private Long id;
   private String userId;

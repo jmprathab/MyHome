@@ -16,7 +16,8 @@
 
 package com.myhome.security;
 
-import io.jsonwebtoken.Jwts;
+import com.myhome.security.jwt.AppJwt;
+import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import java.io.IOException;
 import java.util.Collections;
 import javax.servlet.FilterChain;
@@ -32,12 +33,15 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 public class MyHomeAuthorizationFilter extends BasicAuthenticationFilter {
 
   private final Environment environment;
+  private final AppJwtEncoderDecoder appJwtEncoderDecoder;
 
   public MyHomeAuthorizationFilter(
       AuthenticationManager authenticationManager,
-      Environment environment) {
+      Environment environment,
+      AppJwtEncoderDecoder appJwtEncoderDecoder) {
     super(authenticationManager);
     this.environment = environment;
+    this.appJwtEncoderDecoder = appJwtEncoderDecoder;
   }
 
   @Override
@@ -66,15 +70,11 @@ public class MyHomeAuthorizationFilter extends BasicAuthenticationFilter {
 
     String token =
         authHeader.replace(environment.getProperty("authorization.token.header.prefix"), "");
-    String userId = Jwts.parser()
-        .setSigningKey(environment.getProperty("token.secret"))
-        .parseClaimsJws(token)
-        .getBody()
-        .getSubject();
+    AppJwt jwt = appJwtEncoderDecoder.decode(token, environment.getProperty("token.secret"));
 
-    if (userId == null) {
+    if (jwt.getUserId() == null) {
       return null;
     }
-    return new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+    return new UsernamePasswordAuthenticationToken(jwt.getUserId(), null, Collections.emptyList());
   }
 }

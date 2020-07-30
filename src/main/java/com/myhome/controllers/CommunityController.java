@@ -33,8 +33,6 @@ import com.myhome.domain.CommunityHouse;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -151,7 +149,8 @@ public class CommunityController {
     if (!communityService.getCommunityDetailsById(communityId).isPresent()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GetHouseDetailsResponse());
     }
-    Set<CommunityHouse> houseDetails = communityService.getCommunityDetailsById(communityId).get().getHouses();
+    Set<CommunityHouse> houseDetails =
+        communityService.getCommunityDetailsById(communityId).get().getHouses();
     Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
         communityApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 

@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package com.myhome.services;
+package com.myhome.security;
 
 import com.myhome.controllers.dto.UserDto;
-import com.myhome.domain.User;
-import java.util.Optional;
-import java.util.Set;
 
-/**
- * Interface for service layer.
- */
-public interface UserService {
-  UserDto createUser(UserDto request);
-
-  Set<User> listAll();
-
-  Set<User> listAll(Integer limit, Integer start);
-
-  Optional<UserDto> getUserDetails(String userId);
+public interface UserDetailFetcher {
+  UserDto getUserDetailsByUsername(String username);
 }

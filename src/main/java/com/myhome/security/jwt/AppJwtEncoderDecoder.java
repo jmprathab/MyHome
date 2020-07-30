@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package com.myhome.services;
-
-import com.myhome.controllers.dto.UserDto;
-import com.myhome.domain.User;
-import java.util.Optional;
-import java.util.Set;
+package com.myhome.security.jwt;
 
 /**
- * Interface for service layer.
+ * Implementation should provide a logic to Encode and Decode Application's JWT.
  */
-public interface UserService {
-  UserDto createUser(UserDto request);
+public interface AppJwtEncoderDecoder {
+  AppJwt decode(String encodedJwt, String secret);
 
-  Set<User> listAll();
-
-  Set<User> listAll(Integer limit, Integer start);
-
-  Optional<UserDto> getUserDetails(String userId);
+  String encode(AppJwt jwt, String secret);
 }

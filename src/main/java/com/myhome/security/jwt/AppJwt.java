@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package com.myhome.services;
+package com.myhome.security.jwt;
 
-import com.myhome.controllers.dto.UserDto;
-import com.myhome.domain.User;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDateTime;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
 /**
- * Interface for service layer.
+ * Represents a JWT in the application.
  */
-public interface UserService {
-  UserDto createUser(UserDto request);
-
-  Set<User> listAll();
-
-  Set<User> listAll(Integer limit, Integer start);
-
-  Optional<UserDto> getUserDetails(String userId);
+@Builder
+@ToString
+@Getter
+public class AppJwt {
+  private final String userId;
+  private final LocalDateTime expiration;
 }

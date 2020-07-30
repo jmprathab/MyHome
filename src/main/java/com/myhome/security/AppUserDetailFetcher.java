@@ -18,43 +18,20 @@ package com.myhome.security;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
+import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
-import java.util.Collections;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-/**
- * Custom {@link UserDetailsService} catering to the need of service logic.
- */
-@Service
+@Component
 @RequiredArgsConstructor
-public class AppUserDetailsService implements UserDetailsService {
+public class AppUserDetailFetcher implements UserDetailFetcher {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
 
-  @Override public UserDetails loadUserByUsername(String username)
-      throws UsernameNotFoundException {
-
-    com.myhome.domain.User user = userRepository.findByEmail(username);
-    if (user == null) {
-      throw new UsernameNotFoundException(username);
-    }
-
-    return new User(user.getEmail(),
-        user.getEncryptedPassword(),
-        true,
-        true,
-        true,
-        true,
-        Collections.emptyList());
-  }
-
-  public UserDto getUserDetailsByUsername(String username) {
-    com.myhome.domain.User user = userRepository.findByEmail(username);
+  @Override public UserDto getUserDetailsByUsername(String username) {
+    User user = userRepository.findByEmail(username);
     if (user == null) {
       throw new UsernameNotFoundException(username);
     }
