@@ -24,7 +24,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
       - name: Upload code coverage
-        if: {{ github.ref == 'ref/head/master' }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: bash <(curl -s https://codecov.io/bash)
