@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.unittest;
+package com.myhome.controllers.unit;
 
 import com.myhome.controllers.UserController;
 import com.myhome.controllers.dto.UserDto;
