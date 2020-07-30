@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.dto;
+package com.myhome.security.jwt;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.LocalDateTime;
+import org.junit.jupiter.api.Test;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class HouseMemberDto {
-  private String memberId;
-  private String name;
+class AppJwtParamTest {
+
+  @Test
+  void testParamCreationBuilder() {
+    AppJwt param = AppJwt.builder().userId("test-user-id").expiration(LocalDateTime.now()).build();
+    System.out.println(param);
+  }
 }

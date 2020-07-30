@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.dto;
+package com.myhome.security;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.myhome.controllers.dto.UserDto;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class HouseMemberDto {
-  private String memberId;
-  private String name;
+public interface UserDetailFetcher {
+  UserDto getUserDetailsByUsername(String username);
 }

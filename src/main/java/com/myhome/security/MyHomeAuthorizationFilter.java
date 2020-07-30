@@ -16,15 +16,14 @@
 
 package com.myhome.security;
 
-import io.jsonwebtoken.Jwts;
+import com.myhome.security.jwt.AppJwt;
+import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import java.io.IOException;
 import java.util.Collections;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import io.jsonwebtoken.security.Keys;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,12 +33,15 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 public class MyHomeAuthorizationFilter extends BasicAuthenticationFilter {
 
   private final Environment environment;
+  private final AppJwtEncoderDecoder appJwtEncoderDecoder;
 
   public MyHomeAuthorizationFilter(
       AuthenticationManager authenticationManager,
-      Environment environment) {
+      Environment environment,
+      AppJwtEncoderDecoder appJwtEncoderDecoder) {
     super(authenticationManager);
     this.environment = environment;
+    this.appJwtEncoderDecoder = appJwtEncoderDecoder;
   }
 
   @Override
@@ -68,15 +70,11 @@ public class MyHomeAuthorizationFilter extends BasicAuthenticationFilter {
 
     String token =
         authHeader.replace(environment.getProperty("authorization.token.header.prefix"), "");
-    String userId = Jwts.parserBuilder()
-        .setSigningKey(Keys.hmacShaKeyFor(environment.getProperty("token.secret").getBytes())) //key needed to be changed here to match the one used in MyHomeAuthenticationFilter.successfulAuthentication
-            .build() //the build function is now required to replace deprecated API
-        .parseClaimsJws(token)
-        .getBody()
-        .getSubject();
-    if (userId == null) {
+    AppJwt jwt = appJwtEncoderDecoder.decode(token, environment.getProperty("token.secret"));
+
+    if (jwt.getUserId() == null) {
       return null;
     }
-    return new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+    return new UsernamePasswordAuthenticationToken(jwt.getUserId(), null, Collections.emptyList());
   }
 }

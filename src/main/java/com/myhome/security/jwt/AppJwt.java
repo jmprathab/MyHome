@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.dto;
+package com.myhome.security.jwt;
 
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 
-@AllArgsConstructor
-@NoArgsConstructor
+/**
+ * Represents a JWT in the application.
+ */
+@Builder
+@ToString
 @Getter
-@Setter
-public class HouseMemberDto {
-  private String memberId;
-  private String name;
+public class AppJwt {
+  private final String userId;
+  private final LocalDateTime expiration;
 }

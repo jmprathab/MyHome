@@ -27,10 +27,9 @@ import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.Set;
 import javax.validation.Valid;
-
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -147,8 +146,9 @@ public class HouseController {
   }
 
   @Operation(description = "Deletion of member associated with a house",
-          responses = {@ApiResponse(responseCode = "204", description = "If house member was removed from house"),
-            @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
+      responses = {
+          @ApiResponse(responseCode = "204", description = "If house member was removed from house"),
+          @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
   @DeleteMapping(
       path = "/houses/{houseId}/members/{memberId}"
   )
@@ -157,7 +157,7 @@ public class HouseController {
     log.trace("Received request to delete a member from house with house id[{}] and member id[{}]",
         houseId, memberId);
     boolean isMemberDeleted = houseService.deleteMemberFromHouse(houseId, memberId);
-    if(isMemberDeleted) {
+    if (isMemberDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

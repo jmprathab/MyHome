@@ -19,13 +19,13 @@ package com.myhome.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.LoginUserRequest;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import com.myhome.security.jwt.AppJwt;
+import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Objects;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +38,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 /**
  * Custom {@link UsernamePasswordAuthenticationFilter} for catering to service need. Generates JWT
  * token as a response for Login request.
@@ -46,14 +45,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
   private final ObjectMapper objectMapper;
   private final Environment environment;
-  private final AppUserDetailsService appUserDetailsService;
+  private final UserDetailFetcher userDetailFetcher;
+  private final AppJwtEncoderDecoder appJwtEncoderDecoder;
 
   public MyHomeAuthenticationFilter(ObjectMapper objectMapper,
-      AppUserDetailsService appUserDetailsService, Environment environment,
-      AuthenticationManager authenticationManager) {
+      Environment environment,
+      AuthenticationManager authenticationManager,
+      UserDetailFetcher userDetailFetcher,
+      AppJwtEncoderDecoder appJwtEncoderDecoder) {
+    this.appJwtEncoderDecoder = appJwtEncoderDecoder;
     super.setAuthenticationManager(authenticationManager);
+    this.userDetailFetcher = userDetailFetcher;
     this.objectMapper = objectMapper;
-    this.appUserDetailsService = appUserDetailsService;
     this.environment = environment;
   }
 
@@ -76,16 +79,14 @@ public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFi
       FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
     String username = ((User) authResult.getPrincipal()).getUsername();
-    UserDto userDto = appUserDetailsService.getUserDetailsByUsername(username);
+    UserDto userDto = userDetailFetcher.getUserDetailsByUsername(username);
 
-    String token = Jwts.builder()
-        .setSubject(userDto.getUserId())
-        .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(
-            Objects.requireNonNull(environment.getProperty("token.expiration_time")))))
-        .signWith(Keys.hmacShaKeyFor(environment.getProperty("token.secret").getBytes()),
-                SignatureAlgorithm.HS512) //to replace the deprecated API calls, you need to call the signWith(Key, SignatureAlgorithm) method. For this you need to convert the string token to a Key (SecretKey in this case) and this can be done as here
-        .compact();
-
+    LocalDateTime expiration = new Date(System.currentTimeMillis() + Long.parseLong(
+        environment.getProperty("token.expiration_time"))).toInstant()
+        .atZone(ZoneId.systemDefault())
+        .toLocalDateTime();
+    AppJwt jwt = AppJwt.builder().userId(userDto.getUserId()).expiration(expiration).build();
+    String token = appJwtEncoderDecoder.encode(jwt, environment.getProperty("token.secret"));
     response.addHeader("token", token);
     response.addHeader("userId", userDto.getUserId());
   }

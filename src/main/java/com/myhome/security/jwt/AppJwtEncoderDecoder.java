@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.dto;
+package com.myhome.security.jwt;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+/**
+ * Implementation should provide a logic to Encode and Decode Application's JWT.
+ */
+public interface AppJwtEncoderDecoder {
+  AppJwt decode(String encodedJwt, String secret);
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class HouseMemberDto {
-  private String memberId;
-  private String name;
+  String encode(AppJwt jwt, String secret);
 }

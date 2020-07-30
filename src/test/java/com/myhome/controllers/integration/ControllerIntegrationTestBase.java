@@ -1,6 +1,19 @@
+/*
+ * Copyright 2020 Prathab Murugan
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.myhome.controllers.integration;
-
-import static java.util.Optional.ofNullable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,22 +35,25 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static java.util.Optional.ofNullable;
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = {
     MyHomeServiceApplication.class})
 public class ControllerIntegrationTestBase {
 
   @Autowired
-  private TestRestTemplate client;
-  @Autowired
   ObjectMapper objectMapper;
+  @Autowired
+  private TestRestTemplate client;
   @LocalServerPort
   private int randomPort;
   private String jwtToken;
 
-  protected <T> ResponseEntity<String> sendRequest(HttpMethod httpMethod, String urlParams, T body){
+  protected <T> ResponseEntity<String> sendRequest(HttpMethod httpMethod, String urlParams,
+      T body) {
     String url = String.format("http://localhost:%d/%s", randomPort, urlParams);
-    try{
+    try {
       return client.exchange(new URI(url), httpMethod,
           new HttpEntity<>(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body),
               getHttpEntityHeaders()), String.class);
@@ -46,8 +62,8 @@ public class ControllerIntegrationTestBase {
     }
   }
 
-  protected <T> T readValue (ResponseEntity<String> response, Class<T> type){
-    try{
+  protected <T> T readValue(ResponseEntity<String> response, Class<T> type) {
+    try {
       return objectMapper.readValue(response.getBody(), type);
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
