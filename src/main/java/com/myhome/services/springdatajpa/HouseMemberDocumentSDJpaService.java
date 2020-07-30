@@ -46,54 +46,43 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
 
     @Override
     public Optional<HouseMemberDocument> findHouseMemberDocument(String memberId) {
-        HouseMember member = houseMemberRepository.findByMemberId(memberId);
-        if(member != null) {
-            return Optional.ofNullable(member.getHouseMemberDocument());
-        } else {
-            return Optional.empty();
-        }
+        return houseMemberRepository.findByMemberId(memberId)
+                .map(member -> member.getHouseMemberDocument());
     }
 
     @Override
     public boolean deleteHouseMemberDocument(String memberId) {
-        boolean documentDeleted = false;
-        HouseMember member = houseMemberRepository.findByMemberId(memberId);
-        if (member != null) {
-            houseMemberDocumentRepository.delete(member.getHouseMemberDocument());
-            member.setHouseMemberDocument(null);
-            houseMemberRepository.save(member);
-            documentDeleted = true;
-        }
-        return documentDeleted;
+        return houseMemberRepository.findByMemberId(memberId).map(member -> {
+            if(member.getHouseMemberDocument() != null) {
+                member.setHouseMemberDocument(null);
+                houseMemberRepository.save(member);
+            }
+            return true;
+        }).orElse(false);
     }
 
     @Override
     public Optional<HouseMemberDocument> updateHouseMemberDocument(MultipartFile multipartFile, String memberId) throws IOException {
-        HouseMember member = houseMemberRepository.findByMemberId(memberId);
-        if (member != null) {
+        return houseMemberRepository.findByMemberId(memberId).map(member -> {
             Optional<HouseMemberDocument> houseMemberDocument = tryCreateDocument(multipartFile, member);
             houseMemberDocument.ifPresent(document -> {
                 member.setHouseMemberDocument(document);
                 houseMemberRepository.save(member);
             });
             return houseMemberDocument;
-        } else {
-            return Optional.empty();
-        }    }
+        }).orElse(Optional.empty());
+    }
 
     @Override
     public Optional<HouseMemberDocument> createHouseMemberDocument(MultipartFile multipartFile, String memberId) throws IOException {
-        HouseMember member = houseMemberRepository.findByMemberId(memberId);
-        if (member != null) {
+        return houseMemberRepository.findByMemberId(memberId).map(member -> {
             Optional<HouseMemberDocument> houseMemberDocument = tryCreateDocument(multipartFile, member);
-            houseMemberDocument.map(document -> addDocumentToHouseMember(document, member));
+            houseMemberDocument.ifPresent(document -> addDocumentToHouseMember(document, member));
             return houseMemberDocument;
-        } else {
-            return Optional.empty();
-        }
+        }).orElse(Optional.empty());
     }
 
-    private Optional<HouseMemberDocument> tryCreateDocument(MultipartFile multipartFile, HouseMember member) throws IOException {
+    private Optional<HouseMemberDocument> tryCreateDocument(MultipartFile multipartFile, HouseMember member) {
 
         File memberDocumentFile = createMemberDocumentFile(member);
 
@@ -110,6 +99,8 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
             } else {
                 return Optional.empty();
             }
+        } catch (IOException e) {
+            return Optional.empty();
         } finally {
             memberDocumentFile.delete();
         }

@@ -22,7 +22,7 @@ public class HouseMember extends BaseEntity {
   @Column(nullable = false, unique = true)
   private String memberId;
 
-  @OneToOne(orphanRemoval = true, fetch = FetchType.LAZY)
+  @OneToOne(orphanRemoval = true)
   @JoinColumn(name = "document_id")
   private HouseMemberDocument houseMemberDocument;
 
