@@ -106,7 +106,6 @@ test {
   useJUnitPlatform()
 }
 
-
 // Jacoco
 test.finalizedBy jacocoTestReport
 
@@ -118,5 +117,13 @@ jacocoTestReport {
     xml.enabled false
     csv.enabled false
     html.destination file("${buildDir}/jacoco/jacocoHtml")
+  }
+
+  // Keep this until mapstruct team comes up with a better solution
+  // https://github.com/mapstruct/mapstruct/issues/1528
+  afterEvaluate {
+    classDirectories.setFrom(files(classDirectories.files.collect {
+      fileTree(dir: it, exclude: ['**/mapper/**', '**/mapper'])
+    }))
   }
 }

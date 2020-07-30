@@ -52,7 +52,7 @@ public class HouseSDJpaService implements HouseService {
   @Override public Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers) {
     CommunityHouse communityHouse = communityHouseRepository.findByHouseId(houseId);
     Set<HouseMember> savedMembers = new HashSet<>();
-    if(communityHouse != null) {
+    if (communityHouse != null) {
       houseMembers.forEach(member -> member.setMemberId(generateUniqueId()));
       houseMembers.forEach(member -> member.setCommunityHouse(communityHouse));
       houseMemberRepository.saveAll(houseMembers).forEach(savedMembers::add);
