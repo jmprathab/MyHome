@@ -41,8 +41,7 @@ public class CommunitySDJpaService implements CommunityService {
   private final CommunityMapper communityMapper;
   private final CommunityHouseRepository communityHouseRepository;
 
-  public CommunitySDJpaService(
-      CommunityRepository communityRepository,
+  public CommunitySDJpaService(CommunityRepository communityRepository,
       CommunityAdminRepository communityAdminRepository,
       CommunityMapper communityMapper,
       CommunityHouseRepository communityHouseRepository) {
@@ -75,7 +74,7 @@ public class CommunitySDJpaService implements CommunityService {
     if (!getCommunityDetailsById(communityId).isPresent()) return new Community();
     Community community = communityRepository.findByCommunityId(communityId);
 
-    Set<CommunityAdmin> savedAdminSet = new HashSet<CommunityAdmin>();
+    Set<CommunityAdmin> savedAdminSet = new HashSet<>();
     admins.forEach(s -> {
       CommunityAdmin admin = new CommunityAdmin();
       admin.setAdminId(s);
@@ -90,9 +89,11 @@ public class CommunitySDJpaService implements CommunityService {
   @Override
   public Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses) {
     if (!getCommunityDetailsById(communityId).isPresent()) return new HashSet<>();
-    houses.forEach(communityHouse -> communityHouse.setHouseId(generateUniqueId()));
     Community community = communityRepository.findByCommunityId(communityId);
-    houses.forEach(communityHouse -> communityHouse.setCommunity(community));
+    houses.stream().map(house -> {
+      house.setHouseId(generateUniqueId());
+      return house;
+    }).forEach(communityHouse -> communityHouse.setCommunity(community));
     Set<CommunityHouse> savedHouses = new HashSet<>();
     communityHouseRepository.saveAll(houses).forEach(savedHouses::add);
     community.getHouses().addAll(savedHouses);

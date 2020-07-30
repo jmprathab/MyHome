@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers;
+package com.myhome.controllers.unittest;
 
+import com.myhome.controllers.UserController;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.UserApiMapper;
 import com.myhome.controllers.request.CreateUserRequest;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers;
+package com.myhome.controllers.integration;
 
-import java.time.LocalDateTime;
+import com.myhome.controllers.HealthCheckController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,9 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = "test")
-class HealthCheckControllerTest {
-
-  private final String TEST_JWT = "test-user-id" + "+" + LocalDateTime.now();
+class HealthCheckControllerIntegrationTest {
 
   @Autowired MockMvc mockMvc;
 

@@ -19,6 +19,7 @@ package com.myhome.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import javax.servlet.Filter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -32,6 +33,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final Environment environment;
   private final ObjectMapper objectMapper;
@@ -39,18 +41,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final PasswordEncoder passwordEncoder;
   private final UserDetailFetcher userDetailFetcher;
   private final AppJwtEncoderDecoder appJwtEncoderDecoder;
-
-  public WebSecurity(Environment environment,
-      ObjectMapper objectMapper, UserDetailsService userDetailsService,
-      PasswordEncoder passwordEncoder, UserDetailFetcher userDetailFetcher,
-      AppJwtEncoderDecoder appJwtEncoderDecoder) {
-    this.environment = environment;
-    this.objectMapper = objectMapper;
-    this.userDetailsService = userDetailsService;
-    this.passwordEncoder = passwordEncoder;
-    this.userDetailFetcher = userDetailFetcher;
-    this.appJwtEncoderDecoder = appJwtEncoderDecoder;
-  }
 
   @Override protected void configure(HttpSecurity http) throws Exception {
     http.cors().and().csrf().disable();
