@@ -10,19 +10,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Value;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class HouseMemberDocumentServiceTest {
@@ -34,19 +31,8 @@ public class HouseMemberDocumentServiceTest {
     @Mock
     private HouseMemberRepository houseMemberRepository;
     
-    @Mock
-    private HouseMemberDocumentRepository houseMemberDocumentRepository;
-    
     @InjectMocks
     private HouseMemberDocumentSDJpaService houseMemberDocumentService;
-
-    private byte[] getImage(int height, int width) throws IOException {
-        BufferedImage documentImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        try(ByteArrayOutputStream imageBytesStream = new ByteArrayOutputStream()) {
-            ImageIO.write(documentImage, "jpg", imageBytesStream);
-            return imageBytesStream.toByteArray();
-        }
-    }
 
     @BeforeEach
     private void init() {
@@ -77,7 +63,7 @@ public class HouseMemberDocumentServiceTest {
         Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.findHouseMemberDocument(MEMBER_ID);
         // then
         assertFalse(houseMemberDocument.isPresent());
-        //verify(houseMemberRepository).findByMemberId(MEMBER_ID);
+        verify(houseMemberRepository).findByMemberId(MEMBER_ID);
     }
 
     @Test
@@ -119,6 +105,7 @@ public class HouseMemberDocumentServiceTest {
         assertTrue(isDocumentDeleted);
         assertNull(testMember.getHouseMemberDocument());
         verify(houseMemberRepository).findByMemberId(MEMBER_ID);
+        verify(houseMemberRepository, never()).save(testMember);
     }
 
     @Test
@@ -131,5 +118,6 @@ public class HouseMemberDocumentServiceTest {
         // then
         assertFalse(isDocumentDeleted);
         verify(houseMemberRepository).findByMemberId(MEMBER_ID);
+        verify(houseMemberRepository, never()).save(any());
     }
 }
