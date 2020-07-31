@@ -59,7 +59,7 @@ class DataLoader implements CommandLineRunner {
 
   @Override public void run(String... args) throws Exception {
     //loadPostmanData();
-    //loadData();
+    loadData();
   }
 
   private void loadPostmanData() {
