@@ -16,12 +16,9 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.File;
-import java.nio.file.Files;
 import java.util.Optional;
 
 @Service
@@ -82,15 +79,15 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
     private Optional<HouseMemberDocument> tryCreateDocument(MultipartFile multipartFile, HouseMember member) {
 
 
-        try(ByteArrayOutputStream imageBytesStream = new ByteArrayOutputStream()) {
+        try(ByteArrayOutputStream imageByteStream = new ByteArrayOutputStream()) {
             BufferedImage documentImage = getImageFromMultipartFile(multipartFile);
             if (multipartFile.getSize() < DataSize.ofKilobytes(compressionBorderSizeKBytes).toBytes()) {
-                writeImageToFile(documentImage, imageBytesStream);
+                writeImageToFile(documentImage, imageByteStream);
             } else {
-                compressImageToFile(documentImage, imageBytesStream);
+                compressImageToByteStream(documentImage, imageByteStream);
             }
-            if (imageBytesStream.size() < DataSize.ofKilobytes(maxFileSizeKBytes).toBytes()) {
-                HouseMemberDocument houseMemberDocument = saveHouseMemberDocument(imageBytesStream, String.format("member_%s_document.jpg", member.getMemberId()));
+            if (imageByteStream.size() < DataSize.ofKilobytes(maxFileSizeKBytes).toBytes()) {
+                HouseMemberDocument houseMemberDocument = saveHouseMemberDocument(imageByteStream, String.format("member_%s_document.jpg", member.getMemberId()));
                 return Optional.of(houseMemberDocument);
             } else {
                 return Optional.empty();
@@ -105,18 +102,18 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
         return houseMemberRepository.save(member);
     }
 
-    private HouseMemberDocument saveHouseMemberDocument(ByteArrayOutputStream imageBytesStream, String filename) throws IOException {
-        HouseMemberDocument newDocument = new HouseMemberDocument(filename, imageBytesStream.toByteArray());
+    private HouseMemberDocument saveHouseMemberDocument(ByteArrayOutputStream imageByteStream, String filename) throws IOException {
+        HouseMemberDocument newDocument = new HouseMemberDocument(filename, imageByteStream.toByteArray());
         return houseMemberDocumentRepository.save(newDocument);
     }
 
-    private void writeImageToFile(BufferedImage documentImage, ByteArrayOutputStream imageBytesStream) throws IOException {
-        ImageIO.write(documentImage, "jpg", imageBytesStream);
+    private void writeImageToFile(BufferedImage documentImage, ByteArrayOutputStream imageByteStream) throws IOException {
+        ImageIO.write(documentImage, "jpg", imageByteStream);
     }
 
-    private void compressImageToFile(BufferedImage bufferedImage, ByteArrayOutputStream imageBytesStream) throws IOException {
+    private void compressImageToByteStream(BufferedImage bufferedImage, ByteArrayOutputStream imageByteStream) throws IOException {
 
-        try (ImageOutputStream imageOutStream = ImageIO.createImageOutputStream(imageBytesStream)) {
+        try (ImageOutputStream imageOutStream = ImageIO.createImageOutputStream(imageByteStream)) {
 
             ImageWriter imageWriter = ImageIO.getImageWritersByFormatName("jpg").next();
             imageWriter.setOutput(imageOutStream);
