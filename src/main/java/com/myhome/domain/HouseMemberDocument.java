@@ -1,13 +1,12 @@
 package com.myhome.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
 
 @Entity
 @AllArgsConstructor
@@ -16,11 +15,10 @@ import javax.persistence.Lob;
 @Setter
 public class HouseMemberDocument extends BaseEntity {
 
-    @Column
-    private String documentFilename;
+  @Column
+  private String documentFilename;
 
-    @Lob
-    @Column
-    private byte[] documentContent = new byte[0];
-
+  @Lob
+  @Column
+  private byte[] documentContent = new byte[0];
 }
