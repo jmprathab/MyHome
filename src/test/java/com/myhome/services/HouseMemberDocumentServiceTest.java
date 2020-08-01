@@ -2,7 +2,6 @@ package com.myhome.services;
 
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.HouseMemberDocument;
-import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.springdatajpa.HouseMemberDocumentSDJpaService;
 import org.junit.jupiter.api.BeforeEach;
