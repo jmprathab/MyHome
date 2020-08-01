@@ -16,6 +16,14 @@
 
 package com.myhome.controllers.integration;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.myhome.controllers.HealthCheckController;
 import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.request.LoginUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
@@ -26,10 +34,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-class UserControllerIntegrationTest extends ControllerIntegrationTestBase {
+class ControllerIntegrationTest extends ControllerIntegrationTestBase {
 
   private static final String testUserName = "Test User";
   private static final String testUserEmail = "testuser@myhome.com";
@@ -78,5 +83,13 @@ class UserControllerIntegrationTest extends ControllerIntegrationTestBase {
     GetUserDetailsResponse getUserDetailsResponse =
         readValue(response, GetUserDetailsResponse.class);
     assertNotNull(getUserDetailsResponse.getUsers());
+  }
+
+  @Test
+  @DisplayName("HealthCheckControllerIntegrationTest statusCheck()")
+  void statusCheck() throws Exception {
+    mockMvc.perform(get("/status"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString(HealthCheckController.STATUS_HEALTHY)));
   }
 }

@@ -4,6 +4,6 @@
  |_|  |_|  \_, | |_||_| \___/ |_|_|_| \___|
            |__/
 ============================================
-Application Name: ${spring.application.name}
-Application Version: ${spring.application.version}
+Application Name: ${application.title}
+Application Version: ${application.version}
 ${AnsiColor.RED} :: Spring Boot${spring-boot.formatted-version} :: ${AnsiColor.DEFAULT}
