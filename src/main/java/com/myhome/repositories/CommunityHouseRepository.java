@@ -17,12 +17,15 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.CommunityHouse;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CommunityHouseRepository extends CrudRepository<CommunityHouse, Long> {
+public interface CommunityHouseRepository extends PagingAndSortingRepository<CommunityHouse, Long> {
   CommunityHouse findByHouseId(String houseId);
+
+  CommunityHouse findByHouseId(String houseId, Pageable pageable);
 
   void deleteByHouseId(String houseId);
 }

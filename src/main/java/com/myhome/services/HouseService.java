@@ -20,13 +20,16 @@ import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.data.domain.Pageable;
 
 public interface HouseService {
-  Set<CommunityHouse> listAllHouses();
+  Set<CommunityHouse> listAllHouses(Pageable pageable);
 
   Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers);
 
   boolean deleteMemberFromHouse(String houseId, String memberId);
 
   Optional<CommunityHouse> getHouseDetailsById(String houseId);
+
+  Optional<CommunityHouse> getHouseDetailsById(String houseId, Pageable pageable);
 }

@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -43,9 +44,10 @@ public class HouseSDJpaService implements HouseService {
     return UUID.randomUUID().toString();
   }
 
-  @Override public Set<CommunityHouse> listAllHouses() {
+  @Override
+  public Set<CommunityHouse> listAllHouses(Pageable pageable) {
     Set<CommunityHouse> communityHouses = new HashSet<>();
-    communityHouseRepository.findAll().forEach(communityHouses::add);
+    communityHouseRepository.findAll(pageable).forEach(communityHouses::add);
     return communityHouses;
   }
 
@@ -84,8 +86,13 @@ public class HouseSDJpaService implements HouseService {
     return isMemberRemoved;
   }
 
-  @Override public Optional<CommunityHouse> getHouseDetailsById(String houseId) {
-    CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
-    return house == null ? Optional.empty() : Optional.of(house);
+  @Override
+  public Optional<CommunityHouse> getHouseDetailsById(String houseId) {
+    return Optional.ofNullable(communityHouseRepository.findByHouseId(houseId));
+  }
+
+  @Override
+  public Optional<CommunityHouse> getHouseDetailsById(String houseId, Pageable pageable) {
+    return Optional.ofNullable(communityHouseRepository.findByHouseId(houseId, pageable));
   }
 }
