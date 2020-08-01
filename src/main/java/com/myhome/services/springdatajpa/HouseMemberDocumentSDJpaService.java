@@ -57,7 +57,7 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
 
   @Override
   public Optional<HouseMemberDocument> updateHouseMemberDocument(MultipartFile multipartFile,
-      String memberId) throws IOException {
+      String memberId) {
     return houseMemberRepository.findByMemberId(memberId).map(member -> {
       Optional<HouseMemberDocument> houseMemberDocument = tryCreateDocument(multipartFile, member);
       houseMemberDocument.ifPresent(document -> addDocumentToHouseMember(document, member));
@@ -67,7 +67,7 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
 
   @Override
   public Optional<HouseMemberDocument> createHouseMemberDocument(MultipartFile multipartFile,
-      String memberId) throws IOException {
+      String memberId) {
     return houseMemberRepository.findByMemberId(memberId).map(member -> {
       Optional<HouseMemberDocument> houseMemberDocument = tryCreateDocument(multipartFile, member);
       houseMemberDocument.ifPresent(document -> addDocumentToHouseMember(document, member));
@@ -104,7 +104,7 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
   }
 
   private HouseMemberDocument saveHouseMemberDocument(ByteArrayOutputStream imageByteStream,
-      String filename) throws IOException {
+      String filename) {
     HouseMemberDocument newDocument =
         new HouseMemberDocument(filename, imageByteStream.toByteArray());
     return houseMemberDocumentRepository.save(newDocument);
