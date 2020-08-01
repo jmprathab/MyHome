@@ -29,27 +29,20 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @Slf4j
+@RequiredArgsConstructor
+@Service
 public class CommunitySDJpaService implements CommunityService {
   private final CommunityRepository communityRepository;
   private final CommunityAdminRepository communityAdminRepository;
   private final CommunityMapper communityMapper;
   private final CommunityHouseRepository communityHouseRepository;
-
-  public CommunitySDJpaService(CommunityRepository communityRepository,
-      CommunityAdminRepository communityAdminRepository,
-      CommunityMapper communityMapper,
-      CommunityHouseRepository communityHouseRepository) {
-    this.communityRepository = communityRepository;
-    this.communityAdminRepository = communityAdminRepository;
-    this.communityMapper = communityMapper;
-    this.communityHouseRepository = communityHouseRepository;
-  }
 
   @Override public Community createCommunity(CommunityDto communityDto) {
     communityDto.setCommunityId(generateUniqueId());
@@ -59,15 +52,21 @@ public class CommunitySDJpaService implements CommunityService {
     return savedCommunity;
   }
 
-  @Override public Set<Community> listAll() {
+  @Override
+  public Set<Community> listAll(Pageable pageable) {
     Set<Community> communityListSet = new HashSet<>();
-    communityRepository.findAll().forEach(communityListSet::add);
+    communityRepository.findAll(pageable).forEach(communityListSet::add);
     return communityListSet;
   }
 
-  @Override public Optional<Community> getCommunityDetailsById(String communityId) {
-    Community community = communityRepository.findByCommunityId(communityId);
-    return community == null ? Optional.empty() : Optional.of(community);
+  @Override
+  public Optional<Community> getCommunityDetailsById(String communityId) {
+    return Optional.ofNullable(communityRepository.findByCommunityId(communityId));
+  }
+
+  @Override
+  public Optional<Community> getCommunityDetailsById(String communityId, Pageable pageable) {
+    return Optional.ofNullable(communityRepository.findByCommunityId(communityId, pageable));
   }
 
   @Override public Community addAdminsToCommunity(String communityId, Set<String> admins) {

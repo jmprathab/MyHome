@@ -21,13 +21,16 @@ import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.data.domain.Pageable;
 
 public interface CommunityService {
   Community createCommunity(CommunityDto communityDto);
 
-  Set<Community> listAll();
+  Set<Community> listAll(Pageable pageable);
 
   Optional<Community> getCommunityDetailsById(String communityId);
+
+  Optional<Community> getCommunityDetailsById(String communityId, Pageable pageable);
 
   Community addAdminsToCommunity(String communityId, Set<String> admins);
 

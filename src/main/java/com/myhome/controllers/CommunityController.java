@@ -38,6 +38,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -86,14 +88,17 @@ public class CommunityController {
       path = "/communities",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<GetCommunityDetailsResponse> listAllCommunity() {
+  public ResponseEntity<GetCommunityDetailsResponse> listAllCommunity(
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all community");
-    Set<Community> communityDetails = communityService.listAll();
+
+    Set<Community> communityDetails = communityService.listAll(pageable);
     Set<GetCommunityDetailsResponse.Community> communityDetailsResponse =
         communityApiMapper.communitySetToRestApiResponseCommunitySet(communityDetails);
 
     GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
     response.getCommunities().addAll(communityDetailsResponse);
+
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
@@ -123,19 +128,16 @@ public class CommunityController {
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<ListCommunityAdminsResponse> listCommunityAdmins(
-      @PathVariable String communityId) {
+      @PathVariable String communityId,
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all admins of community with id[{}]", communityId);
-    if (!communityService.getCommunityDetailsById(communityId).isPresent()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ListCommunityAdminsResponse());
-    }
-    Set<CommunityAdmin> adminDetails =
-        communityService.getCommunityDetailsById(communityId).get().getAdmins();
-    Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSet =
-        communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminDetails);
 
-    ListCommunityAdminsResponse response = new ListCommunityAdminsResponse();
-    response.getAdmins().addAll(communityAdminSet);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    return communityService.getCommunityDetailsById(communityId, pageable)
+        .map(Community::getAdmins)
+        .map(communityApiMapper::communityAdminSetToRestApiResponseCommunityAdminSet)
+        .map(ListCommunityAdminsResponse::new)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @Operation(description = "List all houses of the community given a community id")
@@ -144,19 +146,16 @@ public class CommunityController {
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
-      @PathVariable String communityId) {
+      @PathVariable String communityId,
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all houses of community with id[{}]", communityId);
-    if (!communityService.getCommunityDetailsById(communityId).isPresent()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GetHouseDetailsResponse());
-    }
-    Set<CommunityHouse> houseDetails =
-        communityService.getCommunityDetailsById(communityId).get().getHouses();
-    Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
-        communityApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
-    GetHouseDetailsResponse response = new GetHouseDetailsResponse();
-    response.setHouses(getHouseDetailsResponseSet);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    return communityService.getCommunityDetailsById(communityId, pageable)
+        .map(Community::getHouses)
+        .map(communityApiMapper::communityHouseSetToRestApiResponseCommunityHouseSet)
+        .map(GetHouseDetailsResponse::new)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @Operation(description = "Add a new admin to the community given a community id")

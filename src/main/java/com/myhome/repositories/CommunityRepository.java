@@ -17,14 +17,17 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.Community;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface CommunityRepository extends CrudRepository<Community, Long> {
+public interface CommunityRepository extends PagingAndSortingRepository<Community, Long> {
 
   Community findByCommunityId(String communityId);
+
+  Community findByCommunityId(String communityId, Pageable pageable);
 
   @Transactional
   Integer deleteByCommunityId(String communityId);
