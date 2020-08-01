@@ -20,6 +20,7 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.domain.User;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Interface for service layer.
@@ -29,7 +30,7 @@ public interface UserService {
 
   Set<User> listAll();
 
-  Set<User> listAll(Integer limit, Integer start);
+  Set<User> listAll(Pageable pageable);
 
   Optional<UserDto> getUserDetails(String userId);
 }
