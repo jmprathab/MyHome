@@ -53,6 +53,13 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override
+  public Set<Community> listAll() {
+    Set<Community> communityListSet = new HashSet<>();
+    communityRepository.findAll().forEach(communityListSet::add);
+    return communityListSet;
+  }
+
+  @Override
   public Set<Community> listAll(Pageable pageable) {
     Set<Community> communityListSet = new HashSet<>();
     communityRepository.findAll(pageable).forEach(communityListSet::add);

@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -94,8 +95,9 @@ class UserControllerTest {
   @Test
   void shouldListUsersSuccess() {
     // given
-    Integer limit = 150;
-    Integer start = 50;
+    int limit = 150;
+    int start = 50;
+    PageRequest pageRequest = PageRequest.of(start, limit);
 
     Set<User> users = new HashSet<>();
     users.add(new User(TEST_NAME, TEST_ID, TEST_EMAIL, TEST_PASSWORD));
@@ -111,19 +113,19 @@ class UserControllerTest {
     );
     GetUserDetailsResponse expectedResponse = new GetUserDetailsResponse(responseUsers);
 
-    given(userService.listAll(limit, start))
+    given(userService.listAll(pageRequest))
         .willReturn(users);
     given(userApiMapper.userSetToRestApiResponseUserSet(users))
         .willReturn(responseUsers);
 
     // when
     ResponseEntity<GetUserDetailsResponse> responseEntity =
-        userController.listAllUsers(limit, start);
+        userController.listAllUsers(pageRequest);
 
     // then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     assertEquals(expectedResponse, responseEntity.getBody());
-    verify(userService).listAll(limit, start);
+    verify(userService).listAll(pageRequest);
     verify(userApiMapper).userSetToRestApiResponseUserSet(users);
   }
 

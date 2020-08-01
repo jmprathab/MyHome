@@ -26,6 +26,8 @@ import org.springframework.data.domain.Pageable;
 public interface CommunityService {
   Community createCommunity(CommunityDto communityDto);
 
+  Set<Community> listAll();
+
   Set<Community> listAll(Pageable pageable);
 
   Optional<Community> getCommunityDetailsById(String communityId);

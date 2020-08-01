@@ -45,6 +45,13 @@ public class HouseSDJpaService implements HouseService {
   }
 
   @Override
+  public Set<CommunityHouse> listAllHouses() {
+    Set<CommunityHouse> communityHouses = new HashSet<>();
+    communityHouseRepository.findAll().forEach(communityHouses::add);
+    return communityHouses;
+  }
+
+  @Override
   public Set<CommunityHouse> listAllHouses(Pageable pageable) {
     Set<CommunityHouse> communityHouses = new HashSet<>();
     communityHouseRepository.findAll(pageable).forEach(communityHouses::add);
