@@ -37,7 +37,7 @@ public class HouseMemberDocumentServiceTest {
     private void init() {
         MockitoAnnotations.initMocks(this);
     }
-    
+
     @Test
     void findMemberDocumentSuccess() {
         // given
