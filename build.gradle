@@ -49,6 +49,9 @@ ext {
 }
 
 dependencies {
+
+
+
   // Spring web
   implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -56,6 +59,8 @@ dependencies {
   testImplementation('org.springframework.boot:spring-boot-starter-test') {
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+  testImplementation 'junit:junit:4.12'
+  implementation 'junit:junit:4.12'
 
   // Spring security
   implementation 'org.springframework.boot:spring-boot-starter-security'
