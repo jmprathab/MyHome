@@ -5,7 +5,6 @@ import com.myhome.domain.HouseMemberDocument;
 import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.springdatajpa.HouseMemberDocumentSDJpaService;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -64,19 +63,21 @@ public class HouseMemberDocumentServiceTestAdditional {
         // given
         byte[] imageBytes = getImageAsByteArray(10, 10);
         MockMultipartFile newDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
+        HouseMemberDocument savedDocument = new HouseMemberDocument(String.format("member_%s_document.jpg", MEMBER_ID), imageBytes);
         HouseMember testMember = new HouseMember(MEMBER_ID, MEMBER_DOCUMENT, MEMBER_NAME, null);
 
         given(houseMemberRepository.findByMemberId(MEMBER_ID))
                 .willReturn(Optional.of(testMember));
-        given(houseMemberDocumentRepository.save(any()))
-                .willReturn(new HouseMemberDocument("mock-document-name", imageBytes));
+        given(houseMemberDocumentRepository.save(savedDocument))
+                .willReturn(savedDocument);
         // when
         Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.updateHouseMemberDocument(newDocumentFile, MEMBER_ID);
+
         // then
         assertTrue(houseMemberDocument.isPresent());
         assertEquals(testMember.getHouseMemberDocument(), houseMemberDocument.get());
         verify(houseMemberRepository).findByMemberId(MEMBER_ID);
-        verify(houseMemberDocumentRepository).save(any());
+        verify(houseMemberDocumentRepository).save(savedDocument);
         verify(houseMemberRepository).save(testMember);
     }
 
@@ -90,6 +91,7 @@ public class HouseMemberDocumentServiceTestAdditional {
                 .willReturn(Optional.empty());
         // when
         Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.updateHouseMemberDocument(newDocumentFile, MEMBER_ID);
+
         // then
         assertFalse(houseMemberDocument.isPresent());
         verify(houseMemberRepository).findByMemberId(MEMBER_ID);
@@ -99,7 +101,6 @@ public class HouseMemberDocumentServiceTestAdditional {
     }
 
     @Test
-    @Ignore("not working")
     void updateHouseMemberDocumentTooLargeFile() throws IOException {
         // given
         byte[] imageBytes = getImageAsByteArray(10, 10);
@@ -110,6 +111,7 @@ public class HouseMemberDocumentServiceTestAdditional {
                 .willReturn(Optional.of(testMember));
         // when
         Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.updateHouseMemberDocument(tooLargeDocumentFile, MEMBER_ID);
+
         // then
         assertFalse(houseMemberDocument.isPresent());
         assertEquals(testMember.getHouseMemberDocument(), MEMBER_DOCUMENT);
@@ -122,20 +124,22 @@ public class HouseMemberDocumentServiceTestAdditional {
     void createHouseMemberDocumentSuccess() throws IOException {
         // given
         byte[] imageBytes = getImageAsByteArray(10, 10);
+        HouseMemberDocument savedDocument = new HouseMemberDocument(String.format("member_%s_document.jpg", MEMBER_ID), imageBytes);
         MockMultipartFile newDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
         HouseMember testMember = new HouseMember(MEMBER_ID, MEMBER_DOCUMENT, MEMBER_NAME, null);
 
         given(houseMemberRepository.findByMemberId(MEMBER_ID))
                 .willReturn(Optional.of(testMember));
-        given(houseMemberDocumentRepository.save(any()))
-                .willReturn(new HouseMemberDocument("mock-document-name", imageBytes));
+        given(houseMemberDocumentRepository.save(savedDocument))
+                .willReturn(savedDocument);
         // when
         Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.createHouseMemberDocument(newDocumentFile, MEMBER_ID);
+
         // then
         assertTrue(houseMemberDocument.isPresent());
         assertNotEquals(testMember.getHouseMemberDocument().getDocumentFilename(), MEMBER_DOCUMENT.getDocumentFilename());
         verify(houseMemberRepository).findByMemberId(MEMBER_ID);
-        verify(houseMemberDocumentRepository).save(any());
+        verify(houseMemberDocumentRepository).save(savedDocument);
         verify(houseMemberRepository).save(testMember);
     }
 
@@ -149,6 +153,7 @@ public class HouseMemberDocumentServiceTestAdditional {
                 .willReturn(Optional.empty());
         // when
         Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.createHouseMemberDocument(newDocumentFile, MEMBER_ID);
+
         // then
         assertFalse(houseMemberDocument.isPresent());
         verify(houseMemberRepository).findByMemberId(MEMBER_ID);
@@ -157,7 +162,6 @@ public class HouseMemberDocumentServiceTestAdditional {
     }
 
     @Test
-    @Ignore("not working")
     void createHouseMemberDocumentTooLargeFile() throws IOException {
         // given
         byte[] imageBytes = getImageAsByteArray(1, 1);
@@ -168,6 +172,7 @@ public class HouseMemberDocumentServiceTestAdditional {
                 .willReturn(Optional.of(testMember));
         // when
         Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.createHouseMemberDocument(tooLargeDocumentFile, MEMBER_ID);
+
         // then
         assertFalse(houseMemberDocument.isPresent());
         assertEquals(testMember.getHouseMemberDocument(), MEMBER_DOCUMENT);
