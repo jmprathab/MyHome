@@ -55,7 +55,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
   private MockMvc mockMvc;
 
   @BeforeEach
-  void authUser() {
+  void setUp() {
     if(!houseMemberRepository.findByMemberId(MEMBER_ID).isPresent()) {
       HouseMember member = houseMemberRepository.save(new HouseMember(MEMBER_ID, null, "test-member-name", null));
       member.setMemberId(MEMBER_ID);
@@ -73,23 +73,26 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   @Test
   void getHouseMemberDocumentSuccess() throws Exception {
+    // given
     addDefaultHouseMemberDocument();
-
+    // when
     MvcResult mvcResult = mockMvc.perform(get("/members/{memberId}/documents", MEMBER_ID)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isOk())
         .andReturn();
-    HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
 
+    // then
+    HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
     assertEquals(mvcResult.getResponse().getContentType(), MediaType.IMAGE_JPEG_VALUE);
     assertEquals(mvcResult.getResponse().getContentAsByteArray().length, member.getHouseMemberDocument().getDocumentContent().length);
   }
 
   @Test
   void getHouseMemberDocumentMemberNotExists() throws Exception {
+    // given
     addDefaultHouseMemberDocument();
-
+    // when
     mockMvc.perform(get("/members/{memberId}/documents", "non-existing-member-id")
         .headers(getHttpEntityHeaders()))
         .andDo(print())
@@ -98,73 +101,80 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   @Test
   void addHouseMemberDocumentSuccess() throws Exception {
+    // given
     byte[] imageBytes = getImageAsByteArray(10, 10);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
-
+    // when
     mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", MEMBER_ID)
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isNoContent());
 
+    // then
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
     assertEquals(member.getHouseMemberDocument().getDocumentFilename(), String.format("member_%s_document.jpg", MEMBER_ID));
   }
 
   @Test
   void addHouseMemberDocumentMemberNotExists() throws Exception {
+    // given
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
-
+    // when
     mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", "non-exist-member-id")
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isNotFound());
 
+    // then
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
     assertNull(member.getHouseMemberDocument());
   }
 
   @Test
   void addHouseMemberDocumentTooLargeFile() throws Exception {
+    // given
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
-
+    // when
     mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", MEMBER_ID)
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isNotFound());
 
+    // then
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
     assertNull(member.getHouseMemberDocument());
   }
 
   @Test
   void putHouseMemberDocumentSuccess() throws Exception {
+    // given
     byte[] imageBytes = getImageAsByteArray(10, 10);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
-
     addDefaultHouseMemberDocument();
-
+    // when
     mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", MEMBER_ID)
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isNoContent());
 
+    // then
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
     assertEquals(member.getHouseMemberDocument().getDocumentFilename(), String.format("member_%s_document.jpg", member.getMemberId()));
   }
 
   @Test
   void putHouseMemberDocumentMemberNotExists() throws Exception {
+    // given
     byte[] imageBytes = getImageAsByteArray(10, 10);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
-
     addDefaultHouseMemberDocument();
-
+    // when
     mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", "non-exist-member-id")
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
@@ -174,36 +184,40 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   @Test
   void putHouseMemberDocumentTooLargeFile() throws Exception {
+    // given
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
-
     addDefaultHouseMemberDocument();
-
+    // when
     mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", MEMBER_ID)
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isNotFound());
 
+    // then
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
     assertNotEquals(member.getHouseMemberDocument().getDocumentFilename(), String.format("member_%s_document.jpg", member.getMemberId()));
   }
 
   @Test
   void deleteHouseMemberDocumentSuccess() throws Exception {
+    // given
     addDefaultHouseMemberDocument();
-
+    // when
     mockMvc.perform(delete("/members/{memberId}/documents", MEMBER_ID)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isNoContent());
 
+    // then
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
     assertNull(member.getHouseMemberDocument());
   }
 
   @Test
   void deleteHouseMemberDocumentMemberNotExists() throws Exception {
+    // given
     addDefaultHouseMemberDocument();
 
     mockMvc.perform(delete("/members/{memberId}/documents", "non-existing-member-id")
