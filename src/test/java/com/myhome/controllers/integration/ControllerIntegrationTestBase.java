@@ -70,7 +70,7 @@ public class ControllerIntegrationTestBase {
     }
   }
 
-  private HttpHeaders getHttpEntityHeaders() {
+  protected HttpHeaders getHttpEntityHeaders() {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     ofNullable(jwtToken).ifPresent(headers::setBearerAuth);
