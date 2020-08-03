@@ -45,6 +45,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   private static final String MEMBER_ID = "default-member-id-for-testing";
   private static final String TEST_DOCUMENT_NAME = "test-document";
+  private static final String TESTING_ENDPOINT_URL = "/members/{memberId}/documents";
   private static final String TEST_USERNAME = "Test User";
   private static final String TEST_USER_EMAIL = "testuser@myhome.com";
   private static final String TEST_USER_PASSWORD = "testpassword";
@@ -70,7 +71,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     // given
     addDefaultHouseMemberDocument();
     // when
-    MvcResult mvcResult = mockMvc.perform(get("/members/{memberId}/documents", MEMBER_ID)
+    MvcResult mvcResult = mockMvc.perform(get(TESTING_ENDPOINT_URL, MEMBER_ID)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isOk())
@@ -87,7 +88,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     // given
     addDefaultHouseMemberDocument();
     // when
-    mockMvc.perform(get("/members/{memberId}/documents", "non-existing-member-id")
+    mockMvc.perform(get(TESTING_ENDPOINT_URL, "non-existing-member-id")
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isNotFound());
@@ -99,7 +100,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     byte[] imageBytes = getImageAsByteArray(10, 10);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     // when
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", MEMBER_ID)
+    mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
@@ -116,7 +117,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     // when
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", "non-exist-member-id")
+    mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, "non-exist-member-id")
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
@@ -133,7 +134,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     // when
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", MEMBER_ID)
+    mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
@@ -151,7 +152,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     addDefaultHouseMemberDocument();
     // when
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", MEMBER_ID)
+    mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
@@ -169,7 +170,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     addDefaultHouseMemberDocument();
     // when
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", "non-exist-member-id")
+    mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, "non-exist-member-id")
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
@@ -183,7 +184,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     addDefaultHouseMemberDocument();
     // when
-    mockMvc.perform(MockMvcRequestBuilders.multipart("/members/{memberId}/documents", MEMBER_ID)
+    mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
@@ -199,7 +200,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     // given
     addDefaultHouseMemberDocument();
     // when
-    mockMvc.perform(delete("/members/{memberId}/documents", MEMBER_ID)
+    mockMvc.perform(delete(TESTING_ENDPOINT_URL, MEMBER_ID)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isNoContent());
@@ -214,7 +215,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     // given
     addDefaultHouseMemberDocument();
 
-    mockMvc.perform(delete("/members/{memberId}/documents", "non-existing-member-id")
+    mockMvc.perform(delete(TESTING_ENDPOINT_URL, "non-existing-member-id")
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isNotFound());
@@ -222,7 +223,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   @Test
   void deleteHouseMemberDocumentNoDocumentPresent() throws Exception {
-    mockMvc.perform(delete("/members/{memberId}/documents", MEMBER_ID)
+    mockMvc.perform(delete(TESTING_ENDPOINT_URL, MEMBER_ID)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isNotFound());
@@ -231,7 +232,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   @Test
   void getHouseMemberDocumentNoDocumentPresent() throws Exception {
-    mockMvc.perform(get("/members/{memberId}/documents", MEMBER_ID)
+    mockMvc.perform(get(TESTING_ENDPOINT_URL, MEMBER_ID)
         .headers(getHttpEntityHeaders()))
         .andDo(print())
         .andExpect(status().isNotFound());
