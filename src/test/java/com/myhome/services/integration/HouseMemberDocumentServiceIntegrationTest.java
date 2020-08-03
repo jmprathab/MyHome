@@ -44,9 +44,9 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   private static final String MEMBER_ID = "default-member-id-for-testing";
   private static final String TEST_DOCUMENT_NAME = "test-document";
-  private static final String testUserName = "Test User";
-  private static final String testUserEmail = "testuser@myhome.com";
-  private static final String testUserPassword = "testpassword";
+  private static final String TEST_USERNAME = "Test User";
+  private static final String TEST_USER_EMAIL = "testuser@myhome.com";
+  private static final String TEST_USER_PASSWORD = "testpassword";
   @Autowired
   private HouseMemberDocumentRepository houseMemberDocumentRepository;
   @Autowired
@@ -254,11 +254,11 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
   }
 
   private void authDefaultUser() {
-    if (userRepository.findByEmail(testUserEmail) == null) {
-      CreateUserRequest createUserRequest = new CreateUserRequest(testUserName, testUserEmail, testUserPassword);
+    if (userRepository.findByEmail(TEST_USER_EMAIL) == null) {
+      CreateUserRequest createUserRequest = new CreateUserRequest(TEST_USERNAME, TEST_USER_EMAIL, TEST_USER_PASSWORD);
       sendRequest(HttpMethod.POST, "users", createUserRequest);
     }
-    updateJwtToken(new LoginUserRequest(testUserEmail, testUserPassword));
+    updateJwtToken(new LoginUserRequest(TEST_USER_EMAIL, TEST_USER_PASSWORD));
   }
 
   private byte[] getImageAsByteArray(int height, int width) throws IOException {
