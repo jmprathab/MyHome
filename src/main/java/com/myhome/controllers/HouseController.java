@@ -24,12 +24,13 @@ import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListHouseMembersResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
-import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.Set;
 import javax.validation.Valid;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,21 +43,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 @Slf4j
 public class HouseController {
-  private final CommunityHouseRepository communityHouseRepository;
   private final HouseMemberMapper houseMemberMapper;
   private final HouseService houseService;
   private final HouseApiMapper houseApiMapper;
-
-  public HouseController(CommunityHouseRepository communityHouseRepository,
-      HouseMemberMapper houseMemberMapper, HouseService houseService,
-      HouseApiMapper houseApiMapper) {
-    this.communityHouseRepository = communityHouseRepository;
-    this.houseMemberMapper = houseMemberMapper;
-    this.houseService = houseService;
-    this.houseApiMapper = houseApiMapper;
-  }
 
   @Operation(description = "List all houses of the community given a community id")
   @GetMapping(
