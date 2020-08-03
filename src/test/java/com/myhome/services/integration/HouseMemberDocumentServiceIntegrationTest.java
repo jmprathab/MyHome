@@ -8,7 +8,6 @@ import com.myhome.domain.HouseMemberDocument;
 import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.repositories.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -40,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "files.compressionBorderSizeKBytes=99",
     "files.compressedImageQuality=0.99"
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegrationTestBase {
 
   private static final String MEMBER_ID = "default-member-id-for-testing";
@@ -58,19 +59,10 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   @BeforeEach
   void setUp() {
-    if(!houseMemberRepository.findByMemberId(MEMBER_ID).isPresent()) {
-      HouseMember member = houseMemberRepository.save(new HouseMember(MEMBER_ID, null, "test-member-name", null));
-      member.setMemberId(MEMBER_ID);
-      houseMemberRepository.save(member);
-    }
-    authDefaultUser();
-  }
-
-  @AfterEach()
-  void cleanHouseMemberDocument() {
-    HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
-    member.setHouseMemberDocument(null);
+    HouseMember member = houseMemberRepository.save(new HouseMember(MEMBER_ID, null, "test-member-name", null));
+    member.setMemberId(MEMBER_ID);
     houseMemberRepository.save(member);
+    authDefaultUser();
   }
 
   @Test
