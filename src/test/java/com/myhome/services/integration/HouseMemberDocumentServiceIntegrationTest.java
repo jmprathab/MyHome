@@ -70,6 +70,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
   void getHouseMemberDocumentSuccess() throws Exception {
     // given
     addDefaultHouseMemberDocument();
+    
     // when
     MvcResult mvcResult = mockMvc.perform(get(TESTING_ENDPOINT_URL, MEMBER_ID)
         .headers(getHttpEntityHeaders()))
@@ -87,6 +88,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
   void getHouseMemberDocumentMemberNotExists() throws Exception {
     // given
     addDefaultHouseMemberDocument();
+
     // when
     mockMvc.perform(get(TESTING_ENDPOINT_URL, "non-existing-member-id")
         .headers(getHttpEntityHeaders()))
@@ -99,6 +101,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     // given
     byte[] imageBytes = getImageAsByteArray(10, 10);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
+    
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
@@ -116,6 +119,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     // given
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
+    
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, "non-exist-member-id")
         .file(mockImageFile)
@@ -133,6 +137,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     // given
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
+    
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
@@ -151,6 +156,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     byte[] imageBytes = getImageAsByteArray(10, 10);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     addDefaultHouseMemberDocument();
+    
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
@@ -169,6 +175,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     byte[] imageBytes = getImageAsByteArray(10, 10);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     addDefaultHouseMemberDocument();
+    
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, "non-exist-member-id")
         .file(mockImageFile)
@@ -183,6 +190,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     addDefaultHouseMemberDocument();
+    
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
@@ -199,6 +207,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
   void deleteHouseMemberDocumentSuccess() throws Exception {
     // given
     addDefaultHouseMemberDocument();
+    
     // when
     mockMvc.perform(delete(TESTING_ENDPOINT_URL, MEMBER_ID)
         .headers(getHttpEntityHeaders()))
@@ -215,6 +224,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     // given
     addDefaultHouseMemberDocument();
 
+    // when
     mockMvc.perform(delete(TESTING_ENDPOINT_URL, "non-existing-member-id")
         .headers(getHttpEntityHeaders()))
         .andDo(print())
