@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -79,9 +80,10 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
         .andReturn();
 
     // then
+    MockHttpServletResponse response = mvcResult.getResponse();
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
-    assertEquals(mvcResult.getResponse().getContentType(), MediaType.IMAGE_JPEG_VALUE);
-    assertEquals(mvcResult.getResponse().getContentAsByteArray().length, member.getHouseMemberDocument().getDocumentContent().length);
+    assertEquals(response.getContentType(), MediaType.IMAGE_JPEG_VALUE);
+    assertEquals(response.getContentAsByteArray().length, member.getHouseMemberDocument().getDocumentContent().length);
   }
 
   @Test
