@@ -1,4 +1,5 @@
 INSERT INTO "PUBLIC"."COMMUNITY"("ID", "COMMUNITY_ID", "DISTRICT", "NAME") VALUES
+(0, 'default-community-id-for-testing', 'MyHome default community district', 'MyHome default community'),
 (1, 'd8ef3522-1193-4ec2-bc10-7f79a69d8040', 'Wonderland', 'Test Community 1'),
 (2, '5d55e016-5e94-4ba1-8bd0-86578b49327b', 'Wonderland', 'Test Community 2'),
 (3, '14b5f9f1-271a-4739-b38c-fb13ea5a9693', 'Wonderland', 'Test Community 3'),
@@ -52,6 +53,8 @@ INSERT INTO "PUBLIC"."COMMUNITY"("ID", "COMMUNITY_ID", "DISTRICT", "NAME") VALUE
 
 
 INSERT INTO "PUBLIC"."USER"("ID", "EMAIL", "ENCRYPTED_PASSWORD", "NAME", "USER_ID") VALUES
+-- test user password - testtest
+(0, 'test@test.com', '$2a$10$9LPq9HKQRPe/HP1zeOoxyuqj.SSMXWmvJNBBtjnX1Ftm1Y9f70ofm', 'Test', 'default-user-id-for-testing'),
 (1, 'testuser1@myhome.com', '$2a$10$dkGFwWtwiJ2wkW7o49dyp.0maTXH8HYUC1nz/9v.Zu5.0dyXw3IP2', 'Test User 1', '0c0ee99f-845a-4433-8581-1d3525add05c'),
 (2, 'testuser2@myhome.com', '$2a$10$lDQ8tnfwYnVGGSf0FhTkIOs2.ty8pox/dZHdxPQPhxOxN.b9o.UCi', 'Test User 2', '1e25a4d9-8421-448e-bfe0-4749c48586de'),
 (3, 'testuser3@myhome.com', '$2a$10$i2NKzapQXaclCPl5mnXgEuqwuKpVMI4TfFdJHKOdkjK/5FJE5nR9W', 'Test User 3', '4c62eb04-850b-448c-ae98-b87a02a9b8c2'),
@@ -614,6 +617,7 @@ INSERT INTO "PUBLIC"."COMMUNITY_ADMIN"("ID", "ADMIN_ID") VALUES
 
 
 INSERT INTO "PUBLIC"."COMMUNITY_ADMINS"("COMMUNITIES_ID", "ADMINS_ID") VALUES
+(0, 0),
 (37, 2),
 (37, 5),
 (37, 9),
@@ -1117,6 +1121,7 @@ INSERT INTO "PUBLIC"."COMMUNITY_ADMINS"("COMMUNITIES_ID", "ADMINS_ID") VALUES
 (46, 498);
 
 INSERT INTO "PUBLIC"."COMMUNITY_HOUSE"("ID", "HOUSE_ID", "NAME", "COMMUNITY_ID") VALUES
+(0, 'default-house-id-for-testing', 'MyHome default house', 0),
 (1, '97e10b62-97db-4357-82be-21a58d6c6e65', 'Test House 1', 10),
 (2, '80927e39-973d-4a00-b698-0317a87f8875', 'Test House 9', 10),
 (3, '5e4863d1-20cb-4f90-865d-c5060724db95', 'Test House 2', 10),
@@ -1628,6 +1633,7 @@ INSERT INTO "PUBLIC"."COMMUNITY_HOUSE"("ID", "HOUSE_ID", "NAME", "COMMUNITY_ID")
 
 
 INSERT INTO "PUBLIC"."COMMUNITY_HOUSES"("COMMUNITY_ID", "HOUSES_ID") VALUES
+(0, 0),
 (10, 5),
 (10, 7),
 (10, 9),
@@ -2131,6 +2137,7 @@ INSERT INTO "PUBLIC"."COMMUNITY_HOUSES"("COMMUNITY_ID", "HOUSES_ID") VALUES
 (7, 494);
 
 INSERT INTO "PUBLIC"."HOUSE_MEMBER"("ID", "MEMBER_ID", "NAME", "COMMUNITY_HOUSE_ID", "DOCUMENT_ID") VALUES
+(0, 'default-member-id-for-testing', 'MyHome default house member', 0, NULL),
 (1, 'd296cfc2-35ed-4a72-8e29-a235a69165c5', 'Test User 13', 251, NULL),
 (2, '213012e2-e19d-4e65-9163-7f158d7d67ce', 'Test User 18', 251, NULL),
 (3, '01813ed7-c906-46b6-af07-d128e69c2fef', 'Test User 19', 251, NULL),
@@ -7226,6 +7233,7 @@ INSERT INTO "PUBLIC"."HOUSE_MEMBER"("ID", "MEMBER_ID", "NAME", "COMMUNITY_HOUSE_
 
 
 INSERT INTO "PUBLIC"."COMMUNITY_HOUSE_HOUSE_MEMBERS"("COMMUNITY_HOUSE_ID", "HOUSE_MEMBERS_ID") VALUES
+(0, 0),
 (251, 8),
 (251, 7),
 (251, 10),
