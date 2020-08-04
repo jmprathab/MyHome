@@ -61,9 +61,11 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   @BeforeEach
   void setUp() {
-    HouseMember member = houseMemberRepository.save(new HouseMember(MEMBER_ID, null, "test-member-name", null));
-    member.setMemberId(MEMBER_ID);
-    houseMemberRepository.save(member);
+    if(!houseMemberRepository.findByMemberId(MEMBER_ID).isPresent()) {
+      HouseMember member = houseMemberRepository.save(new HouseMember(MEMBER_ID, null, "test-member-name", null));
+      member.setMemberId(MEMBER_ID);
+      houseMemberRepository.save(member);
+    }
     authDefaultUser();
   }
 
