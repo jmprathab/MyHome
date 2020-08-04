@@ -17,10 +17,14 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.CommunityAdmin;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface CommunityAdminRepository extends CrudRepository<CommunityAdmin, Long> {
+public interface CommunityAdminRepository extends JpaRepository<CommunityAdmin, Long> {
+
+  Optional<CommunityAdmin> findByAdminId(String adminId);
 
 }
