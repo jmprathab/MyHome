@@ -26,6 +26,7 @@ import com.myhome.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.Set;
+import java.util.Optional;
 import javax.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
 /**
  * Controller for facilitating user actions.
  */
@@ -50,7 +52,19 @@ public class UserController {
   private final UserService userService;
   private final UserApiMapper userApiMapper;
 
-  @Operation(description = "Create a new user")
+  @Operation(
+      description = "Create a new user",
+      responses = {
+          @ApiResponse(
+              responseCode = "201",
+              description = "if user created"
+          ),
+          @ApiResponse(
+              responseCode = "409",
+              description = "if user already exists"
+          )
+      }
+  )
   @PostMapping(
       path = "/users",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -59,10 +73,13 @@ public class UserController {
   public ResponseEntity<CreateUserResponse> signUp(@Valid @RequestBody CreateUserRequest request) {
     log.trace("Received SignUp request");
     UserDto requestUserDto = userApiMapper.createUserRequestToUserDto(request);
-    UserDto createdUserDto = userService.createUser(requestUserDto);
-    CreateUserResponse createdUserResponse =
-        userApiMapper.userDtoToCreateUserResponse(createdUserDto);
-    return ResponseEntity.status(HttpStatus.CREATED).body(createdUserResponse);
+    Optional<UserDto> createdUserDto = userService.createUser(requestUserDto);
+    return createdUserDto
+        .map(userDto -> {
+          CreateUserResponse response = userApiMapper.userDtoToCreateUserResponse(userDto);
+          return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        })
+        .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).build());
   }
 
   @GetMapping(path = "/users",

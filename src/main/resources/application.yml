@@ -25,7 +25,8 @@ server:
 # Spring
 ###############################################################################
 spring:
-  application.name: "myhome-service"
+  application:
+    name: "myhome-service"
   devtools:
     restart:
       enabled: true

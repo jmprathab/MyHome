@@ -76,7 +76,7 @@ class UserControllerTest {
     given(userApiMapper.createUserRequestToUserDto(request))
         .willReturn(userDto);
     given(userService.createUser(userDto))
-        .willReturn(userDto);
+        .willReturn(Optional.of(userDto));
     given(userApiMapper.userDtoToCreateUserResponse(userDto))
         .willReturn(createUserResponse);
 
