@@ -8,6 +8,7 @@ import com.myhome.domain.HouseMemberDocument;
 import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.repositories.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "files.compressionBorderSizeKBytes=99",
     "files.compressedImageQuality=0.99"
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegrationTestBase {
 
   private static final String MEMBER_ID = "default-member-id-for-testing";
@@ -65,6 +65,13 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     member.setMemberId(MEMBER_ID);
     houseMemberRepository.save(member);
     authDefaultUser();
+  }
+
+  @AfterEach()
+  void cleanHouseMemberDocument() {
+    HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
+    member.setHouseMemberDocument(null);
+    houseMemberRepository.save(member);
   }
 
   @Test
