@@ -47,10 +47,14 @@ public class UserSDJpaService implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final CommunityService communityService;
 
-  @Override public UserDto createUser(UserDto request) {
-    generateUniqueUserId(request);
-    encryptUserPassword(request);
-    return createUserInRepository(request);
+  @Override public Optional<UserDto> createUser(UserDto request) {
+    if(userRepository.findByEmail(request.getEmail()) == null) {
+      generateUniqueUserId(request);
+      encryptUserPassword(request);
+      return Optional.of(createUserInRepository(request));
+    } else {
+      return Optional.empty();
+    }
   }
 
   @Override public Set<User> listAll() {

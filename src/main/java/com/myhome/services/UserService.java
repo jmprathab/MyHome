@@ -25,7 +25,7 @@ import java.util.Set;
  * Interface for service layer.
  */
 public interface UserService {
-  UserDto createUser(UserDto request);
+  Optional<UserDto> createUser(UserDto request);
 
   Set<User> listAll();
 
