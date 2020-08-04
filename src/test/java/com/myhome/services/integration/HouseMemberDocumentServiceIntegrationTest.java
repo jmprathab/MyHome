@@ -17,7 +17,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -40,7 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {
     "files.maxSizeKBytes=1",
     "files.compressionBorderSizeKBytes=99",
-    "files.compressedImageQuality=0.99"
+    "files.compressedImageQuality=0.99",
+    "spring.datasource.initialization-mode=never"
 })
 public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegrationTestBase {
 
