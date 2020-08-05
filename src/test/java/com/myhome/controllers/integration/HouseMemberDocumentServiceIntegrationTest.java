@@ -1,4 +1,4 @@
-package com.myhome.services.integration;
+package com.myhome.controllers.integration;
 
 import com.myhome.controllers.integration.ControllerIntegrationTestBase;
 import com.myhome.controllers.request.CreateUserRequest;
