@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"documentFilename"}, callSuper = true)
+@EqualsAndHashCode(of = {"documentFilename"})
 public class HouseMemberDocument extends BaseEntity {
 
     @Column(unique = true)
