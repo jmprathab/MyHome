@@ -22,7 +22,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
 public interface CommunityAdminRepository extends JpaRepository<CommunityAdmin, Long> {
 
   Optional<CommunityAdmin> findByAdminId(String adminId);
