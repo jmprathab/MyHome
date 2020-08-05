@@ -23,11 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Repository
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
   Optional<Community> findByCommunityId(String communityId);
 
-  @Transactional
-  Integer deleteByCommunityId(String communityId);
 }
