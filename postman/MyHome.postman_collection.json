@@ -702,6 +702,130 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get house member document",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"members",
+						"{{MEMBER_ID}}",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add house member document",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "memberDocument",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"members",
+						"{{MEMBER_ID}}",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete house member document",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"members",
+						"{{MEMBER_ID}}",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Updata house member document",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "memberDocument",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"members",
+						"{{MEMBER_ID}}",
+						"documents"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [

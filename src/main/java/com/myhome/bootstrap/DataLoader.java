@@ -112,8 +112,7 @@ class DataLoader implements CommandLineRunner {
 
   private CommunityAdmin saveCommunityAdmin(Community savedCommunity) {
     CommunityAdmin communityAdmin = new CommunityAdmin();
-    String adminId = UUID.randomUUID().toString();
-    communityAdmin.setAdminId(adminId);
+    communityAdmin.setAdminId(TestDataConstants.ADMIN_ID);
     communityAdmin.getCommunities().add(savedCommunity);
     return communityAdminRepository.save(communityAdmin);
   }
