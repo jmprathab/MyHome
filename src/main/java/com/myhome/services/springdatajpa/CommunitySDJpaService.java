@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -103,16 +102,20 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override
-  public Optional<Community> deleteAdminFromCommunity(String communityId, String adminId) {
+  public boolean removeAdminFromCommunity(String communityId, String adminId) {
     Optional<Community> communitySearch = communityRepository.findByCommunityId(communityId);
     return communitySearch.map(community -> {
-      community.getAdmins().removeIf(admin -> admin.getAdminId().equals(adminId));
-      return Optional.of(communityRepository.save(community));
-    }).orElse(Optional.empty());
+      boolean adminRemoved = community.getAdmins().removeIf(admin -> admin.getAdminId().equals(adminId));
+      if(adminRemoved) {
+        communityRepository.save(community);
+        return true;
+      } else {
+        return false;
+      }
+    }).orElse(false);
   }
 
   @Override
-  @Transactional
   public boolean deleteCommunity(String communityId) {
     return communityRepository.findByCommunityId(communityId)
         .map(community -> {
@@ -130,7 +133,18 @@ public class CommunitySDJpaService implements CommunityService {
     return UUID.randomUUID().toString();
   }
 
-  public void deleteHouseFromCommunityByHouseId(String houseId) {
-    communityHouseRepository.deleteByHouseId(houseId);
+  public boolean removeHouseFromCommunityByHouseId(String communityId, String houseId) {
+    return communityRepository.findByCommunityId(communityId)
+        .map(community -> {
+          CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
+          if(house != null && community.getHouses().contains(house)) {
+            community.getHouses().remove(house);
+            communityRepository.save(community);
+            return true;
+          } else {
+            return false;
+          }
+        })
+        .orElse(false);
   }
 }

@@ -241,18 +241,22 @@ public class CommunityController {
   @DeleteMapping(
       path = "/communities/{communityId}/houses/{houseId}"
   )
-  public ResponseEntity<Void> deleteCommunityHouse(
+  public ResponseEntity<Void> removeCommunityHouse(
       @PathVariable String communityId, @PathVariable String houseId
   ) {
-    communityService.deleteHouseFromCommunityByHouseId(houseId);
     log.trace(
         "Received request to delete house with id[{}] from community with id[{}]",
         houseId, communityId);
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    boolean houseRemoved = communityService.removeHouseFromCommunityByHouseId(communityId, houseId);
+    if(houseRemoved) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 
   @Operation(
-      description = "Deletion of admin associated with a community",
+      description = "Remove of admin associated with a community",
       responses = {
           @ApiResponse(responseCode = "204", description = "If admin was removed"),
           @ApiResponse(responseCode = "404", description = "If parameters are invalid")
@@ -266,10 +270,12 @@ public class CommunityController {
     log.trace(
         "Received request to delete an admin from community with community id[{}] and admin id[{}]",
         communityId, adminId);
-    Optional<Community> communityOptional = communityService.deleteAdminFromCommunity(communityId, adminId);
-    return communityOptional
-        .map(community -> ResponseEntity.status(HttpStatus.NO_CONTENT).build())
-        .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    boolean adminRemoved = communityService.removeAdminFromCommunity(communityId, adminId);
+    if(adminRemoved) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 
   @Operation(
