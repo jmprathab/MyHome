@@ -184,7 +184,7 @@ public class CommunityController {
   @Operation(
       description = "Add a new admin to the community given a community id",
       responses = {
-          @ApiResponse(responseCode = "204", description = "If admin were added"),
+          @ApiResponse(responseCode = "204", description = "If admins were added"),
           @ApiResponse(responseCode = "404", description = "If params are invalid"),
       }
   )
@@ -193,7 +193,7 @@ public class CommunityController {
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
       consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<AddCommunityAdminResponse> addCommunityAdmin(
+  public ResponseEntity<AddCommunityAdminResponse> addCommunityAdmins(
       @PathVariable String communityId, @Valid @RequestBody
       AddCommunityAdminRequest request) {
     log.trace("Received request to add admin to community with id[{}]", communityId);
@@ -212,7 +212,7 @@ public class CommunityController {
   @Operation(
       description = "Add a new house to the community given a community id",
       responses = {
-          @ApiResponse(responseCode = "204", description = "If admin were added"),
+          @ApiResponse(responseCode = "204", description = "If houses were added"),
           @ApiResponse(responseCode = "400", description = "If params are invalid"),
       }
   )
@@ -221,7 +221,7 @@ public class CommunityController {
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
       consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<AddCommunityHouseResponse> addCommunityHouse(
+  public ResponseEntity<AddCommunityHouseResponse> addCommunityHouses(
       @PathVariable String communityId, @Valid @RequestBody
       AddCommunityHouseRequest request) {
     log.trace("Received request to add house to community with id[{}]", communityId);
@@ -237,7 +237,13 @@ public class CommunityController {
     }
   }
 
-  @Operation(description = "Deletion of house from the community given a community id and a house id")
+  @Operation(
+      description = "Remove of house from the community given a community id and a house id",
+      responses = {
+          @ApiResponse(responseCode = "204", description = "If house was added"),
+          @ApiResponse(responseCode = "400", description = "If params are invalid"),
+      }
+  )
   @DeleteMapping(
       path = "/communities/{communityId}/houses/{houseId}"
   )
@@ -265,7 +271,7 @@ public class CommunityController {
   @DeleteMapping(
       path = "/communities/{communityId}/admins/{adminId}"
   )
-  public ResponseEntity deleteAdminFromCommunity(
+  public ResponseEntity removeAdminFromCommunity(
       @PathVariable String communityId, @PathVariable String adminId) {
     log.trace(
         "Received request to delete an admin from community with community id[{}] and admin id[{}]",
