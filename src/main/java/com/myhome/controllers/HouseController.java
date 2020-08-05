@@ -16,6 +16,8 @@
 
 package com.myhome.controllers;
 
+import com.myhome.controllers.dto.HouseHistoryDto;
+import com.myhome.controllers.dto.HouseHistoryResponseDto;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;
 import com.myhome.controllers.request.AddHouseMemberRequest;
@@ -23,11 +25,17 @@ import com.myhome.controllers.response.AddHouseMemberResponse;
 import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListHouseMembersResponse;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseHistory;
 import com.myhome.domain.HouseMember;
+import com.myhome.helper.CommonHelper;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,12 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
@@ -155,5 +158,37 @@ public class HouseController {
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+  }
+  @Operation(description = "Post Date Interval for houseId and Member Id")
+  @PostMapping(
+          path = "/house/member/interval",
+          produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+          consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<HouseHistory> postInterval(@Valid @RequestBody HouseHistoryDto houseHistoryDto) {
+    log.trace("Received request to postinterval reuqest "+ CommonHelper.getStringFromObject(houseHistoryDto));
+
+    HouseHistory houseHistory = houseService.addInterval(houseHistoryDto);
+    if(!CommonHelper.empty(houseHistory) ){
+      return ResponseEntity.status(HttpStatus.CREATED).body(houseHistory);
+    }
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(houseHistory);
+  }
+
+  @Operation(description = "List History of House/Member")
+  @GetMapping(
+          path = "/house/history/{houseId}",
+          produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<List<HouseHistoryDto>> getHouseHistory(@PathVariable(required = true) String houseId,
+                                                               @RequestParam(required = false) String memberId) {
+    log.trace("Received request to get history of a house with id[{}] and member Id with id[{}]", houseId,memberId);
+    if (!houseService.getHouseDetailsById(houseId).isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<HouseHistoryDto>());
+    }
+    List<HouseHistory> houseHistoryPOList = houseService.getHouseHistory(houseId,memberId);
+    List<HouseHistoryDto> houseHistoryDTOList = houseHistoryPOList.stream().map(houseHistoryPo->houseMemberMapper.houseHistoryPoToHouseHistoryDto(houseHistoryPo)).collect(Collectors.toList());
+    return ResponseEntity.status(HttpStatus.OK).body(houseHistoryDTOList);
   }
 }

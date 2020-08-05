@@ -1,27 +1,29 @@
 package com.myhome.services.springdatajpa;
 
+import com.myhome.controllers.dto.HouseHistoryDto;
+import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseHistory;
 import com.myhome.domain.HouseMember;
+import com.myhome.helper.CommonHelper;
 import com.myhome.repositories.CommunityHouseRepository;
+import com.myhome.repositories.HouseHistoryRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.HouseService;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+
+import java.util.*;
+
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@AllArgsConstructor
 public class HouseSDJpaService implements HouseService {
   private final HouseMemberRepository houseMemberRepository;
   private final CommunityHouseRepository communityHouseRepository;
-
-  public HouseSDJpaService(HouseMemberRepository houseMemberRepository,
-      CommunityHouseRepository communityHouseRepository) {
-    this.houseMemberRepository = houseMemberRepository;
-    this.communityHouseRepository = communityHouseRepository;
-  }
+  private final HouseHistoryRepository houseHistoryRepository;
+  private final HouseMemberMapper houseMemberMapper;
 
   private String generateUniqueId() {
     return UUID.randomUUID().toString();
@@ -69,5 +71,23 @@ public class HouseSDJpaService implements HouseService {
   @Override public Optional<CommunityHouse> getHouseDetailsById(String houseId) {
     CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
     return house == null ? Optional.empty() : Optional.of(house);
+  }
+
+  @Override
+  public HouseHistory addInterval(HouseHistoryDto houseHistoryDto) {
+
+    HouseHistory houseHistoryPO = houseMemberMapper.houseHistoryDtoToHouseHistory(houseHistoryDto);
+    houseHistoryRepository.save(houseHistoryPO);
+    return houseHistoryPO;
+  }
+
+  @Override
+  public List<HouseHistory> getHouseHistory(String houseId, String memberId) {
+    if(!CommonHelper.empty(houseId) && !CommonHelper.empty(memberId)){
+      return  houseHistoryRepository.findByHouseIdAndMemberId(houseId,memberId);
+    }
+    else{
+      return  houseHistoryRepository.findByHouseId(houseId);
+    }
   }
 }
