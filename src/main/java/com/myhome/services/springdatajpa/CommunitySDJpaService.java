@@ -26,6 +26,7 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -44,7 +45,8 @@ public class CommunitySDJpaService implements CommunityService {
   private final CommunityMapper communityMapper;
   private final CommunityHouseRepository communityHouseRepository;
 
-  @Override public Community createCommunity(CommunityDto communityDto) {
+  @Override
+  public Community createCommunity(CommunityDto communityDto) {
     communityDto.setCommunityId(generateUniqueId());
     Community community = communityMapper.communityDtoToCommunity(communityDto);
     Community savedCommunity = communityRepository.save(community);
@@ -72,11 +74,30 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override
-  public Optional<Community> getCommunityDetailsById(String communityId, Pageable pageable) {
-    return Optional.ofNullable(communityRepository.findByCommunityId(communityId, pageable));
+  public Optional<List<CommunityHouse>> findCommunityHousesById(String communityId,
+      Pageable pageable) {
+    boolean exists = communityRepository.existsByCommunityId(communityId);
+    if (exists) {
+      return Optional.of(
+          communityHouseRepository.findAllByCommunity_CommunityId(communityId, pageable));
+    }
+    return Optional.empty();
   }
 
-  @Override public Community addAdminsToCommunity(String communityId, Set<String> admins) {
+  @Override
+  public Optional<List<CommunityAdmin>> findCommunityAdminsById(String communityId,
+      Pageable pageable) {
+    boolean exists = communityRepository.existsByCommunityId(communityId);
+    if (exists) {
+      return Optional.of(
+          communityAdminRepository.findAllByCommunities_CommunityId(communityId, pageable)
+      );
+    }
+    return Optional.empty();
+  }
+
+  @Override
+  public Community addAdminsToCommunity(String communityId, Set<String> admins) {
     if (!getCommunityDetailsById(communityId).isPresent()) return new Community();
     Community community = communityRepository.findByCommunityId(communityId);
 

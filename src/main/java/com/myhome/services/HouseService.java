@@ -18,6 +18,7 @@ package com.myhome.services;
 
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.domain.Pageable;
@@ -33,5 +34,5 @@ public interface HouseService {
 
   Optional<CommunityHouse> getHouseDetailsById(String houseId);
 
-  Optional<CommunityHouse> getHouseDetailsById(String houseId, Pageable pageable);
+  Optional<List<HouseMember>> getHouseMembersById(String houseId, Pageable pageable);
 }
