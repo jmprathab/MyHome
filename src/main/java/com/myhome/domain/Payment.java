@@ -13,37 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.myhome.domain;
 
-import javax.persistence.Entity;
 import javax.persistence.Column;
-import javax.persistence.OneToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+/**
+ * Entity identifying a payment in the service. This could be an electricity bill, house rent, water charge etc
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class HouseMember extends BaseEntity {
-
-  @Column(nullable = false, unique = true)
-  private String memberId;
-
-  @OneToOne(orphanRemoval = true)
-  @JoinColumn(name = "document_id")
-  private HouseMemberDocument houseMemberDocument;
-
-  @Column(nullable = false)
-  private String name;
-
-  @ManyToOne
-  private CommunityHouse communityHouse;
+@Entity
+public class Payment extends BaseEntity {
+    @Column(unique = true, nullable = false)
+    private String paymentId;
+    @Column(nullable = false)
+    private BigDecimal charge;
+    @Column(nullable = false)
+    private String type;
+    @Column(unique = true, nullable = false)
+    private String description;
+    @Column(nullable = false)
+    private boolean recurring;
+    @JsonFormat(pattern="yyyy-MM-dd")
+    private LocalDate dueDate;
+    @Column(nullable = false)
+    private String adminId;
+    @Column(nullable = false)
+    private String memberId;
 }

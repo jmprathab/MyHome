@@ -13,37 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.myhome.domain;
-
-import javax.persistence.Entity;
-import javax.persistence.Column;
-import javax.persistence.OneToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+package com.myhome.controllers.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
-@AllArgsConstructor
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-public class HouseMember extends BaseEntity {
-
-  @Column(nullable = false, unique = true)
-  private String memberId;
-
-  @OneToOne(orphanRemoval = true)
-  @JoinColumn(name = "document_id")
-  private HouseMemberDocument houseMemberDocument;
-
-  @Column(nullable = false)
-  private String name;
-
-  @ManyToOne
-  private CommunityHouse communityHouse;
+public class SchedulePaymentRequest {
+    private String type;
+    @NotBlank
+    @Size(min = 5, max = 300, message = "Description should be between 5 and 300 characters")
+    private String description;
+    private boolean recurring;
+    private BigDecimal charge;
+    private String dueDate;
+    private String adminId;
+    private String memberId;
 }
