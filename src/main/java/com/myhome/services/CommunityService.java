@@ -29,13 +29,13 @@ public interface CommunityService {
 
   Optional<Community> getCommunityDetailsById(String communityId);
 
-  Community addAdminsToCommunity(String communityId, Set<String> admins);
+  Optional<Community> addAdminsToCommunity(String communityId, Set<String> admins);
 
   Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses);
 
-  void deleteHouseFromCommunityByHouseId(String houseId);
+  boolean removeHouseFromCommunityByHouseId(String communityId, String houseId);
 
-  Integer deleteCommunity(String communityId);
+  boolean deleteCommunity(String communityId);
 
-  Optional<Community> deleteAdminFromCommunity(String communityId, String adminId);
+  boolean removeAdminFromCommunity(String communityId, String adminId);
 }

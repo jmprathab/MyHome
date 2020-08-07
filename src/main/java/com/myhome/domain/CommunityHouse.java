@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.With;
 
 @Entity
 @AllArgsConstructor
@@ -34,6 +35,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CommunityHouse extends BaseEntity {
+  @With
   @ManyToOne
   private Community community;
   @Column(nullable = false)
@@ -42,4 +44,5 @@ public class CommunityHouse extends BaseEntity {
   private String houseId;
   @OneToMany(fetch = FetchType.EAGER)
   private Set<HouseMember> houseMembers = new HashSet<>();
+
 }

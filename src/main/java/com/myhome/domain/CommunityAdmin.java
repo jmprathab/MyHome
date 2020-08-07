@@ -36,6 +36,6 @@ public class CommunityAdmin extends BaseEntity {
   @Column(nullable = false)
   @ManyToMany(mappedBy = "admins")
   private Set<Community> communities = new HashSet<>();
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String adminId;
 }

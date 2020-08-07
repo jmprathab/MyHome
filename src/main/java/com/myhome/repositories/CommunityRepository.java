@@ -17,15 +17,14 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.Community;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface CommunityRepository extends CrudRepository<Community, Long> {
+import java.util.Optional;
 
-  Community findByCommunityId(String communityId);
+public interface CommunityRepository extends JpaRepository<Community, Long> {
 
-  @Transactional
-  Integer deleteByCommunityId(String communityId);
+  Optional<Community> findByCommunityId(String communityId);
+
 }

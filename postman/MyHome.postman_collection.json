@@ -298,9 +298,9 @@
 			"response": []
 		},
 		{
-			"name": "Add admins to community",
+			"name": "List admins of a community",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
@@ -308,15 +308,6 @@
 						"type": "text"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"admins\": [\n        \"first-admin-user-id\",\n        \"second-admin-user-id\"\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
 					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/admins",
 					"protocol": "http",
@@ -333,9 +324,9 @@
 			"response": []
 		},
 		{
-			"name": "List admins of a community",
+			"name": "Add admins to community",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
@@ -343,6 +334,15 @@
 						"type": "text"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"admins\": [\n        \"2a26eb99-f7bd-4291-af7d-53cb344e488f\",\n        \"4c62eb04-850b-448c-ae98-b87a02a9b8c2\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/admins",
 					"protocol": "http",
@@ -395,6 +395,32 @@
 			"response": []
 		},
 		{
+			"name": "List houses of a community",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/houses",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"communities",
+						"{{COMMUNITY_ID}}",
+						"houses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Add house to community",
 			"request": {
 				"method": "POST",
@@ -430,7 +456,34 @@
 			"response": []
 		},
 		{
-			"name": "List houses of a community",
+			"name": "Remove house from community",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/houses/{{HOUSE_ID}}",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"communities",
+						"{{COMMUNITY_ID}}",
+						"houses",
+						"{{HOUSE_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List members of a house",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -441,15 +494,15 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/houses",
+					"raw": "http://{{ENV_URL}}/houses/{{HOUSE_ID}}/members",
 					"protocol": "http",
 					"host": [
 						"{{ENV_URL}}"
 					],
 					"path": [
-						"communities",
-						"{{COMMUNITY_ID}}",
-						"houses"
+						"houses",
+						"{{HOUSE_ID}}",
+						"members"
 					]
 				}
 			},
@@ -491,7 +544,43 @@
 			"response": []
 		},
 		{
-			"name": "List members of a house",
+			"name": "Remove member from house",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"members\": [\n    {\n      \"memberId\": \"test-member-id-for-testing\",\n      \"name\": \"Test member name\"\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{ENV_URL}}/houses/{{HOUSE_ID}}/members/{{MEMBER_ID}}",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"houses",
+						"{{HOUSE_ID}}",
+						"members",
+						"{{MEMBER_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get house member document",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -502,15 +591,113 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{ENV_URL}}/houses/{{HOUSE_ID}}/members",
+					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
 					"protocol": "http",
 					"host": [
 						"{{ENV_URL}}"
 					],
 					"path": [
-						"houses",
-						"{{HOUSE_ID}}",
-						"members"
+						"members",
+						"{{MEMBER_ID}}",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add house member document",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "memberDocument",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"members",
+						"{{MEMBER_ID}}",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete house member document",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"members",
+						"{{MEMBER_ID}}",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Updata house member document",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "memberDocument",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"members",
+						"{{MEMBER_ID}}",
+						"documents"
 					]
 				}
 			},
@@ -665,37 +852,37 @@
 	],
 	"variable": [
 		{
-			"id": "9edca30e-c4fc-4350-9e9e-801b6d73de8b",
+			"id": "0dfd2a27-bd04-47ff-b5a5-0195a6a697bc",
 			"key": "AUTH_TOKEN",
-			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkOTQ2MWZlYi0wMWFhLTRiNDgtOTRmOS02MDE0YjdkNTc1MjgiLCJleHAiOjE1OTczNjM3NjR9.ZcBTpF-j5VubnvWjf3V9--lLIQUyLOCYix5kOpkkkyHOpcGn7Dhi46ga1kWdJSO_bZLqw1cRnVGC5PlmicIjSg"
+			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiMjU4YzA4My0yZDllLTQxNzktYTJmOC01M2M3ZDg3NDUwZmIiLCJleHAiOjE1OTc1MjU1MjV9.ncgokjGzMZRIDVkzV_VNRFZrIfY61c_tWvdpa4f-Sk2hgC3WDSVCe1OouEeCAJpjiFq5cOI9pgMRiiO1lc8oJA"
 		},
 		{
-			"id": "dcd0df6a-165d-4661-8eed-057e295f9771",
+			"id": "da23eb5e-81c9-48e9-8469-53ca122f3df2",
 			"key": "ENV_URL",
 			"value": "127.0.0.1:8080"
 		},
 		{
-			"id": "16841315-6a4a-46f9-8bc6-773538d1eef1",
+			"id": "ce44c598-8d6e-4058-9dc9-9929657d98b2",
 			"key": "COMMUNITY_ID",
 			"value": "default-community-id-for-testing"
 		},
 		{
-			"id": "655b0f60-b821-481c-a460-dfdc26853fca",
+			"id": "f2c61b19-a3b6-416a-b62b-405f6066b006",
 			"key": "HOUSE_ID",
 			"value": "default-house-id-for-testing"
 		},
 		{
-			"id": "d771c826-9577-4295-bb64-816ce0eda669",
+			"id": "0930bb17-2b73-4323-bd2a-cee8250a5197",
 			"key": "USER_ID",
-			"value": "d9461feb-01aa-4b48-94f9-6014b7d57528"
+			"value": "b258c083-2d9e-4179-a2f8-53c7d87450fb"
 		},
 		{
-			"id": "efbefe2c-334c-4b82-945d-02f32741a82b",
+			"id": "c8e541c8-ca05-4fad-acd4-dee08085485f",
 			"key": "ADMIN_ID",
 			"value": "default-admin-id-for-testing"
 		},
 		{
-			"id": "e89369b7-0268-4475-b3bb-b5655cedd488",
+			"id": "6d3c6afe-8d1e-4567-a404-0ad1a93c0c45",
 			"key": "MEMBER_ID",
 			"value": "default-member-id-for-testing"
 		}
