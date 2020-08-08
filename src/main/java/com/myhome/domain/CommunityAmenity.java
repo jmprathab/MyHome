@@ -9,7 +9,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @AllArgsConstructor
@@ -21,18 +21,18 @@ public class CommunityAmenity extends BaseEntity {
   @Column(nullable = false, unique = true)
   private String amenityId;
   @Column(nullable = false)
-  private String discription;
+  private String description;
   @Column
   private boolean isBooked;
   @Column
-  private LocalDate bookingStartDate;
+  private LocalDateTime bookingStartDate;
   @Column
-  private LocalDate bookingEndDate;
+  private LocalDateTime bookingEndDate;
   @ManyToOne
   private Community community;
 
   public boolean checkBooking() {
-    if(bookingEndDate == null || bookingEndDate.isBefore(LocalDate.now())) {
+    if(bookingEndDate == null || bookingEndDate.isBefore(LocalDateTime.now())) {
       isBooked = false;
     }
     return isBooked;
