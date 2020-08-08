@@ -1,4 +1,4 @@
-package com.myhome.controllers;
+package com.myhome.controllers.exceptionhandler;
 
 import java.io.IOException;
 import java.util.HashMap;
