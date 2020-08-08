@@ -24,14 +24,17 @@ import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.HouseService;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+@RequiredArgsConstructor
 @Service
 @RequiredArgsConstructor
 public class HouseSDJpaService implements HouseService {
@@ -43,9 +46,17 @@ public class HouseSDJpaService implements HouseService {
     return UUID.randomUUID().toString();
   }
 
-  @Override public Set<CommunityHouse> listAllHouses() {
+  @Override
+  public Set<CommunityHouse> listAllHouses() {
     Set<CommunityHouse> communityHouses = new HashSet<>();
     communityHouseRepository.findAll().forEach(communityHouses::add);
+    return communityHouses;
+  }
+
+  @Override
+  public Set<CommunityHouse> listAllHouses(Pageable pageable) {
+    Set<CommunityHouse> communityHouses = new HashSet<>();
+    communityHouseRepository.findAll(pageable).forEach(communityHouses::add);
     return communityHouses;
   }
 
@@ -89,8 +100,15 @@ public class HouseSDJpaService implements HouseService {
     return isMemberRemoved;
   }
 
-  @Override public Optional<CommunityHouse> getHouseDetailsById(String houseId) {
-    CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
-    return house == null ? Optional.empty() : Optional.of(house);
+  @Override
+  public Optional<CommunityHouse> getHouseDetailsById(String houseId) {
+    return Optional.ofNullable(communityHouseRepository.findByHouseId(houseId));
+  }
+
+  @Override
+  public Optional<List<HouseMember>> getHouseMembersById(String houseId, Pageable pageable) {
+    return Optional.ofNullable(
+        houseMemberRepository.findAllByCommunityHouse_HouseId(houseId, pageable)
+    );
   }
 }

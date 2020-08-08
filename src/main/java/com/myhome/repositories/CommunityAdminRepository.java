@@ -17,7 +17,11 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.CommunityAdmin;
+
+import java.util.List;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -26,4 +30,5 @@ public interface CommunityAdminRepository extends JpaRepository<CommunityAdmin, 
 
   Optional<CommunityAdmin> findByAdminId(String adminId);
 
+  List<CommunityAdmin> findAllByCommunities_CommunityId(String communityId, Pageable pageable);
 }

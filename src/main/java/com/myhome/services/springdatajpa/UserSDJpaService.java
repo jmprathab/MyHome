@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,11 +59,11 @@ public class UserSDJpaService implements UserService {
   }
 
   @Override public Set<User> listAll() {
-    return listAll(200, 0);
+    return listAll(PageRequest.of(0, 200));
   }
 
-  @Override public Set<User> listAll(Integer limit, Integer start) {
-    return userRepository.findAll(PageRequest.of(start, limit)).toSet();
+  @Override public Set<User> listAll(Pageable pageable) {
+    return userRepository.findAll(pageable).toSet();
   }
 
   @Override

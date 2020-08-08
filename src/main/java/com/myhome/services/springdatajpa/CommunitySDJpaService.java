@@ -25,39 +25,67 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
+import lombok.RequiredArgsConstructor;
 import java.util.stream.Collectors;
 
+
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-@Service
 @Slf4j
+@RequiredArgsConstructor
+@Service
 public class CommunitySDJpaService implements CommunityService {
   private final CommunityRepository communityRepository;
   private final CommunityAdminRepository communityAdminRepository;
   private final CommunityMapper communityMapper;
   private final CommunityHouseRepository communityHouseRepository;
 
-  public CommunitySDJpaService(CommunityRepository communityRepository,
-      CommunityAdminRepository communityAdminRepository,
-      CommunityMapper communityMapper,
-      CommunityHouseRepository communityHouseRepository) {
-    this.communityRepository = communityRepository;
-    this.communityAdminRepository = communityAdminRepository;
-    this.communityMapper = communityMapper;
-    this.communityHouseRepository = communityHouseRepository;
-  }
-
-  @Override public Community createCommunity(CommunityDto communityDto) {
+  @Override
+  public Community createCommunity(CommunityDto communityDto) {
     communityDto.setCommunityId(generateUniqueId());
     Community community = communityMapper.communityDtoToCommunity(communityDto);
     Community savedCommunity = communityRepository.save(community);
     log.trace("saved community with id[{}] to repository", savedCommunity.getId());
     return savedCommunity;
   }
+
+  @Override
+  public Set<Community> listAll(Pageable pageable) {
+    Set<Community> communityListSet = new HashSet<>();
+    communityRepository.findAll(pageable).forEach(communityListSet::add);
+    return communityListSet;
+  }
+
+  @Override
+  public Optional<List<CommunityHouse>> findCommunityHousesById(String communityId,
+      Pageable pageable) {
+    boolean exists = communityRepository.existsByCommunityId(communityId);
+    if (exists) {
+      return Optional.of(
+          communityHouseRepository.findAllByCommunity_CommunityId(communityId, pageable));
+    }
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<List<CommunityAdmin>> findCommunityAdminsById(String communityId,
+      Pageable pageable) {
+    boolean exists = communityRepository.existsByCommunityId(communityId);
+    if (exists) {
+      return Optional.of(
+          communityAdminRepository.findAllByCommunities_CommunityId(communityId, pageable)
+      );
+    }
+    return Optional.empty();
+  }
+
 
   @Override public Set<Community> listAll() {
     return new HashSet<>(communityRepository.findAll());
@@ -79,6 +107,7 @@ public class CommunitySDJpaService implements CommunityService {
       });
       return Optional.of(communityRepository.save(community));
     }).orElseGet(Optional::empty);
+
   }
 
   @Override

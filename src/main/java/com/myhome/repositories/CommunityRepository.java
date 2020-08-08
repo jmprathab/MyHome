@@ -17,14 +17,19 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.Community;
-import org.springframework.data.jpa.repository.JpaRepository;
+
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 
-public interface CommunityRepository extends JpaRepository<Community, Long> {
+@Repository
+public interface CommunityRepository extends PagingAndSortingRepository<Community, Long> {
 
   Optional<Community> findByCommunityId(String communityId);
 
+  @Transactional
+  Integer deleteByCommunityId(String communityId);
+
+  boolean existsByCommunityId(String communityId);
 }

@@ -27,11 +27,14 @@ import com.myhome.domain.HouseMember;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.HashSet;
 import java.util.Set;
 import javax.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -55,15 +58,18 @@ public class HouseController {
       path = "/houses",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<GetHouseDetailsResponse> listAllHouses() {
+  public ResponseEntity<GetHouseDetailsResponse> listAllHouses(
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all houses");
+
     Set<CommunityHouse> houseDetails =
-        houseService.listAllHouses();
+        houseService.listAllHouses(pageable);
     Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
         houseApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
     GetHouseDetailsResponse response = new GetHouseDetailsResponse();
     response.setHouses(getHouseDetailsResponseSet);
+
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
@@ -93,20 +99,16 @@ public class HouseController {
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<ListHouseMembersResponse> listAllMembersOfHouse(
-      @PathVariable String houseId) {
-
+      @PathVariable String houseId,
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all members of the house with id[{}]", houseId);
-    if (!houseService.getHouseDetailsById(houseId).isPresent()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ListHouseMembersResponse());
-    }
-    Set<HouseMember> houseMembers =
-        houseService.getHouseDetailsById(houseId).get().getHouseMembers();
-    Set<ListHouseMembersResponse.HouseMember> responseSet =
-        houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(houseMembers);
 
-    ListHouseMembersResponse response = new ListHouseMembersResponse();
-    response.setMembers(responseSet);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    return houseService.getHouseMembersById(houseId, pageable)
+        .map(HashSet::new)
+        .map(houseMemberMapper::houseMemberSetToRestApiResponseHouseMemberSet)
+        .map(ListHouseMembersResponse::new)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @Operation(

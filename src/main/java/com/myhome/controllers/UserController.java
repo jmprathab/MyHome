@@ -31,6 +31,8 @@ import javax.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -85,11 +87,10 @@ public class UserController {
   @GetMapping(path = "/users",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<GetUserDetailsResponse> listAllUsers(
-      @RequestParam(defaultValue = "200") Integer limit,
-      @RequestParam(defaultValue = "0") Integer start) {
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all users");
 
-    Set<User> userDetails = userService.listAll(limit, start);
+    Set<User> userDetails = userService.listAll(pageable);
     Set<GetUserDetailsResponse.User> userDetailsResponse =
         userApiMapper.userSetToRestApiResponseUserSet(userDetails);
 
