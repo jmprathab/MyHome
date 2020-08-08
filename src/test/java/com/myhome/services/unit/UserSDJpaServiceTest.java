@@ -14,22 +14,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 class UserSDJpaServiceTest {
 
-  private String USER_ID = "test-user-id";
-  private String USER_NAME = "test-user-id";
-  private String USER_EMAIL = "test-user-id";
-  private String USER_PASSWORD = "test-user-id";
+  private String userId = "test-user-id";
+  private String userName = "test-user-id";
+  private String userEmail = "test-user-id";
+  private String userPassword = "test-user-id";
 
   @Mock
   private UserRepository userRepository;
@@ -52,7 +55,15 @@ class UserSDJpaServiceTest {
     // given
     UserDto request = getDefaultUserDtoRequest();
     User resultUser = new User(request.getName(), request.getUserId(), request.getEmail(), request.getEncryptedPassword());
-    UserDto response = new UserDto(resultUser.getId(), resultUser.getUserId(), resultUser.getName(), resultUser.getEmail(), null, resultUser.getEncryptedPassword(), new HashSet<>());
+    UserDto response = new UserDto(
+        resultUser.getId(),
+        resultUser.getUserId(),
+        resultUser.getName(),
+        resultUser.getEmail(),
+        null,
+        resultUser.getEncryptedPassword(),
+        new HashSet<>()
+    );
 
     given(userRepository.findByEmail(request.getEmail()))
         .willReturn(null);
@@ -100,7 +111,7 @@ class UserSDJpaServiceTest {
     UserDto userDto = getDefaultUserDtoRequest();
     User user = new User(userDto.getName(), userDto.getUserId(), userDto.getEmail(), userDto.getEncryptedPassword());
 
-    given(userRepository.findByUserId(USER_ID))
+    given(userRepository.findByUserId(userId))
         .willReturn(user);
     given(communityService.listAll())
         .willReturn(new HashSet<>());
@@ -108,13 +119,13 @@ class UserSDJpaServiceTest {
         .willReturn(userDto);
 
     // when
-    Optional<UserDto> createdUserDto = userService.getUserDetails(USER_ID);
+    Optional<UserDto> createdUserDto = userService.getUserDetails(userId);
 
     // then
     assertTrue(createdUserDto.isPresent());
     assertEquals(createdUserDto.get(), userDto);
     assertEquals(createdUserDto.get().getCommunityIds().size(), 0);
-    verify(userRepository).findByUserId(USER_ID);
+    verify(userRepository).findByUserId(userId);
     verify(communityService).listAll();
   }
 
@@ -134,7 +145,7 @@ class UserSDJpaServiceTest {
     }};
     Set<String> communitiesIds = communities.stream().map(comm -> comm.getCommunityId()).collect(Collectors.toSet());
 
-    given(userRepository.findByUserId(USER_ID))
+    given(userRepository.findByUserId(userId))
         .willReturn(user);
     given(communityService.listAll())
         .willReturn(communities);
@@ -142,20 +153,20 @@ class UserSDJpaServiceTest {
         .willReturn(userDto);
 
     // when
-    Optional<UserDto> createdUserDto = userService.getUserDetails(USER_ID);
+    Optional<UserDto> createdUserDto = userService.getUserDetails(userId);
 
     // then
     assertTrue(createdUserDto.isPresent());
     assertEquals(createdUserDto.get(), userDto);
     assertEquals(createdUserDto.get().getCommunityIds(), communitiesIds);
-    verify(userRepository).findByUserId(USER_ID);
+    verify(userRepository).findByUserId(userId);
     verify(communityService).listAll();
   }
 
   @Test
   void getUserDetailsNotFound() {
     // given
-    given(userRepository.findByUserId(USER_ID))
+    given(userRepository.findByUserId(userId))
         .willReturn(null);
     given(communityService.listAll())
         .willReturn(new HashSet<>());
@@ -163,11 +174,11 @@ class UserSDJpaServiceTest {
         .willReturn(null);
 
     // when
-    Optional<UserDto> createdUserDto = userService.getUserDetails(USER_ID);
+    Optional<UserDto> createdUserDto = userService.getUserDetails(userId);
 
     // then
     assertFalse(createdUserDto.isPresent());
-    verify(userRepository).findByUserId(USER_ID);
+    verify(userRepository).findByUserId(userId);
   }
 
   private Community createCommunityWithUserAdmin(CommunityAdmin communityUserAdmin) {
@@ -177,12 +188,12 @@ class UserSDJpaServiceTest {
   }
 
   private UserDto getDefaultUserDtoRequest() {
-    return new UserDto(null, USER_ID, USER_NAME, USER_EMAIL, USER_PASSWORD, null, new HashSet<>());
+    return new UserDto(null, userId, userName, userEmail, userPassword, null, new HashSet<>());
   }
 
   private CommunityAdmin getAdminFromUser() {
     CommunityAdmin communityAdmin = new CommunityAdmin();
-    communityAdmin.setAdminId(USER_ID);
+    communityAdmin.setAdminId(userId);
     return communityAdmin;
   }
 

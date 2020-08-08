@@ -70,11 +70,15 @@ public class UserSDJpaService implements UserService {
   public Optional<UserDto> getUserDetails(String userId) {
     User user = userRepository.findByUserId(userId);
     if(user != null) {
-      Set<String> communityIds = communityService.listAll().stream().filter(c -> c.getAdmins()
-          .stream()
-          .map(CommunityAdmin::getAdminId)
-          .collect(Collectors.toSet())
-          .contains(userId)).map(Community::getCommunityId).collect(Collectors.toSet());
+      Set<String> communityIds = communityService.listAll().stream()
+          .filter(community -> community.getAdmins()
+              .stream()
+              .map(CommunityAdmin::getAdminId)
+              .collect(Collectors.toSet())
+              .contains(userId)
+          )
+          .map(Community::getCommunityId)
+          .collect(Collectors.toSet());
 
       UserDto userDto = userMapper.userToUserDto(user);
       userDto.setCommunityIds(communityIds);
