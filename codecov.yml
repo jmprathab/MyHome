@@ -3,3 +3,6 @@ coverage:
     patch:
       default:
         enabled: no
+    project:
+      default:
+        threshold: 0%
