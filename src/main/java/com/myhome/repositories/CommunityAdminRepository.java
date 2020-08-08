@@ -17,13 +17,18 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.CommunityAdmin;
+
 import java.util.List;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface CommunityAdminRepository extends CrudRepository<CommunityAdmin, Long> {
+import java.util.Optional;
+
+public interface CommunityAdminRepository extends JpaRepository<CommunityAdmin, Long> {
+
+  Optional<CommunityAdmin> findByAdminId(String adminId);
 
   List<CommunityAdmin> findAllByCommunities_CommunityId(String communityId, Pageable pageable);
 }

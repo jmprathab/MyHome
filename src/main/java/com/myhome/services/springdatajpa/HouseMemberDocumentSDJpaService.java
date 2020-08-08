@@ -50,8 +50,9 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
       if (member.getHouseMemberDocument() != null) {
         member.setHouseMemberDocument(null);
         houseMemberRepository.save(member);
+        return true;
       }
-      return true;
+      return false;
     }).orElse(false);
   }
 

@@ -13,23 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.myhome.repositories;
 
-import com.myhome.domain.Community;
+import com.myhome.domain.Payment;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
-@Repository
-public interface CommunityRepository extends PagingAndSortingRepository<Community, Long> {
+public interface PaymentRepository extends JpaRepository<Payment, Long> {
+    Optional<Payment> findByPaymentId(String paymentId);
 
-  Optional<Community> findByCommunityId(String communityId);
-
-  @Transactional
-  Integer deleteByCommunityId(String communityId);
-
-  boolean existsByCommunityId(String communityId);
+    void deleteByPaymentId(String paymentId);
 }

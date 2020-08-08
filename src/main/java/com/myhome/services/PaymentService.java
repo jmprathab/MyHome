@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-package com.myhome.repositories;
+package com.myhome.services;
 
-import com.myhome.domain.Community;
+import com.myhome.controllers.dto.PaymentDto;
+import com.myhome.domain.HouseMember;
+import com.myhome.domain.Payment;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
+import java.util.Set;
 
-@Repository
-public interface CommunityRepository extends PagingAndSortingRepository<Community, Long> {
+/**
+ * Interface for service layer
+ */
+public interface PaymentService {
+    PaymentDto schedulePayment(PaymentDto request);
 
-  Optional<Community> findByCommunityId(String communityId);
+    Set<Payment> listAll();
 
-  @Transactional
-  Integer deleteByCommunityId(String communityId);
+    Set<Payment> listAll(Integer limit, Integer start);
 
-  boolean existsByCommunityId(String communityId);
+    Optional<PaymentDto> getPaymentDetails(String paymentId);
+
+    Set<Payment> getPaymentsByMember(String memberId);
+
+    Set<Payment> getPaymentsByAdmin(String adminId);
+
+    Optional<HouseMember> getHouseMember(String memberId);
 }

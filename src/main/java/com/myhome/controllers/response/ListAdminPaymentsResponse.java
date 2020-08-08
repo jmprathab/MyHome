@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-package com.myhome.domain;
+package com.myhome.controllers.response;
 
+import lombok.*;
+
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.With;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class CommunityHouse extends BaseEntity {
-  @With
-  @ManyToOne
-  private Community community;
-  @Column(nullable = false)
-  private String name;
-  @Column(unique = true, nullable = false)
-  private String houseId;
-  @OneToMany(fetch = FetchType.EAGER)
-  private Set<HouseMember> houseMembers = new HashSet<>();
+@Data
+public class ListAdminPaymentsResponse {
+  private Set<AdminPayment> payments = new HashSet<>();
 
+  @AllArgsConstructor
+  @NoArgsConstructor
+  @Getter
+  @Setter
+  public static class AdminPayment {
+    private String adminId;
+    private String paymentId;
+    private BigDecimal charge;
+    private String dueDate;
+
+    /*This just displays the bare minimum as it is listing responses of existing payments. So if you want to find
+    more payment details just hit the /members/payments/{paymentId} endpoint with the paymentId provided*/
+  }
 }

@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package com.myhome.repositories;
+package com.myhome.controllers.dto;
 
-import com.myhome.domain.Community;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.Optional;
+import java.math.BigDecimal;
 
-@Repository
-public interface CommunityRepository extends PagingAndSortingRepository<Community, Long> {
-
-  Optional<Community> findByCommunityId(String communityId);
-
-  @Transactional
-  Integer deleteByCommunityId(String communityId);
-
-  boolean existsByCommunityId(String communityId);
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class PaymentDto {
+  private String paymentId;
+  private BigDecimal charge;
+  private String type;
+  private String description;
+  private boolean recurring;
+  private String dueDate;
+  private String adminId;
+  private String memberId;
 }

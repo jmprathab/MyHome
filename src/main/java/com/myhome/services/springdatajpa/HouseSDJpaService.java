@@ -18,7 +18,9 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import com.myhome.domain.HouseMemberDocument;
 import com.myhome.repositories.CommunityHouseRepository;
+import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.HouseService;
 import java.util.HashSet;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,8 +36,10 @@ import org.springframework.util.CollectionUtils;
 
 @RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class HouseSDJpaService implements HouseService {
   private final HouseMemberRepository houseMemberRepository;
+  private final HouseMemberDocumentRepository houseMemberDocumentRepository;
   private final CommunityHouseRepository communityHouseRepository;
 
   private String generateUniqueId() {
@@ -59,6 +64,11 @@ public class HouseSDJpaService implements HouseService {
     CommunityHouse communityHouse = communityHouseRepository.findByHouseId(houseId);
     Set<HouseMember> savedMembers = new HashSet<>();
     if (communityHouse != null) {
+      for (HouseMember member : houseMembers) {
+        HouseMemberDocument document = new HouseMemberDocument();
+        member.setHouseMemberDocument(document);
+        houseMemberDocumentRepository.save(document);
+      }
       houseMembers.forEach(member -> member.setMemberId(generateUniqueId()));
       houseMembers.forEach(member -> member.setCommunityHouse(communityHouse));
       houseMemberRepository.saveAll(houseMembers).forEach(savedMembers::add);

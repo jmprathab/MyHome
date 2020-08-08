@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package com.myhome.repositories;
+package com.myhome.controllers.response;
 
-import com.myhome.domain.Community;
+import lombok.*;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.Optional;
+import java.math.BigDecimal;
 
-@Repository
-public interface CommunityRepository extends PagingAndSortingRepository<Community, Long> {
-
-  Optional<Community> findByCommunityId(String communityId);
-
-  @Transactional
-  Integer deleteByCommunityId(String communityId);
-
-  boolean existsByCommunityId(String communityId);
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Data
+public class SchedulePaymentResponse {
+    private String paymentId;
+    private BigDecimal charge;
+    private String type;
+    private String description;
+    private boolean recurring;
+    private String dueDate;
+    private String adminId;
+    private String memberId;
 }

@@ -13,36 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.myhome.controllers.request;
 
-package com.myhome.domain;
-
-import java.util.HashSet;
-import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.With;
 
-@Entity
-@AllArgsConstructor
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-public class CommunityHouse extends BaseEntity {
-  @With
-  @ManyToOne
-  private Community community;
-  @Column(nullable = false)
-  private String name;
-  @Column(unique = true, nullable = false)
-  private String houseId;
-  @OneToMany(fetch = FetchType.EAGER)
-  private Set<HouseMember> houseMembers = new HashSet<>();
-
+public class SchedulePaymentRequest {
+    private String type;
+    @NotBlank
+    @Size(min = 5, max = 300, message = "Description should be between 5 and 300 characters")
+    private String description;
+    private boolean recurring;
+    private BigDecimal charge;
+    private String dueDate;
+    private String adminId;
+    private String memberId;
 }

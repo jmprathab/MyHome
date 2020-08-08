@@ -82,8 +82,7 @@ public class HouseMemberDocumentController {
       consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
   )
   public ResponseEntity uploadHoseMemberDocument(
-      @PathVariable String memberId, @RequestParam("memberDocument") MultipartFile memberDocument)
-      throws IOException {
+      @PathVariable String memberId, @RequestParam("memberDocument") MultipartFile memberDocument) {
     log.trace("Received request to add house member documents");
 
     Optional<HouseMemberDocument> houseMemberDocumentOptional =
@@ -106,8 +105,7 @@ public class HouseMemberDocumentController {
       consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
   )
   public ResponseEntity updateHoseMemberDocument(
-      @PathVariable String memberId, @RequestParam("memberDocument") MultipartFile memberDocument)
-      throws IOException {
+      @PathVariable String memberId, @RequestParam("memberDocument") MultipartFile memberDocument) {
     log.trace("Received request to update house member documents");
     Optional<HouseMemberDocument> houseMemberDocumentOptional =
         houseMemberDocumentService.updateHouseMemberDocument(memberDocument, memberId);

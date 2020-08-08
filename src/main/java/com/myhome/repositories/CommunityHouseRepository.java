@@ -17,6 +17,7 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.CommunityHouse;
+
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommunityHouseRepository extends PagingAndSortingRepository<CommunityHouse, Long> {
+
   CommunityHouse findByHouseId(String houseId);
 
   List<CommunityHouse> findAllByCommunity_CommunityId(String communityId, Pageable pageable);

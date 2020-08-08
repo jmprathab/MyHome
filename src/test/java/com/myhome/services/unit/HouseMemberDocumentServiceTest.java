@@ -128,7 +128,7 @@ public class HouseMemberDocumentServiceTest {
     boolean isDocumentDeleted = houseMemberDocumentService.deleteHouseMemberDocument(MEMBER_ID);
 
     // then
-    assertTrue(isDocumentDeleted);
+    assertFalse(isDocumentDeleted);
     assertNull(testMember.getHouseMemberDocument());
     verify(houseMemberRepository).findByMemberId(MEMBER_ID);
     verify(houseMemberRepository, never()).save(testMember);

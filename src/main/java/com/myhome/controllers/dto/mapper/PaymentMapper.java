@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.myhome.controllers.dto.mapper;
 
-package com.myhome.repositories;
+import com.myhome.controllers.dto.PaymentDto;
+import com.myhome.domain.Payment;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-import com.myhome.domain.Community;
+/**
+ * Provides conversion between DTO and entity object
+ */
+@Mapper
+public interface PaymentMapper {
+    Payment paymentDtoToPayment(PaymentDto paymentDto);
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.Optional;
-
-@Repository
-public interface CommunityRepository extends PagingAndSortingRepository<Community, Long> {
-
-  Optional<Community> findByCommunityId(String communityId);
-
-  @Transactional
-  Integer deleteByCommunityId(String communityId);
-
-  boolean existsByCommunityId(String communityId);
+    @Mapping(source = "payment.dueDate", target = "dueDate", dateFormat="yyyy-MM-dd")
+    PaymentDto paymentToPaymentDto(Payment payment);
 }
