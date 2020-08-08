@@ -97,6 +97,7 @@ public class CommunitySDJpaService implements CommunityService {
   @Override
   public Optional<Community> addAdminsToCommunity(String communityId, Set<String> adminsIds) {
     Optional<Community> communitySearch = communityRepository.findByCommunityId(communityId);
+
     return communitySearch.map(community -> {
       adminsIds.forEach(adminId -> {
         communityAdminRepository.findByAdminId(adminId).map(admin -> {

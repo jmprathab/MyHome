@@ -19,7 +19,7 @@ package com.myhome.controllers.response;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,7 +28,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-@Data
+@EqualsAndHashCode
 public class AddCommunityHouseResponse {
   private Set<String> houses = new HashSet<>();
 }
