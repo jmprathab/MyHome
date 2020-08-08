@@ -77,12 +77,13 @@ class UserSDJpaServiceTest {
         .willReturn(response);
 
     // when
-    Optional<UserDto> createdUserDto = userService.createUser(request);
+    Optional<UserDto> createdUserDtoOptional = userService.createUser(request);
 
     // then
-    assertTrue(createdUserDto.isPresent());
-    assertEquals(createdUserDto.get(), response);
-    assertEquals(createdUserDto.get().getCommunityIds().size(), 0);
+    UserDto createdUserDto = createdUserDtoOptional.get();
+    assertTrue(createdUserDtoOptional.isPresent());
+    assertEquals(response, createdUserDto);
+    assertEquals(0, createdUserDto.getCommunityIds().size());
     verify(userRepository).findByEmail(request.getEmail());
     verify(passwordEncoder).encode(request.getPassword());
     verify(userRepository).save(resultUser);
@@ -119,12 +120,13 @@ class UserSDJpaServiceTest {
         .willReturn(userDto);
 
     // when
-    Optional<UserDto> createdUserDto = userService.getUserDetails(userId);
+    Optional<UserDto> createdUserDtoOptional = userService.getUserDetails(userId);
 
     // then
-    assertTrue(createdUserDto.isPresent());
-    assertEquals(createdUserDto.get(), userDto);
-    assertEquals(createdUserDto.get().getCommunityIds().size(), 0);
+    UserDto createdUserDto = createdUserDtoOptional.get();
+    assertTrue(createdUserDtoOptional.isPresent());
+    assertEquals(userDto, createdUserDto);
+    assertEquals(0, createdUserDto.getCommunityIds().size());
     verify(userRepository).findByUserId(userId);
     verify(communityService).listAll();
   }
@@ -153,12 +155,13 @@ class UserSDJpaServiceTest {
         .willReturn(userDto);
 
     // when
-    Optional<UserDto> createdUserDto = userService.getUserDetails(userId);
+    Optional<UserDto> createdUserDtoOptional = userService.getUserDetails(userId);
 
     // then
-    assertTrue(createdUserDto.isPresent());
-    assertEquals(createdUserDto.get(), userDto);
-    assertEquals(createdUserDto.get().getCommunityIds(), communitiesIds);
+    UserDto createdUserDto = createdUserDtoOptional.get();
+    assertTrue(createdUserDtoOptional.isPresent());
+    assertEquals(userDto, createdUserDto);
+    assertEquals(communitiesIds, createdUserDto.getCommunityIds());
     verify(userRepository).findByUserId(userId);
     verify(communityService).listAll();
   }
