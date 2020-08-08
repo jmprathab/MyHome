@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -141,11 +142,11 @@ class UserSDJpaServiceTest {
     Community firstCommunity = createCommunityWithUserAdmin(communityUserAdmin);
     Community secCommunity = createCommunityWithUserAdmin(communityUserAdmin);
 
-    Set<Community> communities = new HashSet<Community>(){{
-      add(firstCommunity);
-      add(secCommunity);
-    }};
-    Set<String> communitiesIds = communities.stream().map(comm -> comm.getCommunityId()).collect(Collectors.toSet());
+    Set<Community> communities = Stream.of(firstCommunity, secCommunity).collect(Collectors.toSet());
+    Set<String> communitiesIds = communities
+        .stream()
+        .map(comm -> comm.getCommunityId())
+        .collect(Collectors.toSet());
 
     given(userRepository.findByUserId(userId))
         .willReturn(user);
