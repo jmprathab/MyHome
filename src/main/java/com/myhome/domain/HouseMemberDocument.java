@@ -14,14 +14,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"documentFilename"})
+@EqualsAndHashCode(of = {"documentFilename"}, callSuper = false)
 public class HouseMemberDocument extends BaseEntity {
 
-    @Column(unique = true)
-    private String documentFilename;
+  @Column(unique = true)
+  private String documentFilename;
 
-    @Lob
-    @Column
-    private byte[] documentContent = new byte[0];
-
+  @Lob
+  @Column
+  private byte[] documentContent = new byte[0];
 }

@@ -4,7 +4,6 @@ import com.myhome.domain.HouseMemberDocument;
 import com.myhome.services.HouseMemberDocumentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import java.io.IOException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.CacheControl;

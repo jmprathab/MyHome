@@ -25,17 +25,16 @@ import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.repositories.PaymentRepository;
 import com.myhome.services.HouseMemberDocumentService;
 import com.myhome.services.PaymentService;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Implements {@link PaymentService} and uses Spring Data JPA Repository to do its work
@@ -68,7 +67,7 @@ public class PaymentSDJpaService implements PaymentService {
   @Override
   public Optional<PaymentDto> getPaymentDetails(String paymentId) {
     return paymentRepository.findByPaymentId(paymentId)
-                                .map(paymentMapper::paymentToPaymentDto);
+        .map(paymentMapper::paymentToPaymentDto);
   }
 
   @Override
@@ -81,7 +80,8 @@ public class PaymentSDJpaService implements PaymentService {
       if (member.getHouseMemberDocument() == null) {
         HouseMemberDocument document = new HouseMemberDocument();
         document.setId(member.getId());
-        member.setHouseMemberDocument(houseMemberDocumentService.findHouseMemberDocument(memberId).orElse(document));
+        member.setHouseMemberDocument(
+            houseMemberDocumentService.findHouseMemberDocument(memberId).orElse(document));
       }
 
       return Optional.of(member);
@@ -91,13 +91,14 @@ public class PaymentSDJpaService implements PaymentService {
   @Override
   public Set<Payment> getPaymentsByMember(String memberId) {
     ExampleMatcher ignoringMatcher = ExampleMatcher.matchingAll()
-      .withMatcher("memberId",
-        ExampleMatcher.GenericPropertyMatchers.startsWith().ignoreCase())
-          .withIgnorePaths("paymentId", "charge", "type", "description", "recurring", "dueDate", "adminId");
+        .withMatcher("memberId",
+            ExampleMatcher.GenericPropertyMatchers.startsWith().ignoreCase())
+        .withIgnorePaths("paymentId", "charge", "type", "description", "recurring", "dueDate",
+            "adminId");
 
     Example<Payment> paymentExample =
-      Example.of(new Payment(null, null, null, null, false, null, null, memberId),
-                  ignoringMatcher);
+        Example.of(new Payment(null, null, null, null, false, null, null, memberId),
+            ignoringMatcher);
 
     return new HashSet<>(paymentRepository.findAll(paymentExample));
   }
@@ -105,13 +106,14 @@ public class PaymentSDJpaService implements PaymentService {
   @Override
   public Set<Payment> getPaymentsByAdmin(String adminId) {
     ExampleMatcher ignoringMatcher = ExampleMatcher.matchingAll()
-    .withMatcher("adminId",
-    ExampleMatcher.GenericPropertyMatchers.startsWith().ignoreCase())
-    .withIgnorePaths("paymentId", "charge", "type", "description", "recurring", "dueDate", "memberId");
+        .withMatcher("adminId",
+            ExampleMatcher.GenericPropertyMatchers.startsWith().ignoreCase())
+        .withIgnorePaths("paymentId", "charge", "type", "description", "recurring", "dueDate",
+            "memberId");
 
     Example<Payment> paymentExample =
-      Example.of(new Payment(null, null, null, null, false, null, null, adminId),
-                ignoringMatcher);
+        Example.of(new Payment(null, null, null, null, false, null, null, adminId),
+            ignoringMatcher);
 
     return new HashSet<>(paymentRepository.findAll(paymentExample));
   }

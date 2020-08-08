@@ -19,6 +19,7 @@ package com.myhome.services.springdatajpa;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.mapper.CommunityMapper;
 import com.myhome.domain.Community;
+import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.repositories.CommunityAdminRepository;
 import com.myhome.repositories.CommunityHouseRepository;
@@ -29,11 +30,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
-import lombok.RequiredArgsConstructor;
 import java.util.stream.Collectors;
-
-
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -86,16 +84,18 @@ public class CommunitySDJpaService implements CommunityService {
     return Optional.empty();
   }
 
-
   @Override public Set<Community> listAll() {
-    return new HashSet<>(communityRepository.findAll());
+    Set<Community> communities = new HashSet<>();
+    communityRepository.findAll().forEach(communities::add);
+    return communities;
   }
 
   @Override public Optional<Community> getCommunityDetailsById(String communityId) {
     return communityRepository.findByCommunityId(communityId);
   }
 
-  @Override public Optional<Community> addAdminsToCommunity(String communityId, Set<String> adminsIds) {
+  @Override
+  public Optional<Community> addAdminsToCommunity(String communityId, Set<String> adminsIds) {
     Optional<Community> communitySearch = communityRepository.findByCommunityId(communityId);
     return communitySearch.map(community -> {
       adminsIds.forEach(adminId -> {
@@ -107,7 +107,6 @@ public class CommunitySDJpaService implements CommunityService {
       });
       return Optional.of(communityRepository.save(community));
     }).orElseGet(Optional::empty);
-
   }
 
   @Override
@@ -134,8 +133,9 @@ public class CommunitySDJpaService implements CommunityService {
   public boolean removeAdminFromCommunity(String communityId, String adminId) {
     Optional<Community> communitySearch = communityRepository.findByCommunityId(communityId);
     return communitySearch.map(community -> {
-      boolean adminRemoved = community.getAdmins().removeIf(admin -> admin.getAdminId().equals(adminId));
-      if(adminRemoved) {
+      boolean adminRemoved =
+          community.getAdmins().removeIf(admin -> admin.getAdminId().equals(adminId));
+      if (adminRemoved) {
         communityRepository.save(community);
         return true;
       } else {
@@ -166,7 +166,7 @@ public class CommunitySDJpaService implements CommunityService {
     return communityRepository.findByCommunityId(communityId)
         .map(community -> {
           CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
-          if(house != null && community.getHouses().contains(house)) {
+          if (house != null && community.getHouses().contains(house)) {
             community.getHouses().remove(house);
             communityRepository.save(community);
             return true;

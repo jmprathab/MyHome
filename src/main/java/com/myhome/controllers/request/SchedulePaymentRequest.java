@@ -15,27 +15,26 @@
  */
 package com.myhome.controllers.request;
 
+import java.math.BigDecimal;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class SchedulePaymentRequest {
-    private String type;
-    @NotBlank
-    @Size(min = 5, max = 300, message = "Description should be between 5 and 300 characters")
-    private String description;
-    private boolean recurring;
-    private BigDecimal charge;
-    private String dueDate;
-    private String adminId;
-    private String memberId;
+  private String type;
+  @NotBlank
+  @Size(min = 5, max = 300, message = "Description should be between 5 and 300 characters")
+  private String description;
+  private boolean recurring;
+  private BigDecimal charge;
+  private String dueDate;
+  private String adminId;
+  private String memberId;
 }

@@ -15,20 +15,19 @@
  */
 package com.myhome.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
 /**
- * Entity identifying a payment in the service. This could be an electricity bill, house rent, water charge etc
+ * Entity identifying a payment in the service. This could be an electricity bill, house rent, water
+ * charge etc
  */
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,20 +35,20 @@ import java.time.LocalDate;
 @Setter
 @Entity
 public class Payment extends BaseEntity {
-    @Column(unique = true, nullable = false)
-    private String paymentId;
-    @Column(nullable = false)
-    private BigDecimal charge;
-    @Column(nullable = false)
-    private String type;
-    @Column(unique = true, nullable = false)
-    private String description;
-    @Column(nullable = false)
-    private boolean recurring;
-    @JsonFormat(pattern="yyyy-MM-dd")
-    private LocalDate dueDate;
-    @Column(nullable = false)
-    private String adminId;
-    @Column(nullable = false)
-    private String memberId;
+  @Column(unique = true, nullable = false)
+  private String paymentId;
+  @Column(nullable = false)
+  private BigDecimal charge;
+  @Column(nullable = false)
+  private String type;
+  @Column(unique = true, nullable = false)
+  private String description;
+  @Column(nullable = false)
+  private boolean recurring;
+  @JsonFormat(pattern = "yyyy-MM-dd")
+  private LocalDate dueDate;
+  @Column(nullable = false)
+  private String adminId;
+  @Column(nullable = false)
+  private String memberId;
 }

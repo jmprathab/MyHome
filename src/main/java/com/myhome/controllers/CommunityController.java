@@ -33,12 +33,8 @@ import com.myhome.domain.CommunityHouse;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 import java.util.Arrays;
 import java.util.HashSet;
-
-import java.util.Collections;
-
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -155,7 +151,6 @@ public class CommunityController {
         .map(ListCommunityAdminsResponse::new)
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
-
   }
 
   @Operation(
@@ -198,7 +193,8 @@ public class CommunityController {
       @PathVariable String communityId, @Valid @RequestBody
       AddCommunityAdminRequest request) {
     log.trace("Received request to add admin to community with id[{}]", communityId);
-    Optional<Community> communityOptional = communityService.addAdminsToCommunity(communityId, request.getAdmins());
+    Optional<Community> communityOptional =
+        communityService.addAdminsToCommunity(communityId, request.getAdmins());
     return communityOptional.map(community -> {
       Set<String> adminsSet = community.getAdmins()
           .stream()
@@ -207,7 +203,6 @@ public class CommunityController {
       AddCommunityAdminResponse response = new AddCommunityAdminResponse(adminsSet);
       return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-
   }
 
   @Operation(
@@ -229,7 +224,7 @@ public class CommunityController {
     Set<CommunityHouse> communityHouses =
         communityApiMapper.communityHouseDtoSetToCommunityHouseSet(request.getHouses());
     Set<String> houseIds = communityService.addHousesToCommunity(communityId, communityHouses);
-    if(houseIds.size() != 0 && request.getHouses().size() != 0) {
+    if (houseIds.size() != 0 && request.getHouses().size() != 0) {
       AddCommunityHouseResponse response = new AddCommunityHouseResponse();
       response.setHouses(houseIds);
       return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -255,7 +250,7 @@ public class CommunityController {
         "Received request to delete house with id[{}] from community with id[{}]",
         houseId, communityId);
     boolean houseRemoved = communityService.removeHouseFromCommunityByHouseId(communityId, houseId);
-    if(houseRemoved) {
+    if (houseRemoved) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -278,7 +273,7 @@ public class CommunityController {
         "Received request to delete an admin from community with community id[{}] and admin id[{}]",
         communityId, adminId);
     boolean adminRemoved = communityService.removeAdminFromCommunity(communityId, adminId);
-    if(adminRemoved) {
+    if (adminRemoved) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

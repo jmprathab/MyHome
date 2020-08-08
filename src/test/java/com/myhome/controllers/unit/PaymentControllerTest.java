@@ -30,6 +30,12 @@ import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -37,13 +43,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
-import java.util.Set;
-import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -104,7 +103,8 @@ class PaymentControllerTest {
   }
 
   private Community getMockCommunity(Set<CommunityAdmin> admins) {
-    Community community = new Community(admins, null, TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID, TEST_COMMUNITY_DISTRICT);
+    Community community = new Community(admins, null, TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID,
+        TEST_COMMUNITY_DISTRICT);
     CommunityAdmin admin = new CommunityAdmin(new HashSet<>(), TEST_ADMIN_ID);
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
@@ -112,15 +112,21 @@ class PaymentControllerTest {
   }
 
   private Payment getMockPayment() {
-    return new Payment(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, LocalDate.parse(TEST_DUE_DATE, DateTimeFormatter.ofPattern("yyyy-MM-dd")), TEST_ADMIN_ID, TEST_MEMBER_ID);
+    return new Payment(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING,
+        LocalDate.parse(TEST_DUE_DATE, DateTimeFormatter.ofPattern("yyyy-MM-dd")), TEST_ADMIN_ID,
+        TEST_MEMBER_ID);
   }
 
   @Test
   void shouldSchedulePaymentSuccessful() {
     // given
-    SchedulePaymentRequest request = new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+    SchedulePaymentRequest request =
+        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
+            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
-    SchedulePaymentResponse response = new SchedulePaymentResponse(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+    SchedulePaymentResponse response =
+        new SchedulePaymentResponse(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION,
+            TEST_RECURRING, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
 
     HouseMember member = new HouseMember(TEST_MEMBER_ID, null, TEST_MEMBER_NAME, null);
 
@@ -128,13 +134,14 @@ class PaymentControllerTest {
         .willReturn(paymentDto);
     given(paymentService.schedulePayment(paymentDto))
         .willReturn(paymentDto);
-    given (paymentApiMapper.paymentToSchedulePaymentResponse(paymentDto))
+    given(paymentApiMapper.paymentToSchedulePaymentResponse(paymentDto))
         .willReturn(response);
     given(paymentService.getHouseMember(TEST_MEMBER_ID))
         .willReturn(Optional.of(member));
 
     //when
-    ResponseEntity<SchedulePaymentResponse> responseEntity = paymentController.schedulePayment(request);
+    ResponseEntity<SchedulePaymentResponse> responseEntity =
+        paymentController.schedulePayment(request);
     //then
     assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
     assertEquals(response, responseEntity.getBody());
@@ -146,19 +153,21 @@ class PaymentControllerTest {
   @Test
   void shouldNotScheduleIfMemberDoesNotExist() {
     // given
-    SchedulePaymentRequest request = new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+    SchedulePaymentRequest request =
+        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
+            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
-    SchedulePaymentResponse response = new SchedulePaymentResponse();
 
     given(paymentApiMapper.schedulePaymentRequestToPaymentDto(request))
-    .willReturn(paymentDto);
+        .willReturn(paymentDto);
     given(paymentService.schedulePayment(paymentDto))
-    .willReturn(paymentDto);
+        .willReturn(paymentDto);
     given(paymentService.getHouseMember(TEST_MEMBER_ID))
-    .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     //when
-    ResponseEntity<SchedulePaymentResponse> responseEntity = paymentController.schedulePayment(request);
+    ResponseEntity<SchedulePaymentResponse> responseEntity =
+        paymentController.schedulePayment(request);
 
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -172,14 +181,14 @@ class PaymentControllerTest {
     PaymentDto paymentDto = createTestPaymentDto();
 
     SchedulePaymentResponse expectedResponse = new SchedulePaymentResponse(
-      TEST_ID,
-      TEST_CHARGE,
-      TEST_TYPE,
-      TEST_DESCRIPTION,
-      TEST_RECURRING,
-      TEST_DUE_DATE,
-      TEST_ADMIN_ID,
-      TEST_MEMBER_ID
+        TEST_ID,
+        TEST_CHARGE,
+        TEST_TYPE,
+        TEST_DESCRIPTION,
+        TEST_RECURRING,
+        TEST_DUE_DATE,
+        TEST_ADMIN_ID,
+        TEST_MEMBER_ID
     );
     given(paymentService.getPaymentDetails(TEST_ID))
         .willReturn(Optional.of(paymentDto));
@@ -187,7 +196,8 @@ class PaymentControllerTest {
         .willReturn(expectedResponse);
 
     // when
-    ResponseEntity<SchedulePaymentResponse> responseEntity = paymentController.listPaymentDetails(TEST_ID);
+    ResponseEntity<SchedulePaymentResponse> responseEntity =
+        paymentController.listPaymentDetails(TEST_ID);
 
     // then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -200,10 +210,11 @@ class PaymentControllerTest {
   void shouldListNoPaymentDetailsSuccess() {
     //given
     given(paymentService.getPaymentDetails(TEST_ID))
-      .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     //when
-    ResponseEntity<SchedulePaymentResponse> responseEntity = paymentController.listPaymentDetails(TEST_ID);
+    ResponseEntity<SchedulePaymentResponse> responseEntity =
+        paymentController.listPaymentDetails(TEST_ID);
 
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -215,15 +226,17 @@ class PaymentControllerTest {
   @Test
   void shouldGetMemberPaymentsSuccess() {
     // given
-    SchedulePaymentRequest request = new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+    SchedulePaymentRequest request =
+        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
+            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
 
     given(paymentService.schedulePayment(paymentDto))
-      .willReturn(paymentDto);
+        .willReturn(paymentDto);
 
     HouseMember member = new HouseMember(TEST_MEMBER_ID, null, TEST_MEMBER_NAME, null);
     given(paymentService.getHouseMember(TEST_MEMBER_ID))
-      .willReturn(Optional.of(member));
+        .willReturn(Optional.of(member));
 
     Set<Payment> payments = new HashSet<>();
     Payment mockPayment = getMockPayment();
@@ -232,27 +245,27 @@ class PaymentControllerTest {
     paymentController.schedulePayment(request);
 
     given(paymentService.getPaymentsByMember(TEST_MEMBER_ID))
-      .willReturn(payments);
+        .willReturn(payments);
 
     Set<ListMemberPaymentsResponse.MemberPayment> paymentResponses = new HashSet<>();
     paymentResponses.add(
-      new ListMemberPaymentsResponse.MemberPayment(
-        TEST_MEMBER_ID,
-        TEST_ID,
-        TEST_CHARGE,
-        TEST_DUE_DATE
-      )
+        new ListMemberPaymentsResponse.MemberPayment(
+            TEST_MEMBER_ID,
+            TEST_ID,
+            TEST_CHARGE,
+            TEST_DUE_DATE
+        )
     );
 
     ListMemberPaymentsResponse expectedResponse =
-    new ListMemberPaymentsResponse(paymentResponses);
+        new ListMemberPaymentsResponse(paymentResponses);
 
     given(paymentApiMapper.memberPaymentSetToRestApiResponseMemberPaymentSet(payments))
-      .willReturn(paymentResponses);
+        .willReturn(paymentResponses);
 
     // when
     ResponseEntity<ListMemberPaymentsResponse> responseEntity =
-      paymentController.listAllMemberPayments(TEST_MEMBER_ID);
+        paymentController.listAllMemberPayments(TEST_MEMBER_ID);
 
     // then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -265,10 +278,11 @@ class PaymentControllerTest {
   void shouldGetNoMemberPaymentsSuccess() {
     //given
     given(paymentService.getHouseMember(TEST_MEMBER_ID))
-      .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     //when
-    ResponseEntity<ListMemberPaymentsResponse> responseEntity = paymentController.listAllMemberPayments(TEST_MEMBER_ID);
+    ResponseEntity<ListMemberPaymentsResponse> responseEntity =
+        paymentController.listAllMemberPayments(TEST_MEMBER_ID);
 
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -279,11 +293,13 @@ class PaymentControllerTest {
   @Test
   void shouldGetAdminPaymentsSuccess() {
     // given
-    SchedulePaymentRequest request = new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+    SchedulePaymentRequest request =
+        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
+            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
 
     given(paymentService.schedulePayment(paymentDto))
-    .willReturn(paymentDto);
+        .willReturn(paymentDto);
 
     Set<Payment> payments = new HashSet<>();
     Payment mockPayment = getMockPayment();
@@ -301,32 +317,32 @@ class PaymentControllerTest {
     CommunityDto communityDto = createTestCommunityDto();
 
     given(communityService.createCommunity(communityDto))
-      .willReturn(community);
+        .willReturn(community);
     given(communityService.getCommunityDetailsById(TEST_COMMUNITY_ID))
-      .willReturn(Optional.of(community));
+        .willReturn(Optional.of(community));
     given(paymentService.getPaymentsByAdmin(TEST_ADMIN_ID))
-      .willReturn(payments);
+        .willReturn(payments);
     given(communityService.addAdminsToCommunity(TEST_COMMUNITY_ID, adminIds))
-    .willReturn(community);
+        .willReturn(Optional.of(community));
 
     Set<ListAdminPaymentsResponse.AdminPayment> responsePayments = new HashSet<>();
     responsePayments.add(
-      new ListAdminPaymentsResponse.AdminPayment(
-        TEST_ADMIN_ID,
-        TEST_ID,
-        TEST_CHARGE,
-        TEST_DUE_DATE
-      )
+        new ListAdminPaymentsResponse.AdminPayment(
+            TEST_ADMIN_ID,
+            TEST_ID,
+            TEST_CHARGE,
+            TEST_DUE_DATE
+        )
     );
 
     ListAdminPaymentsResponse expectedResponse = new ListAdminPaymentsResponse(responsePayments);
 
     given(paymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(payments))
-      .willReturn(responsePayments);
+        .willReturn(responsePayments);
 
     //when
     ResponseEntity<ListAdminPaymentsResponse> responseEntity =
-      paymentController.listAllAdminScheduledPayments(TEST_COMMUNITY_ID, TEST_ADMIN_ID);
+        paymentController.listAllAdminScheduledPayments(TEST_COMMUNITY_ID, TEST_ADMIN_ID);
 
     //then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -339,10 +355,11 @@ class PaymentControllerTest {
   void shouldGetNoAdminPaymentDetailsCommunityNotFoundSuccess() {
     //given
     given(communityService.getCommunityDetailsById(TEST_COMMUNITY_ID))
-      .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     //when
-    ResponseEntity<ListAdminPaymentsResponse> responseEntity = paymentController.listAllAdminScheduledPayments(TEST_COMMUNITY_ID, TEST_ADMIN_ID);
+    ResponseEntity<ListAdminPaymentsResponse> responseEntity =
+        paymentController.listAllAdminScheduledPayments(TEST_COMMUNITY_ID, TEST_ADMIN_ID);
 
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -354,15 +371,18 @@ class PaymentControllerTest {
   @Test
   void shouldGetNoAdminPaymentDetailsAdminNotFoundSuccess() {
     //given
-    Community community = new Community(new HashSet<>(), new HashSet<>(), TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID, TEST_COMMUNITY_DISTRICT);
+    Community community =
+        new Community(new HashSet<>(), new HashSet<>(), TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID,
+            TEST_COMMUNITY_DISTRICT);
 
     given(communityService.getCommunityDetailsById(TEST_COMMUNITY_ID))
-      .willReturn(Optional.of(community));
+        .willReturn(Optional.of(community));
     given(paymentService.getPaymentsByAdmin(TEST_ADMIN_ID))
-      .willReturn(new HashSet<>());
+        .willReturn(new HashSet<>());
 
     //when
-    ResponseEntity<ListAdminPaymentsResponse> response = paymentController.listAllAdminScheduledPayments(TEST_COMMUNITY_ID, TEST_ADMIN_ID);
+    ResponseEntity<ListAdminPaymentsResponse> response =
+        paymentController.listAllAdminScheduledPayments(TEST_COMMUNITY_ID, TEST_ADMIN_ID);
 
     //then
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -374,18 +394,21 @@ class PaymentControllerTest {
   @Test
   void shouldGetNoPaymentsForFoundAdminSuccess() {
     //given
-    Community community = new Community(new HashSet<>(), new HashSet<>(), TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID, TEST_COMMUNITY_DISTRICT);
+    Community community =
+        new Community(new HashSet<>(), new HashSet<>(), TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID,
+            TEST_COMMUNITY_DISTRICT);
     CommunityAdmin admin = new CommunityAdmin(new HashSet<>(), TEST_ADMIN_ID);
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
 
     given(communityService.getCommunityDetailsById(TEST_COMMUNITY_ID))
-    .willReturn(Optional.of(community));
+        .willReturn(Optional.of(community));
     given(paymentService.getPaymentsByAdmin(TEST_ADMIN_ID))
-    .willReturn(new HashSet<>());
+        .willReturn(new HashSet<>());
 
     //when
-    ResponseEntity<ListAdminPaymentsResponse> response = paymentController.listAllAdminScheduledPayments(TEST_COMMUNITY_ID, TEST_ADMIN_ID);
+    ResponseEntity<ListAdminPaymentsResponse> response =
+        paymentController.listAllAdminScheduledPayments(TEST_COMMUNITY_ID, TEST_ADMIN_ID);
 
     //then
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

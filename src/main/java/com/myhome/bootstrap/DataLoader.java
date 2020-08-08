@@ -26,9 +26,6 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.repositories.UserRepository;
-import com.myhome.services.CommunityService;
-import com.myhome.services.HouseService;
-import com.myhome.services.UserService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -38,9 +35,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 class DataLoader implements CommandLineRunner {
-  private final CommunityService communityService;
-  private final UserService userService;
-  private final HouseService houseService;
   private final CommunityRepository communityRepository;
   private final CommunityAdminRepository communityAdminRepository;
   private final CommunityHouseRepository communityHouseRepository;
@@ -48,9 +42,8 @@ class DataLoader implements CommandLineRunner {
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
 
-  @Override public void run(String... args) throws Exception {
-    //loadPostmanData();
-    //loadData();
+  @Override public void run(String... args) {
+    loadPostmanData();
   }
 
   private void loadPostmanData() {

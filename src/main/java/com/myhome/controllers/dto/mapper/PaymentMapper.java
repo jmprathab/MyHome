@@ -25,8 +25,8 @@ import org.mapstruct.Mapping;
  */
 @Mapper
 public interface PaymentMapper {
-    Payment paymentDtoToPayment(PaymentDto paymentDto);
+  Payment paymentDtoToPayment(PaymentDto paymentDto);
 
-    @Mapping(source = "payment.dueDate", target = "dueDate", dateFormat="yyyy-MM-dd")
-    PaymentDto paymentToPaymentDto(Payment payment);
+  @Mapping(source = "payment.dueDate", target = "dueDate", dateFormat = "yyyy-MM-dd")
+  PaymentDto paymentToPaymentDto(Payment payment);
 }

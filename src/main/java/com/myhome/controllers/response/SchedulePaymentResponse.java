@@ -16,9 +16,12 @@
 
 package com.myhome.controllers.response;
 
-import lombok.*;
-
 import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,12 +29,12 @@ import java.math.BigDecimal;
 @Setter
 @Data
 public class SchedulePaymentResponse {
-    private String paymentId;
-    private BigDecimal charge;
-    private String type;
-    private String description;
-    private boolean recurring;
-    private String dueDate;
-    private String adminId;
-    private String memberId;
+  private String paymentId;
+  private BigDecimal charge;
+  private String type;
+  private String description;
+  private boolean recurring;
+  private String dueDate;
+  private String adminId;
+  private String memberId;
 }

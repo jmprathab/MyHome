@@ -49,7 +49,7 @@ public class UserSDJpaService implements UserService {
   private final CommunityService communityService;
 
   @Override public Optional<UserDto> createUser(UserDto request) {
-    if(userRepository.findByEmail(request.getEmail()) == null) {
+    if (userRepository.findByEmail(request.getEmail()) == null) {
       generateUniqueUserId(request);
       encryptUserPassword(request);
       return Optional.of(createUserInRepository(request));

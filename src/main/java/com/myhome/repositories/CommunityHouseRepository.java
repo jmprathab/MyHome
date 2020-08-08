@@ -17,7 +17,6 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.CommunityHouse;
-
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;

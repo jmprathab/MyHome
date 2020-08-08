@@ -1,6 +1,5 @@
 package com.myhome.controllers.integration;
 
-import com.myhome.controllers.integration.ControllerIntegrationTestBase;
 import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.request.LoginUserRequest;
 import com.myhome.domain.HouseMember;
@@ -8,6 +7,10 @@ import com.myhome.domain.HouseMemberDocument;
 import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.repositories.UserRepository;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,11 +24,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -61,8 +59,9 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   @BeforeEach
   void setUp() {
-    if(!houseMemberRepository.findByMemberId(MEMBER_ID).isPresent()) {
-      HouseMember member = houseMemberRepository.save(new HouseMember(MEMBER_ID, null, "test-member-name", null));
+    if (!houseMemberRepository.findByMemberId(MEMBER_ID).isPresent()) {
+      HouseMember member =
+          houseMemberRepository.save(new HouseMember(MEMBER_ID, null, "test-member-name", null));
       member.setMemberId(MEMBER_ID);
       houseMemberRepository.save(member);
     }
@@ -80,7 +79,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
   void getHouseMemberDocumentSuccess() throws Exception {
     // given
     addDefaultHouseMemberDocument();
-    
+
     // when
     MvcResult mvcResult = mockMvc.perform(get(TESTING_ENDPOINT_URL, MEMBER_ID)
         .headers(getHttpEntityHeaders()))
@@ -92,7 +91,8 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     MockHttpServletResponse response = mvcResult.getResponse();
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
     assertEquals(response.getContentType(), MediaType.IMAGE_JPEG_VALUE);
-    assertEquals(response.getContentAsByteArray().length, member.getHouseMemberDocument().getDocumentContent().length);
+    assertEquals(response.getContentAsByteArray().length,
+        member.getHouseMemberDocument().getDocumentContent().length);
   }
 
   @Test
@@ -112,7 +112,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     // given
     byte[] imageBytes = getImageAsByteArray(10, 10);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
-    
+
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
@@ -122,7 +122,8 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
     // then
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
-    assertEquals(member.getHouseMemberDocument().getDocumentFilename(), String.format("member_%s_document.jpg", MEMBER_ID));
+    assertEquals(member.getHouseMemberDocument().getDocumentFilename(),
+        String.format("member_%s_document.jpg", MEMBER_ID));
   }
 
   @Test
@@ -130,7 +131,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     // given
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
-    
+
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, "non-exist-member-id")
         .file(mockImageFile)
@@ -148,7 +149,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     // given
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
-    
+
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
@@ -167,7 +168,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     byte[] imageBytes = getImageAsByteArray(10, 10);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     addDefaultHouseMemberDocument();
-    
+
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
@@ -177,7 +178,8 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
     // then
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
-    assertEquals(member.getHouseMemberDocument().getDocumentFilename(), String.format("member_%s_document.jpg", member.getMemberId()));
+    assertEquals(member.getHouseMemberDocument().getDocumentFilename(),
+        String.format("member_%s_document.jpg", member.getMemberId()));
   }
 
   @Test
@@ -186,7 +188,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     byte[] imageBytes = getImageAsByteArray(10, 10);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     addDefaultHouseMemberDocument();
-    
+
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, "non-exist-member-id")
         .file(mockImageFile)
@@ -201,7 +203,7 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
     MockMultipartFile mockImageFile = new MockMultipartFile("memberDocument", imageBytes);
     addDefaultHouseMemberDocument();
-    
+
     // when
     mockMvc.perform(MockMvcRequestBuilders.multipart(TESTING_ENDPOINT_URL, MEMBER_ID)
         .file(mockImageFile)
@@ -211,14 +213,15 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
     // then
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
-    assertNotEquals(member.getHouseMemberDocument().getDocumentFilename(), String.format("member_%s_document.jpg", member.getMemberId()));
+    assertNotEquals(member.getHouseMemberDocument().getDocumentFilename(),
+        String.format("member_%s_document.jpg", member.getMemberId()));
   }
 
   @Test
   void deleteHouseMemberDocumentSuccess() throws Exception {
     // given
     addDefaultHouseMemberDocument();
-    
+
     // when
     mockMvc.perform(delete(TESTING_ENDPOINT_URL, MEMBER_ID)
         .headers(getHttpEntityHeaders()))
@@ -250,7 +253,6 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
         .andExpect(status().isNotFound());
   }
 
-
   @Test
   void getHouseMemberDocumentNoDocumentPresent() throws Exception {
     mockMvc.perform(get(TESTING_ENDPOINT_URL, MEMBER_ID)
@@ -261,7 +263,8 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   private void addDefaultHouseMemberDocument() throws IOException {
     byte[] imageBytes = getImageAsByteArray(10, 10);
-    HouseMemberDocument houseMemberDocument = houseMemberDocumentRepository.save(new HouseMemberDocument(TEST_DOCUMENT_NAME, imageBytes));
+    HouseMemberDocument houseMemberDocument =
+        houseMemberDocumentRepository.save(new HouseMemberDocument(TEST_DOCUMENT_NAME, imageBytes));
     HouseMember member = houseMemberRepository.findByMemberId(MEMBER_ID).get();
     member.setHouseMemberDocument(houseMemberDocument);
     houseMemberRepository.save(member);
@@ -269,7 +272,8 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   private void authDefaultUser() {
     if (userRepository.findByEmail(TEST_USER_EMAIL) == null) {
-      CreateUserRequest createUserRequest = new CreateUserRequest(TEST_USERNAME, TEST_USER_EMAIL, TEST_USER_PASSWORD);
+      CreateUserRequest createUserRequest =
+          new CreateUserRequest(TEST_USERNAME, TEST_USER_EMAIL, TEST_USER_PASSWORD);
       sendRequest(HttpMethod.POST, "users", createUserRequest);
     }
     updateJwtToken(new LoginUserRequest(TEST_USER_EMAIL, TEST_USER_PASSWORD));
@@ -282,5 +286,4 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
       return imageBytesStream.toByteArray();
     }
   }
-
 }

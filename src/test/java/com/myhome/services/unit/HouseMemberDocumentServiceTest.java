@@ -5,11 +5,11 @@ import com.myhome.domain.HouseMemberDocument;
 import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.springdatajpa.HouseMemberDocumentSDJpaService;
-
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
+import javax.imageio.ImageIO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,13 +18,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.imageio.ImageIO;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
@@ -51,11 +49,13 @@ public class HouseMemberDocumentServiceTest {
 
   @BeforeEach
   private void init() {
-        MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(houseMemberDocumentService, "compressionBorderSizeKBytes", COMPRESSION_BORDER_SIZE_KB);
-        ReflectionTestUtils.setField(houseMemberDocumentService, "maxFileSizeKBytes", MAX_FILE_SIZE_KB);
-        ReflectionTestUtils.setField(houseMemberDocumentService, "compressedImageQuality", COMPRESSED_IMAGE_QUALITY);
-    }
+    MockitoAnnotations.initMocks(this);
+    ReflectionTestUtils.setField(houseMemberDocumentService, "compressionBorderSizeKBytes",
+        COMPRESSION_BORDER_SIZE_KB);
+    ReflectionTestUtils.setField(houseMemberDocumentService, "maxFileSizeKBytes", MAX_FILE_SIZE_KB);
+    ReflectionTestUtils.setField(houseMemberDocumentService, "compressedImageQuality",
+        COMPRESSED_IMAGE_QUALITY);
+  }
 
   @Test
   void findMemberDocumentSuccess() {
@@ -153,15 +153,17 @@ public class HouseMemberDocumentServiceTest {
     // given
     byte[] imageBytes = getImageAsByteArray(10, 10);
     MockMultipartFile newDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
-    HouseMemberDocument savedDocument = new HouseMemberDocument(String.format("member_%s_document.jpg", MEMBER_ID), imageBytes);
+    HouseMemberDocument savedDocument =
+        new HouseMemberDocument(String.format("member_%s_document.jpg", MEMBER_ID), imageBytes);
     HouseMember testMember = new HouseMember(MEMBER_ID, MEMBER_DOCUMENT, MEMBER_NAME, null);
 
     given(houseMemberRepository.findByMemberId(MEMBER_ID))
-            .willReturn(Optional.of(testMember));
+        .willReturn(Optional.of(testMember));
     given(houseMemberDocumentRepository.save(savedDocument))
-            .willReturn(savedDocument);
+        .willReturn(savedDocument);
     // when
-    Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.updateHouseMemberDocument(newDocumentFile, MEMBER_ID);
+    Optional<HouseMemberDocument> houseMemberDocument =
+        houseMemberDocumentService.updateHouseMemberDocument(newDocumentFile, MEMBER_ID);
 
     // then
     assertTrue(houseMemberDocument.isPresent());
@@ -178,33 +180,36 @@ public class HouseMemberDocumentServiceTest {
     MockMultipartFile newDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
 
     given(houseMemberRepository.findByMemberId(MEMBER_ID))
-            .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     // when
-    Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.updateHouseMemberDocument(newDocumentFile, MEMBER_ID);
+    Optional<HouseMemberDocument> houseMemberDocument =
+        houseMemberDocumentService.updateHouseMemberDocument(newDocumentFile, MEMBER_ID);
 
     // then
     assertFalse(houseMemberDocument.isPresent());
     verify(houseMemberRepository).findByMemberId(MEMBER_ID);
     verify(houseMemberDocumentRepository, never()).save(any());
     verify(houseMemberRepository, never()).save(any());
-
   }
 
   @Test
   void updateHouseMemberDocumentTooLargeFile() throws IOException {
     // given
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
-    MockMultipartFile tooLargeDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
-    HouseMemberDocument savedDocument = new HouseMemberDocument(String.format("member_%s_document.jpg", MEMBER_ID), imageBytes);
+    MockMultipartFile tooLargeDocumentFile =
+        new MockMultipartFile("new-test-file-name", imageBytes);
+    HouseMemberDocument savedDocument =
+        new HouseMemberDocument(String.format("member_%s_document.jpg", MEMBER_ID), imageBytes);
     HouseMember testMember = new HouseMember(MEMBER_ID, MEMBER_DOCUMENT, MEMBER_NAME, null);
 
     given(houseMemberRepository.findByMemberId(MEMBER_ID))
-            .willReturn(Optional.of(testMember));
+        .willReturn(Optional.of(testMember));
     given(houseMemberDocumentRepository.save(savedDocument))
-            .willReturn(savedDocument);
+        .willReturn(savedDocument);
     // when
-    Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.updateHouseMemberDocument(tooLargeDocumentFile, MEMBER_ID);
+    Optional<HouseMemberDocument> houseMemberDocument =
+        houseMemberDocumentService.updateHouseMemberDocument(tooLargeDocumentFile, MEMBER_ID);
 
     // then
     assertFalse(houseMemberDocument.isPresent());
@@ -218,20 +223,23 @@ public class HouseMemberDocumentServiceTest {
   void createHouseMemberDocumentSuccess() throws IOException {
     // given
     byte[] imageBytes = getImageAsByteArray(10, 10);
-    HouseMemberDocument savedDocument = new HouseMemberDocument(String.format("member_%s_document.jpg", MEMBER_ID), imageBytes);
+    HouseMemberDocument savedDocument =
+        new HouseMemberDocument(String.format("member_%s_document.jpg", MEMBER_ID), imageBytes);
     MockMultipartFile newDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
     HouseMember testMember = new HouseMember(MEMBER_ID, MEMBER_DOCUMENT, MEMBER_NAME, null);
 
     given(houseMemberRepository.findByMemberId(MEMBER_ID))
-            .willReturn(Optional.of(testMember));
+        .willReturn(Optional.of(testMember));
     given(houseMemberDocumentRepository.save(savedDocument))
-            .willReturn(savedDocument);
+        .willReturn(savedDocument);
     // when
-    Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.createHouseMemberDocument(newDocumentFile, MEMBER_ID);
+    Optional<HouseMemberDocument> houseMemberDocument =
+        houseMemberDocumentService.createHouseMemberDocument(newDocumentFile, MEMBER_ID);
 
     // then
     assertTrue(houseMemberDocument.isPresent());
-    assertNotEquals(testMember.getHouseMemberDocument().getDocumentFilename(), MEMBER_DOCUMENT.getDocumentFilename());
+    assertNotEquals(testMember.getHouseMemberDocument().getDocumentFilename(),
+        MEMBER_DOCUMENT.getDocumentFilename());
     verify(houseMemberRepository).findByMemberId(MEMBER_ID);
     verify(houseMemberDocumentRepository).save(savedDocument);
     verify(houseMemberRepository).save(testMember);
@@ -244,9 +252,10 @@ public class HouseMemberDocumentServiceTest {
     MockMultipartFile newDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
 
     given(houseMemberRepository.findByMemberId(MEMBER_ID))
-            .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
     // when
-    Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.createHouseMemberDocument(newDocumentFile, MEMBER_ID);
+    Optional<HouseMemberDocument> houseMemberDocument =
+        houseMemberDocumentService.createHouseMemberDocument(newDocumentFile, MEMBER_ID);
 
     // then
     assertFalse(houseMemberDocument.isPresent());
@@ -259,13 +268,15 @@ public class HouseMemberDocumentServiceTest {
   void createHouseMemberDocumentTooLargeFile() throws IOException {
     // given
     byte[] imageBytes = getImageAsByteArray(1000, 1000);
-    MockMultipartFile tooLargeDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
+    MockMultipartFile tooLargeDocumentFile =
+        new MockMultipartFile("new-test-file-name", imageBytes);
     HouseMember testMember = new HouseMember(MEMBER_ID, MEMBER_DOCUMENT, MEMBER_NAME, null);
 
     given(houseMemberRepository.findByMemberId(MEMBER_ID))
-            .willReturn(Optional.of(testMember));
+        .willReturn(Optional.of(testMember));
     // when
-    Optional<HouseMemberDocument> houseMemberDocument = houseMemberDocumentService.createHouseMemberDocument(tooLargeDocumentFile, MEMBER_ID);
+    Optional<HouseMemberDocument> houseMemberDocument =
+        houseMemberDocumentService.createHouseMemberDocument(tooLargeDocumentFile, MEMBER_ID);
 
     // then
     assertFalse(houseMemberDocument.isPresent());
@@ -277,7 +288,7 @@ public class HouseMemberDocumentServiceTest {
 
   private byte[] getImageAsByteArray(int height, int width) throws IOException {
     BufferedImage documentImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-    try(ByteArrayOutputStream imageBytesStream = new ByteArrayOutputStream()) {
+    try (ByteArrayOutputStream imageBytesStream = new ByteArrayOutputStream()) {
       ImageIO.write(documentImage, "jpg", imageBytesStream);
       return imageBytesStream.toByteArray();
     }

@@ -16,12 +16,11 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.Payment;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-    Optional<Payment> findByPaymentId(String paymentId);
+  Optional<Payment> findByPaymentId(String paymentId);
 
-    void deleteByPaymentId(String paymentId);
+  void deleteByPaymentId(String paymentId);
 }

@@ -22,22 +22,21 @@ import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.controllers.response.ListMemberPaymentsResponse;
 import com.myhome.controllers.response.SchedulePaymentResponse;
 import com.myhome.domain.Payment;
-import org.mapstruct.Mapper;
-
 import java.util.Set;
+import org.mapstruct.Mapper;
 
 @Mapper
 public interface SchedulePaymentApiMapper {
 
-    PaymentDto schedulePaymentRequestToPaymentDto(SchedulePaymentRequest schedulePaymentRequest);
+  PaymentDto schedulePaymentRequestToPaymentDto(SchedulePaymentRequest schedulePaymentRequest);
 
-    Set<PaymentDto> paymentSetToRestApiResponsePaymentSet(Set<Payment> payments);
+  Set<PaymentDto> paymentSetToRestApiResponsePaymentSet(Set<Payment> payments);
 
-    Set<ListMemberPaymentsResponse.MemberPayment> memberPaymentSetToRestApiResponseMemberPaymentSet(
-        Set<Payment> memberPaymentSet);
+  Set<ListMemberPaymentsResponse.MemberPayment> memberPaymentSetToRestApiResponseMemberPaymentSet(
+      Set<Payment> memberPaymentSet);
 
-    Set<ListAdminPaymentsResponse.AdminPayment> adminPaymentSetToRestApiResponseAdminPaymentSet(
-        Set<Payment> memberPaymentSet);
+  Set<ListAdminPaymentsResponse.AdminPayment> adminPaymentSetToRestApiResponseAdminPaymentSet(
+      Set<Payment> memberPaymentSet);
 
-    SchedulePaymentResponse paymentToSchedulePaymentResponse(PaymentDto payment);
+  SchedulePaymentResponse paymentToSchedulePaymentResponse(PaymentDto payment);
 }

@@ -19,7 +19,6 @@ package com.myhome.services;
 import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
-
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,17 +26,17 @@ import java.util.Set;
  * Interface for service layer
  */
 public interface PaymentService {
-    PaymentDto schedulePayment(PaymentDto request);
+  PaymentDto schedulePayment(PaymentDto request);
 
-    Set<Payment> listAll();
+  Set<Payment> listAll();
 
-    Set<Payment> listAll(Integer limit, Integer start);
+  Set<Payment> listAll(Integer limit, Integer start);
 
-    Optional<PaymentDto> getPaymentDetails(String paymentId);
+  Optional<PaymentDto> getPaymentDetails(String paymentId);
 
-    Set<Payment> getPaymentsByMember(String memberId);
+  Set<Payment> getPaymentsByMember(String memberId);
 
-    Set<Payment> getPaymentsByAdmin(String adminId);
+  Set<Payment> getPaymentsByAdmin(String adminId);
 
-    Optional<HouseMember> getHouseMember(String memberId);
+  Optional<HouseMember> getHouseMember(String memberId);
 }

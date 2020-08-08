@@ -111,7 +111,8 @@ public class HouseMemberDocumentSDJpaService implements HouseMemberDocumentServi
     return houseMemberDocumentRepository.save(newDocument);
   }
 
-  private void writeImageToByteStream(BufferedImage documentImage, ByteArrayOutputStream imageByteStream)
+  private void writeImageToByteStream(BufferedImage documentImage,
+      ByteArrayOutputStream imageByteStream)
       throws IOException {
     ImageIO.write(documentImage, "jpg", imageByteStream);
   }

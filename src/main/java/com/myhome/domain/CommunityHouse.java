@@ -44,5 +44,4 @@ public class CommunityHouse extends BaseEntity {
   private String houseId;
   @OneToMany(fetch = FetchType.EAGER)
   private Set<HouseMember> houseMembers = new HashSet<>();
-
 }
