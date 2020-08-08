@@ -31,10 +31,4 @@ public class CommunityAmenity extends BaseEntity {
   @ManyToOne
   private Community community;
 
-  public boolean checkBooking() {
-    if(bookingEndDate == null || bookingEndDate.isBefore(LocalDateTime.now())) {
-      isBooked = false;
-    }
-    return isBooked;
-  }
 }
