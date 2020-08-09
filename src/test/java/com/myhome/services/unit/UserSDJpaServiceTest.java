@@ -55,7 +55,7 @@ class UserSDJpaServiceTest {
   void createUserSuccess() {
     // given
     UserDto request = getDefaultUserDtoRequest();
-    User resultUser = new User(request.getName(), request.getUserId(), request.getEmail(), request.getEncryptedPassword());
+    User resultUser = getUserFromDto(request);
     UserDto response = new UserDto(
         resultUser.getId(),
         resultUser.getUserId(),
@@ -94,7 +94,7 @@ class UserSDJpaServiceTest {
   void createUserEmailExists() {
     // given
     UserDto request = getDefaultUserDtoRequest();
-    User user = new User(request.getName(), request.getUserId(), request.getEmail(), request.getEncryptedPassword());
+    User user = getUserFromDto(request);
 
     given(userRepository.findByEmail(request.getEmail()))
         .willReturn(user);
@@ -111,7 +111,7 @@ class UserSDJpaServiceTest {
   void getUserDetailsSuccess() {
     // given
     UserDto userDto = getDefaultUserDtoRequest();
-    User user = new User(userDto.getName(), userDto.getUserId(), userDto.getEmail(), userDto.getEncryptedPassword());
+    User user = getUserFromDto(userDto);
 
     given(userRepository.findByUserId(USER_ID))
         .willReturn(user);
@@ -197,6 +197,15 @@ class UserSDJpaServiceTest {
     CommunityAdmin communityAdmin = new CommunityAdmin();
     communityAdmin.setAdminId(USER_ID);
     return communityAdmin;
+  }
+
+  private User getUserFromDto(UserDto request) {
+    return new User(
+        request.getName(),
+        request.getUserId(),
+        request.getEmail(),
+        request.getEncryptedPassword()
+    );
   }
 
 }
