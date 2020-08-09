@@ -20,9 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,10 +28,9 @@ import lombok.Setter;
 public class ListCommunityAdminsResponse {
   private Set<CommunityAdmin> admins = new HashSet<>();
 
-  @Getter
-  @Setter
   @AllArgsConstructor
   @NoArgsConstructor
+  @Data
   public static class CommunityAdmin {
     private String adminId;
   }

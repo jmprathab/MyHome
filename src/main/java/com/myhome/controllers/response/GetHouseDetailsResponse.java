@@ -20,9 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,8 +30,7 @@ public class GetHouseDetailsResponse {
 
   @AllArgsConstructor
   @NoArgsConstructor
-  @Getter
-  @Setter
+  @Data
   public static class CommunityHouse {
     private String houseId;
     private String name;
