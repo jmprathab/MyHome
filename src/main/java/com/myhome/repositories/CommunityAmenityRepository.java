@@ -16,24 +16,20 @@
 
 package com.myhome.repositories;
 
-import com.myhome.domain.Community;
+import com.myhome.domain.CommunityAmenity;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+public interface CommunityAmenityRepository extends JpaRepository<CommunityAmenity, Long> {
 
-@Repository
-public interface CommunityRepository extends PagingAndSortingRepository<Community, Long> {
+  Optional<CommunityAmenity> findByAmenityId(String amenityId);
 
-  Optional<Community> findByCommunityId(String communityId);
+  @Query("from CommunityAmenity comminityAmenity where comminityAmenity.amenityId = :amenityId")
+  @EntityGraph(value = "CommunityAmenity.community")
+  Optional<CommunityAmenity> findByAmenityIdWithCommunity(@Param("amenityId") String amenityId);
 
-  @Query("from Community comminity where comminity.communityId = :communityId")
-  @EntityGraph(value = "Community.amenities")
-  Optional<Community> findByCommunityIdWithAmenities(@Param("communityId") String communityId);
-
-  boolean existsByCommunityId(String communityId);
 }

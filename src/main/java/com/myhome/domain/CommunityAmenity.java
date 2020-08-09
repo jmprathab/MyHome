@@ -10,6 +10,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,6 +20,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "CommunityAmenity.community",
+        attributeNodes = {
+            @NamedAttributeNode("community"),
+        }
+    )
+})
 public class CommunityAmenity extends BaseEntity {
 
   @Column(nullable = false, unique = true)

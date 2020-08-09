@@ -23,6 +23,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,6 +40,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Entity
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "Community.amenities",
+        attributeNodes = {
+            @NamedAttributeNode("amenities"),
+        }
+    )
+})
 public class Community extends BaseEntity {
   @ManyToMany(fetch = FetchType.EAGER)
   private Set<CommunityAdmin> admins = new HashSet<>();
