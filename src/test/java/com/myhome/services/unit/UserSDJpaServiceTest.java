@@ -81,8 +81,8 @@ class UserSDJpaServiceTest {
     Optional<UserDto> createdUserDtoOptional = userService.createUser(request);
 
     // then
-    UserDto createdUserDto = createdUserDtoOptional.get();
     assertTrue(createdUserDtoOptional.isPresent());
+    UserDto createdUserDto = createdUserDtoOptional.get();
     assertEquals(response, createdUserDto);
     assertEquals(0, createdUserDto.getCommunityIds().size());
     verify(userRepository).findByEmail(request.getEmail());
@@ -124,8 +124,8 @@ class UserSDJpaServiceTest {
     Optional<UserDto> createdUserDtoOptional = userService.getUserDetails(USER_ID);
 
     // then
-    UserDto createdUserDto = createdUserDtoOptional.get();
     assertTrue(createdUserDtoOptional.isPresent());
+    UserDto createdUserDto = createdUserDtoOptional.get();
     assertEquals(userDto, createdUserDto);
     assertEquals(0, createdUserDto.getCommunityIds().size());
     verify(userRepository).findByUserId(USER_ID);
@@ -159,8 +159,8 @@ class UserSDJpaServiceTest {
     Optional<UserDto> createdUserDtoOptional = userService.getUserDetails(USER_ID);
 
     // then
-    UserDto createdUserDto = createdUserDtoOptional.get();
     assertTrue(createdUserDtoOptional.isPresent());
+    UserDto createdUserDto = createdUserDtoOptional.get();
     assertEquals(userDto, createdUserDto);
     assertEquals(communitiesIds, createdUserDto.getCommunityIds());
     verify(userRepository).findByUserId(USER_ID);
