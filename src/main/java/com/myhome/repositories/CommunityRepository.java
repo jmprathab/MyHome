@@ -17,23 +17,15 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.Community;
-import java.util.Optional;
-
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Repository
 public interface CommunityRepository extends PagingAndSortingRepository<Community, Long> {
 
   Optional<Community> findByCommunityId(String communityId);
-
-  @Query("from Community comminity where comminity.communityId = :communityId")
-  @EntityGraph(value = "Community.amenities")
-  Optional<Community> findByCommunityIdWithAmenities(@Param("communityId") String communityId);
 
   boolean existsByCommunityId(String communityId);
 }

@@ -26,8 +26,6 @@ import java.util.Optional;
 
 public interface CommunityAmenityRepository extends JpaRepository<CommunityAmenity, Long> {
 
-  Optional<CommunityAmenity> findByAmenityId(String amenityId);
-
   @Query("from CommunityAmenity comminityAmenity where comminityAmenity.amenityId = :amenityId")
   @EntityGraph(value = "CommunityAmenity.community")
   Optional<CommunityAmenity> findByAmenityIdWithCommunity(@Param("amenityId") String amenityId);
