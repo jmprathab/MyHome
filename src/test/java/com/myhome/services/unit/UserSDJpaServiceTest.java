@@ -30,10 +30,10 @@ import static org.mockito.Mockito.verify;
 
 class UserSDJpaServiceTest {
 
-  private String userId = "test-user-id";
-  private String userName = "test-user-id";
-  private String userEmail = "test-user-id";
-  private String userPassword = "test-user-id";
+  private final String USER_ID = "test-user-id";
+  private final String USERNAME = "test-user-id";
+  private final String USER_EMAIL = "test-user-id";
+  private final String USER_PASSWORD = "test-user-id";
 
   @Mock
   private UserRepository userRepository;
@@ -113,7 +113,7 @@ class UserSDJpaServiceTest {
     UserDto userDto = getDefaultUserDtoRequest();
     User user = new User(userDto.getName(), userDto.getUserId(), userDto.getEmail(), userDto.getEncryptedPassword());
 
-    given(userRepository.findByUserId(userId))
+    given(userRepository.findByUserId(USER_ID))
         .willReturn(user);
     given(communityService.listAll())
         .willReturn(new HashSet<>());
@@ -121,14 +121,14 @@ class UserSDJpaServiceTest {
         .willReturn(userDto);
 
     // when
-    Optional<UserDto> createdUserDtoOptional = userService.getUserDetails(userId);
+    Optional<UserDto> createdUserDtoOptional = userService.getUserDetails(USER_ID);
 
     // then
     UserDto createdUserDto = createdUserDtoOptional.get();
     assertTrue(createdUserDtoOptional.isPresent());
     assertEquals(userDto, createdUserDto);
     assertEquals(0, createdUserDto.getCommunityIds().size());
-    verify(userRepository).findByUserId(userId);
+    verify(userRepository).findByUserId(USER_ID);
     verify(communityService).listAll();
   }
 
@@ -145,10 +145,10 @@ class UserSDJpaServiceTest {
     Set<Community> communities = Stream.of(firstCommunity, secCommunity).collect(Collectors.toSet());
     Set<String> communitiesIds = communities
         .stream()
-        .map(comm -> comm.getCommunityId())
+        .map(community -> community.getCommunityId())
         .collect(Collectors.toSet());
 
-    given(userRepository.findByUserId(userId))
+    given(userRepository.findByUserId(USER_ID))
         .willReturn(user);
     given(communityService.listAll())
         .willReturn(communities);
@@ -156,33 +156,31 @@ class UserSDJpaServiceTest {
         .willReturn(userDto);
 
     // when
-    Optional<UserDto> createdUserDtoOptional = userService.getUserDetails(userId);
+    Optional<UserDto> createdUserDtoOptional = userService.getUserDetails(USER_ID);
 
     // then
     UserDto createdUserDto = createdUserDtoOptional.get();
     assertTrue(createdUserDtoOptional.isPresent());
     assertEquals(userDto, createdUserDto);
     assertEquals(communitiesIds, createdUserDto.getCommunityIds());
-    verify(userRepository).findByUserId(userId);
+    verify(userRepository).findByUserId(USER_ID);
     verify(communityService).listAll();
   }
 
   @Test
   void getUserDetailsNotFound() {
     // given
-    given(userRepository.findByUserId(userId))
+    given(userRepository.findByUserId(USER_ID))
         .willReturn(null);
     given(communityService.listAll())
         .willReturn(new HashSet<>());
-    given(userMapper.userToUserDto(any()))
-        .willReturn(null);
 
     // when
-    Optional<UserDto> createdUserDto = userService.getUserDetails(userId);
+    Optional<UserDto> createdUserDto = userService.getUserDetails(USER_ID);
 
     // then
     assertFalse(createdUserDto.isPresent());
-    verify(userRepository).findByUserId(userId);
+    verify(userRepository).findByUserId(USER_ID);
   }
 
   private Community createCommunityWithUserAdmin(CommunityAdmin communityUserAdmin) {
@@ -192,12 +190,12 @@ class UserSDJpaServiceTest {
   }
 
   private UserDto getDefaultUserDtoRequest() {
-    return new UserDto(null, userId, userName, userEmail, userPassword, null, new HashSet<>());
+    return new UserDto(null, USER_ID, USERNAME, USER_EMAIL, USER_PASSWORD, null, new HashSet<>());
   }
 
   private CommunityAdmin getAdminFromUser() {
     CommunityAdmin communityAdmin = new CommunityAdmin();
-    communityAdmin.setAdminId(userId);
+    communityAdmin.setAdminId(USER_ID);
     return communityAdmin;
   }
 
