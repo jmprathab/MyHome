@@ -59,6 +59,6 @@ public class Community extends BaseEntity {
   private String communityId;
   @Column(nullable = false)
   private String district;
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "community")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "community", orphanRemoval = true)
   private Set<CommunityAmenity> amenities = new HashSet<>();
 }
