@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
@@ -28,7 +29,7 @@ public class CommunityAmenity extends BaseEntity {
   private LocalDateTime bookingStartDate;
   @Column
   private LocalDateTime bookingEndDate;
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   private Community community;
 
 }

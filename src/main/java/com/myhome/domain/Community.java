@@ -18,6 +18,7 @@ package com.myhome.domain;
 
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -47,6 +48,6 @@ public class Community extends BaseEntity {
   private String communityId;
   @Column(nullable = false)
   private String district;
-  @OneToMany(fetch = FetchType.EAGER)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "community")
   private Set<CommunityAmenity> amenities = new HashSet<>();
 }
