@@ -172,8 +172,6 @@ class UserSDJpaServiceTest {
     // given
     given(userRepository.findByUserId(USER_ID))
         .willReturn(null);
-    given(communityService.listAll())
-        .willReturn(new HashSet<>());
 
     // when
     Optional<UserDto> createdUserDto = userService.getUserDetails(USER_ID);
