@@ -20,23 +20,18 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 public class ListAdminPaymentsResponse {
   private Set<AdminPayment> payments = new HashSet<>();
 
   @AllArgsConstructor
   @NoArgsConstructor
-  @Getter
-  @Setter
+  @Data
   public static class AdminPayment {
     private String adminId;
     private String paymentId;
