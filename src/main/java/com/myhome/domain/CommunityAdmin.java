@@ -22,6 +22,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,8 +31,8 @@ import lombok.Setter;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false, exclude = "communities")
 public class CommunityAdmin extends BaseEntity {
 
   @Column(nullable = false)

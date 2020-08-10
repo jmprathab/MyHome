@@ -20,14 +20,14 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class AddCommunityAdminRequest {
   @NotEmpty
   private Set<String> admins = new HashSet<>();

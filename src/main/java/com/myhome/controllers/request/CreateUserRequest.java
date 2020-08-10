@@ -20,6 +20,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,8 +30,7 @@ import lombok.Setter;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class CreateUserRequest {
   @NotBlank
   private String name;
