@@ -24,7 +24,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 
 /**
  * Entity identifying a valid user in the service.
