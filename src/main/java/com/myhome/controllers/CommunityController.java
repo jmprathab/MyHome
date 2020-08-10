@@ -267,7 +267,7 @@ public class CommunityController {
   @DeleteMapping(
       path = "/communities/{communityId}/admins/{adminId}"
   )
-  public ResponseEntity removeAdminFromCommunity(
+  public ResponseEntity<Void> removeAdminFromCommunity(
       @PathVariable String communityId, @PathVariable String adminId) {
     log.trace(
         "Received request to delete an admin from community with community id[{}] and admin id[{}]",

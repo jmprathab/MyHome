@@ -17,17 +17,15 @@
 package com.myhome.controllers.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Request model for Logging in to service.
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class LoginUserRequest {
   private String email;
   private String password;

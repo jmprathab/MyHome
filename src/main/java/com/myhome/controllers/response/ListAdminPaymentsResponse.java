@@ -21,22 +21,17 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Data
 public class ListAdminPaymentsResponse {
   private Set<AdminPayment> payments = new HashSet<>();
 
   @AllArgsConstructor
   @NoArgsConstructor
-  @Getter
-  @Setter
+  @Data
   public static class AdminPayment {
     private String adminId;
     private String paymentId;
