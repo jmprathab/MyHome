@@ -16,16 +16,18 @@
 
 package com.myhome.repositories;
 
-import com.myhome.domain.Community;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
+import com.myhome.domain.CommunityAmenity;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-@Repository
-public interface CommunityRepository extends PagingAndSortingRepository<Community, Long> {
+public interface CommunityAmenityRepository extends JpaRepository<CommunityAmenity, Long> {
 
-  Optional<Community> findByCommunityId(String communityId);
+  @Query("from CommunityAmenity comminityAmenity where comminityAmenity.amenityId = :amenityId")
+  @EntityGraph(value = "CommunityAmenity.community")
+  Optional<CommunityAmenity> findByAmenityIdWithCommunity(@Param("amenityId") String amenityId);
 
-  boolean existsByCommunityId(String communityId);
 }

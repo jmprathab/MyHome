@@ -18,10 +18,14 @@ package com.myhome.domain;
 
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,6 +40,14 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = "houses")
 @Entity
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "Community.amenities",
+        attributeNodes = {
+            @NamedAttributeNode("amenities"),
+        }
+    )
+})
 public class Community extends BaseEntity {
   @ManyToMany(fetch = FetchType.EAGER)
   private Set<CommunityAdmin> admins = new HashSet<>();
@@ -47,4 +59,6 @@ public class Community extends BaseEntity {
   private String communityId;
   @Column(nullable = false)
   private String district;
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "community", orphanRemoval = true)
+  private Set<CommunityAmenity> amenities = new HashSet<>();
 }
