@@ -24,15 +24,17 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.With;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(exclude = "community", callSuper = false)
 public class CommunityHouse extends BaseEntity {
   @With
@@ -40,6 +42,7 @@ public class CommunityHouse extends BaseEntity {
   private Community community;
   @Column(nullable = false)
   private String name;
+  @With
   @Column(unique = true, nullable = false)
   private String houseId;
   @OneToMany(fetch = FetchType.EAGER)

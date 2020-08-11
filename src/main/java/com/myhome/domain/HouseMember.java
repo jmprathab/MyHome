@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.With;
 
 @Entity
 @AllArgsConstructor
@@ -33,6 +34,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false, exclude = "communityHouse")
 public class HouseMember extends BaseEntity {
 
+  @With
   @Column(nullable = false, unique = true)
   private String memberId;
 
