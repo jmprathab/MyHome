@@ -7,7 +7,12 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -27,4 +32,10 @@ public class HouseHistory  extends BaseEntity {
 
     @Column(nullable = true)
     private Date toDate;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    private CommunityHouse communityHouse;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    private HouseMember houseMember;
 }

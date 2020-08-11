@@ -26,7 +26,6 @@ import com.myhome.controllers.response.ListHouseMembersResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseHistory;
 import com.myhome.domain.HouseMember;
-import com.myhome.helper.CommonHelper;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,7 +41,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @Slf4j
@@ -127,7 +133,7 @@ public class HouseController {
       consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<AddHouseMemberResponse> addHouseMembers(
-      @PathVariable String houseId, @Valid @RequestBody AddHouseMemberRequest request) {
+          @PathVariable String houseId, @Valid @RequestBody AddHouseMemberRequest request) {
 
     log.trace("Received request to add member to the house with id[{}]", houseId);
     Set<HouseMember> members =
@@ -165,10 +171,11 @@ public class HouseController {
           consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<HouseHistory> postInterval(@Valid @RequestBody HouseHistoryDto houseHistoryDto) {
-    log.trace("Received request to postinterval reuqest "+ CommonHelper.getStringFromObject(houseHistoryDto));
+    log.trace("Received request to post date interval for house Id[{}] and memberId [{}] ",
+            houseHistoryDto.getHouseId(),houseHistoryDto.getMemberId());
 
     HouseHistory houseHistory = houseService.addInterval(houseHistoryDto);
-    if(!CommonHelper.empty(houseHistory) ){
+    if(houseHistory != null ){
       return ResponseEntity.status(HttpStatus.CREATED).body(houseHistory);
     }
 
