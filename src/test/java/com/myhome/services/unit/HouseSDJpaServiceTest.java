@@ -53,28 +53,6 @@ class HouseSDJpaServiceTest {
     MockitoAnnotations.initMocks(this);
   }
 
-  private String generateUniqueId() {
-    return UUID.randomUUID().toString();
-  }
-
-  private Set<CommunityHouse> getTestHouses(int count) {
-    return Stream
-        .generate(() -> new CommunityHouse().withHouseId(generateUniqueId()))
-        .limit(count)
-        .collect(Collectors.toSet());
-  }
-
-  private Set<HouseMember> getTestHouseMembers(int count) {
-    return Stream
-        .generate(() -> new HouseMember().withMemberId(generateUniqueId()))
-        .limit(count)
-        .collect(Collectors.toSet());
-  }
-
-  private CommunityHouse getTestCommunityHouse() {
-    return new CommunityHouse();
-  }
-
   @Test
   void listAllHousesDefault() {
     // given
@@ -231,5 +209,27 @@ class HouseSDJpaServiceTest {
     // when
 
     // then
+  }
+
+  private String generateUniqueId() {
+    return UUID.randomUUID().toString();
+  }
+
+  private Set<CommunityHouse> getTestHouses(int count) {
+    return Stream
+        .generate(() -> new CommunityHouse().withHouseId(generateUniqueId()))
+        .limit(count)
+        .collect(Collectors.toSet());
+  }
+
+  private Set<HouseMember> getTestHouseMembers(int count) {
+    return Stream
+        .generate(() -> new HouseMember().withMemberId(generateUniqueId()))
+        .limit(count)
+        .collect(Collectors.toSet());
+  }
+
+  private CommunityHouse getTestCommunityHouse() {
+    return new CommunityHouse();
   }
 }
