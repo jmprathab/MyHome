@@ -14,6 +14,7 @@ public class HealthCheckControllerTest {
 
   @InjectMocks
   private HealthCheckController healthCheckController;
+
   @BeforeEach
   void init() {
     MockitoAnnotations.initMocks(this);
@@ -25,8 +26,7 @@ public class HealthCheckControllerTest {
     String healthyMessage = "Application is healthy";
 
     // when
-    ResponseEntity<String> responseEntity =
-      healthCheckController.statusCheck();
+    ResponseEntity<String> responseEntity = healthCheckController.statusCheck();
 
     // then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
