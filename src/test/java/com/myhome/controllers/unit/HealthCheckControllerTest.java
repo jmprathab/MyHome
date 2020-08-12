@@ -5,14 +5,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.BDDMockito.given;
 
 public class HealthCheckControllerTest {
 
   @InjectMocks
-  HealthCheckController healthCheckController;
-
+  private HealthCheckController healthCheckController;
   @BeforeEach
   void init() {
     MockitoAnnotations.initMocks(this);
@@ -20,6 +22,15 @@ public class HealthCheckControllerTest {
 
   @Test
   void shouldReturnHealthySuccessfully() {
-    assertEquals("Application is healthy", healthCheckController.statusCheck());
+    // given
+    String healthyMessage = "Application is healthy";
+
+    // when
+    ResponseEntity<String> responseEntity =
+      healthCheckController.statusCheck();
+
+    // then
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    assertEquals(healthyMessage, responseEntity.getBody());
   }
 }
