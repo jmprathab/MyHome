@@ -95,7 +95,7 @@ public class CommunityControllerTest {
   }
 
   private Community createTestCommunity() {
-    Community community = new Community(new HashSet<>(), new HashSet<>(), COMMUNITY_NAME, COMMUNITY_ID, COMMUNITY_DISTRICT);
+    Community community = new Community(new HashSet<>(), new HashSet<>(), COMMUNITY_NAME, COMMUNITY_ID, COMMUNITY_DISTRICT, new HashSet<>());
     CommunityAdmin admin = new CommunityAdmin(new HashSet<>(), COMMUNITY_ADMIN_ID);
     community.getAdmins().add(admin);
     community.getHouses().add(createTestCommunityHouse(community));
