@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -91,14 +92,13 @@ public class HouseController {
   )
   public ResponseEntity<GetHouseDetailsResponse> getHouseDetails(@PathVariable String houseId) {
     log.trace("Received request to get details of a house with id[{}]", houseId);
-    if (!houseService.getHouseDetailsById(houseId).isPresent()) {
+
+    Optional<CommunityHouse> houseDetail = Optional.of(houseService.getHouseDetailsById(houseId)).orElse(null);
+    if(houseDetail == null){
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GetHouseDetailsResponse());
     }
-    CommunityHouse houseDetail =
-        houseService.getHouseDetailsById(houseId).get();
     GetHouseDetailsResponse.CommunityHouse getHouseDetailsResponse =
-        houseApiMapper.communityHouseToRestApiResponseCommunityHouse(houseDetail);
-
+        houseApiMapper.communityHouseToRestApiResponseCommunityHouse(houseDetail.get());
     GetHouseDetailsResponse response = new GetHouseDetailsResponse();
     response.getHouses().add(getHouseDetailsResponse);
     return ResponseEntity.status(HttpStatus.OK).body(response);
