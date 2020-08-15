@@ -18,11 +18,12 @@ package com.myhome.services;
 
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.domain.Community;
-import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import com.myhome.domain.User;
 import org.springframework.data.domain.Pageable;
 
 public interface CommunityService {
@@ -36,7 +37,9 @@ public interface CommunityService {
 
   Optional<List<CommunityHouse>> findCommunityHousesById(String communityId, Pageable pageable);
 
-  Optional<List<CommunityAdmin>> findCommunityAdminsById(String communityId, Pageable pageable);
+  Optional<List<User>> findCommunityAdminsById(String communityId, Pageable pageable);
+
+  Optional<User> findCommunityAdminById(String adminId);
 
   Optional<Community> addAdminsToCommunity(String communityId, Set<String> admins);
 

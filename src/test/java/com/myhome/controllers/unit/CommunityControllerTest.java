@@ -17,9 +17,9 @@
 package com.myhome.controllers.unit;
 
 import com.myhome.controllers.CommunityController;
-import com.myhome.controllers.dto.CommunityAdminDto;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.CommunityHouseDto;
+import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.CommunityApiMapper;
 import com.myhome.controllers.request.AddCommunityAdminRequest;
 import com.myhome.controllers.request.AddCommunityHouseRequest;
@@ -31,8 +31,8 @@ import com.myhome.controllers.response.GetCommunityDetailsResponse;
 import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
-import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.User;
 import com.myhome.services.CommunityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,6 +51,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +59,9 @@ import java.util.Set;
 
 public class CommunityControllerTest {
   private static final String COMMUNITY_ADMIN_ID = "1";
+  private static final String COMMUNITY_ADMIN_NAME = "Test Name";
+  private static final String COMMUNITY_ADMIN_EMAIL = "testadmin@myhome.com";
+  private static final String COMMUNITY_ADMIN_PASSWORD = "testpassword@myhome.com";
   private static final String COMMUNITY_HOUSE_ID = "2";
   private static final String COMMUNITY_HOUSE_NAME = "Test House";
   private static final String COMMUNITY_NAME = "Test Community";
@@ -79,8 +83,16 @@ public class CommunityControllerTest {
   }
 
   private CommunityDto createTestCommunityDto() {
-    Set<CommunityAdminDto> communityAdminDtos = new HashSet<>();
-    communityAdminDtos.add(new CommunityAdminDto(COMMUNITY_ADMIN_ID));
+    Set<UserDto> communityAdminDtos = new HashSet<>();
+    UserDto userDto = new UserDto();
+    userDto.setUserId(COMMUNITY_ADMIN_ID);
+    userDto.setName(COMMUNITY_ADMIN_NAME);
+    userDto.setEmail(COMMUNITY_ADMIN_EMAIL);
+    userDto.setPassword(COMMUNITY_ADMIN_PASSWORD);
+    Set<String> communityIds = new HashSet<>(Arrays.asList(COMMUNITY_ID));
+    userDto.setCommunityIds(communityIds);
+
+    communityAdminDtos.add(userDto);
     CommunityDto communityDto = new CommunityDto();
     communityDto.setCommunityId(COMMUNITY_ID);
     communityDto.setName(COMMUNITY_NAME);
@@ -96,7 +108,7 @@ public class CommunityControllerTest {
 
   private Community createTestCommunity() {
     Community community = new Community(new HashSet<>(), new HashSet<>(), COMMUNITY_NAME, COMMUNITY_ID, COMMUNITY_DISTRICT, new HashSet<>());
-    CommunityAdmin admin = new CommunityAdmin(new HashSet<>(), COMMUNITY_ADMIN_ID);
+    User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, COMMUNITY_ADMIN_PASSWORD, new HashSet<>());
     community.getAdmins().add(admin);
     community.getHouses().add(createTestCommunityHouse(community));
     admin.getCommunities().add(community);
@@ -225,16 +237,15 @@ public class CommunityControllerTest {
   void shouldListCommunityAdminsSuccess() {
     // given
     Community community = createTestCommunity();
-    List<CommunityAdmin> admins = new ArrayList<>();
-    admins.addAll(community.getAdmins());
-    Optional<List<CommunityAdmin>> communityAdminsOptional = Optional.of(admins);
+    List<User> admins = new ArrayList<>(community.getAdmins());
+    Optional<List<User>> communityAdminsOptional = Optional.of(admins);
 
     Pageable pageable = PageRequest.of(0, 1);
 
     given(communityService.findCommunityAdminsById(COMMUNITY_ID, pageable))
       .willReturn(communityAdminsOptional);
 
-    Set<CommunityAdmin> adminsSet = new HashSet<>(admins);
+    Set<User> adminsSet = new HashSet<>(admins);
 
     Set<ListCommunityAdminsResponse.CommunityAdmin> listAdminsResponses = new HashSet<>();
     listAdminsResponses.add(
@@ -283,9 +294,9 @@ public class CommunityControllerTest {
     // given
     AddCommunityAdminRequest addRequest = new AddCommunityAdminRequest();
     Community community = createTestCommunity();
-    Set<CommunityAdmin> communityAdmins = community.getAdmins();
-    for (CommunityAdmin admin : communityAdmins) {
-        addRequest.getAdmins().add(admin.getAdminId());
+    Set<User> communityAdmins = community.getAdmins();
+    for (User admin : communityAdmins) {
+        addRequest.getAdmins().add(admin.getUserId());
     }
 
     Set<String> adminIds = addRequest.getAdmins();
@@ -309,9 +320,9 @@ public class CommunityControllerTest {
     // given
     AddCommunityAdminRequest addRequest = new AddCommunityAdminRequest();
     Community community = createTestCommunity();
-    Set<CommunityAdmin> communityAdmins = community.getAdmins();
-    for (CommunityAdmin admin : communityAdmins) {
-      addRequest.getAdmins().add(admin.getAdminId());
+    Set<User> communityAdmins = community.getAdmins();
+    for (User admin : communityAdmins) {
+      addRequest.getAdmins().add(admin.getUserId());
     }
 
     Set<String> adminIds = addRequest.getAdmins();

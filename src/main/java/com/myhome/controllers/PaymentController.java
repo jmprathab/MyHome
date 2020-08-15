@@ -21,11 +21,14 @@ import com.myhome.controllers.request.SchedulePaymentRequest;
 import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.controllers.response.ListMemberPaymentsResponse;
 import com.myhome.controllers.response.SchedulePaymentResponse;
-import com.myhome.domain.CommunityAdmin;
+import com.myhome.domain.Community;
+import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.Payment;
+import com.myhome.domain.User;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
+
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -59,9 +62,26 @@ public class PaymentController {
   public ResponseEntity<SchedulePaymentResponse> schedulePayment(@Valid @RequestBody
       SchedulePaymentRequest request) {
     log.trace("Received schedule payment request");
+
+    String adminId = request.getAdminId();
+
     return paymentService.getHouseMember(request.getMemberId())
-        .map(requestPaymentDto -> schedulePaymentApiMapper.schedulePaymentRequestToPaymentDto(
-            request))
+        .map(houseMember -> {
+          boolean adminExists = communityService.findCommunityAdminById(adminId)
+            .map(admin -> {
+              CommunityHouse house = houseMember.getCommunityHouse();
+              Community community = house.getCommunity();
+              return community.getAdmins()
+                .stream()
+                .anyMatch(admin1 -> admin.getUserId().equals(adminId)); //makes sure this user is an admin of the community this member belongs to
+            })
+            .orElse(false);
+
+          if (adminExists)
+            return schedulePaymentApiMapper.schedulePaymentRequestToPaymentDto(request);
+          else
+            return null;
+        })
         .map(paymentService::schedulePayment)
         .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
         .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
@@ -123,9 +143,9 @@ public class PaymentController {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  private Boolean isAdminMatchingId(Set<CommunityAdmin> list, String adminId) {
+  private Boolean isAdminMatchingId(Set<User> list, String adminId) {
     if (list.stream()
-        .anyMatch(communityAdmin -> communityAdmin.getAdminId().equals(adminId))) {
+        .anyMatch(communityAdmin -> communityAdmin.getUserId().equals(adminId))) {
       return true;
     }
 

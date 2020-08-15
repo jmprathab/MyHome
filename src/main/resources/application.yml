@@ -21,6 +21,18 @@ server:
   port: 8080
   cors.allowedOrigins: http://localhost:3000
 
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+        
+
 ###############################################################################
 # Spring
 ###############################################################################
