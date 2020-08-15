@@ -44,13 +44,9 @@ import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 
 @RequiredArgsConstructor
 @Service
-@AllArgsConstructor
 public class HouseSDJpaService implements HouseService {
   private final HouseMemberRepository houseMemberRepository;
   private final HouseMemberDocumentRepository houseMemberDocumentRepository;
