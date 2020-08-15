@@ -24,7 +24,6 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,10 +34,10 @@ import lombok.With;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = "community", callSuper = false)
+//@EqualsAndHashCode(exclude = "community", callSuper = false)
 public class CommunityHouse extends BaseEntity {
   @With
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.EAGER)
   private Community community;
   @Column(nullable = false)
   private String name;
@@ -47,4 +46,20 @@ public class CommunityHouse extends BaseEntity {
   private String houseId;
   @OneToMany(fetch = FetchType.EAGER)
   private Set<HouseMember> houseMembers = new HashSet<>();
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    } else if (this.hashCode() == obj.hashCode()) {
+      return true;
+    }
+
+    if (!(obj instanceof CommunityHouse)) {
+      return false;
+    } else {
+      CommunityHouse house = (CommunityHouse)obj;
+
+      return house.getHouseMembers().size() == houseMembers.size() && house.community.equals(community) && house.name.equals(name) && house.houseId.equals(houseId) && getId().equals(house.getId());
+    }
+  }
 }

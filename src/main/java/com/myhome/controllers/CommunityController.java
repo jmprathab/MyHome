@@ -28,8 +28,8 @@ import com.myhome.controllers.response.GetCommunityDetailsResponse;
 import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
-import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.User;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -198,7 +198,7 @@ public class CommunityController {
     return communityOptional.map(community -> {
       Set<String> adminsSet = community.getAdmins()
           .stream()
-          .map(CommunityAdmin::getAdminId)
+          .map(User::getUserId)
           .collect(Collectors.toSet());
       AddCommunityAdminResponse response = new AddCommunityAdminResponse(adminsSet);
       return ResponseEntity.status(HttpStatus.CREATED).body(response);

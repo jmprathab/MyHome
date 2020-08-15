@@ -17,11 +17,9 @@
 package com.myhome.bootstrap;
 
 import com.myhome.domain.Community;
-import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
-import com.myhome.repositories.CommunityAdminRepository;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.HouseMemberRepository;
@@ -36,7 +34,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 class DataLoader implements CommandLineRunner {
   private final CommunityRepository communityRepository;
-  private final CommunityAdminRepository communityAdminRepository;
+  //private final CommunityAdminRepository communityAdminRepository;
+  //private final UserRepository communityAdminRepository;
   private final CommunityHouseRepository communityHouseRepository;
   private final HouseMemberRepository houseMemberRepository;
   private final PasswordEncoder passwordEncoder;
@@ -52,7 +51,7 @@ class DataLoader implements CommandLineRunner {
     // Persist community
     Community savedCommunity = saveCommunity();
     // Persist admin to repo
-    CommunityAdmin savedCommunityAdmin = saveCommunityAdmin(savedCommunity);
+    User savedCommunityAdmin = saveCommunityAdmin(savedCommunity);
     // Update community with the saved admin
     savedCommunity = addAdminToCommunity(savedCommunityAdmin, savedCommunity);
 
@@ -98,17 +97,17 @@ class DataLoader implements CommandLineRunner {
     return communityHouseRepository.save(house);
   }
 
-  private Community addAdminToCommunity(CommunityAdmin savedCommunityAdmin,
+  private Community addAdminToCommunity(User savedCommunityAdmin,
       Community savedCommunity) {
     savedCommunity.getAdmins().add(savedCommunityAdmin);
     return communityRepository.save(savedCommunity);
   }
 
-  private CommunityAdmin saveCommunityAdmin(Community savedCommunity) {
-    CommunityAdmin communityAdmin = new CommunityAdmin();
-    communityAdmin.setAdminId(TestDataConstants.ADMIN_ID);
+  private User saveCommunityAdmin(Community savedCommunity) {
+    User communityAdmin = new User();
+    communityAdmin.setUserId(TestDataConstants.ADMIN_ID);
     communityAdmin.getCommunities().add(savedCommunity);
-    return communityAdminRepository.save(communityAdmin);
+    return userRepository.save(communityAdmin);
   }
 
   private Community saveCommunity() {
