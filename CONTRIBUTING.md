@@ -17,6 +17,8 @@ Please note we have a [code of conduct](CODE_OF_CONDUCT.md), please follow it in
 3. Increase the version numbers in any examples files and the README.md to the new version that this
    Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
 4. Pull requests will be approved by one of the owners of this repository.
+5. Pattern for git branch name has to be `feature/<ISSUE_NUMBER>--<ISSUE_SHORT_NAME>`
+6. Pattern for pull request title has to be `Issue <ISSUE_NUMBER>: <ISSUE_NAME>`
 
 ## How to set up your environment and run tests?
 
