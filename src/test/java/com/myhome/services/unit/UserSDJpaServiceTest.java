@@ -3,7 +3,6 @@ package com.myhome.services.unit;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
 import com.myhome.domain.Community;
-import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
@@ -113,7 +112,7 @@ class UserSDJpaServiceTest {
     User user = getUserFromDto(userDto);
 
     given(userRepository.findByUserId(USER_ID))
-        .willReturn(user);
+        .willReturn(Optional.of(user));
     given(communityService.listAll())
         .willReturn(new HashSet<>());
     given(userMapper.userToUserDto(user))
@@ -135,11 +134,10 @@ class UserSDJpaServiceTest {
   void getUserDetailsSuccessWithCommunityIds() {
     // given
     UserDto userDto = getDefaultUserDtoRequest();
-    User user = new User(userDto.getName(), userDto.getUserId(), userDto.getEmail(), userDto.getEncryptedPassword());
+    User user = new User(userDto.getName(), userDto.getUserId(), userDto.getEmail(), userDto.getEncryptedPassword(), new HashSet<>());
 
-    CommunityAdmin communityUserAdmin = getAdminFromUser();
-    Community firstCommunity = createCommunityWithUserAdmin(communityUserAdmin);
-    Community secCommunity = createCommunityWithUserAdmin(communityUserAdmin);
+    Community firstCommunity = createCommunityWithUserAdmin(user);
+    Community secCommunity = createCommunityWithUserAdmin(user);
 
     Set<Community> communities = Stream.of(firstCommunity, secCommunity).collect(Collectors.toSet());
     Set<String> communitiesIds = communities
@@ -148,7 +146,7 @@ class UserSDJpaServiceTest {
         .collect(Collectors.toSet());
 
     given(userRepository.findByUserId(USER_ID))
-        .willReturn(user);
+        .willReturn(Optional.of(user));
     given(communityService.listAll())
         .willReturn(communities);
     given(userMapper.userToUserDto(user))
@@ -170,7 +168,7 @@ class UserSDJpaServiceTest {
   void getUserDetailsNotFound() {
     // given
     given(userRepository.findByUserId(USER_ID))
-        .willReturn(null);
+        .willReturn(Optional.empty());
 
     // when
     Optional<UserDto> createdUserDto = userService.getUserDetails(USER_ID);
@@ -180,7 +178,7 @@ class UserSDJpaServiceTest {
     verify(userRepository).findByUserId(USER_ID);
   }
 
-  private Community createCommunityWithUserAdmin(CommunityAdmin communityUserAdmin) {
+  private Community createCommunityWithUserAdmin(User communityUserAdmin) {
     Community community = new Community();
     community.getAdmins().add(communityUserAdmin);
     return community;
@@ -190,18 +188,13 @@ class UserSDJpaServiceTest {
     return new UserDto(null, USER_ID, USERNAME, USER_EMAIL, USER_PASSWORD, null, new HashSet<>());
   }
 
-  private CommunityAdmin getAdminFromUser() {
-    CommunityAdmin communityAdmin = new CommunityAdmin();
-    communityAdmin.setAdminId(USER_ID);
-    return communityAdmin;
-  }
-
   private User getUserFromDto(UserDto request) {
     return new User(
         request.getName(),
         request.getUserId(),
         request.getEmail(),
-        request.getEncryptedPassword()
+        request.getEncryptedPassword(),
+        new HashSet<>()
     );
   }
 

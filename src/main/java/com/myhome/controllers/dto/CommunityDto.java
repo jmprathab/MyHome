@@ -29,5 +29,5 @@ public class CommunityDto {
   private String communityId;
   private String name;
   private String district;
-  private Set<CommunityAdminDto> admins;
+  private Set<UserDto> admins;
 }
