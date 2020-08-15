@@ -19,21 +19,18 @@ package com.myhome.controllers.response;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class GetCommunityDetailsResponse {
   private Set<Community> communities = new HashSet<>();
 
-  @Getter
-  @Setter
   @AllArgsConstructor
   @NoArgsConstructor
+  @Data
   public static class Community {
     private String communityId;
     private String name;

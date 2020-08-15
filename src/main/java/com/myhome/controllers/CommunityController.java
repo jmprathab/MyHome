@@ -33,13 +33,16 @@ import com.myhome.domain.CommunityHouse;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,20 +56,20 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * REST Controller which provides endpoints for managing community
  */
+@RequiredArgsConstructor
 @RestController
 @Slf4j
 public class CommunityController {
   private final CommunityService communityService;
   private final CommunityApiMapper communityApiMapper;
 
-  public CommunityController(
-      CommunityService communityService,
-      CommunityApiMapper communityApiMapper) {
-    this.communityService = communityService;
-    this.communityApiMapper = communityApiMapper;
-  }
+  @Operation(
+      description = "Create a new community",
+      responses = {
+          @ApiResponse(responseCode = "201", description = "If community was created"),
+      }
+  )
 
-  @Operation(description = "Create a new community")
   @PostMapping(
       path = "/communities",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -88,18 +91,27 @@ public class CommunityController {
       path = "/communities",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<GetCommunityDetailsResponse> listAllCommunity() {
+  public ResponseEntity<GetCommunityDetailsResponse> listAllCommunity(
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all community");
-    Set<Community> communityDetails = communityService.listAll();
+
+    Set<Community> communityDetails = communityService.listAll(pageable);
     Set<GetCommunityDetailsResponse.Community> communityDetailsResponse =
         communityApiMapper.communitySetToRestApiResponseCommunitySet(communityDetails);
 
     GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
     response.getCommunities().addAll(communityDetailsResponse);
+
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @Operation(description = "Get details about the community given a community id")
+  @Operation(
+      description = "Get details about the community given a community id",
+      responses = {
+          @ApiResponse(responseCode = "200", description = "If community exists"),
+          @ApiResponse(responseCode = "404", description = "If params are invalid"),
+      }
+  )
   @GetMapping(
       path = "/communities/{communityId}",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
@@ -107,139 +119,181 @@ public class CommunityController {
   public ResponseEntity<GetCommunityDetailsResponse> listCommunityDetails(
       @PathVariable String communityId) {
     log.trace("Received request to get details about community with id[{}]", communityId);
-    if (!communityService.getCommunityDetailsById(communityId).isPresent()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GetCommunityDetailsResponse());
-    }
-    Community communityDetails = communityService.getCommunityDetailsById(communityId).get();
-    GetCommunityDetailsResponse.Community communityDetailsResponse =
-        communityApiMapper.communityToRestApiResponseCommunity(communityDetails);
 
-    GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
-    response.getCommunities().add(communityDetailsResponse);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    return communityService.getCommunityDetailsById(communityId)
+        .map(communityApiMapper::communityToRestApiResponseCommunity)
+        .map(Arrays::asList)
+        .map(HashSet::new)
+        .map(GetCommunityDetailsResponse::new)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Operation(description = "List all admins of the community given a community id")
+  @Operation(
+      description = "List all admins of the community given a community id",
+      responses = {
+          @ApiResponse(responseCode = "200", description = "If community exists"),
+          @ApiResponse(responseCode = "404", description = "If params are invalid"),
+      }
+  )
   @GetMapping(
       path = "/communities/{communityId}/admins",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<ListCommunityAdminsResponse> listCommunityAdmins(
-      @PathVariable String communityId) {
+      @PathVariable String communityId,
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all admins of community with id[{}]", communityId);
-    if (!communityService.getCommunityDetailsById(communityId).isPresent()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ListCommunityAdminsResponse());
-    }
-    Set<CommunityAdmin> adminDetails =
-        communityService.getCommunityDetailsById(communityId).get().getAdmins();
-    Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSet =
-        communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminDetails);
 
-    ListCommunityAdminsResponse response = new ListCommunityAdminsResponse();
-    response.getAdmins().addAll(communityAdminSet);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    return communityService.findCommunityAdminsById(communityId, pageable)
+        .map(HashSet::new)
+        .map(communityApiMapper::communityAdminSetToRestApiResponseCommunityAdminSet)
+        .map(ListCommunityAdminsResponse::new)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Operation(description = "List all houses of the community given a community id")
+  @Operation(
+      description = "List all houses of the community given a community id",
+      responses = {
+          @ApiResponse(responseCode = "200", description = "If community exists"),
+          @ApiResponse(responseCode = "404", description = "If params are invalid"),
+      }
+  )
   @GetMapping(
       path = "/communities/{communityId}/houses",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
-      @PathVariable String communityId) {
+      @PathVariable String communityId,
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all houses of community with id[{}]", communityId);
-    if (!communityService.getCommunityDetailsById(communityId).isPresent()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GetHouseDetailsResponse());
-    }
-    Set<CommunityHouse> houseDetails = communityService.getCommunityDetailsById(communityId).get().getHouses();
-    Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
-        communityApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
-    GetHouseDetailsResponse response = new GetHouseDetailsResponse();
-    response.setHouses(getHouseDetailsResponseSet);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    return communityService.findCommunityHousesById(communityId, pageable)
+        .map(HashSet::new)
+        .map(communityApiMapper::communityHouseSetToRestApiResponseCommunityHouseSet)
+        .map(GetHouseDetailsResponse::new)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Operation(description = "Add a new admin to the community given a community id")
+  @Operation(
+      description = "Add a new admin to the community given a community id",
+      responses = {
+          @ApiResponse(responseCode = "204", description = "If admins were added"),
+          @ApiResponse(responseCode = "404", description = "If params are invalid"),
+      }
+  )
   @PostMapping(
       path = "/communities/{communityId}/admins",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
       consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<AddCommunityAdminResponse> addCommunityAdmin(
+  public ResponseEntity<AddCommunityAdminResponse> addCommunityAdmins(
       @PathVariable String communityId, @Valid @RequestBody
       AddCommunityAdminRequest request) {
     log.trace("Received request to add admin to community with id[{}]", communityId);
-    Community community = communityService.addAdminsToCommunity(communityId, request.getAdmins());
-    AddCommunityAdminResponse response = new AddCommunityAdminResponse();
-    Set<String> adminsSet =
-        community.getAdmins().stream().map(CommunityAdmin::getAdminId).collect(Collectors.toSet());
-    response.setAdmins(adminsSet);
-    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    Optional<Community> communityOptional =
+        communityService.addAdminsToCommunity(communityId, request.getAdmins());
+    return communityOptional.map(community -> {
+      Set<String> adminsSet = community.getAdmins()
+          .stream()
+          .map(CommunityAdmin::getAdminId)
+          .collect(Collectors.toSet());
+      AddCommunityAdminResponse response = new AddCommunityAdminResponse(adminsSet);
+      return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
-  @Operation(description = "Add a new house to the community given a community id")
+  @Operation(
+      description = "Add a new house to the community given a community id",
+      responses = {
+          @ApiResponse(responseCode = "204", description = "If houses were added"),
+          @ApiResponse(responseCode = "400", description = "If params are invalid"),
+      }
+  )
   @PostMapping(
       path = "/communities/{communityId}/houses",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
       consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<AddCommunityHouseResponse> addCommunityHouse(
+  public ResponseEntity<AddCommunityHouseResponse> addCommunityHouses(
       @PathVariable String communityId, @Valid @RequestBody
       AddCommunityHouseRequest request) {
     log.trace("Received request to add house to community with id[{}]", communityId);
-
     Set<CommunityHouse> communityHouses =
         communityApiMapper.communityHouseDtoSetToCommunityHouseSet(request.getHouses());
     Set<String> houseIds = communityService.addHousesToCommunity(communityId, communityHouses);
-    AddCommunityHouseResponse response = new AddCommunityHouseResponse();
-    response.setHouses(houseIds);
-    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    if (houseIds.size() != 0 && request.getHouses().size() != 0) {
+      AddCommunityHouseResponse response = new AddCommunityHouseResponse();
+      response.setHouses(houseIds);
+      return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    } else {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
   }
 
-  @Operation(description = "Deletion of house from the community given a community id and a house id")
+  @Operation(
+      description = "Remove of house from the community given a community id and a house id",
+      responses = {
+          @ApiResponse(responseCode = "204", description = "If house was added"),
+          @ApiResponse(responseCode = "400", description = "If params are invalid"),
+      }
+  )
   @DeleteMapping(
       path = "/communities/{communityId}/houses/{houseId}"
   )
-  public ResponseEntity<Void> deleteCommunityHouse(
+  public ResponseEntity<Void> removeCommunityHouse(
       @PathVariable String communityId, @PathVariable String houseId
   ) {
-    communityService.deleteHouseFromCommunityByHouseId(houseId);
     log.trace(
         "Received request to delete house with id[{}] from community with id[{}]",
         houseId, communityId);
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-  }
-
-  @Operation(description = "Deletion of admin associated with a community"
-      , responses = {@ApiResponse(responseCode = "204", description = "If admin was removed"),
-      @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
-  @DeleteMapping(
-      path = "/communities/{communityId}/admins/{adminId}"
-  )
-  public ResponseEntity<Void> deleteAdminFromCommunity(
-      @PathVariable String communityId, @PathVariable String adminId) {
-    log.trace(
-        "Received request to delete an admin from community with community id[{}] and admin id[{}]",
-        communityId, adminId);
-    Optional<Community> community = communityService.deleteAdminFromCommunity(communityId, adminId);
-    if (community.isPresent()) {
+    boolean houseRemoved = communityService.removeHouseFromCommunityByHouseId(communityId, houseId);
+    if (houseRemoved) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
   }
 
-  @Operation(description = "Deletion community with given community id",
-      responses = {@ApiResponse(responseCode = "204", description = "If community was removed"),
-          @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
+  @Operation(
+      description = "Remove of admin associated with a community",
+      responses = {
+          @ApiResponse(responseCode = "204", description = "If admin was removed"),
+          @ApiResponse(responseCode = "404", description = "If parameters are invalid")
+      }
+  )
+  @DeleteMapping(
+      path = "/communities/{communityId}/admins/{adminId}"
+  )
+  public ResponseEntity<Void> removeAdminFromCommunity(
+      @PathVariable String communityId, @PathVariable String adminId) {
+    log.trace(
+        "Received request to delete an admin from community with community id[{}] and admin id[{}]",
+        communityId, adminId);
+    boolean adminRemoved = communityService.removeAdminFromCommunity(communityId, adminId);
+    if (adminRemoved) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+  @Operation(
+      description = "Deletion community with given community id",
+      responses = {
+          @ApiResponse(responseCode = "204", description = "If community was removed"),
+          @ApiResponse(responseCode = "404", description = "If parameters are invalid")
+      }
+  )
   @DeleteMapping(
       path = "/communities/{communityId}"
   )
   public ResponseEntity<Void> deleteCommunity(@PathVariable String communityId) {
     log.trace("Received delete community request");
-    Integer isDeleted = communityService.deleteCommunity(communityId);
-    if (isDeleted == 1) {
+    boolean isDeleted = communityService.deleteCommunity(communityId);
+    if (isDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

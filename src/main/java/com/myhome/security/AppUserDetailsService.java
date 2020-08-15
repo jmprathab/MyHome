@@ -20,6 +20,7 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
 import com.myhome.repositories.UserRepository;
 import java.util.Collections;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,15 +31,10 @@ import org.springframework.stereotype.Service;
  * Custom {@link UserDetailsService} catering to the need of service logic.
  */
 @Service
+@RequiredArgsConstructor
 public class AppUserDetailsService implements UserDetailsService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
-
-  public AppUserDetailsService(UserRepository userRepository,
-      UserMapper userMapper) {
-    this.userRepository = userRepository;
-    this.userMapper = userMapper;
-  }
 
   @Override public UserDetails loadUserByUsername(String username)
       throws UsernameNotFoundException {

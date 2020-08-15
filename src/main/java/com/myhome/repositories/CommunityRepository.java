@@ -17,15 +17,15 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.Community;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Repository
-public interface CommunityRepository extends CrudRepository<Community, Long> {
+public interface CommunityRepository extends PagingAndSortingRepository<Community, Long> {
 
-  Community findByCommunityId(String communityId);
+  Optional<Community> findByCommunityId(String communityId);
 
-  @Transactional
-  Integer deleteByCommunityId(String communityId);
+  boolean existsByCommunityId(String communityId);
 }

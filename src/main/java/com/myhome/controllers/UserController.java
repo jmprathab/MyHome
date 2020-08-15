@@ -31,6 +31,8 @@ import javax.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +40,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -51,7 +52,19 @@ public class UserController {
   private final UserService userService;
   private final UserApiMapper userApiMapper;
 
-  @Operation(description = "Create a new user")
+  @Operation(
+      description = "Create a new user",
+      responses = {
+          @ApiResponse(
+              responseCode = "201",
+              description = "if user created"
+          ),
+          @ApiResponse(
+              responseCode = "409",
+              description = "if user already exists"
+          )
+      }
+  )
   @PostMapping(
       path = "/users",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -60,45 +73,50 @@ public class UserController {
   public ResponseEntity<CreateUserResponse> signUp(@Valid @RequestBody CreateUserRequest request) {
     log.trace("Received SignUp request");
     UserDto requestUserDto = userApiMapper.createUserRequestToUserDto(request);
-    UserDto createdUserDto = userService.createUser(requestUserDto);
-    CreateUserResponse createdUserResponse =
-        userApiMapper.userDtoToCreateUserResponse(createdUserDto);
-    return ResponseEntity.status(HttpStatus.CREATED).body(createdUserResponse);
+    Optional<UserDto> createdUserDto = userService.createUser(requestUserDto);
+    return createdUserDto
+        .map(userDto -> {
+          CreateUserResponse response = userApiMapper.userDtoToCreateUserResponse(userDto);
+          return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        })
+        .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).build());
   }
 
   @GetMapping(path = "/users",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<GetUserDetailsResponse> listAllUsers(
-      @RequestParam(defaultValue = "200") Integer limit,
-      @RequestParam(defaultValue = "0") Integer start) {
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all users");
-    Set<User> userDetails = userService.listAll(limit, start);
+
+    Set<User> userDetails = userService.listAll(pageable);
     Set<GetUserDetailsResponse.User> userDetailsResponse =
         userApiMapper.userSetToRestApiResponseUserSet(userDetails);
 
-    GetUserDetailsResponse response = new GetUserDetailsResponse();
-    response.getUsers().addAll(userDetailsResponse);
+    GetUserDetailsResponse response = new GetUserDetailsResponse(userDetailsResponse);
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @Operation(description = "Get details of a user given userId"
-      , responses = {@ApiResponse(responseCode = "404", description = "If userId is invalid"),
-      @ApiResponse(responseCode = "200",
-          description = "If userId is valid. Response body has the details ")})
+  @Operation(
+      description = "Get details of a user given userId",
+      responses = {
+          @ApiResponse(
+              responseCode = "404",
+              description = "If userId is invalid"
+          ),
+          @ApiResponse(
+              responseCode = "200",
+              description = "If userId is valid. Response body has the details")
+      }
+  )
   @GetMapping(path = "/users/{userId}",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<GetUserDetailsResponse.User> getUserDetails(
       @Valid @PathVariable @NonNull String userId) {
     log.trace("Received request to get details of user with Id[{}]", userId);
 
-    UserDto userDto = new UserDto();
-    userDto.setUserId(userId);
-    Optional<UserDto> userDetails = userService.getUserDetails(userDto);
-    if (!userDetails.isPresent()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    }
-    GetUserDetailsResponse.User response =
-        userApiMapper.userDtoToGetUserDetailsResponse(userDetails.get());
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    return userService.getUserDetails(userId)
+        .map(userApiMapper::userDtoToGetUserDetailsResponse)
+        .map(response -> ResponseEntity.status(HttpStatus.OK).body(response))
+        .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 }

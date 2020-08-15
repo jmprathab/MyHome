@@ -22,20 +22,20 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false, exclude = "communities")
 public class CommunityAdmin extends BaseEntity {
 
   @Column(nullable = false)
   @ManyToMany(mappedBy = "admins")
   private Set<Community> communities = new HashSet<>();
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String adminId;
 }

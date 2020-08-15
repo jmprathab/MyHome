@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.myhome.controllers.dto.mapper;
 
-package com.myhome;
+import com.myhome.controllers.dto.PaymentDto;
+import com.myhome.domain.Payment;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+/**
+ * Provides conversion between DTO and entity object
+ */
+@Mapper
+public interface PaymentMapper {
+  Payment paymentDtoToPayment(PaymentDto paymentDto);
 
-@SpringBootTest
-class MyHomeServiceApplicationTests {
-
-  @Test
-  void contextLoads() {
-  }
+  @Mapping(source = "payment.dueDate", target = "dueDate", dateFormat = "yyyy-MM-dd")
+  PaymentDto paymentToPaymentDto(Payment payment);
 }

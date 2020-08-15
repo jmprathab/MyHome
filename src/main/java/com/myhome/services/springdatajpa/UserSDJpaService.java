@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,36 +48,44 @@ public class UserSDJpaService implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final CommunityService communityService;
 
-  @Override public UserDto createUser(UserDto request) {
-    generateUniqueUserId(request);
-    encryptUserPassword(request);
-    return createUserInRepository(request);
+  @Override public Optional<UserDto> createUser(UserDto request) {
+    if (userRepository.findByEmail(request.getEmail()) == null) {
+      generateUniqueUserId(request);
+      encryptUserPassword(request);
+      return Optional.of(createUserInRepository(request));
+    } else {
+      return Optional.empty();
+    }
   }
 
   @Override public Set<User> listAll() {
-    return listAll(200, 0);
+    return listAll(PageRequest.of(0, 200));
   }
 
-  @Override public Set<User> listAll(Integer limit, Integer start) {
-    return userRepository.findAll(PageRequest.of(start, limit)).toSet();
+  @Override public Set<User> listAll(Pageable pageable) {
+    return userRepository.findAll(pageable).toSet();
   }
 
-  @Override public Optional<UserDto> getUserDetails(UserDto request) {
-    String userId = request.getUserId();
+  @Override
+  public Optional<UserDto> getUserDetails(String userId) {
     User user = userRepository.findByUserId(userId);
+    if(user != null) {
+      Set<String> communityIds = communityService.listAll().stream()
+          .filter(community -> community.getAdmins()
+              .stream()
+              .map(CommunityAdmin::getAdminId)
+              .collect(Collectors.toSet())
+              .contains(userId)
+          )
+          .map(Community::getCommunityId)
+          .collect(Collectors.toSet());
 
-    Set<String> communityIds = communityService.listAll().stream().filter(c -> c.getAdmins()
-        .stream()
-        .map(CommunityAdmin::getAdminId)
-        .collect(Collectors.toSet())
-        .contains(userId)).map(Community::getCommunityId).collect(Collectors.toSet());
-
-    UserDto userDto = userMapper.userToUserDto(user);
-    if (userDto == null) {
+      UserDto userDto = userMapper.userToUserDto(user);
+      userDto.setCommunityIds(communityIds);
+      return Optional.of(userDto);
+    } else {
       return Optional.empty();
     }
-    userDto.setCommunityIds(communityIds);
-    return Optional.of(userDto);
   }
 
   private UserDto createUserInRepository(UserDto request) {

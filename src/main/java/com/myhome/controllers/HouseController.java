@@ -26,19 +26,21 @@ import com.myhome.controllers.response.ListHouseMembersResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseHistory;
 import com.myhome.domain.HouseMember;
-import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
-
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -52,36 +54,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
+@RequiredArgsConstructor
 @Slf4j
 public class HouseController {
-  private final CommunityHouseRepository communityHouseRepository;
   private final HouseMemberMapper houseMemberMapper;
   private final HouseService houseService;
   private final HouseApiMapper houseApiMapper;
-
-  public HouseController(CommunityHouseRepository communityHouseRepository,
-      HouseMemberMapper houseMemberMapper, HouseService houseService,
-      HouseApiMapper houseApiMapper) {
-    this.communityHouseRepository = communityHouseRepository;
-    this.houseMemberMapper = houseMemberMapper;
-    this.houseService = houseService;
-    this.houseApiMapper = houseApiMapper;
-  }
 
   @Operation(description = "List all houses of the community given a community id")
   @GetMapping(
       path = "/houses",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<GetHouseDetailsResponse> listAllHouses() {
+  public ResponseEntity<GetHouseDetailsResponse> listAllHouses(
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all houses");
+
     Set<CommunityHouse> houseDetails =
-        houseService.listAllHouses();
+        houseService.listAllHouses(pageable);
     Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
         houseApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
     GetHouseDetailsResponse response = new GetHouseDetailsResponse();
     response.setHouses(getHouseDetailsResponseSet);
+
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
@@ -110,23 +106,24 @@ public class HouseController {
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
   public ResponseEntity<ListHouseMembersResponse> listAllMembersOfHouse(
-      @PathVariable String houseId) {
-
+      @PathVariable String houseId,
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all members of the house with id[{}]", houseId);
-    if (!houseService.getHouseDetailsById(houseId).isPresent()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ListHouseMembersResponse());
-    }
-    Set<HouseMember> houseMembers =
-        houseService.getHouseDetailsById(houseId).get().getHouseMembers();
-    Set<ListHouseMembersResponse.HouseMember> responseSet =
-        houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(houseMembers);
 
-    ListHouseMembersResponse response = new ListHouseMembersResponse();
-    response.setMembers(responseSet);
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+    return houseService.getHouseMembersById(houseId, pageable)
+        .map(HashSet::new)
+        .map(houseMemberMapper::houseMemberSetToRestApiResponseHouseMemberSet)
+        .map(ListHouseMembersResponse::new)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Operation(description = "Add new members to the house given a house id. Responds with member id which were added")
+  @Operation(
+      description = "Add new members to the house given a house id. Responds with member id which were added",
+      responses = {
+          @ApiResponse(responseCode = "201", description = "If members were added to house"),
+          @ApiResponse(responseCode = "404", description = "If parameters are invalid")
+      })
   @PostMapping(
       path = "/houses/{houseId}/members",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -140,16 +137,20 @@ public class HouseController {
         houseMemberMapper.houseMemberDtoSetToHouseMemberSet(request.getMembers());
     Set<HouseMember> savedHouseMembers = houseService.addHouseMembers(houseId, members);
 
-    AddHouseMemberResponse response = new AddHouseMemberResponse();
-    response.setMembers(
-        houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(response);
+    if (savedHouseMembers.size() == 0 && request.getMembers().size() != 0) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    } else {
+      AddHouseMemberResponse response = new AddHouseMemberResponse();
+      response.setMembers(
+          houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
+      return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
   }
 
   @Operation(description = "Deletion of member associated with a house",
-          responses = {@ApiResponse(responseCode = "204", description = "If house member was removed from house"),
-            @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
+      responses = {
+          @ApiResponse(responseCode = "204", description = "If house member was removed from house"),
+          @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
   @DeleteMapping(
       path = "/houses/{houseId}/members/{memberId}"
   )
@@ -158,7 +159,7 @@ public class HouseController {
     log.trace("Received request to delete a member from house with house id[{}] and member id[{}]",
         houseId, memberId);
     boolean isMemberDeleted = houseService.deleteMemberFromHouse(houseId, memberId);
-    if(isMemberDeleted) {
+    if (isMemberDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

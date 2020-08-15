@@ -19,6 +19,7 @@ plugins {
   id 'io.spring.dependency-management' version '1.0.9.RELEASE'
   id 'net.researchgate.release' version '2.8.1'
   id 'java'
+  id 'jacoco'
 }
 
 group = 'com.prathab'
@@ -48,6 +49,7 @@ ext {
 }
 
 dependencies {
+
   // Spring web
   implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -94,6 +96,14 @@ dependencyManagement {
   }
 }
 
+bootJar {
+  mainClassName = 'com.myhome.MyHomeServiceApplication'
+  manifest {
+    attributes('Implementation-Title': 'myhome-service',
+            'Implementation-Version': archiveVersion)
+  }
+}
+
 compileJava {
   // Mapstruct options
   options.annotationProcessorPath = configurations.annotationProcessor
@@ -103,4 +113,26 @@ compileJava {
 
 test {
   useJUnitPlatform()
+}
+
+// Jacoco
+test.finalizedBy jacocoTestReport
+
+jacocoTestReport {
+  dependsOn {
+    test
+  }
+  reports {
+    xml.enabled true
+    csv.enabled false
+    html.destination file("${buildDir}/jacoco/jacocoHtml")
+  }
+
+  // Keep this until mapstruct comes up with a better solution
+  // https://github.com/mapstruct/mapstruct/issues/1528
+  afterEvaluate {
+    classDirectories.setFrom(files(classDirectories.files.collect {
+      fileTree(dir: it, exclude: ['**/mapper/**', '**/mapper'])
+    }))
+  }
 }

@@ -25,35 +25,28 @@ import com.myhome.repositories.CommunityAdminRepository;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
-@Service
 @Slf4j
+@RequiredArgsConstructor
+@Service
 public class CommunitySDJpaService implements CommunityService {
   private final CommunityRepository communityRepository;
   private final CommunityAdminRepository communityAdminRepository;
   private final CommunityMapper communityMapper;
   private final CommunityHouseRepository communityHouseRepository;
 
-  public CommunitySDJpaService(
-      CommunityRepository communityRepository,
-      CommunityAdminRepository communityAdminRepository,
-      CommunityMapper communityMapper,
-      CommunityHouseRepository communityHouseRepository) {
-    this.communityRepository = communityRepository;
-    this.communityAdminRepository = communityAdminRepository;
-    this.communityMapper = communityMapper;
-    this.communityHouseRepository = communityHouseRepository;
-  }
-
-  @Override public Community createCommunity(CommunityDto communityDto) {
+  @Override
+  public Community createCommunity(CommunityDto communityDto) {
     communityDto.setCommunityId(generateUniqueId());
     Community community = communityMapper.communityDtoToCommunity(communityDto);
     Community savedCommunity = communityRepository.save(community);
@@ -61,84 +54,127 @@ public class CommunitySDJpaService implements CommunityService {
     return savedCommunity;
   }
 
-  @Override public Set<Community> listAll() {
+  @Override
+  public Set<Community> listAll(Pageable pageable) {
     Set<Community> communityListSet = new HashSet<>();
-    communityRepository.findAll().forEach(communityListSet::add);
+    communityRepository.findAll(pageable).forEach(communityListSet::add);
     return communityListSet;
   }
 
+  @Override
+  public Optional<List<CommunityHouse>> findCommunityHousesById(String communityId,
+      Pageable pageable) {
+    boolean exists = communityRepository.existsByCommunityId(communityId);
+    if (exists) {
+      return Optional.of(
+          communityHouseRepository.findAllByCommunity_CommunityId(communityId, pageable));
+    }
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<List<CommunityAdmin>> findCommunityAdminsById(String communityId,
+      Pageable pageable) {
+    boolean exists = communityRepository.existsByCommunityId(communityId);
+    if (exists) {
+      return Optional.of(
+          communityAdminRepository.findAllByCommunities_CommunityId(communityId, pageable)
+      );
+    }
+    return Optional.empty();
+  }
+
+  @Override public Set<Community> listAll() {
+    Set<Community> communities = new HashSet<>();
+    communityRepository.findAll().forEach(communities::add);
+    return communities;
+  }
+
   @Override public Optional<Community> getCommunityDetailsById(String communityId) {
-    Community community = communityRepository.findByCommunityId(communityId);
-    return community == null ? Optional.empty() : Optional.of(community);
+    return communityRepository.findByCommunityId(communityId);
   }
 
-  @Override public Community addAdminsToCommunity(String communityId, Set<String> admins) {
-    if (!getCommunityDetailsById(communityId).isPresent()) return new Community();
-    Community community = communityRepository.findByCommunityId(communityId);
+  @Override
+  public Optional<Community> addAdminsToCommunity(String communityId, Set<String> adminsIds) {
+    Optional<Community> communitySearch = communityRepository.findByCommunityId(communityId);
 
-    Set<CommunityAdmin> savedAdminSet = new HashSet<CommunityAdmin>();
-    admins.forEach(s -> {
-      CommunityAdmin admin = new CommunityAdmin();
-      admin.setAdminId(s);
-      admin.getCommunities().add(community);
-      savedAdminSet.add(communityAdminRepository.save(admin));
-    });
-    community.getAdmins().addAll(savedAdminSet);
-    return communityRepository.save(community);
+    return communitySearch.map(community -> {
+      adminsIds.forEach(adminId -> {
+        communityAdminRepository.findByAdminId(adminId).map(admin -> {
+          admin.getCommunities().add(community);
+          community.getAdmins().add(communityAdminRepository.save(admin));
+          return admin;
+        });
+      });
+      return Optional.of(communityRepository.save(community));
+    }).orElseGet(Optional::empty);
   }
 
-  // Returns houseId which was added to the community
   @Override
   public Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses) {
-    if (!getCommunityDetailsById(communityId).isPresent()) return new HashSet<>();
-      houses.forEach(communityHouse -> communityHouse.setHouseId(generateUniqueId()));
-    Community community = communityRepository.findByCommunityId(communityId);
-    houses.forEach(communityHouse -> communityHouse.setCommunity(community));
-    Set<CommunityHouse> savedHouses = new HashSet<>();
-    communityHouseRepository.saveAll(houses).forEach(savedHouses::add);
-    community.getHouses().addAll(savedHouses);
-    communityRepository.save(community);
-
-    Set<String> houseIds = new HashSet<>(savedHouses.size());
-    savedHouses.forEach(communityHouse -> houseIds.add(communityHouse.getHouseId()));
-    return houseIds;
+    Optional<Community> communitySearch = communityRepository.findByCommunityId(communityId);
+    Set<String> addedHousesIds = communitySearch.map(community -> {
+      Set<CommunityHouse> savedHouses = houses
+          .stream()
+          .filter(house -> communityHouseRepository.findByHouseId(house.getHouseId()) != null)
+          .map(house -> house.withCommunity(community))
+          .filter(house -> community.getHouses().add(house))
+          .collect(Collectors.toSet());
+      communityHouseRepository.saveAll(savedHouses);
+      Set<String> housesIds = communityRepository.save(community).getHouses()
+          .stream()
+          .map(house -> house.getHouseId())
+          .collect(Collectors.toSet());
+      return housesIds;
+    }).orElse(new HashSet<>());
+    return addedHousesIds;
   }
 
   @Override
-  public Optional<Community> deleteAdminFromCommunity(String communityId, String adminId) {
-    final Community community = communityRepository.findByCommunityId(communityId);
-    if (community == null || community.getAdmins().isEmpty()) {
-      return Optional.empty();
-    }
-    Set<CommunityAdmin> communityAdmins = community.getAdmins();
-    boolean removed =
-        communityAdmins.removeIf(communityAdmin -> communityAdmin.getAdminId().equals(adminId));
-    if (!removed) {
-      return Optional.empty();
-    }
-    community.setAdmins(communityAdmins);
-    Community savedCommunity = communityRepository.save(community);
-    return Optional.of(savedCommunity);
+  public boolean removeAdminFromCommunity(String communityId, String adminId) {
+    Optional<Community> communitySearch = communityRepository.findByCommunityId(communityId);
+    return communitySearch.map(community -> {
+      boolean adminRemoved =
+          community.getAdmins().removeIf(admin -> admin.getAdminId().equals(adminId));
+      if (adminRemoved) {
+        communityRepository.save(community);
+        return true;
+      } else {
+        return false;
+      }
+    }).orElse(false);
   }
 
   @Override
-  @Transactional
-  public Integer deleteCommunity(String communityId) {
-
-    getCommunityDetailsById(communityId).ifPresent(community -> {
-      community.getHouses()
+  public boolean deleteCommunity(String communityId) {
+    return communityRepository.findByCommunityId(communityId)
+        .map(community -> {
+          community.getHouses()
               .stream()
               .map(CommunityHouse::getHouseId)
               .forEach(communityHouseRepository::deleteByHouseId);
-    });
-    return communityRepository.deleteByCommunityId(communityId);
+          communityRepository.delete(community);
+          return true;
+        })
+        .orElse(false);
   }
 
   private String generateUniqueId() {
     return UUID.randomUUID().toString();
   }
 
-  public void deleteHouseFromCommunityByHouseId(String houseId) {
-    communityHouseRepository.deleteByHouseId(houseId);
+  public boolean removeHouseFromCommunityByHouseId(String communityId, String houseId) {
+    return communityRepository.findByCommunityId(communityId)
+        .map(community -> {
+          CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
+          if (house != null && community.getHouses().contains(house)) {
+            community.getHouses().remove(house);
+            communityRepository.save(community);
+            return true;
+          } else {
+            return false;
+          }
+        })
+        .orElse(false);
   }
 }
