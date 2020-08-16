@@ -128,8 +128,8 @@ public class HouseSDJpaService implements HouseService {
   @Override
   public HouseHistory addInterval(HouseHistoryDto houseHistoryDto) {
 
-    HouseHistory houseHistoryPO = houseMemberMapper.houseHistoryDtoToHouseHistory(houseHistoryDto);
-    return houseHistoryRepository.save(houseHistoryPO);
+    HouseHistory houseHistory = houseMemberMapper.houseHistoryDtoToHouseHistory(houseHistoryDto);
+    return houseHistoryRepository.save(houseHistory);
 
   }
 

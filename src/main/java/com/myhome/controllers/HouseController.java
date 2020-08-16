@@ -194,8 +194,8 @@ public class HouseController {
     if (!houseService.getHouseDetailsById(houseId).isPresent()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<HouseHistoryDto>());
     }
-    List<HouseHistory> houseHistoryPOList = houseService.getHouseHistory(houseId,memberId);
-    List<HouseHistoryDto> houseHistoryDTOList = houseHistoryPOList.stream().map(houseHistoryPo->houseMemberMapper.houseHistoryPoToHouseHistoryDto(houseHistoryPo)).collect(Collectors.toList());
+    List<HouseHistory> houseHistoryList = houseService.getHouseHistory(houseId,memberId);
+    List<HouseHistoryDto> houseHistoryDTOList = houseHistoryList.stream().map(houseHistoryPo->houseMemberMapper.houseHistoryPoToHouseHistoryDto(houseHistoryPo)).collect(Collectors.toList());
     return ResponseEntity.status(HttpStatus.OK).body(houseHistoryDTOList);
   }
 }
