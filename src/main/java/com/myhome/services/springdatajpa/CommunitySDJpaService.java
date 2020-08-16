@@ -41,8 +41,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommunitySDJpaService implements CommunityService {
   private final CommunityRepository communityRepository;
-  //private final CommunityAdminRepository communityAdminRepository;
-  private final UserRepository communityAdminRepository; //the repository containing admin used
+  private final UserRepository communityAdminRepository;
   private final CommunityMapper communityMapper;
   private final CommunityHouseRepository communityHouseRepository;
 
