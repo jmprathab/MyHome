@@ -110,7 +110,6 @@ class HouseSDJpaServiceTest {
     verify(communityHouseRepository).save(communityHouse);
     verify(houseMemberRepository).saveAll(membersToAdd);
     verify(communityHouseRepository).findByHouseId(HOUSE_ID);
-    verify(houseMemberDocumentRepository).save(any());
   }
 
   @Test
