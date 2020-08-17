@@ -30,4 +30,5 @@ public interface CommunityAmenityRepository extends JpaRepository<CommunityAmeni
   @EntityGraph(value = "CommunityAmenity.community")
   Optional<CommunityAmenity> findByAmenityIdWithCommunity(@Param("amenityId") String amenityId);
 
+  Optional<CommunityAmenity> findByAmenityId(String amenityId);
 }

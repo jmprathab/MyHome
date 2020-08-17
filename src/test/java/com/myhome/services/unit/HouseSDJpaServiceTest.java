@@ -110,6 +110,7 @@ class HouseSDJpaServiceTest {
     verify(communityHouseRepository).save(communityHouse);
     verify(houseMemberRepository).saveAll(membersToAdd);
     verify(communityHouseRepository).findByHouseId(HOUSE_ID);
+    verify(houseMemberDocumentRepository).save(any());
   }
 
   @Test
@@ -124,6 +125,7 @@ class HouseSDJpaServiceTest {
     Set<HouseMember> resultMembers = houseSDJpaService.addHouseMembers(HOUSE_ID, membersToAdd);
 
     // then
+    assertTrue(resultMembers.isEmpty());
     verify(communityHouseRepository).findByHouseId(HOUSE_ID);
     verify(communityHouseRepository, never()).save(any());
     verifyNoInteractions(houseMemberRepository);
