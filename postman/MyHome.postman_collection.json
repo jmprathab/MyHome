@@ -715,15 +715,14 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+					"raw": "http://{{ENV_URL}}/amenities/{{AMENITY_ID}}",
 					"protocol": "http",
 					"host": [
 						"{{ENV_URL}}"
 					],
 					"path": [
-						"members",
-						"{{MEMBER_ID}}",
-						"documents"
+						"amenities",
+						"{{AMENITY_ID}}"
 					]
 				}
 			},
@@ -779,42 +778,42 @@
 	],
 	"variable": [
 		{
-			"id": "1e3c6c96-8cf5-4f9a-ab3b-cb9c2f8bfe92",
+			"id": "d70e8168-17d7-4374-a4f3-5de21a6f7e4c",
 			"key": "AUTH_TOKEN",
 			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiOGFmOWFlMi04NDNhLTRlZDMtOTVlNS1hM2QxMjUxMDVlZDYiLCJleHAiOjE1OTc3ODk0ODF9.d1jR_MhxgAh6GqyxUR9bDzJ4gjfulw8aSAzBhnAZZDKh0iE09TRj311-MNuDltcXrumd-to8W25EL6ItxyfWIA"
 		},
 		{
-			"id": "ad52daca-b7b6-4dac-a558-4fb56bd6b7fe",
+			"id": "229eb4e0-7119-4078-bc9f-2c92b908791b",
 			"key": "ENV_URL",
 			"value": "127.0.0.1:8080"
 		},
 		{
-			"id": "43b6cc9e-e192-4fc0-82e2-4ad471006632",
+			"id": "ee5b4aa1-9f87-4b7e-ae40-c4e3768a4105",
 			"key": "COMMUNITY_ID",
 			"value": "default-community-id-for-testing"
 		},
 		{
-			"id": "6f66d13c-694a-49d4-9be8-eda6bd3ef815",
+			"id": "8fc9e6d1-da15-42dc-b07a-160cba2c85bd",
 			"key": "HOUSE_ID",
 			"value": "default-house-id-for-testing"
 		},
 		{
-			"id": "f071902d-6a32-4f94-bd00-aaa151f0fcd2",
+			"id": "0f0fa4f8-9039-4037-85fd-2ab3857c7d87",
 			"key": "USER_ID",
 			"value": "b8af9ae2-843a-4ed3-95e5-a3d125105ed6"
 		},
 		{
-			"id": "2021074d-b2f5-481c-b33b-de52841e4551",
+			"id": "2f812a37-46fd-4ed9-a841-54a2353d3294",
 			"key": "ADMIN_ID",
 			"value": "default-admin-id-for-testing"
 		},
 		{
-			"id": "c0b8e334-90a7-4b4e-955e-aea4da1def08",
+			"id": "748b74eb-ac9c-4249-9f81-12c5cfa643d1",
 			"key": "MEMBER_ID",
 			"value": "default-member-id-for-testing"
 		},
 		{
-			"id": "8f516d38-7ef8-471f-92ab-f8b5f4e787a3",
+			"id": "acf764d2-557b-4ab2-bba9-d30164acc4ea",
 			"key": "AMENITY_ID",
 			"value": "244282d9-d71b-4824-ae72-1f5d4f9b067c"
 		}
