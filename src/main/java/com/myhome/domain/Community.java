@@ -30,6 +30,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.With;
 
 /**
  * Entity identifying a valid user in the service.
@@ -39,6 +40,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = "houses")
 @Entity
+@With
 @NamedEntityGraphs({
     @NamedEntityGraph(
         name = "Community.amenities",

@@ -63,29 +63,22 @@ public class PaymentController {
       SchedulePaymentRequest request) {
     log.trace("Received schedule payment request");
 
-    String adminId = request.getAdminId();
-
     return paymentService.getHouseMember(request.getMemberId())
-        .map(houseMember -> {
-          boolean adminExists = communityService.findCommunityAdminById(adminId)
-            .map(admin -> {
-              CommunityHouse house = houseMember.getCommunityHouse();
-              Community community = house.getCommunity();
-              return community.getAdmins()
-                .stream()
-                .anyMatch(admin1 -> admin.getUserId().equals(adminId)); //makes sure this user is an admin of the community this member belongs to
-            })
-            .orElse(false);
+      .map(member -> communityService.findCommunityAdminById(request.getAdminId())
+                      .map(admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin))
+                      .orElse(null))
+      .map(admin -> schedulePaymentApiMapper.schedulePaymentRequestToPaymentDto(request))
+      .map(paymentService::schedulePayment)
+      .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
+      .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
+      .orElseGet(() -> ResponseEntity.notFound().build());
+  }
 
-          if (adminExists)
-            return schedulePaymentApiMapper.schedulePaymentRequestToPaymentDto(request);
-          else
-            return null;
-        })
-        .map(paymentService::schedulePayment)
-        .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
-        .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
-        .orElseGet(() -> ResponseEntity.notFound().build());
+  private Boolean isUserAdminOfCommunityHouse(CommunityHouse communityHouse, User admin) {
+    if (communityHouse.getCommunity().getAdmins().contains(admin))
+      return true;
+    else
+      return null;
   }
 
   @Operation(description = "Get details about a payment with the given payment id")

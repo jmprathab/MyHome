@@ -33,6 +33,7 @@ import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -123,25 +124,16 @@ public class CommunitySDJpaService implements CommunityService {
       Set<String> addedIds = new HashSet<>();
 
       houses.forEach(house -> {
-        house = communityHouseRepository.findByHouseId(house.getHouseId());
-
         if (house != null) {
-          Community houseCommunity = house.getCommunity();
 
-          if (houseCommunity != null) {
-            CommunityHouse finalHouse = house;
-            communityRepository.findByCommunityId(houseCommunity.getCommunityId())
-              .map(community1 -> {
-                community1.getHouses().remove(finalHouse);
-                communityRepository.save(community1);
-                return community1;
-              });
+          if (community.getHouses().stream()
+              .noneMatch(communityHouse -> communityHouse.getName().equals(house.getName()))) {
+            house.setHouseId(generateUniqueId());
+            house.setCommunity(community);
+            addedIds.add(house.getHouseId());
+            communityHouseRepository.save(house);
+            community.getHouses().add(house);
           }
-
-          addedIds.add(house.getHouseId());
-          house.setCommunity(community);
-          communityHouseRepository.save(house);
-          community.getHouses().add(house);
         }
       });
 

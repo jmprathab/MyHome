@@ -19,6 +19,7 @@ package com.myhome.controllers.unit;
 import com.myhome.controllers.CommunityController;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.CommunityHouseDto;
+import com.myhome.controllers.dto.CommunityHouseName;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.CommunityApiMapper;
 import com.myhome.controllers.request.AddCommunityAdminRequest;
@@ -33,6 +34,7 @@ import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.User;
+import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,6 +72,9 @@ public class CommunityControllerTest {
 
   @Mock
   private CommunityService communityService;
+
+  @Mock
+  private CommunityRepository communityRepository;
 
   @Mock
   private CommunityApiMapper communityApiMapper;
@@ -394,19 +399,19 @@ public class CommunityControllerTest {
     AddCommunityHouseRequest addCommunityHouseRequest = new AddCommunityHouseRequest();
     Community community = createTestCommunity();
     Set<CommunityHouse> communityHouses = community.getHouses();
-    Set<CommunityHouseDto> communityHouseDtos = new HashSet<>();
-    communityHouseDtos.add(new CommunityHouseDto(COMMUNITY_HOUSE_ID, COMMUNITY_HOUSE_NAME));
+    Set<CommunityHouseName> communityHouseNames = new HashSet<>();
+    communityHouseNames.add(new CommunityHouseName(COMMUNITY_HOUSE_NAME));
 
     Set<String> houseIds = new HashSet<>();
     for (CommunityHouse house : communityHouses) {
       houseIds.add(house.getHouseId());
     }
 
-    addCommunityHouseRequest.getHouses().addAll(communityHouseDtos);
+    addCommunityHouseRequest.getHouses().addAll(communityHouseNames);
 
     AddCommunityHouseResponse response = new AddCommunityHouseResponse(houseIds);
 
-    given(communityApiMapper.communityHouseDtoSetToCommunityHouseSet(communityHouseDtos))
+    given(communityApiMapper.communityHouseNamesSetToCommunityHouseSet(communityHouseNames))
       .willReturn(communityHouses);
     given(communityService.addHousesToCommunity(COMMUNITY_ID, communityHouses))
       .willReturn(houseIds);
@@ -418,7 +423,7 @@ public class CommunityControllerTest {
     // then
     assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
     assertEquals(response, responseEntity.getBody());
-    verify(communityApiMapper).communityHouseDtoSetToCommunityHouseSet(communityHouseDtos);
+    verify(communityApiMapper).communityHouseNamesSetToCommunityHouseSet(communityHouseNames);
     verify(communityService).addHousesToCommunity(COMMUNITY_ID, communityHouses);
   }
 
@@ -427,7 +432,7 @@ public class CommunityControllerTest {
     // given
     AddCommunityHouseRequest emptyRequest = new AddCommunityHouseRequest();
 
-    given(communityApiMapper.communityHouseDtoSetToCommunityHouseSet(emptyRequest.getHouses()))
+    given(communityApiMapper.communityHouseNamesSetToCommunityHouseSet(emptyRequest.getHouses()))
       .willReturn(new HashSet<>());
     given(communityService.addHousesToCommunity(COMMUNITY_ID, new HashSet<>()))
       .willReturn(new HashSet<>());
@@ -439,7 +444,7 @@ public class CommunityControllerTest {
     // then
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     assertNull(responseEntity.getBody());
-    verify(communityApiMapper).communityHouseDtoSetToCommunityHouseSet(new HashSet<>());
+    verify(communityApiMapper).communityHouseNamesSetToCommunityHouseSet(new HashSet<>());
     verify(communityService).addHousesToCommunity(COMMUNITY_ID, new HashSet<>());
   }
 

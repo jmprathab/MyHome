@@ -71,11 +71,10 @@ public class UserSDJpaService implements UserService {
     return user.map(admin -> {
       Set<String> communityIds = communityService.listAll().stream()
       .filter(community -> community.getAdmins()
-      .stream()
-      .map(User::getUserId)
-      .collect(Collectors.toSet())
-      .contains(userId)
-      )
+            .stream()
+            .map(User::getUserId)
+            .collect(Collectors.toSet())
+            .contains(userId))
       .map(Community::getCommunityId)
       .collect(Collectors.toSet());
 

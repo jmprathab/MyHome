@@ -17,6 +17,7 @@
 package com.myhome.controllers;
 
 import com.myhome.controllers.dto.CommunityDto;
+import com.myhome.controllers.dto.CommunityHouseName;
 import com.myhome.controllers.mapper.CommunityApiMapper;
 import com.myhome.controllers.request.AddCommunityAdminRequest;
 import com.myhome.controllers.request.AddCommunityHouseRequest;
@@ -221,10 +222,11 @@ public class CommunityController {
       @PathVariable String communityId, @Valid @RequestBody
       AddCommunityHouseRequest request) {
     log.trace("Received request to add house to community with id[{}]", communityId);
+    Set<CommunityHouseName> houseNames = request.getHouses();
     Set<CommunityHouse> communityHouses =
-        communityApiMapper.communityHouseDtoSetToCommunityHouseSet(request.getHouses());
+        communityApiMapper.communityHouseNamesSetToCommunityHouseSet(houseNames);
     Set<String> houseIds = communityService.addHousesToCommunity(communityId, communityHouses);
-    if (houseIds.size() != 0 && request.getHouses().size() != 0) {
+    if (houseIds.size() != 0 && houseNames.size() != 0) {
       AddCommunityHouseResponse response = new AddCommunityHouseResponse();
       response.setHouses(houseIds);
       return ResponseEntity.status(HttpStatus.CREATED).body(response);

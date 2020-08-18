@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.request;
+package com.myhome.controllers.dto;
 
-import java.util.HashSet;
-import java.util.Set;
-import javax.validation.constraints.NotEmpty;
-
-import com.myhome.controllers.dto.CommunityHouseName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
-public class AddCommunityHouseRequest {
-  @NotEmpty
-  private Set<CommunityHouseName> houses = new HashSet<>();
+@AllArgsConstructor
+@NoArgsConstructor
+public class CommunityHouseName {
+  private String name;
 }

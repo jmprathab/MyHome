@@ -26,6 +26,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.With;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +40,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = "communities")
 @Entity
+@With
 public class User extends BaseEntity {
   @NonNull
   private String name;

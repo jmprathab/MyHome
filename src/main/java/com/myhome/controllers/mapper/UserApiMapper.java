@@ -50,8 +50,7 @@ public interface UserApiMapper {
 
   @Named("communitySetToIdsSet")
   static Set<String> communityObjectSetToCommunityIdSet(Set<Community> communities) {
-    return communities
-    .stream()
+    return communities.stream()
     .map(community -> community.getCommunityId())
     .collect(Collectors.toSet());
   }
