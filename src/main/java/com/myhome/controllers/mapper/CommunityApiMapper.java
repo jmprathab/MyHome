@@ -17,7 +17,6 @@
 package com.myhome.controllers.mapper;
 
 import com.myhome.controllers.dto.CommunityDto;
-import com.myhome.controllers.dto.CommunityHouseDto;
 import com.myhome.controllers.dto.CommunityHouseName;
 import com.myhome.controllers.request.CreateCommunityRequest;
 import com.myhome.controllers.response.CreateCommunityResponse;
@@ -27,14 +26,11 @@ import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 
-import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.myhome.domain.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 
 @Mapper
 public interface CommunityApiMapper {

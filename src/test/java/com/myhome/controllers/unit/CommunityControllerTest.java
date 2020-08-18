@@ -18,7 +18,6 @@ package com.myhome.controllers.unit;
 
 import com.myhome.controllers.CommunityController;
 import com.myhome.controllers.dto.CommunityDto;
-import com.myhome.controllers.dto.CommunityHouseDto;
 import com.myhome.controllers.dto.CommunityHouseName;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.CommunityApiMapper;
