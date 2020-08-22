@@ -19,7 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-public class HouseHistory  extends BaseEntity {
+public class HouseHistory extends BaseEntity {
 
     @Column(unique = false, nullable = false)
     private String houseId;
