@@ -97,7 +97,7 @@ public class HouseController {
         CommunityHouse houseDetail =
                 houseService.getHouseDetailsById(houseId).get();
         GetHouseDetailsResponse.CommunityHouse getHouseDetailsResponse =
-                houseApiMapper.communityHouseToRestApiResponseCommunityHouse(houseDetail.get());
+                houseApiMapper.communityHouseToRestApiResponseCommunityHouse(houseDetail);
         GetHouseDetailsResponse response = new GetHouseDetailsResponse();
         response.getHouses().add(getHouseDetailsResponse);
         return ResponseEntity.status(HttpStatus.OK).body(response);
