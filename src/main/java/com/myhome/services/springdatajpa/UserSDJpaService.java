@@ -19,7 +19,6 @@ package com.myhome.services.springdatajpa;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
 import com.myhome.domain.Community;
-import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
@@ -68,24 +67,21 @@ public class UserSDJpaService implements UserService {
 
   @Override
   public Optional<UserDto> getUserDetails(String userId) {
-    User user = userRepository.findByUserId(userId);
-    if(user != null) {
+    Optional<User> user = userRepository.findByUserId(userId);
+    return user.map(admin -> {
       Set<String> communityIds = communityService.listAll().stream()
-          .filter(community -> community.getAdmins()
-              .stream()
-              .map(CommunityAdmin::getAdminId)
-              .collect(Collectors.toSet())
-              .contains(userId)
-          )
-          .map(Community::getCommunityId)
-          .collect(Collectors.toSet());
+      .filter(community -> community.getAdmins()
+            .stream()
+            .map(User::getUserId)
+            .collect(Collectors.toSet())
+            .contains(userId))
+      .map(Community::getCommunityId)
+      .collect(Collectors.toSet());
 
-      UserDto userDto = userMapper.userToUserDto(user);
+      UserDto userDto = userMapper.userToUserDto(user.get());
       userDto.setCommunityIds(communityIds);
       return Optional.of(userDto);
-    } else {
-      return Optional.empty();
-    }
+    }).orElse(Optional.empty());
   }
 
   private UserDto createUserInRepository(UserDto request) {

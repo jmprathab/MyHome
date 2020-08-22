@@ -38,7 +38,7 @@ import lombok.With;
 @EqualsAndHashCode(exclude = "community", callSuper = false)
 public class CommunityHouse extends BaseEntity {
   @With
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.EAGER)
   private Community community;
   @Column(nullable = false)
   private String name;

@@ -21,11 +21,13 @@ import com.myhome.controllers.request.SchedulePaymentRequest;
 import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.controllers.response.ListMemberPaymentsResponse;
 import com.myhome.controllers.response.SchedulePaymentResponse;
-import com.myhome.domain.CommunityAdmin;
+import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.Payment;
+import com.myhome.domain.User;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
+
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -59,13 +61,23 @@ public class PaymentController {
   public ResponseEntity<SchedulePaymentResponse> schedulePayment(@Valid @RequestBody
       SchedulePaymentRequest request) {
     log.trace("Received schedule payment request");
+
     return paymentService.getHouseMember(request.getMemberId())
-        .map(requestPaymentDto -> schedulePaymentApiMapper.schedulePaymentRequestToPaymentDto(
-            request))
-        .map(paymentService::schedulePayment)
-        .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
-        .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
-        .orElseGet(() -> ResponseEntity.notFound().build());
+      .map(member -> communityService.findCommunityAdminById(request.getAdminId())
+                      .map(admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin))
+                      .orElse(null))
+      .map(admin -> schedulePaymentApiMapper.schedulePaymentRequestToPaymentDto(request))
+      .map(paymentService::schedulePayment)
+      .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
+      .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
+      .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  private Boolean isUserAdminOfCommunityHouse(CommunityHouse communityHouse, User admin) {
+    if (communityHouse.getCommunity().getAdmins().contains(admin))
+      return true;
+    else
+      return null;
   }
 
   @Operation(description = "Get details about a payment with the given payment id")
@@ -123,9 +135,9 @@ public class PaymentController {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  private Boolean isAdminMatchingId(Set<CommunityAdmin> list, String adminId) {
+  private Boolean isAdminMatchingId(Set<User> list, String adminId) {
     if (list.stream()
-        .anyMatch(communityAdmin -> communityAdmin.getAdminId().equals(adminId))) {
+        .anyMatch(communityAdmin -> communityAdmin.getUserId().equals(adminId))) {
       return true;
     }
 
