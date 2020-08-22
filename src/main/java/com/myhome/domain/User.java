@@ -18,12 +18,18 @@ package com.myhome.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.With;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entity identifying a valid user in the service.
@@ -32,8 +38,9 @@ import lombok.NonNull;
 @Getter
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = "communities")
 @Entity
+@With
 public class User extends BaseEntity {
   @NonNull
   private String name;
@@ -43,4 +50,6 @@ public class User extends BaseEntity {
   private String email;
   @Column(nullable = false)
   private String encryptedPassword;
+  @ManyToMany(mappedBy = "admins")
+  private Set<Community> communities = new HashSet<>();
 }

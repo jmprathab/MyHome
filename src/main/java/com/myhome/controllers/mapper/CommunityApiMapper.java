@@ -17,17 +17,20 @@
 package com.myhome.controllers.mapper;
 
 import com.myhome.controllers.dto.CommunityDto;
-import com.myhome.controllers.dto.CommunityHouseDto;
+import com.myhome.controllers.dto.CommunityHouseName;
 import com.myhome.controllers.request.CreateCommunityRequest;
 import com.myhome.controllers.response.CreateCommunityResponse;
 import com.myhome.controllers.response.GetCommunityDetailsResponse;
 import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
-import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
+
 import java.util.Set;
+
+import com.myhome.domain.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper
 public interface CommunityApiMapper {
@@ -42,10 +45,13 @@ public interface CommunityApiMapper {
   CreateCommunityResponse communityToCreateCommunityResponse(Community community);
 
   Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSetToRestApiResponseCommunityAdminSet(
-      Set<CommunityAdmin> communityAdminSet);
+    Set<User> communityAdminSet);
 
-  Set<CommunityHouse> communityHouseDtoSetToCommunityHouseSet(
-      Set<CommunityHouseDto> communityHouseDtoSet);
+  @Mapping(source = "userId", target = "adminId")
+  ListCommunityAdminsResponse.CommunityAdmin userAdminToResponseAdmin(User user);
+
+  Set<CommunityHouse> communityHouseNamesSetToCommunityHouseSet(
+      Set<CommunityHouseName> communityHouseNamesSet);
 
   Set<GetHouseDetailsResponse.CommunityHouse> communityHouseSetToRestApiResponseCommunityHouseSet(
       Set<CommunityHouse> communityHouse);

@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package com.myhome.repositories;
+package com.myhome.controllers.dto;
 
-import com.myhome.domain.CommunityAdmin;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public interface CommunityAdminRepository extends JpaRepository<CommunityAdmin, Long> {
-
-  Optional<CommunityAdmin> findByAdminId(String adminId);
-
-  List<CommunityAdmin> findAllByCommunities_CommunityId(String communityId, Pageable pageable);
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class CommunityHouseName {
+  private String name;
 }

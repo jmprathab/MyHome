@@ -704,7 +704,7 @@
 			"response": []
 		},
 		{
-			"name": "Get house member document",
+			"name": "Get community amenity details",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -715,58 +715,21 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+					"raw": "http://{{ENV_URL}}/amenities/{{AMENITY_ID}}",
 					"protocol": "http",
 					"host": [
 						"{{ENV_URL}}"
 					],
 					"path": [
-						"members",
-						"{{MEMBER_ID}}",
-						"documents"
+						"amenities",
+						"{{AMENITY_ID}}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Add house member document",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"type": "text",
-						"value": "Bearer {{AUTH_TOKEN}}"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "memberDocument",
-							"type": "file",
-							"src": []
-						}
-					]
-				},
-				"url": {
-					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
-					"protocol": "http",
-					"host": [
-						"{{ENV_URL}}"
-					],
-					"path": [
-						"members",
-						"{{MEMBER_ID}}",
-						"documents"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete house member document",
+			"name": "Delete community amenity",
 			"request": {
 				"method": "DELETE",
 				"header": [
@@ -777,51 +740,14 @@
 					}
 				],
 				"url": {
-					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+					"raw": "http://{{ENV_URL}}/amenities/{{AMENITY_ID}}",
 					"protocol": "http",
 					"host": [
 						"{{ENV_URL}}"
 					],
 					"path": [
-						"members",
-						"{{MEMBER_ID}}",
-						"documents"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Updata house member document",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"type": "text",
-						"value": "Bearer {{AUTH_TOKEN}}"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "memberDocument",
-							"type": "file",
-							"src": []
-						}
-					]
-				},
-				"url": {
-					"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
-					"protocol": "http",
-					"host": [
-						"{{ENV_URL}}"
-					],
-					"path": [
-						"members",
-						"{{MEMBER_ID}}",
-						"documents"
+						"amenities",
+						"{{AMENITY_ID}}"
 					]
 				}
 			},
@@ -852,39 +778,44 @@
 	],
 	"variable": [
 		{
-			"id": "0dfd2a27-bd04-47ff-b5a5-0195a6a697bc",
+			"id": "d70e8168-17d7-4374-a4f3-5de21a6f7e4c",
 			"key": "AUTH_TOKEN",
-			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiMjU4YzA4My0yZDllLTQxNzktYTJmOC01M2M3ZDg3NDUwZmIiLCJleHAiOjE1OTc1MjU1MjV9.ncgokjGzMZRIDVkzV_VNRFZrIfY61c_tWvdpa4f-Sk2hgC3WDSVCe1OouEeCAJpjiFq5cOI9pgMRiiO1lc8oJA"
+			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiOGFmOWFlMi04NDNhLTRlZDMtOTVlNS1hM2QxMjUxMDVlZDYiLCJleHAiOjE1OTc3ODk0ODF9.d1jR_MhxgAh6GqyxUR9bDzJ4gjfulw8aSAzBhnAZZDKh0iE09TRj311-MNuDltcXrumd-to8W25EL6ItxyfWIA"
 		},
 		{
-			"id": "da23eb5e-81c9-48e9-8469-53ca122f3df2",
+			"id": "229eb4e0-7119-4078-bc9f-2c92b908791b",
 			"key": "ENV_URL",
 			"value": "127.0.0.1:8080"
 		},
 		{
-			"id": "ce44c598-8d6e-4058-9dc9-9929657d98b2",
+			"id": "ee5b4aa1-9f87-4b7e-ae40-c4e3768a4105",
 			"key": "COMMUNITY_ID",
 			"value": "default-community-id-for-testing"
 		},
 		{
-			"id": "f2c61b19-a3b6-416a-b62b-405f6066b006",
+			"id": "8fc9e6d1-da15-42dc-b07a-160cba2c85bd",
 			"key": "HOUSE_ID",
 			"value": "default-house-id-for-testing"
 		},
 		{
-			"id": "0930bb17-2b73-4323-bd2a-cee8250a5197",
+			"id": "0f0fa4f8-9039-4037-85fd-2ab3857c7d87",
 			"key": "USER_ID",
-			"value": "b258c083-2d9e-4179-a2f8-53c7d87450fb"
+			"value": "b8af9ae2-843a-4ed3-95e5-a3d125105ed6"
 		},
 		{
-			"id": "c8e541c8-ca05-4fad-acd4-dee08085485f",
+			"id": "2f812a37-46fd-4ed9-a841-54a2353d3294",
 			"key": "ADMIN_ID",
 			"value": "default-admin-id-for-testing"
 		},
 		{
-			"id": "6d3c6afe-8d1e-4567-a404-0ad1a93c0c45",
+			"id": "748b74eb-ac9c-4249-9f81-12c5cfa643d1",
 			"key": "MEMBER_ID",
 			"value": "default-member-id-for-testing"
+		},
+		{
+			"id": "acf764d2-557b-4ab2-bba9-d30164acc4ea",
+			"key": "AMENITY_ID",
+			"value": "244282d9-d71b-4824-ae72-1f5d4f9b067c"
 		}
 	],
 	"protocolProfileBehavior": {}

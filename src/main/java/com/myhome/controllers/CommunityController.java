@@ -17,6 +17,7 @@
 package com.myhome.controllers;
 
 import com.myhome.controllers.dto.CommunityDto;
+import com.myhome.controllers.dto.CommunityHouseName;
 import com.myhome.controllers.mapper.CommunityApiMapper;
 import com.myhome.controllers.request.AddCommunityAdminRequest;
 import com.myhome.controllers.request.AddCommunityHouseRequest;
@@ -28,8 +29,8 @@ import com.myhome.controllers.response.GetCommunityDetailsResponse;
 import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
-import com.myhome.domain.CommunityAdmin;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.User;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -198,7 +199,7 @@ public class CommunityController {
     return communityOptional.map(community -> {
       Set<String> adminsSet = community.getAdmins()
           .stream()
-          .map(CommunityAdmin::getAdminId)
+          .map(User::getUserId)
           .collect(Collectors.toSet());
       AddCommunityAdminResponse response = new AddCommunityAdminResponse(adminsSet);
       return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -221,10 +222,11 @@ public class CommunityController {
       @PathVariable String communityId, @Valid @RequestBody
       AddCommunityHouseRequest request) {
     log.trace("Received request to add house to community with id[{}]", communityId);
+    Set<CommunityHouseName> houseNames = request.getHouses();
     Set<CommunityHouse> communityHouses =
-        communityApiMapper.communityHouseDtoSetToCommunityHouseSet(request.getHouses());
+        communityApiMapper.communityHouseNamesSetToCommunityHouseSet(houseNames);
     Set<String> houseIds = communityService.addHousesToCommunity(communityId, communityHouses);
-    if (houseIds.size() != 0 && request.getHouses().size() != 0) {
+    if (houseIds.size() != 0 && houseNames.size() != 0) {
       AddCommunityHouseResponse response = new AddCommunityHouseResponse();
       response.setHouses(houseIds);
       return ResponseEntity.status(HttpStatus.CREATED).body(response);

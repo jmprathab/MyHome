@@ -124,6 +124,7 @@ class HouseSDJpaServiceTest {
     Set<HouseMember> resultMembers = houseSDJpaService.addHouseMembers(HOUSE_ID, membersToAdd);
 
     // then
+    assertTrue(resultMembers.isEmpty());
     verify(communityHouseRepository).findByHouseId(HOUSE_ID);
     verify(communityHouseRepository, never()).save(any());
     verifyNoInteractions(houseMemberRepository);

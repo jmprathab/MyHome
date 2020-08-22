@@ -20,9 +20,15 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
 import com.myhome.controllers.response.GetUserDetailsResponse;
+import com.myhome.domain.Community;
 import com.myhome.domain.User;
+
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 /**
  * Interface to automatic conversion by Mapstruct
@@ -38,4 +44,14 @@ public interface UserApiMapper {
   CreateUserResponse userDtoToCreateUserResponse(UserDto userDto);
 
   GetUserDetailsResponse.User userDtoToGetUserDetailsResponse(UserDto userDto);
+
+  @Mapping(source = "communities", target = "communityIds", qualifiedByName = "communitySetToIdsSet")
+  GetUserDetailsResponse.User userToRestApiUser(User user);
+
+  @Named("communitySetToIdsSet")
+  static Set<String> communityObjectSetToCommunityIdSet(Set<Community> communities) {
+    return communities.stream()
+    .map(community -> community.getCommunityId())
+    .collect(Collectors.toSet());
+  }
 }
