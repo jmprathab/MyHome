@@ -19,6 +19,7 @@ Please note we have a [code of conduct](CODE_OF_CONDUCT.md), please follow it in
 4. Pull requests will be approved by one of the owners of this repository.
 5. Pattern for git branch name has to be `feature/<ISSUE_NUMBER>--<ISSUE_SHORT_NAME>`
 6. Pattern for pull request title has to be `Issue <ISSUE_NUMBER>: <ISSUE_NAME>`
+7. One PR for one feature/bug. Don't target multiple Features or Bugs in a single PR unless they are related and cannot be breaken down further.
 
 ## How to set up your environment and run tests?
 
