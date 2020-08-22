@@ -41,19 +41,6 @@ public class CommunityAmenityController {
         .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
-
-  @GetMapping("/communities/{communityId}/amenities}")
-  public ResponseEntity listAllCommunityAmenities(@PathVariable String amenityId) {
-    Optional<CommunityAmenity> communityAmenityOptional = communityAmenitySDJpaService.getCommunityAmenityDetails(amenityId);
-    return communityAmenityOptional
-        .map(communityAmenity -> {
-          GetCommunityAmenityDetailsResponse response = communityAmenityApiMapper
-              .communityAmenityToCommunityAmenityDetailsResponse(communityAmenity);
-          return ResponseEntity.status(HttpStatus.OK).body(response);
-        })
-        .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-  }
-
   @Operation(
       description = "Remove amenity",
       responses = {
