@@ -31,13 +31,10 @@ public class CommunityAmenityController {
   )
   @GetMapping("/amenities/{amenityId}")
   public ResponseEntity getAmenityDetails(@PathVariable String amenityId) {
-    Optional<CommunityAmenity> communityAmenityOptional = communityAmenitySDJpaService.getCommunityAmenityDetails(amenityId);
-    return communityAmenityOptional
-        .map(communityAmenity -> {
-          GetCommunityAmenityDetailsResponse response = communityAmenityApiMapper
-              .communityAmenityToCommunityAmenityDetailsResponse(communityAmenity);
-          return ResponseEntity.status(HttpStatus.OK).body(response);
-        })
+    return communityAmenitySDJpaService.getCommunityAmenityDetails(amenityId)
+        .map(communityAmenity -> communityAmenityApiMapper
+              .communityAmenityToCommunityAmenityDetailsResponse(communityAmenity))
+        .map(communityAmenityResponse -> ResponseEntity.ok(communityAmenityResponse))
         .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
@@ -51,7 +48,7 @@ public class CommunityAmenityController {
   @DeleteMapping(path = "/amenities/{amenityId}")
   public ResponseEntity deleteAmenity(@PathVariable String amenityId) {
     boolean isAmenityDeleted = communityAmenitySDJpaService.deleteAmenity(amenityId);
-    if(isAmenityDeleted) {
+    if (isAmenityDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
