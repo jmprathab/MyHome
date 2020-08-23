@@ -36,6 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -175,12 +177,14 @@ public class CommunitySDJpaService implements CommunityService {
     return UUID.randomUUID().toString();
   }
 
+  @Transactional
   public boolean removeHouseFromCommunityByHouseId(String communityId, String houseId) {
     return communityRepository.findByCommunityId(communityId)
         .map(community -> {
           CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
           if (house != null && community.getHouses().contains(house)) {
             community.getHouses().remove(house);
+            communityHouseRepository.deleteByHouseId(houseId);
             communityRepository.save(community);
             return true;
           } else {
