@@ -18,7 +18,6 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
-import com.myhome.domain.HouseMemberDocument;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
