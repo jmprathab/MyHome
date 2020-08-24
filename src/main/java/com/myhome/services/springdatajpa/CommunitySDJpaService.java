@@ -20,17 +20,22 @@ import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.mapper.CommunityMapper;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
+import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.myhome.services.HouseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +51,7 @@ public class CommunitySDJpaService implements CommunityService {
   private final UserRepository communityAdminRepository;
   private final CommunityMapper communityMapper;
   private final CommunityHouseRepository communityHouseRepository;
+  private final HouseService houseService;
 
   @Override
   public Community createCommunity(CommunityDto communityDto) {
@@ -160,14 +166,31 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override
+  @Transactional
   public boolean deleteCommunity(String communityId) {
     return communityRepository.findByCommunityId(communityId)
         .map(community -> {
-          community.getHouses()
-              .stream()
-              .map(CommunityHouse::getHouseId)
-              .forEach(communityHouseRepository::deleteByHouseId);
+          Set<String> houseIds = new HashSet<>();
+
+          //You need an iterator as you need to be able to remove the house as you go and streams don't allow this. You get ConcurrentModificationException otherwise
+          for (Iterator<CommunityHouse> i = community.getHouses().iterator(); i.hasNext();) {
+            CommunityHouse house = i.next();
+            Set<String> memberIds = house.getHouseMembers()
+                 .stream()
+                 .map(HouseMember::getMemberId)
+                 .collect(Collectors.toSet());
+
+            memberIds.stream()
+                     .forEach(id -> houseService.deleteMemberFromHouse(house.getHouseId(), id));
+
+            i.remove();
+            houseIds.add(house.getHouseId());
+          }
+
+          houseIds.forEach(communityHouseRepository::deleteByHouseId);
+
           communityRepository.delete(community);
+
           return true;
         })
         .orElse(false);
