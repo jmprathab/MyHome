@@ -18,13 +18,11 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
-import com.myhome.domain.HouseMemberDocument;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.HouseService;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

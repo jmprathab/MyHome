@@ -24,7 +24,6 @@ import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
-import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
 import java.util.HashSet;
