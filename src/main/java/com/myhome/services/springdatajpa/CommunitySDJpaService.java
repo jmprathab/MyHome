@@ -20,17 +20,21 @@ import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.mapper.CommunityMapper;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.myhome.services.HouseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +50,7 @@ public class CommunitySDJpaService implements CommunityService {
   private final UserRepository communityAdminRepository;
   private final CommunityMapper communityMapper;
   private final CommunityHouseRepository communityHouseRepository;
+  private final HouseService houseService;
 
   @Override
   public Community createCommunity(CommunityDto communityDto) {
@@ -180,17 +185,26 @@ public class CommunitySDJpaService implements CommunityService {
   @Transactional
   public boolean removeHouseFromCommunityByHouseId(String communityId, String houseId) {
     return communityRepository.findByCommunityId(communityId)
-        .map(community -> {
-          CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
-          if (house != null && community.getHouses().contains(house)) {
-            community.getHouses().remove(house);
-            communityHouseRepository.deleteByHouseId(houseId);
-            communityRepository.save(community);
-            return true;
-          } else {
-            return false;
-          }
-        })
-        .orElse(false);
+    .map(community -> {
+      CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
+      Set<CommunityHouse> houses = community.getHouses();
+      if (house != null && houses.contains(house)) {
+        houses.remove(house); //remove the house before deleting house members because otherwise the Set relationship would be broken and remove would not work
+
+        Set<String> memberIds = house.getHouseMembers()
+        .stream()
+        .map(HouseMember::getMemberId)
+        .collect(Collectors.toSet()); //streams are immutable so need to collect all the member IDs and then delete them from the house
+
+        memberIds.forEach(id -> houseService.deleteMemberFromHouse(houseId, id));
+
+        communityRepository.save(community);
+        communityHouseRepository.deleteByHouseId(houseId);
+        return true;
+      } else {
+        return false;
+      }
+    })
+    .orElse(false);
   }
 }
