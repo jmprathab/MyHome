@@ -24,9 +24,11 @@ import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
+import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -164,14 +166,31 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override
+  @Transactional
   public boolean deleteCommunity(String communityId) {
     return communityRepository.findByCommunityId(communityId)
         .map(community -> {
-          community.getHouses()
-              .stream()
-              .map(CommunityHouse::getHouseId)
-              .forEach(communityHouseRepository::deleteByHouseId);
+          Set<String> houseIds = new HashSet<>();
+
+          //You need an iterator as you need to be able to remove the house as you go and streams don't allow this. You get ConcurrentModificationException otherwise
+          for (Iterator<CommunityHouse> i = community.getHouses().iterator(); i.hasNext();) {
+            CommunityHouse house = i.next();
+            Set<String> memberIds = house.getHouseMembers()
+                 .stream()
+                 .map(HouseMember::getMemberId)
+                 .collect(Collectors.toSet());
+
+            memberIds.stream()
+                     .forEach(id -> houseService.deleteMemberFromHouse(house.getHouseId(), id));
+
+            i.remove();
+            houseIds.add(house.getHouseId());
+          }
+
+          houseIds.forEach(communityHouseRepository::deleteByHouseId);
+
           communityRepository.delete(community);
+
           return true;
         })
         .orElse(false);
