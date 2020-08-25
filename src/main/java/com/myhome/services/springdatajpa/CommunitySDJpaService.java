@@ -172,6 +172,7 @@ public class CommunitySDJpaService implements CommunityService {
           Set<String> houseIds = new HashSet<>();
 
           //You need an iterator as you need to be able to remove the house as you go and streams don't allow this. You get ConcurrentModificationException otherwise
+          //This is also why you cannot call removeHouseFromCommunity for each house, as the same exception will occur
           for (Iterator<CommunityHouse> i = community.getHouses().iterator(); i.hasNext();) {
             CommunityHouse house = i.next();
             Set<String> memberIds = house.getHouseMembers()
