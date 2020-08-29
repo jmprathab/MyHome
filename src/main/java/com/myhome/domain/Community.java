@@ -30,6 +30,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.With;
 
 /**
@@ -50,8 +51,10 @@ import lombok.With;
     )
 })
 public class Community extends BaseEntity {
+  @ToString.Exclude
   @ManyToMany(fetch = FetchType.EAGER)
   private Set<User> admins = new HashSet<>();
+  @ToString.Exclude
   @OneToMany(fetch = FetchType.EAGER)
   private Set<CommunityHouse> houses = new HashSet<>();
   @Column(nullable = false)
@@ -60,6 +63,7 @@ public class Community extends BaseEntity {
   private String communityId;
   @Column(nullable = false)
   private String district;
+  @ToString.Exclude
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "community", orphanRemoval = true)
   private Set<CommunityAmenity> amenities = new HashSet<>();
 }
