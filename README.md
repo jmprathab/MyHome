@@ -1,6 +1,6 @@
-<p align="center"><img src="/media/cover_image.png" alt="Logo"/></p>
+<p align="center"><img src="/assets/cover_image.png" alt="Logo"/></p>
 
-MyHome helps people manage their apartment.
+MyHome helps people manage their apartment. See [this](/assets/FEATURES.md) document for the complete list of features we are planning to implement.
 
 Join us at Discord [here](https://discord.gg/CngACKh).
 
