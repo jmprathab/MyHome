@@ -35,6 +35,16 @@ spring:
     enabled: true
     settings.web-allow-others: true
 
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+      type:
+        descriptor:
+          sql:
+            BasicBinder: TRACE
+
 ###############################################################################
 # Spring doc
 ###############################################################################

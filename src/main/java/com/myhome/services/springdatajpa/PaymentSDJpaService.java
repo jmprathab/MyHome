@@ -78,20 +78,7 @@ public class PaymentSDJpaService implements PaymentService {
 
   @Override
   public Optional<HouseMember> getHouseMember(String memberId) {
-    Optional<HouseMember> memberOptional = houseMemberRepository.findByMemberId(memberId);
-
-    return memberOptional.map(member1 -> {
-      HouseMember member = memberOptional.get();
-
-      if (member.getHouseMemberDocument() == null) {
-        HouseMemberDocument document = new HouseMemberDocument();
-        document.setId(member.getId());
-        member.setHouseMemberDocument(
-            houseMemberDocumentService.findHouseMemberDocument(memberId).orElse(document));
-      }
-
-      return Optional.of(member);
-    }).orElse(Optional.empty());
+    return houseMemberRepository.findByMemberId(memberId);
   }
 
   @Override
