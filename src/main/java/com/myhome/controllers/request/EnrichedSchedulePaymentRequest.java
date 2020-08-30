@@ -8,6 +8,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
+/**
+ * This class is used to enrich the normal SchedulePaymentRequest with details relating to the admin and house member in order
+ * to map to the User and HouseMember fields of payment successfully.
+ * By doing this, you can avoid having to specify all the extra details in the request and just use the IDs
+ * to get the data to enrich this request
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
