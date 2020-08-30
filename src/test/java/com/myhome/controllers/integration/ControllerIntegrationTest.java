@@ -23,9 +23,11 @@ import com.myhome.controllers.response.CreateUserResponse;
 import com.myhome.controllers.response.GetUserDetailsResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class ControllerIntegrationTest extends ControllerIntegrationTestBase {
+public class ControllerIntegrationTest extends ControllerIntegrationTestBase {
 
   private static final String testUserName = "Test User";
   private static final String testUserEmail = "testuser@myhome.com";

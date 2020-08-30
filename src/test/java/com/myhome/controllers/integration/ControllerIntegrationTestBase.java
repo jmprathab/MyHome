@@ -35,6 +35,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -43,6 +44,12 @@ import static java.util.Optional.ofNullable;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = {
     MyHomeServiceApplication.class})
+@TestPropertySource(properties = {
+"files.maxSizeKBytes=1",
+"files.compressionBorderSizeKBytes=99",
+"files.compressedImageQuality=0.99",
+"spring.datasource.initialization-mode=never"
+})
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = "test")
 public class ControllerIntegrationTestBase {
