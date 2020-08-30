@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class HouseMemberDto {
+  private Long id;
   private String memberId;
   private String name;
 }

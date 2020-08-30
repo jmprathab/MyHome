@@ -42,6 +42,7 @@ public class HouseMember extends BaseEntity {
   @JoinColumn(name = "document_id")
   private HouseMemberDocument houseMemberDocument;
 
+  @With
   @Column(nullable = false)
   private String name;
 

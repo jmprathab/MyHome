@@ -21,6 +21,7 @@ import com.myhome.controllers.dto.mapper.PaymentMapper;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.HouseMemberDocument;
 import com.myhome.domain.Payment;
+import com.myhome.domain.User;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.HouseMemberRepository;
@@ -87,10 +88,10 @@ public class PaymentSDJpaService implements PaymentService {
         .withMatcher("memberId",
             ExampleMatcher.GenericPropertyMatchers.startsWith().ignoreCase())
         .withIgnorePaths("paymentId", "charge", "type", "description", "recurring", "dueDate",
-            "adminId");
+            "admin");
 
     Example<Payment> paymentExample =
-        Example.of(new Payment(null, null, null, null, false, null, null, memberId),
+        Example.of(new Payment(null, null, null, null, false, null, null, new HouseMember().withMemberId(memberId)),
             ignoringMatcher);
 
     return new HashSet<>(paymentRepository.findAll(paymentExample));
@@ -105,7 +106,7 @@ public class PaymentSDJpaService implements PaymentService {
             "memberId");
 
     Example<Payment> paymentExample =
-        Example.of(new Payment(null, null, null, null, false, null, null, adminId),
+        Example.of(new Payment(null, null, null, null, false, null, new User().withUserId(adminId), null),
             ignoringMatcher);
 
     return new HashSet<>(paymentRepository.findAll(paymentExample));
@@ -114,6 +115,7 @@ public class PaymentSDJpaService implements PaymentService {
   private PaymentDto createPaymentInRepository(PaymentDto request) {
     Payment payment = paymentMapper.paymentDtoToPayment(request);
 
+    adminRepository.save(payment.getAdmin());
     paymentRepository.save(payment);
 
     return paymentMapper.paymentToPaymentDto(payment);

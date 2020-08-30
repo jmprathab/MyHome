@@ -17,6 +17,8 @@
 package com.myhome.controllers.dto;
 
 import java.math.BigDecimal;
+
+import com.myhome.services.HouseService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +33,6 @@ public class PaymentDto {
   private String description;
   private boolean recurring;
   private String dueDate;
-  private String adminId;
-  private String memberId;
+  private UserDto admin;
+  private HouseMemberDto member;
 }

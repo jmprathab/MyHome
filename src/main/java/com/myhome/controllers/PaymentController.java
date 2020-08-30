@@ -16,18 +16,22 @@
 
 package com.myhome.controllers;
 
+import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
+import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
 import com.myhome.controllers.request.SchedulePaymentRequest;
 import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.controllers.response.ListMemberPaymentsResponse;
 import com.myhome.controllers.response.SchedulePaymentResponse;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 
+import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +56,24 @@ public class PaymentController {
   private final CommunityService communityService;
   private final SchedulePaymentApiMapper schedulePaymentApiMapper;
 
+  private EnrichedSchedulePaymentRequest enrichSchedulePaymentRequest(SchedulePaymentRequest request, User admin, HouseMember member) {
+    return new EnrichedSchedulePaymentRequest(request.getType(),
+        request.getDescription(),
+        request.isRecurring(),
+        request.getCharge(),
+        request.getDueDate(),
+        request.getAdminId(),
+        admin.getId(),
+        admin.getName(),
+        admin.getEmail(),
+        admin.getEncryptedPassword(),
+        request.getMemberId(),
+        member.getId(),
+        member.getHouseMemberDocument() != null ? member.getHouseMemberDocument().getDocumentFilename():"",
+        member.getName(),
+        member.getCommunityHouse() != null ? member.getCommunityHouse().getHouseId():"");
+  }
+
   @Operation(description = "Schedule a new payment")
   @PostMapping(
       path = "/payments",
@@ -62,7 +84,23 @@ public class PaymentController {
       SchedulePaymentRequest request) {
     log.trace("Received schedule payment request");
 
-    return paymentService.getHouseMember(request.getMemberId())
+    Optional<HouseMember> houseMember = paymentService.getHouseMember(request.getMemberId());
+
+    if (houseMember.isPresent()) {
+      HouseMember houseMember1 = houseMember.get();
+      Optional<User> adminOptional = communityService.findCommunityAdminById(request.getAdminId());
+
+      if (adminOptional.isPresent() && isUserAdminOfCommunityHouse(houseMember1.getCommunityHouse(), adminOptional.get())) {
+        PaymentDto paymentDto = schedulePaymentApiMapper.enrichedSchedulePaymentRequestToPaymentDto(enrichSchedulePaymentRequest(request, adminOptional.get(), houseMember1));
+        PaymentDto scheduled = paymentService.schedulePayment(paymentDto);
+        SchedulePaymentResponse response = schedulePaymentApiMapper.paymentToSchedulePaymentResponse(scheduled);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+      }
+    }
+
+    return ResponseEntity.notFound().build();
+
+    /*return paymentService.getHouseMember(request.getMemberId())
       .map(member -> communityService.findCommunityAdminById(request.getAdminId())
                       .map(admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin))
                       .orElse(null))
@@ -70,7 +108,7 @@ public class PaymentController {
       .map(paymentService::schedulePayment)
       .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
       .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
-      .orElseGet(() -> ResponseEntity.notFound().build());
+      .orElseGet(() -> ResponseEntity.notFound().build());*/
   }
 
   private Boolean isUserAdminOfCommunityHouse(CommunityHouse communityHouse, User admin) {
@@ -146,7 +184,7 @@ public class PaymentController {
 
   private Boolean isAdminMatchingPayment(Set<Payment> payments, String adminId) {
     if (payments.stream()
-        .anyMatch(payment -> payment.getAdminId().equals(adminId))) {
+        .anyMatch(payment -> payment.getAdmin().getUserId().equals(adminId))) {
       return true;
     }
 

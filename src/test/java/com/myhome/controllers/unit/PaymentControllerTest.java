@@ -18,7 +18,9 @@ package com.myhome.controllers.unit;
 
 import com.myhome.controllers.PaymentController;
 import com.myhome.controllers.dto.CommunityDto;
+import com.myhome.controllers.dto.HouseMemberDto;
 import com.myhome.controllers.dto.PaymentDto;
+import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
 import com.myhome.controllers.request.SchedulePaymentRequest;
 import com.myhome.controllers.response.ListAdminPaymentsResponse;
@@ -27,6 +29,7 @@ import com.myhome.controllers.response.SchedulePaymentResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import com.myhome.domain.HouseMemberDocument;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
 import com.myhome.services.CommunityService;
@@ -95,8 +98,12 @@ class PaymentControllerTest {
     paymentDto.setCharge(TEST_CHARGE);
     paymentDto.setDueDate(TEST_DUE_DATE);
     paymentDto.setRecurring(TEST_RECURRING);
-    paymentDto.setAdminId(TEST_ADMIN_ID);
-    paymentDto.setMemberId(TEST_MEMBER_ID);
+    UserDto userDto = new UserDto();
+    userDto.setUserId(TEST_ADMIN_ID);
+    paymentDto.setAdmin(userDto);
+    HouseMemberDto houseMemberDto = new HouseMemberDto();
+    houseMemberDto.setMemberId(TEST_MEMBER_ID);
+    paymentDto.setMember(houseMemberDto);
     return paymentDto;
   }
 
@@ -133,8 +140,8 @@ class PaymentControllerTest {
 
   private Payment getMockPayment() {
     return new Payment(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING,
-        LocalDate.parse(TEST_DUE_DATE, DateTimeFormatter.ofPattern("yyyy-MM-dd")), TEST_ADMIN_ID,
-        TEST_MEMBER_ID);
+        LocalDate.parse(TEST_DUE_DATE, DateTimeFormatter.ofPattern("yyyy-MM-dd")), new User("test-admin-name", TEST_ADMIN_ID, "test-admin-email@myhome.com", "password", new HashSet<>()),
+        new HouseMember(TEST_MEMBER_ID, new HouseMemberDocument(), TEST_MEMBER_NAME, new CommunityHouse()));
   }
 
   @Test
