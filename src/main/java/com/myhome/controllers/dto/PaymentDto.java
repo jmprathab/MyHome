@@ -18,7 +18,6 @@ package com.myhome.controllers.dto;
 
 import java.math.BigDecimal;
 
-import com.myhome.services.HouseService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
