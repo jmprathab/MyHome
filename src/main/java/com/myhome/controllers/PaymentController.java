@@ -23,6 +23,7 @@ import com.myhome.controllers.request.SchedulePaymentRequest;
 import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.controllers.response.ListMemberPaymentsResponse;
 import com.myhome.controllers.response.SchedulePaymentResponse;
+import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
@@ -33,6 +34,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,24 +58,6 @@ public class PaymentController {
   private final CommunityService communityService;
   private final SchedulePaymentApiMapper schedulePaymentApiMapper;
 
-  private EnrichedSchedulePaymentRequest enrichSchedulePaymentRequest(SchedulePaymentRequest request, User admin, HouseMember member) {
-    return new EnrichedSchedulePaymentRequest(request.getType(),
-        request.getDescription(),
-        request.isRecurring(),
-        request.getCharge(),
-        request.getDueDate(),
-        request.getAdminId(),
-        admin.getId(),
-        admin.getName(),
-        admin.getEmail(),
-        admin.getEncryptedPassword(),
-        request.getMemberId(),
-        member.getId(),
-        member.getHouseMemberDocument() != null ? member.getHouseMemberDocument().getDocumentFilename():"",
-        member.getName(),
-        member.getCommunityHouse() != null ? member.getCommunityHouse().getHouseId():"");
-  }
-
   @Operation(description = "Schedule a new payment")
   @PostMapping(
       path = "/payments",
@@ -85,30 +69,15 @@ public class PaymentController {
     log.trace("Received schedule payment request");
 
     Optional<HouseMember> houseMember = paymentService.getHouseMember(request.getMemberId());
+    Optional<User> adminOptional = communityService.findCommunityAdminById(request.getAdminId());
 
-    if (houseMember.isPresent()) {
-      HouseMember houseMember1 = houseMember.get();
-      Optional<User> adminOptional = communityService.findCommunityAdminById(request.getAdminId());
-
-      if (adminOptional.isPresent() && isUserAdminOfCommunityHouse(houseMember1.getCommunityHouse(), adminOptional.get())) {
-        PaymentDto paymentDto = schedulePaymentApiMapper.enrichedSchedulePaymentRequestToPaymentDto(enrichSchedulePaymentRequest(request, adminOptional.get(), houseMember1));
-        PaymentDto scheduled = paymentService.schedulePayment(paymentDto);
-        SchedulePaymentResponse response = schedulePaymentApiMapper.paymentToSchedulePaymentResponse(scheduled);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-      }
-    }
-
-    return ResponseEntity.notFound().build();
-
-    /*return paymentService.getHouseMember(request.getMemberId())
-      .map(member -> communityService.findCommunityAdminById(request.getAdminId())
-                      .map(admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin))
-                      .orElse(null))
-      .map(admin -> schedulePaymentApiMapper.schedulePaymentRequestToPaymentDto(request))
+     return houseMember.map(member -> adminOptional.map(admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin))
+                                                .orElse(null))
+      .map(success -> schedulePaymentApiMapper.enrichedSchedulePaymentRequestToPaymentDto(schedulePaymentApiMapper.enrichSchedulePaymentRequest(request, adminOptional.get(), houseMember.get())))
       .map(paymentService::schedulePayment)
       .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
       .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
-      .orElseGet(() -> ResponseEntity.notFound().build());*/
+      .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   private Boolean isUserAdminOfCommunityHouse(CommunityHouse communityHouse, User admin) {

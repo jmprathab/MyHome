@@ -2,11 +2,13 @@ package com.myhome.controllers.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.Set;
 
 /**
  * This class is used to enrich the normal SchedulePaymentRequest with details relating to the admin and house member in order
@@ -17,22 +19,28 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class EnrichedSchedulePaymentRequest {
-  private String type;
-  @NotBlank
-  @Size(min = 5, max = 300, message = "Description should be between 5 and 300 characters")
-  private String description;
-  private boolean recurring;
-  private BigDecimal charge;
-  private String dueDate;
-  private String adminId;
+@EqualsAndHashCode(callSuper = false)
+public class EnrichedSchedulePaymentRequest extends SchedulePaymentRequest {
   private Long adminEntityId;
   private String adminName;
   private String adminEmail;
   private String adminEncryptedPassword;
-  private String memberId;
+  private Set<String> adminCommunityIds;
   private Long memberEntityId;
   private String houseMemberDocumentName;
   private String houseMemberName;
   private String houseMemberHouseID;
+
+  public EnrichedSchedulePaymentRequest(String type, String description, boolean recurring, BigDecimal charge, String dueDate, String adminId, Long adminEntityId, String adminName, String adminEmail, String adminEncryptedPassword, Set<String> adminCommunityIds, String memberId, Long memberEntityId, String houseMemberDocumentName, String houseMemberName, String houseMemberHouseID) {
+    super(type, description, recurring, charge, dueDate, adminId, memberId);
+    this.adminName = adminName;
+    this.adminEmail = adminEmail;
+    this.adminEncryptedPassword = adminEncryptedPassword;
+    this.adminCommunityIds = adminCommunityIds;
+    this.adminEntityId = adminEntityId;
+    this.memberEntityId = memberEntityId;
+    this.houseMemberDocumentName = houseMemberDocumentName;
+    this.houseMemberName = houseMemberName;
+    this.houseMemberHouseID = houseMemberHouseID;
+  }
 }

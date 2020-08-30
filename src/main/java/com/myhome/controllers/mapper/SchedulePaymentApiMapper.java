@@ -24,12 +24,13 @@ import com.myhome.controllers.request.SchedulePaymentRequest;
 import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.controllers.response.ListMemberPaymentsResponse;
 import com.myhome.controllers.response.SchedulePaymentResponse;
+import com.myhome.domain.Community;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.myhome.domain.User;
-import org.aspectj.lang.annotation.After;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -60,6 +61,7 @@ public interface SchedulePaymentApiMapper {
     userDto.setEncryptedPassword(enrichedSchedulePaymentRequest.getAdminEncryptedPassword());
     userDto.setName(enrichedSchedulePaymentRequest.getAdminName());
     userDto.setEmail(enrichedSchedulePaymentRequest.getAdminEmail());
+    userDto.setCommunityIds(enrichedSchedulePaymentRequest.getAdminCommunityIds());
 
     HouseMemberDto houseMemberDto = new HouseMemberDto();
     houseMemberDto.setId(enrichedSchedulePaymentRequest.getMemberEntityId());
@@ -89,8 +91,14 @@ public interface SchedulePaymentApiMapper {
   Set<ListMemberPaymentsResponse.MemberPayment> memberPaymentSetToRestApiResponseMemberPaymentSet(
       Set<Payment> memberPaymentSet);
 
+  @Mapping(target = "memberId", expression = "java(payment.getMember().getMemberId())")
+  ListMemberPaymentsResponse.MemberPayment paymentToMemberPayment(Payment payment);
+
   Set<ListAdminPaymentsResponse.AdminPayment> adminPaymentSetToRestApiResponseAdminPaymentSet(
       Set<Payment> memberPaymentSet);
+
+  @Mapping(target = "adminId", expression = "java(payment.getAdmin().getUserId())")
+  ListAdminPaymentsResponse.AdminPayment paymentToAdminPayment(Payment payment);
 
   @Mappings({
     @Mapping(source = "admin", target = "adminId", qualifiedByName = "adminToAdminId"),
@@ -106,5 +114,28 @@ public interface SchedulePaymentApiMapper {
   @Named("memberToMemberId")
   static String memberToMemberId(HouseMemberDto houseMemberDto) {
     return houseMemberDto.getMemberId();
+  }
+
+  default EnrichedSchedulePaymentRequest enrichSchedulePaymentRequest(SchedulePaymentRequest request, User admin, HouseMember member) {
+    Set<String> communityIds = admin.getCommunities()
+    .stream()
+    .map(Community::getCommunityId)
+    .collect(Collectors.toSet());
+    return new EnrichedSchedulePaymentRequest(request.getType(),
+    request.getDescription(),
+    request.isRecurring(),
+    request.getCharge(),
+    request.getDueDate(),
+    request.getAdminId(),
+    admin.getId(),
+    admin.getName(),
+    admin.getEmail(),
+    admin.getEncryptedPassword(),
+    communityIds,
+    member.getMemberId(),
+    member.getId(),
+    member.getHouseMemberDocument() != null ? member.getHouseMemberDocument().getDocumentFilename():"",
+    member.getName(),
+    member.getCommunityHouse() != null ? member.getCommunityHouse().getHouseId():"");
   }
 }
