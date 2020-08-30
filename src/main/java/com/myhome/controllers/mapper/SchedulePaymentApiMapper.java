@@ -86,8 +86,6 @@ public interface SchedulePaymentApiMapper {
     return houseMemberDto;
   }
 
-  Set<PaymentDto> paymentSetToRestApiResponsePaymentSet(Set<Payment> payments);
-
   Set<ListMemberPaymentsResponse.MemberPayment> memberPaymentSetToRestApiResponseMemberPaymentSet(
       Set<Payment> memberPaymentSet);
 
