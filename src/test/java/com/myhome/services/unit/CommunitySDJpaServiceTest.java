@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class CommunitySDJpaServiceTest {
@@ -333,8 +334,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertTrue(communityDeleted);
-    //verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
-    testCommunityHouses.forEach(house -> verify(communityHouseRepository).deleteByHouseId(house.getHouseId()));
+    verify(communityRepository ,times(TEST_HOUSES_COUNT + 1)).findByCommunityId(TEST_COMMUNITY_ID);
     verify(communityRepository).delete(testCommunity);
   }
 
