@@ -124,9 +124,12 @@ public class CommunitySDJpaService implements CommunityService {
 
       houses.forEach(house -> {
         if (house != null) {
-
-          if (community.getHouses().stream()
-              .noneMatch(communityHouse -> communityHouse.getName().equals(house.getName()))) {
+          boolean houseExists = community.getHouses().stream()
+              .noneMatch(communityHouse ->
+                  communityHouse.getHouseId().equals(house.getHouseId())
+                  && communityHouse.getName().equals(house.getName())
+              );
+          if (houseExists) {
             house.setHouseId(generateUniqueId());
             house.setCommunity(community);
             addedIds.add(house.getHouseId());

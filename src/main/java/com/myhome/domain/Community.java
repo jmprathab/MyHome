@@ -38,7 +38,7 @@ import lombok.With;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = "houses")
+@EqualsAndHashCode(callSuper = false, of = {"communityId", "name", "district"})
 @Entity
 @With
 @NamedEntityGraphs({
