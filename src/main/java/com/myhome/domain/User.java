@@ -38,11 +38,11 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = "communities")
+@EqualsAndHashCode(callSuper = false, of = {"userId", "email", "name"})
 @Entity
 @With
 public class User extends BaseEntity {
-  @NonNull
+  @Column(nullable = false)
   private String name;
   @Column(unique = true, nullable = false)
   private String userId;
