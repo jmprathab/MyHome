@@ -333,10 +333,8 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertTrue(communityDeleted);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
-    testCommunityHouses.forEach(house -> {
-      verify(communityHouseRepository).deleteByHouseId(house.getHouseId());
-    });
+    //verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    testCommunityHouses.forEach(house -> verify(communityHouseRepository).deleteByHouseId(house.getHouseId()));
     verify(communityRepository).delete(testCommunity);
   }
 
