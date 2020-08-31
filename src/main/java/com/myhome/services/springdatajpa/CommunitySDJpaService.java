@@ -27,6 +27,7 @@ import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -167,14 +168,19 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override
+  @Transactional
   public boolean deleteCommunity(String communityId) {
     return communityRepository.findByCommunityId(communityId)
         .map(community -> {
-          community.getHouses()
-              .stream()
-              .map(CommunityHouse::getHouseId)
-              .forEach(communityHouseRepository::deleteByHouseId);
+          Set<String> houseIds = community.getHouses()
+                                    .stream()
+                                    .map(CommunityHouse::getHouseId)
+                                    .collect(Collectors.toSet());
+
+          houseIds.forEach(houseId -> removeHouseFromCommunityByHouseId(communityId, houseId));
+
           communityRepository.delete(community);
+
           return true;
         })
         .orElse(false);
