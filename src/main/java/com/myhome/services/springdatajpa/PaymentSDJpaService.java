@@ -19,7 +19,6 @@ package com.myhome.services.springdatajpa;
 import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.mapper.PaymentMapper;
 import com.myhome.domain.HouseMember;
-import com.myhome.domain.HouseMemberDocument;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
 import com.myhome.repositories.CommunityHouseRepository;

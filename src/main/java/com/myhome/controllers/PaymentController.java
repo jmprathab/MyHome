@@ -16,14 +16,11 @@
 
 package com.myhome.controllers;
 
-import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
-import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
 import com.myhome.controllers.request.SchedulePaymentRequest;
 import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.controllers.response.ListMemberPaymentsResponse;
 import com.myhome.controllers.response.SchedulePaymentResponse;
-import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
@@ -34,7 +31,6 @@ import io.swagger.v3.oas.annotations.Operation;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

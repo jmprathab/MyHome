@@ -16,13 +16,13 @@
 
 package com.myhome.controllers.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
+@Builder
+@Getter
+@Setter
 public class HouseMemberDto {
   private Long id;
   private String memberId;

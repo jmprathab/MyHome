@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class ControllerIntegrationTest extends ControllerIntegrationTestBase {
+public class ControllerIntegrationTest extends ControllerIntegrationTestBase {
 
   private static final String testUserName = "Test User";
   private static final String testUserEmail = "testuser@myhome.com";

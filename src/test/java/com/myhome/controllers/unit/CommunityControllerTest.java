@@ -88,13 +88,13 @@ public class CommunityControllerTest {
 
   private CommunityDto createTestCommunityDto() {
     Set<UserDto> communityAdminDtos = new HashSet<>();
-    UserDto userDto = new UserDto();
-    userDto.setUserId(COMMUNITY_ADMIN_ID);
-    userDto.setName(COMMUNITY_ADMIN_NAME);
-    userDto.setEmail(COMMUNITY_ADMIN_EMAIL);
-    userDto.setPassword(COMMUNITY_ADMIN_PASSWORD);
-    Set<String> communityIds = new HashSet<>(Arrays.asList(COMMUNITY_ID));
-    userDto.setCommunityIds(communityIds);
+    UserDto userDto = UserDto.builder()
+                      .userId(COMMUNITY_ADMIN_ID)
+                      .name(COMMUNITY_ADMIN_NAME)
+                      .email(COMMUNITY_ADMIN_NAME)
+                      .password(COMMUNITY_ADMIN_PASSWORD)
+                      .communityIds(new HashSet<>(Arrays.asList(COMMUNITY_ID)))
+                      .build();
 
     communityAdminDtos.add(userDto);
     CommunityDto communityDto = new CommunityDto();

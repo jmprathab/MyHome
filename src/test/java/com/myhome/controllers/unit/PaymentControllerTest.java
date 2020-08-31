@@ -98,27 +98,30 @@ class PaymentControllerTest {
   }
 
   private PaymentDto createTestPaymentDto() {
-    PaymentDto paymentDto = new PaymentDto();
-    paymentDto.setPaymentId(TEST_ID);
-    paymentDto.setType(TEST_TYPE);
-    paymentDto.setDescription(TEST_DESCRIPTION);
-    paymentDto.setCharge(TEST_CHARGE);
-    paymentDto.setDueDate(TEST_DUE_DATE);
-    paymentDto.setRecurring(TEST_RECURRING);
-    UserDto userDto = new UserDto();
-    userDto.setUserId(TEST_ADMIN_ID);
-    userDto.setCommunityIds(new HashSet<>(Arrays.asList(TEST_COMMUNITY_ID)));
-    userDto.setId(Long.valueOf(TEST_ADMIN_ID));
-    userDto.setEncryptedPassword(TEST_ADMIN_PASSWORD);
-    userDto.setName(TEST_ADMIN_NAME);
-    userDto.setEmail(TEST_ADMIN_EMAIL);
-    paymentDto.setAdmin(userDto);
-    HouseMemberDto houseMemberDto = new HouseMemberDto();
-    houseMemberDto.setMemberId(TEST_MEMBER_ID);
-    houseMemberDto.setName(TEST_MEMBER_NAME);
-    houseMemberDto.setId(Long.valueOf(TEST_MEMBER_ID));
-    paymentDto.setMember(houseMemberDto);
-    return paymentDto;
+    UserDto userDto = UserDto.builder()
+                      .userId(TEST_ADMIN_ID)
+                      .communityIds(new HashSet<>(Arrays.asList(TEST_COMMUNITY_ID)))
+                      .id(Long.valueOf(TEST_ADMIN_ID))
+                      .encryptedPassword(TEST_ADMIN_PASSWORD)
+                      .name(TEST_ADMIN_NAME)
+                      .email(TEST_ADMIN_EMAIL)
+                      .build();
+    HouseMemberDto houseMemberDto = HouseMemberDto.builder()
+                                    .memberId(TEST_MEMBER_ID)
+                                    .name(TEST_MEMBER_NAME)
+                                    .id(Long.valueOf(TEST_MEMBER_ID))
+                                    .build();
+
+    return PaymentDto.builder()
+            .paymentId(TEST_ID)
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE)
+            .recurring(TEST_RECURRING)
+            .admin(userDto)
+            .member(houseMemberDto)
+            .build();
   }
 
   private CommunityDto createTestCommunityDto() {
