@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class CommunitySDJpaServiceTest {
@@ -337,13 +338,17 @@ public class CommunitySDJpaServiceTest {
 
     given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(testCommunity));
+    testCommunityHouses.forEach(house -> {
+      given(communityHouseRepository.findByHouseId(house.getHouseId()))
+        .willReturn(house);
+    });
 
     // when
     boolean communityDeleted = communitySDJpaService.deleteCommunity(TEST_COMMUNITY_ID);
 
     // then
     assertTrue(communityDeleted);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityRepository, times(3)).findByCommunityId(TEST_COMMUNITY_ID);
     testCommunityHouses.forEach(house -> {
       verify(communityHouseRepository).deleteByHouseId(house.getHouseId());
     });
