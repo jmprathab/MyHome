@@ -19,7 +19,6 @@ package com.myhome.services.springdatajpa;
 import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.mapper.PaymentMapper;
 import com.myhome.domain.HouseMember;
-import com.myhome.domain.HouseMemberDocument;
 import com.myhome.domain.Payment;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
@@ -78,20 +77,7 @@ public class PaymentSDJpaService implements PaymentService {
 
   @Override
   public Optional<HouseMember> getHouseMember(String memberId) {
-    Optional<HouseMember> memberOptional = houseMemberRepository.findByMemberId(memberId);
-
-    return memberOptional.map(member1 -> {
-      HouseMember member = memberOptional.get();
-
-      if (member.getHouseMemberDocument() == null) {
-        HouseMemberDocument document = new HouseMemberDocument();
-        document.setId(member.getId());
-        member.setHouseMemberDocument(
-            houseMemberDocumentService.findHouseMemberDocument(memberId).orElse(document));
-      }
-
-      return Optional.of(member);
-    }).orElse(Optional.empty());
+    return houseMemberRepository.findByMemberId(memberId);
   }
 
   @Override
