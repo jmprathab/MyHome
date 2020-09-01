@@ -334,7 +334,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertTrue(communityDeleted);
-    verify(communityRepository ,times(TEST_HOUSES_COUNT + 1)).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityRepository, times(TEST_HOUSES_COUNT + 1)).findByCommunityId(TEST_COMMUNITY_ID);
     verify(communityRepository).delete(testCommunity);
   }
 
