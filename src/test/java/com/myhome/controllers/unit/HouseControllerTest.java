@@ -56,33 +56,6 @@ class HouseControllerTest {
     MockitoAnnotations.initMocks(this);
   }
 
-  private String generateUniqueId() {
-    return UUID.randomUUID().toString();
-  }
-
-  private Set<CommunityHouse> getTestHouses(int count) {
-    return Stream.iterate(0, n -> n + 1)
-        .map(index -> new CommunityHouse(
-            null,
-            String.format("test-community-house-%s", index),
-            generateUniqueId(),
-            new HashSet<>()))
-        .limit(count)
-        .collect(Collectors.toSet());
-  }
-
-  private Set<HouseMember> getTestHouseMembers(int count) {
-    return Stream
-        .generate(() -> new HouseMember()
-            .withMemberId(generateUniqueId()))
-        .limit(count)
-        .collect(Collectors.toSet());
-  }
-
-  private CommunityHouse getTestCommunityHouse() {
-    return new CommunityHouse().withHouseId(TEST_HOUSE_ID);
-  }
-
   @Test
   void listAllHouses() {
     // given
@@ -283,4 +256,32 @@ class HouseControllerTest {
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertNull(response.getBody());
   }
+
+  private String generateUniqueId() {
+    return UUID.randomUUID().toString();
+  }
+
+  private Set<CommunityHouse> getTestHouses(int count) {
+    return Stream.iterate(0, n -> n + 1)
+        .map(index -> new CommunityHouse(
+            null,
+            String.format("test-community-house-%s", index),
+            generateUniqueId(),
+            new HashSet<>()))
+        .limit(count)
+        .collect(Collectors.toSet());
+  }
+
+  private Set<HouseMember> getTestHouseMembers(int count) {
+    return Stream
+        .generate(() -> new HouseMember()
+            .withMemberId(generateUniqueId()))
+        .limit(count)
+        .collect(Collectors.toSet());
+  }
+
+  private CommunityHouse getTestCommunityHouse() {
+    return new CommunityHouse().withHouseId(TEST_HOUSE_ID);
+  }
+
 }
