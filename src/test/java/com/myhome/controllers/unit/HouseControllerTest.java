@@ -41,6 +41,9 @@ class HouseControllerTest {
   private final String TEST_HOUSE_ID = "test-house-id";
   private final String TEST_MEMBER_ID = "test-member-id";
 
+  private final int TEST_HOUSES_COUNT = 2;
+  private final int TEST_HOUSE_MEMBERS_COUNT = 2;
+
   @Mock
   private HouseMemberMapper houseMemberMapper;
   @Mock
@@ -59,7 +62,7 @@ class HouseControllerTest {
   @Test
   void listAllHouses() {
     // given
-    Set<CommunityHouse> testHouses = getTestHouses(2);
+    Set<CommunityHouse> testHouses = getTestHouses(TEST_HOUSES_COUNT);
     Set<GetHouseDetailsResponse.CommunityHouse> testHousesResponse = testHouses.stream()
         .map(house -> new GetHouseDetailsResponse.CommunityHouse(house.getHouseId(), house.getName()))
         .collect(Collectors.toSet());
@@ -124,7 +127,7 @@ class HouseControllerTest {
   @Test
   void listAllMembersOfHouse() {
     // given
-    List<HouseMember> testHouseMembers = new ArrayList<>(getTestHouseMembers(2));
+    List<HouseMember> testHouseMembers = new ArrayList<>(getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT));
     Set<ListHouseMembersResponse.HouseMember> testHouseMemberDetails = testHouseMembers.stream()
         .map(member -> new ListHouseMembersResponse.HouseMember(member.getMemberId(), member.getName()))
         .collect(Collectors.toSet());
@@ -164,7 +167,7 @@ class HouseControllerTest {
   @Test
   void addHouseMembers() {
     // given
-    Set<HouseMember> testMembers = getTestHouseMembers(2);
+    Set<HouseMember> testMembers = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
     Set<HouseMemberDto> testMembersDto = testMembers.stream()
         .map(member -> new HouseMemberDto(member.getMemberId(), member.getName()))
         .collect(Collectors.toSet());
@@ -199,7 +202,7 @@ class HouseControllerTest {
   @Test
   void addHouseMembersNoMembersAdded() {
     // given
-    Set<HouseMember> testMembers = getTestHouseMembers(2);
+    Set<HouseMember> testMembers = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
     Set<HouseMemberDto> testMembersDto = testMembers.stream()
         .map(member -> new HouseMemberDto(member.getMemberId(), member.getName()))
         .collect(Collectors.toSet());
