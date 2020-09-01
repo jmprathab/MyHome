@@ -107,7 +107,6 @@ class HouseControllerTest {
   void getHouseDetailsNotExists() {
     // given
     CommunityHouse testCommunityHouse = getTestCommunityHouse();
-    GetHouseDetailsResponse expectedResponseBody = new GetHouseDetailsResponse();
 
     given(houseService.getHouseDetailsById(TEST_HOUSE_ID))
         .willReturn(Optional.empty());
@@ -117,7 +116,7 @@ class HouseControllerTest {
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    assertEquals(expectedResponseBody, response.getBody());
+    assertNull(response.getBody());
     verify(houseService).getHouseDetailsById(TEST_HOUSE_ID);
     verify(houseApiMapper, never()).communityHouseToRestApiResponseCommunityHouse(testCommunityHouse);
   }
