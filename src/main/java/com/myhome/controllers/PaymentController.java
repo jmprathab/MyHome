@@ -67,9 +67,8 @@ public class PaymentController {
     Optional<HouseMember> houseMember = paymentService.getHouseMember(request.getMemberId());
     Optional<User> adminOptional = communityService.findCommunityAdminById(request.getAdminId());
 
-     return houseMember.map(member -> adminOptional.map(admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin))
-                                                .orElse(null))
-      .map(success -> schedulePaymentApiMapper.enrichedSchedulePaymentRequestToPaymentDto(schedulePaymentApiMapper.enrichSchedulePaymentRequest(request, adminOptional.get(), houseMember.get())))
+     return houseMember.flatMap(member -> adminOptional.filter(admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin)))
+      .map(admin -> schedulePaymentApiMapper.enrichedSchedulePaymentRequestToPaymentDto(schedulePaymentApiMapper.enrichSchedulePaymentRequest(request, admin, houseMember.get())))
       .map(paymentService::schedulePayment)
       .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
       .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
@@ -77,10 +76,9 @@ public class PaymentController {
   }
 
   private Boolean isUserAdminOfCommunityHouse(CommunityHouse communityHouse, User admin) {
-    if (communityHouse.getCommunity().getAdmins().contains(admin))
-      return true;
-    else
-      return null;
+    return communityHouse.getCommunity()
+            .getAdmins()
+            .contains(admin);
   }
 
   @Operation(description = "Get details about a payment with the given payment id")
