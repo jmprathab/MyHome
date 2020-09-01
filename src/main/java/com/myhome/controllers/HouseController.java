@@ -44,7 +44,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -86,13 +85,12 @@ public class HouseController {
   )
   public ResponseEntity<GetHouseDetailsResponse> getHouseDetails(@PathVariable String houseId) {
     log.trace("Received request to get details of a house with id[{}]", houseId);
-    Optional<CommunityHouse> communityHouseOptional = houseService.getHouseDetailsById(houseId);
-    return communityHouseOptional
+    return houseService.getHouseDetailsById(houseId)
         .map(houseApiMapper::communityHouseToRestApiResponseCommunityHouse)
         .map(Collections::singleton)
         .map(GetHouseDetailsResponse::new)
         .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GetHouseDetailsResponse()));
+        .orElse(ResponseEntity.notFound().build());
   }
 
   @Operation(description = "List all members of the house given a house id",
