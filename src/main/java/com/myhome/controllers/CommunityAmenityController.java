@@ -61,7 +61,7 @@ public class CommunityAmenityController {
       path = "/communities/{communityId}/amenities",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity listAllCommunityAmenities(@PathVariable String communityId) {
+  public ResponseEntity<Set<GetCommunityAmenityDetailsResponse>> listAllCommunityAmenities(@PathVariable String communityId) {
     Set<CommunityAmenity> communityAmenities = communityAmenitySDJpaService.listAllCommunityAmenities(communityId);
     Set<GetCommunityAmenityDetailsResponse> response = communityAmenityApiMapper
         .communityAmenitiesSetToCommunityAmenityDetailsResponseSet(communityAmenities);

@@ -38,11 +38,9 @@ public class CommunityAmenitySDJpaService implements CommunityAmenityService {
 
   @Override
   public Set<CommunityAmenity> listAllCommunityAmenities(String communityId) {
-    Optional<Community> communityOptional = communityRepository.findByCommunityId(communityId);
-    return communityOptional
-        .map(community -> community.getAmenities())
+    return communityRepository.findByCommunityId(communityId)
+        .map(Community::getAmenities)
         .orElse(new HashSet<>());
-
   }
 
 }
