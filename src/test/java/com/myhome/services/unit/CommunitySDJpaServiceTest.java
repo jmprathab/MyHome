@@ -419,7 +419,6 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(houseDeleted);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
     verify(communityHouseRepository).findByHouseId(TEST_HOUSE_ID);
     verify(communityRepository, never()).save(testCommunity);
   }
@@ -437,7 +436,6 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(houseDeleted);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
     verify(communityHouseRepository).findByHouseId(TEST_HOUSE_ID);
     verify(communityRepository, never()).save(testCommunity);
   }
