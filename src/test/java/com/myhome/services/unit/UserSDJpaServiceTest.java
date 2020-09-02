@@ -54,15 +54,13 @@ class UserSDJpaServiceTest {
     // given
     UserDto request = getDefaultUserDtoRequest();
     User resultUser = getUserFromDto(request);
-    UserDto response = new UserDto(
-        resultUser.getId(),
-        resultUser.getUserId(),
-        resultUser.getName(),
-        resultUser.getEmail(),
-        null,
-        resultUser.getEncryptedPassword(),
-        new HashSet<>()
-    );
+    UserDto response = UserDto.builder()
+                        .id(resultUser.getId())
+                        .userId(resultUser.getUserId())
+                        .name(resultUser.getName())
+                        .encryptedPassword(resultUser.getEncryptedPassword())
+                        .communityIds(new HashSet<>())
+                        .build();
 
     given(userRepository.findByEmail(request.getEmail()))
         .willReturn(null);
@@ -185,7 +183,13 @@ class UserSDJpaServiceTest {
   }
 
   private UserDto getDefaultUserDtoRequest() {
-    return new UserDto(null, USER_ID, USERNAME, USER_EMAIL, USER_PASSWORD, null, new HashSet<>());
+    return UserDto.builder()
+                .userId(USER_ID)
+                .name(USERNAME)
+                .email(USER_EMAIL)
+                .encryptedPassword(USER_PASSWORD)
+                .communityIds(new HashSet<>())
+                .build();
   }
 
   private User getUserFromDto(UserDto request) {

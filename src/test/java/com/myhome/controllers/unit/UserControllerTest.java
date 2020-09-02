@@ -68,10 +68,11 @@ class UserControllerTest {
   void shouldSignUpSuccessful() {
     // given
     CreateUserRequest request = new CreateUserRequest(TEST_NAME, TEST_EMAIL, TEST_PASSWORD);
-    UserDto userDto = new UserDto();
-    userDto.setName(TEST_NAME);
-    userDto.setEmail(TEST_EMAIL);
-    userDto.setPassword(TEST_PASSWORD);
+    UserDto userDto = UserDto.builder()
+                      .name(TEST_NAME)
+                      .email(TEST_EMAIL)
+                      .password(TEST_PASSWORD)
+                      .build();
     CreateUserResponse createUserResponse = new CreateUserResponse(TEST_ID, TEST_NAME, TEST_EMAIL);
 
     given(userApiMapper.createUserRequestToUserDto(request))
@@ -150,8 +151,9 @@ class UserControllerTest {
   void shouldGetUserDetailsSuccessWithResults() {
     // given
     String userId = TEST_ID;
-    UserDto userDto = new UserDto();
-    userDto.setUserId(userId);
+    UserDto userDto = UserDto.builder()
+                      .userId(userId)
+                      .build();
     GetUserDetailsResponse.User expectedResponse = new GetUserDetailsResponse.User(
         TEST_ID,
         TEST_NAME,
