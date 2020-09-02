@@ -254,17 +254,9 @@ public class CommunityController {
 
     Optional<Community> communityOptional = communityService.getCommunityDetailsById(communityId);
 
-    if (communityOptional.isPresent()) {
-      Community community = communityOptional.get();
-
-      boolean removed = communityService.removeHouseFromCommunityByHouseId(community, houseId);
-
-      if (removed) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-      }
-    }
-
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    return communityOptional.filter(community -> communityService.removeHouseFromCommunityByHouseId(community, houseId))
+            .map(removed -> ResponseEntity.noContent().<Void>build())
+            .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @Operation(
