@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class CommunitySDJpaServiceTest {
@@ -46,7 +47,6 @@ public class CommunitySDJpaServiceTest {
   private final String TEST_ADMIN_NAME = "test-user-name";
   private final String TEST_ADMIN_EMAIL = "test-user-email";
   private final String TEST_ADMIN_PASSWORD = "test-user-password";
-
 
   private final String TEST_HOUSE_ID = "test-house-id";
 
@@ -65,15 +65,6 @@ public class CommunitySDJpaServiceTest {
   @BeforeEach
   private void init() {
     MockitoAnnotations.initMocks(this);
-  }
-
-  private User getTestAdmin() {
-    return new User(
-        TEST_ADMIN_NAME,
-        TEST_ADMIN_ID,
-        TEST_ADMIN_EMAIL,
-        TEST_ADMIN_PASSWORD,
-        new HashSet<>());
   }
 
   @Test
@@ -159,7 +150,7 @@ public class CommunitySDJpaServiceTest {
   void addAdminsToCommunity() {
     // given
     Community testCommunity = getTestCommunity();
-    Set<User> adminToAdd = getTestCommunityAdmins(2);
+    Set<User> adminToAdd = getTestCommunityAdmins(TEST_ADMINS_COUNT);
     Set<String> adminToAddIds = adminToAdd.stream()
         .map(admin -> admin.getUserId())
         .collect(Collectors.toSet());
@@ -204,7 +195,7 @@ public class CommunitySDJpaServiceTest {
   void addHousesToCommunity() {
     // given
     Community testCommunity = getTestCommunity();
-    Set<CommunityHouse> housesToAdd = getTestHouses(2);
+    Set<CommunityHouse> housesToAdd = getTestHouses(TEST_HOUSES_COUNT);
 
     given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(testCommunity));
@@ -232,7 +223,7 @@ public class CommunitySDJpaServiceTest {
   @Test
   void addHousesToCommunityNotExist() {
     // given
-    Set<CommunityHouse> housesToAdd = getTestHouses(2);
+    Set<CommunityHouse> housesToAdd = getTestHouses(TEST_HOUSES_COUNT);
 
     given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
         .willReturn(Optional.empty());
@@ -251,7 +242,7 @@ public class CommunitySDJpaServiceTest {
   void addHousesToCommunityHouseExists() {
     // given
     Community testCommunity = getTestCommunity();
-    Set<CommunityHouse> houses = getTestHouses(2);
+    Set<CommunityHouse> houses = getTestHouses(TEST_HOUSES_COUNT);
     testCommunity.setHouses(houses);
 
     given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
@@ -332,7 +323,7 @@ public class CommunitySDJpaServiceTest {
   void deleteCommunity() {
     // given
     Community testCommunity = getTestCommunity();
-    Set<CommunityHouse> testCommunityHouses = getTestHouses(2);
+    Set<CommunityHouse> testCommunityHouses = getTestHouses(TEST_HOUSES_COUNT);
     testCommunity.setHouses(testCommunityHouses);
 
     given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
@@ -343,10 +334,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertTrue(communityDeleted);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
-    testCommunityHouses.forEach(house -> {
-      verify(communityHouseRepository).deleteByHouseId(house.getHouseId());
-    });
+    verify(communityRepository, times(TEST_HOUSES_COUNT + 1)).findByCommunityId(TEST_COMMUNITY_ID);
     verify(communityRepository).delete(testCommunity);
   }
 
@@ -500,6 +488,15 @@ public class CommunitySDJpaServiceTest {
         new HashSet<>()
     );
     return testCommunity;
+  }
+
+  private User getTestAdmin() {
+    return new User(
+        TEST_ADMIN_NAME,
+        TEST_ADMIN_ID,
+        TEST_ADMIN_EMAIL,
+        TEST_ADMIN_PASSWORD,
+        new HashSet<>());
   }
 
 }
