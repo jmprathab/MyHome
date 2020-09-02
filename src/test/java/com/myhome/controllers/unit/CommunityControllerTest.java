@@ -35,7 +35,6 @@ import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.User;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
-import org.apache.commons.lang3.text.translate.NumericEntityUnescaper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

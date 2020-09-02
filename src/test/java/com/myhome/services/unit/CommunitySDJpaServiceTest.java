@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class CommunitySDJpaServiceTest {
@@ -383,7 +382,6 @@ public class CommunitySDJpaServiceTest {
     given(communityHouseRepository.findByHouseId(TEST_HOUSE_ID))
         .willReturn(testHouse);
 
-    // when
     boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(testCommunity, TEST_HOUSE_ID);
 
     // then
@@ -421,6 +419,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(houseDeleted);
+    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
     verify(communityHouseRepository).findByHouseId(TEST_HOUSE_ID);
     verify(communityRepository, never()).save(testCommunity);
   }
@@ -430,8 +429,6 @@ public class CommunitySDJpaServiceTest {
     // given
     Community testCommunity = getTestCommunity();
 
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
-        .willReturn(Optional.of(testCommunity));
     given(communityHouseRepository.findByHouseId(TEST_HOUSE_ID))
         .willReturn(null);
 
@@ -440,6 +437,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(houseDeleted);
+    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
     verify(communityHouseRepository).findByHouseId(TEST_HOUSE_ID);
     verify(communityRepository, never()).save(testCommunity);
   }

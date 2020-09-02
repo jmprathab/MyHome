@@ -206,6 +206,7 @@ public class CommunitySDJpaService implements CommunityService {
         memberIds.forEach(id -> houseService.deleteMemberFromHouse(houseId, id));
 
         communityRepository.save(community1);
+
         communityHouseRepository.deleteByHouseId(houseId);
         return true;
       } else {
