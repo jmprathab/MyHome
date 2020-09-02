@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -251,12 +252,20 @@ public class CommunityController {
     log.trace(
         "Received request to delete house with id[{}] from community with id[{}]",
         houseId, communityId);
-    boolean houseRemoved = communityService.removeHouseFromCommunityByHouseId(communityId, houseId);
-    if (houseRemoved) {
-      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    } else {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+    Optional<Community> communityOptional = communityService.getCommunityDetailsById(communityId);
+
+    if (communityOptional.isPresent()) {
+      Community community = communityOptional.get();
+
+      boolean removed = communityService.removeHouseFromCommunityByHouseId(community, houseId);
+
+      if (removed) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+      }
     }
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
   }
 
   @Operation(

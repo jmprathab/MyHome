@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,8 +48,6 @@ public class Payment extends BaseEntity {
   private boolean recurring;
   @JsonFormat(pattern = "yyyy-MM-dd")
   private LocalDate dueDate;
-  @Column(nullable = false)
-  private String adminId;
-  @Column(nullable = false)
-  private String memberId;
+  private User admin;
+  private HouseMember member;
 }

@@ -18,7 +18,6 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
-import com.myhome.domain.HouseMemberDocument;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
@@ -62,11 +61,6 @@ public class HouseSDJpaService implements HouseService {
     CommunityHouse communityHouse = communityHouseRepository.findByHouseId(houseId);
     Set<HouseMember> savedMembers = new HashSet<>();
     if (communityHouse != null) {
-      for (HouseMember member : houseMembers) {
-        HouseMemberDocument document = new HouseMemberDocument();
-        member.setHouseMemberDocument(document);
-        houseMemberDocumentRepository.save(document);
-      }
       houseMembers.forEach(member -> member.setMemberId(generateUniqueId()));
       houseMembers.forEach(member -> member.setCommunityHouse(communityHouse));
       houseMemberRepository.saveAll(houseMembers).forEach(savedMembers::add);

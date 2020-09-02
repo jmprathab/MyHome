@@ -22,12 +22,14 @@ import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.controllers.response.ListMemberPaymentsResponse;
 import com.myhome.controllers.response.SchedulePaymentResponse;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 
+import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -62,11 +64,11 @@ public class PaymentController {
       SchedulePaymentRequest request) {
     log.trace("Received schedule payment request");
 
-    return paymentService.getHouseMember(request.getMemberId())
-      .map(member -> communityService.findCommunityAdminById(request.getAdminId())
-                      .map(admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin))
-                      .orElse(null))
-      .map(admin -> schedulePaymentApiMapper.schedulePaymentRequestToPaymentDto(request))
+    Optional<HouseMember> houseMember = paymentService.getHouseMember(request.getMemberId());
+    Optional<User> adminOptional = communityService.findCommunityAdminById(request.getAdminId());
+
+     return houseMember.flatMap(member -> adminOptional.filter(admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin)))
+      .map(admin -> schedulePaymentApiMapper.enrichedSchedulePaymentRequestToPaymentDto(schedulePaymentApiMapper.enrichSchedulePaymentRequest(request, admin, houseMember.get())))
       .map(paymentService::schedulePayment)
       .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
       .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
@@ -74,10 +76,9 @@ public class PaymentController {
   }
 
   private Boolean isUserAdminOfCommunityHouse(CommunityHouse communityHouse, User admin) {
-    if (communityHouse.getCommunity().getAdmins().contains(admin))
-      return true;
-    else
-      return null;
+    return communityHouse.getCommunity()
+            .getAdmins()
+            .contains(admin);
   }
 
   @Operation(description = "Get details about a payment with the given payment id")
@@ -146,7 +147,7 @@ public class PaymentController {
 
   private Boolean isAdminMatchingPayment(Set<Payment> payments, String adminId) {
     if (payments.stream()
-        .anyMatch(payment -> payment.getAdminId().equals(adminId))) {
+        .anyMatch(payment -> payment.getAdmin().getUserId().equals(adminId))) {
       return true;
     }
 

@@ -35,6 +35,7 @@ import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.User;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
+import org.apache.commons.lang3.text.translate.NumericEntityUnescaper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -88,13 +89,13 @@ public class CommunityControllerTest {
 
   private CommunityDto createTestCommunityDto() {
     Set<UserDto> communityAdminDtos = new HashSet<>();
-    UserDto userDto = new UserDto();
-    userDto.setUserId(COMMUNITY_ADMIN_ID);
-    userDto.setName(COMMUNITY_ADMIN_NAME);
-    userDto.setEmail(COMMUNITY_ADMIN_EMAIL);
-    userDto.setPassword(COMMUNITY_ADMIN_PASSWORD);
-    Set<String> communityIds = new HashSet<>(Arrays.asList(COMMUNITY_ID));
-    userDto.setCommunityIds(communityIds);
+    UserDto userDto = UserDto.builder()
+                      .userId(COMMUNITY_ADMIN_ID)
+                      .name(COMMUNITY_ADMIN_NAME)
+                      .email(COMMUNITY_ADMIN_NAME)
+                      .password(COMMUNITY_ADMIN_PASSWORD)
+                      .communityIds(new HashSet<>(Arrays.asList(COMMUNITY_ID)))
+                      .build();
 
     communityAdminDtos.add(userDto);
     CommunityDto communityDto = new CommunityDto();
@@ -450,7 +451,11 @@ public class CommunityControllerTest {
   @Test
   void shouldRemoveCommunityHouseSuccessfully() {
     // given
-    given(communityService.removeHouseFromCommunityByHouseId(COMMUNITY_ID, COMMUNITY_HOUSE_ID))
+    Community community = createTestCommunity();
+
+    given(communityService.getCommunityDetailsById(COMMUNITY_ID))
+      .willReturn(Optional.of(community));
+    given(communityService.removeHouseFromCommunityByHouseId(createTestCommunity(), COMMUNITY_HOUSE_ID))
       .willReturn(true);
 
     // when
@@ -459,13 +464,18 @@ public class CommunityControllerTest {
 
     // then
     assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
-    verify(communityService).removeHouseFromCommunityByHouseId(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
+    verify(communityService).removeHouseFromCommunityByHouseId(community, COMMUNITY_HOUSE_ID);
+    verify(communityService).getCommunityDetailsById(COMMUNITY_ID);
   }
 
   @Test
   void shouldNotRemoveCommunityHouseIfNotFoundSuccessfully() {
     // given
-    given(communityService.removeHouseFromCommunityByHouseId(COMMUNITY_ID, COMMUNITY_HOUSE_ID))
+    Community community = createTestCommunity();
+
+    given(communityService.getCommunityDetailsById(COMMUNITY_ID))
+      .willReturn(Optional.of(community));
+    given(communityService.removeHouseFromCommunityByHouseId(community, COMMUNITY_HOUSE_ID))
       .willReturn(false);
 
     // when
@@ -474,7 +484,7 @@ public class CommunityControllerTest {
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    verify(communityService).removeHouseFromCommunityByHouseId(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
+    verify(communityService).removeHouseFromCommunityByHouseId(community, COMMUNITY_HOUSE_ID);
   }
 
   @Test
