@@ -49,6 +49,7 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -485,6 +486,24 @@ public class CommunityControllerTest {
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(communityService).removeHouseFromCommunityByHouseId(community, COMMUNITY_HOUSE_ID);
+  }
+
+  @Test
+  void shouldNotRemoveCommunityHouseIfCommunityNotFound() {
+    //given
+    Community community = createTestCommunity();
+
+    given (communityService.getCommunityDetailsById(COMMUNITY_ID))
+      .willReturn(Optional.empty());
+
+    // when
+    ResponseEntity<Void> responseEntity =
+      communityController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    verify(communityService).getCommunityDetailsById(COMMUNITY_ID);
+    verify(communityService, never()).removeHouseFromCommunityByHouseId(community, COMMUNITY_HOUSE_ID);
   }
 
   @Test
