@@ -31,7 +31,7 @@ public class CommunityAmenityController {
       }
   )
   @GetMapping("/amenities/{amenityId}")
-  public ResponseEntity getAmenityDetails(@PathVariable String amenityId) {
+  public ResponseEntity<GetCommunityAmenityDetailsResponse> getAmenityDetails(@PathVariable String amenityId) {
     return communityAmenitySDJpaService.getCommunityAmenityDetails(amenityId)
         .map(communityAmenity -> communityAmenityApiMapper
               .communityAmenityToCommunityAmenityDetailsResponse(communityAmenity))
