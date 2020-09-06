@@ -160,7 +160,7 @@ public class CommunitySDJpaServiceTest {
     given(communityRepository.save(testCommunity))
         .willReturn(testCommunity);
     adminToAdd.forEach(admin -> {
-      given(communityAdminRepository.findByUserId(admin.getUserId()))
+      given(communityAdminRepository.findByUserIdWithCommunities(admin.getUserId()))
           .willReturn(Optional.of(admin));
     });
     adminToAdd.forEach(admin -> {

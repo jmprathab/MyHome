@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -109,7 +110,7 @@ class UserSDJpaServiceTest {
     UserDto userDto = getDefaultUserDtoRequest();
     User user = getUserFromDto(userDto);
 
-    given(userRepository.findByUserId(USER_ID))
+    given(userRepository.findByUserIdWithCommunities(USER_ID))
         .willReturn(Optional.of(user));
     given(communityService.listAll())
         .willReturn(new HashSet<>());
@@ -124,8 +125,7 @@ class UserSDJpaServiceTest {
     UserDto createdUserDto = createdUserDtoOptional.get();
     assertEquals(userDto, createdUserDto);
     assertEquals(0, createdUserDto.getCommunityIds().size());
-    verify(userRepository).findByUserId(USER_ID);
-    verify(communityService).listAll();
+    verify(userRepository).findByUserIdWithCommunities(USER_ID);
   }
 
   @Test
@@ -138,12 +138,14 @@ class UserSDJpaServiceTest {
     Community secCommunity = createCommunityWithUserAdmin(user);
 
     Set<Community> communities = Stream.of(firstCommunity, secCommunity).collect(Collectors.toSet());
+    user.setCommunities(communities);
+
     Set<String> communitiesIds = communities
         .stream()
         .map(community -> community.getCommunityId())
         .collect(Collectors.toSet());
 
-    given(userRepository.findByUserId(USER_ID))
+    given(userRepository.findByUserIdWithCommunities(USER_ID))
         .willReturn(Optional.of(user));
     given(communityService.listAll())
         .willReturn(communities);
@@ -158,14 +160,13 @@ class UserSDJpaServiceTest {
     UserDto createdUserDto = createdUserDtoOptional.get();
     assertEquals(userDto, createdUserDto);
     assertEquals(communitiesIds, createdUserDto.getCommunityIds());
-    verify(userRepository).findByUserId(USER_ID);
-    verify(communityService).listAll();
+    verify(userRepository).findByUserIdWithCommunities(USER_ID);
   }
 
   @Test
   void getUserDetailsNotFound() {
     // given
-    given(userRepository.findByUserId(USER_ID))
+    given(userRepository.findByUserIdWithCommunities(USER_ID))
         .willReturn(Optional.empty());
 
     // when
@@ -173,11 +174,12 @@ class UserSDJpaServiceTest {
 
     // then
     assertFalse(createdUserDto.isPresent());
-    verify(userRepository).findByUserId(USER_ID);
+    verify(userRepository).findByUserIdWithCommunities(USER_ID);
   }
 
   private Community createCommunityWithUserAdmin(User communityUserAdmin) {
     Community community = new Community();
+    community.setCommunityId(generateUniqueId());
     community.getAdmins().add(communityUserAdmin);
     return community;
   }
@@ -200,6 +202,10 @@ class UserSDJpaServiceTest {
         request.getEncryptedPassword(),
         new HashSet<>()
     );
+  }
+
+  private String generateUniqueId() {
+    return UUID.randomUUID().toString();
   }
 
 }
