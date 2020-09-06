@@ -86,7 +86,7 @@ class CommunityAmenitySDJpaServiceTest {
     Community testCommunity = getTestCommunity();
     testCommunity.setAmenities(testAmenities);
 
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithAmenities(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(testCommunity));
 
     // when
@@ -94,13 +94,13 @@ class CommunityAmenitySDJpaServiceTest {
 
     // then
     assertEquals(testAmenities, resultAmenities);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityRepository).findByCommunityIdWithAmenities(TEST_COMMUNITY_ID);
   }
 
   @Test
   void listAllCommunityAmenitiesNotExists() {
     // given
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithAmenities(TEST_COMMUNITY_ID))
         .willReturn(Optional.empty());
 
     // when
@@ -108,7 +108,7 @@ class CommunityAmenitySDJpaServiceTest {
 
     // then
     assertEquals(new HashSet<>(), resultAmenities);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityRepository).findByCommunityIdWithAmenities(TEST_COMMUNITY_ID);
   }
 
   private CommunityAmenity getTestAmenity() {
