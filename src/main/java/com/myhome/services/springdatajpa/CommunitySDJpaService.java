@@ -105,12 +105,17 @@ public class CommunitySDJpaService implements CommunityService {
   }
 
   @Override
+  public Optional<Community> getCommunityDetailsByIdWithAdmins(String communityId) {
+    return communityRepository.findByCommunityIdWithAdmins(communityId);
+  }
+
+  @Override
   public Optional<Community> addAdminsToCommunity(String communityId, Set<String> adminsIds) {
-    Optional<Community> communitySearch = communityRepository.findByCommunityId(communityId);
+    Optional<Community> communitySearch = communityRepository.findByCommunityIdWithAdmins(communityId);
 
     return communitySearch.map(community -> {
       adminsIds.forEach(adminId -> {
-        communityAdminRepository.findByUserId(adminId).map(admin -> {
+        communityAdminRepository.findByUserIdWithCommunities(adminId).map(admin -> {
           admin.getCommunities().add(community);
           community.getAdmins().add(communityAdminRepository.save(admin));
           return admin;
@@ -122,7 +127,7 @@ public class CommunitySDJpaService implements CommunityService {
 
   @Override
   public Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses) {
-    Optional<Community> communitySearch = communityRepository.findByCommunityId(communityId);
+    Optional<Community> communitySearch = communityRepository.findByCommunityIdWithHouses(communityId);
 
     return communitySearch.map(community -> {
       Set<String> addedIds = new HashSet<>();
@@ -152,7 +157,7 @@ public class CommunitySDJpaService implements CommunityService {
 
   @Override
   public boolean removeAdminFromCommunity(String communityId, String adminId) {
-    Optional<Community> communitySearch = communityRepository.findByCommunityId(communityId);
+    Optional<Community> communitySearch = communityRepository.findByCommunityIdWithAdmins(communityId);
     return communitySearch.map(community -> {
       boolean adminRemoved =
           community.getAdmins().removeIf(admin -> admin.getUserId().equals(adminId));
@@ -168,7 +173,7 @@ public class CommunitySDJpaService implements CommunityService {
   @Override
   @Transactional
   public boolean deleteCommunity(String communityId) {
-    return communityRepository.findByCommunityId(communityId)
+    return communityRepository.findByCommunityIdWithHouses(communityId)
         .map(community -> {
           Set<String> houseIds = community.getHouses()
               .stream()
@@ -176,7 +181,6 @@ public class CommunitySDJpaService implements CommunityService {
               .collect(Collectors.toSet());
 
           houseIds.forEach(houseId -> removeHouseFromCommunityByHouseId(communityId, houseId));
-
           communityRepository.delete(community);
 
           return true;
@@ -191,11 +195,11 @@ public class CommunitySDJpaService implements CommunityService {
   @Override
   @Transactional
   public boolean removeHouseFromCommunityByHouseId(String communityId, String houseId) {
-    return communityRepository.findByCommunityId(communityId)
+    return communityRepository.findByCommunityIdWithHouses(communityId)
         .map(community -> {
-          CommunityHouse house = communityHouseRepository.findByHouseId(houseId);
-          Set<CommunityHouse> houses = community.getHouses();
-          if (house != null && houses.contains(house)) {
+          Optional<CommunityHouse> houseOptional = communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
+          return houseOptional.map(house -> {
+            Set<CommunityHouse> houses = community.getHouses();
             houses.remove(house); //remove the house before deleting house members because otherwise the Set relationship would be broken and remove would not work
 
             Set<String> memberIds = house.getHouseMembers()
@@ -208,10 +212,7 @@ public class CommunitySDJpaService implements CommunityService {
             communityRepository.save(community);
             communityHouseRepository.deleteByHouseId(houseId);
             return true;
-          } else {
-            return false;
-          }
-        })
-        .orElse(false);
+          }).orElse(false);
+        }).orElse(false);
   }
 }

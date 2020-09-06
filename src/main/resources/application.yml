@@ -26,6 +26,12 @@ server:
 # Spring
 ###############################################################################
 spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+        format_sql: true
   application:
     name: "myhome-service"
   devtools:
