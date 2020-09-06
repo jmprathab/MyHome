@@ -67,8 +67,8 @@ public class UserSDJpaService implements UserService {
 
   @Override
   public Optional<UserDto> getUserDetails(String userId) {
-    Optional<User> user = userRepository.findByUserId(userId);
-    return user.map(admin -> {
+    Optional<User> userOptional = userRepository.findByUserId(userId);
+    return userOptional.map(admin -> {
       Set<String> communityIds = communityService.listAll().stream()
       .filter(community -> community.getAdmins()
             .stream()
@@ -78,7 +78,7 @@ public class UserSDJpaService implements UserService {
       .map(Community::getCommunityId)
       .collect(Collectors.toSet());
 
-      UserDto userDto = userMapper.userToUserDto(user.get());
+      UserDto userDto = userMapper.userToUserDto(admin);
       userDto.setCommunityIds(communityIds);
       return Optional.of(userDto);
     }).orElse(Optional.empty());
