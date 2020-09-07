@@ -45,7 +45,6 @@ public class UserSDJpaService implements UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
   private final PasswordEncoder passwordEncoder;
-  private final CommunityService communityService;
 
   @Override public Optional<UserDto> createUser(UserDto request) {
     if (userRepository.findByEmail(request.getEmail()) == null) {

@@ -66,6 +66,12 @@ public class CommunitySDJpaService implements CommunityService {
     return communityListSet;
   }
 
+  @Override public Set<Community> listAll() {
+    Set<Community> communities = new HashSet<>();
+    communityRepository.findAll().forEach(communities::add);
+    return communities;
+  }
+
   @Override
   public Optional<List<CommunityHouse>> findCommunityHousesById(String communityId,
                                                                 Pageable pageable) {
@@ -92,12 +98,6 @@ public class CommunitySDJpaService implements CommunityService {
   @Override
   public Optional<User> findCommunityAdminById(String adminId) {
     return communityAdminRepository.findByUserId(adminId);
-  }
-
-  @Override public Set<Community> listAll() {
-    Set<Community> communities = new HashSet<>();
-    communityRepository.findAll().forEach(communities::add);
-    return communities;
   }
 
   @Override public Optional<Community> getCommunityDetailsById(String communityId) {
