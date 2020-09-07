@@ -169,7 +169,7 @@ class HouseControllerTest {
     // given
     Set<HouseMember> testMembers = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
     Set<HouseMemberDto> testMembersDto = testMembers.stream()
-        .map(member -> new HouseMemberDto(member.getMemberId(), member.getName()))
+        .map(member -> HouseMemberDto.builder().memberId(member.getMemberId()).name(member.getName()).build())
         .collect(Collectors.toSet());
 
     AddHouseMemberRequest request = new AddHouseMemberRequest(testMembersDto);
@@ -204,7 +204,7 @@ class HouseControllerTest {
     // given
     Set<HouseMember> testMembers = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
     Set<HouseMemberDto> testMembersDto = testMembers.stream()
-        .map(member -> new HouseMemberDto(member.getMemberId(), member.getName()))
+        .map(member -> HouseMemberDto.builder().memberId(member.getMemberId()).name(member.getName()).build())
         .collect(Collectors.toSet());
 
     AddHouseMemberRequest request = new AddHouseMemberRequest(testMembersDto);

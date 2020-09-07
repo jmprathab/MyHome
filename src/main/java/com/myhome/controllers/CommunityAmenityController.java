@@ -1,16 +1,21 @@
 package com.myhome.controllers;
 
 import com.myhome.controllers.mapper.CommunityAmenityApiMapper;
+import com.myhome.controllers.response.amenity.GetCommunityAmenityDetailsResponse;
+import com.myhome.domain.CommunityAmenity;
 import com.myhome.services.CommunityAmenityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +31,7 @@ public class CommunityAmenityController {
       }
   )
   @GetMapping("/amenities/{amenityId}")
-  public ResponseEntity getAmenityDetails(@PathVariable String amenityId) {
+  public ResponseEntity<GetCommunityAmenityDetailsResponse> getAmenityDetails(@PathVariable String amenityId) {
     return communityAmenitySDJpaService.getCommunityAmenityDetails(amenityId)
         .map(communityAmenity -> communityAmenityApiMapper
               .communityAmenityToCommunityAmenityDetailsResponse(communityAmenity))
@@ -49,6 +54,18 @@ public class CommunityAmenityController {
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+  }
+
+  @Operation(description = "Get all amenities of community")
+  @GetMapping(
+      path = "/communities/{communityId}/amenities",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<Set<GetCommunityAmenityDetailsResponse>> listAllCommunityAmenities(@PathVariable String communityId) {
+    Set<CommunityAmenity> communityAmenities = communityAmenitySDJpaService.listAllCommunityAmenities(communityId);
+    Set<GetCommunityAmenityDetailsResponse> response = communityAmenityApiMapper
+        .communityAmenitiesSetToCommunityAmenityDetailsResponseSet(communityAmenities);
+    return ResponseEntity.ok(response);
   }
 
 }
