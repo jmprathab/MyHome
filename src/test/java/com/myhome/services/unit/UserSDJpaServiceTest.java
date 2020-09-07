@@ -40,8 +40,6 @@ class UserSDJpaServiceTest {
   private UserMapper userMapper;
   @Mock
   private PasswordEncoder passwordEncoder;
-  @Mock
-  private CommunityService communityService;
   @InjectMocks
   private UserSDJpaService userService;
 
@@ -56,12 +54,12 @@ class UserSDJpaServiceTest {
     UserDto request = getDefaultUserDtoRequest();
     User resultUser = getUserFromDto(request);
     UserDto response = UserDto.builder()
-                        .id(resultUser.getId())
-                        .userId(resultUser.getUserId())
-                        .name(resultUser.getName())
-                        .encryptedPassword(resultUser.getEncryptedPassword())
-                        .communityIds(new HashSet<>())
-                        .build();
+        .id(resultUser.getId())
+        .userId(resultUser.getUserId())
+        .name(resultUser.getName())
+        .encryptedPassword(resultUser.getEncryptedPassword())
+        .communityIds(new HashSet<>())
+        .build();
 
     given(userRepository.findByEmail(request.getEmail()))
         .willReturn(null);
@@ -112,8 +110,6 @@ class UserSDJpaServiceTest {
 
     given(userRepository.findByUserIdWithCommunities(USER_ID))
         .willReturn(Optional.of(user));
-    given(communityService.listAll())
-        .willReturn(new HashSet<>());
     given(userMapper.userToUserDto(user))
         .willReturn(userDto);
 
@@ -147,8 +143,6 @@ class UserSDJpaServiceTest {
 
     given(userRepository.findByUserIdWithCommunities(USER_ID))
         .willReturn(Optional.of(user));
-    given(communityService.listAll())
-        .willReturn(communities);
     given(userMapper.userToUserDto(user))
         .willReturn(userDto);
 
@@ -186,12 +180,12 @@ class UserSDJpaServiceTest {
 
   private UserDto getDefaultUserDtoRequest() {
     return UserDto.builder()
-                .userId(USER_ID)
-                .name(USERNAME)
-                .email(USER_EMAIL)
-                .encryptedPassword(USER_PASSWORD)
-                .communityIds(new HashSet<>())
-                .build();
+        .userId(USER_ID)
+        .name(USERNAME)
+        .email(USER_EMAIL)
+        .encryptedPassword(USER_PASSWORD)
+        .communityIds(new HashSet<>())
+        .build();
   }
 
   private User getUserFromDto(UserDto request) {

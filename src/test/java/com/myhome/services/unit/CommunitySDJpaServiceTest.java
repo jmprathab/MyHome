@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -65,6 +66,22 @@ public class CommunitySDJpaServiceTest {
   @BeforeEach
   private void init() {
     MockitoAnnotations.initMocks(this);
+  }
+
+  @Test
+  void listAllCommunities() {
+    // given
+    Community testCommunity = getTestCommunity();
+    Set<Community> communities = Collections.singleton(testCommunity);
+    given(communityRepository.findAll())
+        .willReturn(communities);
+
+    // when
+    Set<Community> resultCommunities = communitySDJpaService.listAll();
+
+    // then
+    assertEquals(communities, resultCommunities);
+    verify(communityRepository).findAll();
   }
 
   @Test
@@ -147,6 +164,20 @@ public class CommunitySDJpaServiceTest {
   }
 
   @Test
+  void findCommunityAdminsByIdNotExists() {
+    // given
+    given(communityRepository.existsByCommunityId(TEST_COMMUNITY_ID))
+        .willReturn(false);
+
+    // when
+    Optional<List<User>> resultAdminsOptional = communitySDJpaService.findCommunityAdminsById(TEST_COMMUNITY_ID, null);
+
+    // then
+    assertFalse((resultAdminsOptional.isPresent()));
+    verify(communityRepository).existsByCommunityId(TEST_COMMUNITY_ID);
+  }
+
+  @Test
   void addAdminsToCommunity() {
     // given
     Community testCommunity = getTestCommunity();
@@ -188,6 +219,38 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(updatedCommunityOptional.isPresent());
+    verify(communityRepository).findByCommunityIdWithAdmins(TEST_COMMUNITY_ID);
+  }
+
+  @Test
+  void communityDetailsById() {
+    // given
+    Community testCommunity = getTestCommunity();
+    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+        .willReturn(Optional.of(testCommunity));
+
+    // when
+    Optional<Community> communityOptional = communitySDJpaService.getCommunityDetailsById(TEST_COMMUNITY_ID);
+
+    // then
+    assertTrue(communityOptional.isPresent());
+    assertEquals(testCommunity, communityOptional.get());
+    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+  }
+
+  @Test
+  void communityDetailsByIdWithAdmins() {
+    // given
+    Community testCommunity = getTestCommunity();
+    given(communityRepository.findByCommunityIdWithAdmins(TEST_COMMUNITY_ID))
+        .willReturn(Optional.of(testCommunity));
+
+    // when
+    Optional<Community> communityOptional = communitySDJpaService.getCommunityDetailsByIdWithAdmins(TEST_COMMUNITY_ID);
+
+    // then
+    assertTrue(communityOptional.isPresent());
+    assertEquals(testCommunity, communityOptional.get());
     verify(communityRepository).findByCommunityIdWithAdmins(TEST_COMMUNITY_ID);
   }
 
