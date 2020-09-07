@@ -26,6 +26,7 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -69,7 +76,7 @@ public class CommunitySDJpaService implements CommunityService {
 
   @Override
   public Optional<List<CommunityHouse>> findCommunityHousesById(String communityId,
-      Pageable pageable) {
+                                                                Pageable pageable) {
     boolean exists = communityRepository.existsByCommunityId(communityId);
     if (exists) {
       return Optional.of(
@@ -133,7 +140,7 @@ public class CommunitySDJpaService implements CommunityService {
           boolean houseExists = community.getHouses().stream()
               .noneMatch(communityHouse ->
                   communityHouse.getHouseId().equals(house.getHouseId())
-                  && communityHouse.getName().equals(house.getName())
+                      && communityHouse.getName().equals(house.getName())
               );
           if (houseExists) {
             house.setHouseId(generateUniqueId());
@@ -172,9 +179,9 @@ public class CommunitySDJpaService implements CommunityService {
     return communityRepository.findByCommunityId(communityId)
         .map(community -> {
           Set<String> houseIds = community.getHouses()
-                                    .stream()
-                                    .map(CommunityHouse::getHouseId)
-                                    .collect(Collectors.toSet());
+              .stream()
+              .map(CommunityHouse::getHouseId)
+              .collect(Collectors.toSet());
 
           houseIds.forEach(houseId -> removeHouseFromCommunityByHouseId(community, houseId));
 
@@ -189,6 +196,7 @@ public class CommunitySDJpaService implements CommunityService {
     return UUID.randomUUID().toString();
   }
 
+  @Override
   @Transactional
   public boolean removeHouseFromCommunityByHouseId(Community community, String houseId) {
     return Optional.ofNullable(community)

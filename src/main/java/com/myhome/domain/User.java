@@ -37,7 +37,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(callSuper = false, of = {"userId", "email", "name"})
+@EqualsAndHashCode(callSuper = false, of = {"userId", "email"})
 @Entity
 @With
 public class User extends BaseEntity {
