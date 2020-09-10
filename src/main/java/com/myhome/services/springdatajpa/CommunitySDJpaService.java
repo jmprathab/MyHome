@@ -26,6 +26,14 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.myhome.services.HouseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

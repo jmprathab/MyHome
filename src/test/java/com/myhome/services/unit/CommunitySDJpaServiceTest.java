@@ -336,6 +336,10 @@ public class CommunitySDJpaServiceTest {
 
     given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(testCommunity));
+    testCommunityHouses.forEach(house -> {
+      given(communityHouseRepository.findByHouseId(house.getHouseId()))
+        .willReturn(house);
+    });
 
     testCommunityHouses.forEach(house -> {
       given(communityHouseRepository.findByHouseId(house.getHouseId()))
@@ -429,8 +433,6 @@ public class CommunitySDJpaServiceTest {
     // given
     Community testCommunity = getTestCommunity();
 
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
-        .willReturn(Optional.of(testCommunity));
     given(communityHouseRepository.findByHouseId(TEST_HOUSE_ID))
         .willReturn(null);
 
