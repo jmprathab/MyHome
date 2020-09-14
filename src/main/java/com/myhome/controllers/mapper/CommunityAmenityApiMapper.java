@@ -16,5 +16,4 @@ public interface CommunityAmenityApiMapper {
   Set<GetCommunityAmenityDetailsResponse> communityAmenitiesSetToCommunityAmenityDetailsResponseSet(Set<CommunityAmenity> communityAmenity);
 
   CommunityAmenityDto updateCommunityAmenityRequestToAmenityDto(UpdateCommunityAmenityRequest request);
-
 }

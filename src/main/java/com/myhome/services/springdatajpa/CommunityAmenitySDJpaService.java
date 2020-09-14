@@ -42,10 +42,10 @@ public class CommunityAmenitySDJpaService implements CommunityAmenityService {
   @Override
   public Set<CommunityAmenity> listAllCommunityAmenities(String communityId) {
     return communityRepository.findByCommunityId(communityId)
-        .map(Community::getAmenities)
-        .orElse(new HashSet<>());
+    .map(Community::getAmenities)
+    .orElse(new HashSet<>());
   }
-
+  
   @Override
   public boolean updateAmenity(String amenityId, CommunityAmenityDto updatedCommunityAmenity) {
     return communityAmenityRepository.findByAmenityId(amenityId)
@@ -68,5 +68,4 @@ public class CommunityAmenitySDJpaService implements CommunityAmenityService {
         .orElse(null))
       .map(communityAmenityRepository::save).isPresent();
   }
-
 }
