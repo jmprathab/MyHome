@@ -48,7 +48,6 @@ public class CommunitySDJpaServiceTest {
   private final String TEST_ADMIN_NAME = "test-user-name";
   private final String TEST_ADMIN_EMAIL = "test-user-email";
   private final String TEST_ADMIN_PASSWORD = "test-user-password";
-
   private final String TEST_HOUSE_ID = "test-house-id";
 
   @Mock
@@ -66,6 +65,15 @@ public class CommunitySDJpaServiceTest {
   @BeforeEach
   private void init() {
     MockitoAnnotations.initMocks(this);
+  }
+
+  private User getTestAdmin() {
+    return new User(
+        TEST_ADMIN_NAME,
+        TEST_ADMIN_ID,
+        TEST_ADMIN_EMAIL,
+        TEST_ADMIN_PASSWORD,
+        new HashSet<>());
   }
 
   @Test
@@ -391,6 +399,15 @@ public class CommunitySDJpaServiceTest {
 
     given(communityRepository.findByCommunityIdWithHouses(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(testCommunity));
+    testCommunityHouses.forEach(house -> {
+      given(communityHouseRepository.findByHouseId(house.getHouseId()))
+        .willReturn(house);
+    });
+
+    testCommunityHouses.forEach(house -> {
+      given(communityHouseRepository.findByHouseId(house.getHouseId()))
+        .willReturn(house);
+    });
 
     // when
     boolean communityDeleted = communitySDJpaService.deleteCommunity(TEST_COMMUNITY_ID);
@@ -432,7 +449,7 @@ public class CommunitySDJpaServiceTest {
         .willReturn(Optional.of(testHouse));
 
     // when
-    boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(TEST_COMMUNITY_ID, TEST_HOUSE_ID);
+    boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(testCommunity, TEST_HOUSE_ID);
 
     // then
     assertTrue(houseDeleted);
@@ -451,7 +468,7 @@ public class CommunitySDJpaServiceTest {
         .willReturn(Optional.empty());
 
     // when
-    boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(TEST_COMMUNITY_ID, TEST_HOUSE_ID);
+    boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(null, TEST_HOUSE_ID);
 
     // then
     assertFalse(houseDeleted);
@@ -471,7 +488,7 @@ public class CommunitySDJpaServiceTest {
         .willReturn(Optional.empty());
 
     // when
-    boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(TEST_COMMUNITY_ID, TEST_HOUSE_ID);
+    boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(testCommunity, TEST_HOUSE_ID);
 
     // then
     assertFalse(houseDeleted);
@@ -491,7 +508,7 @@ public class CommunitySDJpaServiceTest {
         .willReturn(Optional.empty());
 
     // when
-    boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(TEST_COMMUNITY_ID, TEST_HOUSE_ID);
+    boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(testCommunity, TEST_HOUSE_ID);
 
     // then
     assertFalse(houseDeleted);
@@ -551,14 +568,4 @@ public class CommunitySDJpaServiceTest {
     );
     return testCommunity;
   }
-
-  private User getTestAdmin() {
-    return new User(
-        TEST_ADMIN_NAME,
-        TEST_ADMIN_ID,
-        TEST_ADMIN_EMAIL,
-        TEST_ADMIN_PASSWORD,
-        new HashSet<>());
-  }
-
 }

@@ -26,6 +26,14 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.myhome.services.HouseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +47,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -176,11 +185,11 @@ public class CommunitySDJpaService implements CommunityService {
     return communityRepository.findByCommunityIdWithHouses(communityId)
         .map(community -> {
           Set<String> houseIds = community.getHouses()
-              .stream()
-              .map(CommunityHouse::getHouseId)
-              .collect(Collectors.toSet());
+                                    .stream()
+                                    .map(CommunityHouse::getHouseId)
+                                    .collect(Collectors.toSet());
 
-          houseIds.forEach(houseId -> removeHouseFromCommunityByHouseId(communityId, houseId));
+          houseIds.forEach(houseId -> removeHouseFromCommunityByHouseId(community, houseId));
           communityRepository.delete(community);
 
           return true;
@@ -192,7 +201,6 @@ public class CommunitySDJpaService implements CommunityService {
     return UUID.randomUUID().toString();
   }
 
-  @Override
   @Transactional
   public boolean removeHouseFromCommunityByHouseId(String communityId, String houseId) {
     return communityRepository.findByCommunityIdWithHouses(communityId)

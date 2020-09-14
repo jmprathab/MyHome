@@ -42,5 +42,4 @@ public class CommunityAmenitySDJpaService implements CommunityAmenityService {
         .map(Community::getAmenities)
         .orElse(new HashSet<>());
   }
-
 }

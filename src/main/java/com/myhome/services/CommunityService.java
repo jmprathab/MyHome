@@ -47,7 +47,7 @@ public interface CommunityService {
 
   Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses);
 
-  boolean removeHouseFromCommunityByHouseId(String communityId, String houseId);
+  boolean removeHouseFromCommunityByHouseId(Community community, String houseId);
 
   boolean deleteCommunity(String communityId);
 
