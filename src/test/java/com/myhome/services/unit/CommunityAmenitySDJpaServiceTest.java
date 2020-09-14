@@ -1,5 +1,6 @@
 package com.myhome.services.unit;
 
+import com.myhome.controllers.dto.CommunityAmenityDto;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityAmenity;
 import com.myhome.repositories.CommunityAmenityRepository;
@@ -9,8 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -23,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 class CommunityAmenitySDJpaServiceTest {
 
@@ -30,8 +35,6 @@ class CommunityAmenitySDJpaServiceTest {
   private final String TEST_AMENITY_DESCRIPTION = "test-amenity-description";
 
   private final String TEST_COMMUNITY_ID = "test-community-id";
-  private final String TEST_COMMUNITY_NAME = "test-community-name";
-  private final String TEST_COMMUNITY_DISTRICT = "test-community-name";
 
   @Mock
   private CommunityAmenityRepository communityAmenityRepository;
@@ -111,6 +114,92 @@ class CommunityAmenitySDJpaServiceTest {
     verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
   }
 
+  @Test
+  void shouldUpdateCommunityAmenitySuccessfully() {
+    // given
+    CommunityAmenity communityAmenity = getTestAmenity();
+    Community testCommunity = getTestCommunity();
+    CommunityAmenityDto updated = getTestAmenityDto();
+    CommunityAmenity updatedAmenity = getUpdatedCommunityAmenity();
+
+    given(communityAmenityRepository.findByAmenityId(TEST_AMENITY_ID))
+      .willReturn(Optional.of(communityAmenity));
+    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+      .willReturn(Optional.of(testCommunity));
+    given(communityAmenityRepository.save(updatedAmenity))
+      .willReturn(updatedAmenity);
+
+    // when
+    boolean result = communityAmenitySDJpaService.updateAmenity(TEST_AMENITY_ID, updated);
+
+    // then
+    assertTrue(result);
+    verify(communityAmenityRepository).findByAmenityId(TEST_AMENITY_ID);
+    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityAmenityRepository).save(updatedAmenity);
+  }
+
+  @Test
+  void shouldNotUpdateCommunityAmenitySuccessfullyIfAmenityNotExists() {
+    // given
+      given(communityAmenityRepository.findByAmenityId(TEST_AMENITY_ID))
+        .willReturn(Optional.empty());
+
+    // when
+    boolean result = communityAmenitySDJpaService.updateAmenity(TEST_AMENITY_ID, getTestAmenityDto());
+
+    // then
+    assertFalse(result);
+    verify(communityAmenityRepository, Mockito.times(0)).save(getUpdatedCommunityAmenity());
+    verifyNoInteractions(communityRepository);
+  }
+
+  @Test
+  void shouldNotUpdateCommunityAmenitySuccessfullyIfSavingFails() {
+    // given
+    CommunityAmenity testAmenity = getTestAmenity();
+    CommunityAmenity updatedAmenity = getUpdatedCommunityAmenity();
+    CommunityAmenityDto updatedDto = getTestAmenityDto();
+    Community community = getTestCommunity();
+
+    given(communityAmenityRepository.findByAmenityId(TEST_AMENITY_ID))
+      .willReturn(Optional.of(testAmenity));
+    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+      .willReturn(Optional.of(community));
+    given(communityAmenityRepository.save(updatedAmenity))
+      .willReturn(null);
+
+    // when
+    boolean result = communityAmenitySDJpaService.updateAmenity(TEST_AMENITY_ID, updatedDto);
+
+    // then
+    assertFalse(result);
+    verify(communityAmenityRepository).findByAmenityId(TEST_AMENITY_ID);
+    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityAmenityRepository).save(updatedAmenity);
+  }
+
+  @Test
+  void shouldNotUpdateAmenityIfCommunityDoesNotExist() {
+    // given
+    CommunityAmenity communityAmenity = getTestAmenity();
+    CommunityAmenityDto updatedDto = getTestAmenityDto();
+
+    given(communityAmenityRepository.findByAmenityId(TEST_AMENITY_ID))
+      .willReturn(Optional.of(communityAmenity));
+    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+      .willReturn(Optional.empty());
+
+    // when
+    boolean result = communityAmenitySDJpaService.updateAmenity(TEST_AMENITY_ID, updatedDto);
+
+    // then
+    assertFalse(result);
+    verify(communityAmenityRepository).findByAmenityId(TEST_AMENITY_ID);
+    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityAmenityRepository, Mockito.times(0)).save(getUpdatedCommunityAmenity());
+  }
+
   private CommunityAmenity getTestAmenity() {
     return new CommunityAmenity()
         .withAmenityId(TEST_AMENITY_ID)
@@ -119,15 +208,44 @@ class CommunityAmenitySDJpaServiceTest {
   }
 
   private Community getTestCommunity() {
-    Community testCommunity = new Community(
+    String TEST_COMMUNITY_DISTRICT = "test-community-name";
+    String TEST_COMMUNITY_NAME = "test-community-name";
+    return new Community(
         new HashSet<>(),
         new HashSet<>(),
-        TEST_COMMUNITY_NAME,
+    TEST_COMMUNITY_NAME,
         TEST_COMMUNITY_ID,
-        TEST_COMMUNITY_DISTRICT,
+    TEST_COMMUNITY_DISTRICT,
         new HashSet<>()
     );
-    return testCommunity;
   }
 
+  private CommunityAmenityDto getTestAmenityDto() {
+    String TEST_AMENITY_START_DATE = "2020-09-01 19:00:30";
+    String TEST_AMENITY_END_DATE = "2020-09-20 19:00:00";
+    boolean TEST_AMENITY_IS_BOOKED = false;
+    Long TEST_AMENITY_ENTITY_ID = 1L;
+    return new CommunityAmenityDto(
+    TEST_AMENITY_ENTITY_ID,
+      TEST_AMENITY_ID,
+      TEST_AMENITY_DESCRIPTION,
+    TEST_AMENITY_IS_BOOKED,
+    TEST_AMENITY_START_DATE,
+    TEST_AMENITY_END_DATE,
+      TEST_COMMUNITY_ID
+    );
+  }
+
+  private CommunityAmenity getUpdatedCommunityAmenity() {
+    CommunityAmenityDto communityAmenityDto = getTestAmenityDto();
+    return new CommunityAmenity()
+      .withAmenityId(communityAmenityDto.getAmenityId())
+      .withBooked(communityAmenityDto.isBooked())
+      .withBookingStartDate(LocalDateTime.parse(communityAmenityDto.getBookingStartDate(),
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+      .withBookingEndDate(LocalDateTime.parse(communityAmenityDto.getBookingEndDate(),
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+      .withDescription(communityAmenityDto.getDescription())
+      .withCommunity(getTestCommunity());
+  }
 }

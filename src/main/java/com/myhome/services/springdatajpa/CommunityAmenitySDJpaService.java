@@ -1,5 +1,6 @@
 package com.myhome.services.springdatajpa;
 
+import com.myhome.controllers.dto.CommunityAmenityDto;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityAmenity;
 import com.myhome.repositories.CommunityAmenityRepository;
@@ -8,6 +9,8 @@ import com.myhome.services.CommunityAmenityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -41,6 +44,29 @@ public class CommunityAmenitySDJpaService implements CommunityAmenityService {
     return communityRepository.findByCommunityId(communityId)
         .map(Community::getAmenities)
         .orElse(new HashSet<>());
+  }
+
+  @Override
+  public boolean updateAmenity(String amenityId, CommunityAmenityDto updatedCommunityAmenity) {
+    return communityAmenityRepository.findByAmenityId(amenityId)
+      .map(communityAmenity -> communityRepository.findByCommunityId(updatedCommunityAmenity.getCommunityId())
+        .map(community -> {
+          CommunityAmenity updated = new CommunityAmenity();
+          updated.setId(communityAmenity.getId());
+          updated.setAmenityId(amenityId);
+          updated.setDescription(updatedCommunityAmenity.getDescription());
+          updated.setBooked(updatedCommunityAmenity.isBooked());
+          updated.setBookingStartDate(LocalDateTime.parse(
+                updatedCommunityAmenity.getBookingStartDate(),
+                DateTimeFormatter.ofPattern(CommunityAmenity.BOOKING_DATE_TIME_FORMAT)));
+          updated.setBookingEndDate(LocalDateTime.parse(
+                updatedCommunityAmenity.getBookingEndDate(),
+                DateTimeFormatter.ofPattern(CommunityAmenity.BOOKING_DATE_TIME_FORMAT)));
+
+          return updated;
+        })
+        .orElse(null))
+      .map(communityAmenityRepository::save).isPresent();
   }
 
 }

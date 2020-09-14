@@ -21,12 +21,9 @@ import com.myhome.controllers.dto.mapper.PaymentMapper;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
-import com.myhome.repositories.CommunityHouseRepository;
-import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.repositories.PaymentRepository;
 import com.myhome.repositories.UserRepository;
-import com.myhome.services.HouseMemberDocumentService;
 import com.myhome.services.PaymentService;
 import java.util.HashSet;
 import java.util.Optional;
@@ -50,9 +47,6 @@ public class PaymentSDJpaService implements PaymentService {
   private final UserRepository adminRepository;
   private final PaymentMapper paymentMapper;
   private final HouseMemberRepository houseMemberRepository;
-  private final HouseMemberDocumentService houseMemberDocumentService;
-  private final CommunityHouseRepository communityHouseRepository;
-  private final CommunityRepository communityRepository;
 
   @Override
   public PaymentDto schedulePayment(PaymentDto request) {

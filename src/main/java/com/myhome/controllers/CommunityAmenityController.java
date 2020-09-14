@@ -1,6 +1,7 @@
 package com.myhome.controllers;
 
 import com.myhome.controllers.mapper.CommunityAmenityApiMapper;
+import com.myhome.controllers.request.UpdateCommunityAmenityRequest;
 import com.myhome.controllers.response.amenity.GetCommunityAmenityDetailsResponse;
 import com.myhome.domain.CommunityAmenity;
 import com.myhome.services.CommunityAmenityService;
@@ -13,8 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Set;
 
 @RestController
@@ -51,6 +55,25 @@ public class CommunityAmenityController {
     boolean isAmenityDeleted = communityAmenitySDJpaService.deleteAmenity(amenityId);
     if (isAmenityDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+  @Operation(
+    description = "Update an amenity",
+    responses = {
+      @ApiResponse(responseCode = "204", description = "If updated successfully"),
+      @ApiResponse(responseCode = "400", description = "If amenity is not found"),
+    }
+  )
+  @PutMapping(path = "amenities/{amenityId}")
+  public ResponseEntity<Void> updateAmenity(@PathVariable String amenityId,
+                                            @Valid @RequestBody UpdateCommunityAmenityRequest request) {
+    boolean isUpdated = communityAmenitySDJpaService.updateAmenity(amenityId,
+      communityAmenityApiMapper.updateCommunityAmenityRequestToAmenityDto(request));
+    if (isUpdated) {
+      return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }

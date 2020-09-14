@@ -1,7 +1,9 @@
 package com.myhome.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,7 +32,9 @@ import java.time.LocalDateTime;
         }
     )
 })
+@EqualsAndHashCode(of = {"amenityId"}, callSuper = true)
 public class CommunityAmenity extends BaseEntity {
+  public static final String BOOKING_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
   @Column(nullable = false, unique = true)
   private String amenityId;
@@ -39,8 +43,10 @@ public class CommunityAmenity extends BaseEntity {
   @Column
   private boolean isBooked;
   @Column
+  @JsonFormat(pattern = BOOKING_DATE_TIME_FORMAT)
   private LocalDateTime bookingStartDate;
   @Column
+  @JsonFormat(pattern = BOOKING_DATE_TIME_FORMAT)
   private LocalDateTime bookingEndDate;
   @ManyToOne(fetch = FetchType.LAZY)
   private Community community;

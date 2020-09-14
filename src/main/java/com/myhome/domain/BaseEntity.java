@@ -23,6 +23,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -32,6 +33,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @MappedSuperclass
+@EqualsAndHashCode(callSuper = false)
 public class BaseEntity implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

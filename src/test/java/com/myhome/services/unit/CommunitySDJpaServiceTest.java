@@ -479,7 +479,7 @@ public class CommunitySDJpaServiceTest {
   }
 
   private Community getTestCommunity() {
-    Community testCommunity = new Community(
+    return new Community(
         getTestCommunityAdmins(TEST_ADMINS_COUNT),
         getTestHouses(TEST_HOUSES_COUNT),
         TEST_COMMUNITY_NAME,
@@ -487,7 +487,6 @@ public class CommunitySDJpaServiceTest {
         TEST_COMMUNITY_DISTRICT,
         new HashSet<>()
     );
-    return testCommunity;
   }
 
   private User getTestAdmin() {
