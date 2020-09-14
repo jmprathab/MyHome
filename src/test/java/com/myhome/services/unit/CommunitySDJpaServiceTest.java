@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class CommunitySDJpaServiceTest {
@@ -401,12 +400,12 @@ public class CommunitySDJpaServiceTest {
         .willReturn(Optional.of(testCommunity));
     testCommunityHouses.forEach(house -> {
       given(communityHouseRepository.findByHouseId(house.getHouseId()))
-        .willReturn(house);
+        .willReturn(Optional.of(house));
     });
 
     testCommunityHouses.forEach(house -> {
       given(communityHouseRepository.findByHouseId(house.getHouseId()))
-        .willReturn(house);
+        .willReturn(Optional.of(house));
     });
 
     // when
@@ -414,7 +413,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertTrue(communityDeleted);
-    verify(communityRepository, times(TEST_HOUSES_COUNT + 1)).findByCommunityIdWithHouses(TEST_COMMUNITY_ID);
+    verify(communityRepository).findByCommunityIdWithHouses(TEST_COMMUNITY_ID);
     verify(communityRepository).delete(testCommunity);
   }
 
@@ -454,9 +453,9 @@ public class CommunitySDJpaServiceTest {
     // then
     assertTrue(houseDeleted);
     assertFalse(testCommunity.getHouses().contains(testHouse));
-    verify(communityRepository).findByCommunityIdWithHouses(TEST_COMMUNITY_ID);
     verify(communityRepository).save(testCommunity);
     verify(communityHouseRepository).findByHouseIdWithHouseMembers(TEST_HOUSE_ID);
+    verify(communityHouseRepository).deleteByHouseId(TEST_HOUSE_ID);
   }
 
   @Test
@@ -472,7 +471,6 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(houseDeleted);
-    verify(communityRepository).findByCommunityIdWithHouses(TEST_COMMUNITY_ID);
     verify(communityHouseRepository, never()).findByHouseId(TEST_HOUSE_ID);
     verify(communityRepository, never()).save(testCommunity);
   }
@@ -482,8 +480,6 @@ public class CommunitySDJpaServiceTest {
     // given
     Community testCommunity = getTestCommunity();
 
-    given(communityRepository.findByCommunityIdWithHouses(TEST_COMMUNITY_ID))
-        .willReturn(Optional.of(testCommunity));
     given(communityHouseRepository.findByHouseIdWithHouseMembers(TEST_HOUSE_ID))
         .willReturn(Optional.empty());
 
@@ -492,7 +488,6 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(houseDeleted);
-    verify(communityRepository).findByCommunityIdWithHouses(TEST_COMMUNITY_ID);
     verify(communityHouseRepository).findByHouseIdWithHouseMembers(TEST_HOUSE_ID);
     verify(communityRepository, never()).save(testCommunity);
   }
@@ -502,8 +497,6 @@ public class CommunitySDJpaServiceTest {
     // given
     Community testCommunity = getTestCommunity();
 
-    given(communityRepository.findByCommunityIdWithHouses(TEST_COMMUNITY_ID))
-        .willReturn(Optional.of(testCommunity));
     given(communityHouseRepository.findByHouseIdWithHouseMembers(TEST_HOUSE_ID))
         .willReturn(Optional.empty());
 
@@ -512,7 +505,6 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(houseDeleted);
-    verify(communityRepository).findByCommunityIdWithHouses(TEST_COMMUNITY_ID);
     verify(communityHouseRepository).findByHouseIdWithHouseMembers(TEST_HOUSE_ID);
     verify(communityRepository, never()).save(testCommunity);
   }
