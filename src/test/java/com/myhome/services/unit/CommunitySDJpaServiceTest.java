@@ -4,10 +4,12 @@ import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.mapper.CommunityMapper;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.UserRepository;
+import com.myhome.services.HouseService;
 import com.myhome.services.springdatajpa.CommunitySDJpaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class CommunitySDJpaServiceTest {
 
@@ -57,6 +60,8 @@ public class CommunitySDJpaServiceTest {
   private CommunityMapper communityMapper;
   @Mock
   private CommunityHouseRepository communityHouseRepository;
+  @Mock
+  private HouseService houseService;
 
   @InjectMocks
   private CommunitySDJpaService communitySDJpaService;
@@ -440,6 +445,8 @@ public class CommunitySDJpaServiceTest {
     // given
     Community testCommunity = getTestCommunity();
     CommunityHouse testHouse = getTestCommunityHouse();
+    Set<HouseMember> testHouseMembers = getTestHouseMembers(2);
+    testHouse.setHouseMembers(testHouseMembers);
     testCommunity.getHouses().add(testHouse);
 
     given(communityRepository.findByCommunityIdWithHouses(TEST_COMMUNITY_ID))
@@ -454,6 +461,7 @@ public class CommunitySDJpaServiceTest {
     assertTrue(houseDeleted);
     assertFalse(testCommunity.getHouses().contains(testHouse));
     verify(communityRepository).save(testCommunity);
+    testHouse.getHouseMembers().forEach(houseMember -> verify(houseService).deleteMemberFromHouse(TEST_HOUSE_ID, houseMember.getMemberId()));
     verify(communityHouseRepository).findByHouseIdWithHouseMembers(TEST_HOUSE_ID);
     verify(communityHouseRepository).deleteByHouseId(TEST_HOUSE_ID);
   }
@@ -472,6 +480,7 @@ public class CommunitySDJpaServiceTest {
     // then
     assertFalse(houseDeleted);
     verify(communityHouseRepository, never()).findByHouseId(TEST_HOUSE_ID);
+    verifyNoInteractions(houseService);
     verify(communityRepository, never()).save(testCommunity);
   }
 
@@ -489,6 +498,7 @@ public class CommunitySDJpaServiceTest {
     // then
     assertFalse(houseDeleted);
     verify(communityHouseRepository).findByHouseIdWithHouseMembers(TEST_HOUSE_ID);
+    verifyNoInteractions(houseService);
     verify(communityRepository, never()).save(testCommunity);
   }
 
@@ -506,6 +516,7 @@ public class CommunitySDJpaServiceTest {
     // then
     assertFalse(houseDeleted);
     verify(communityHouseRepository).findByHouseIdWithHouseMembers(TEST_HOUSE_ID);
+    verifyNoInteractions(houseService);
     verify(communityRepository, never()).save(testCommunity);
   }
 
@@ -524,6 +535,13 @@ public class CommunitySDJpaServiceTest {
             String.format("test-community-house-%s", index),
             generateUniqueId(),
             new HashSet<>()))
+        .limit(count)
+        .collect(Collectors.toSet());
+  }
+
+  private Set<HouseMember> getTestHouseMembers(int count) {
+    return Stream
+        .generate(() -> new HouseMember().withMemberId(generateUniqueId()))
         .limit(count)
         .collect(Collectors.toSet());
   }
