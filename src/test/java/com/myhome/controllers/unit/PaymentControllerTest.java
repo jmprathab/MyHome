@@ -460,7 +460,7 @@ class PaymentControllerTest {
 
     given(communityService.createCommunity(communityDto))
         .willReturn(community);
-    given(communityService.getCommunityDetailsById(TEST_COMMUNITY_ID))
+    given(communityService.getCommunityDetailsByIdWithAdmins(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(community));
     given(paymentService.getPaymentsByAdmin(TEST_ADMIN_ID))
         .willReturn(payments);
@@ -489,6 +489,7 @@ class PaymentControllerTest {
     //then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     assertEquals(expectedResponse, responseEntity.getBody());
+    verify(communityService).getCommunityDetailsByIdWithAdmins(TEST_COMMUNITY_ID);
     verify(paymentService).getPaymentsByAdmin(TEST_ADMIN_ID);
     verify(paymentApiMapper).adminPaymentSetToRestApiResponseAdminPaymentSet(payments);
   }
@@ -496,7 +497,7 @@ class PaymentControllerTest {
   @Test
   void shouldGetNoAdminPaymentDetailsCommunityNotFoundSuccess() {
     //given
-    given(communityService.getCommunityDetailsById(TEST_COMMUNITY_ID))
+    given(communityService.getCommunityDetailsByIdWithAdmins(TEST_COMMUNITY_ID))
         .willReturn(Optional.empty());
 
     //when
@@ -506,7 +507,7 @@ class PaymentControllerTest {
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     assertNull(responseEntity.getBody());
-    verify(communityService).getCommunityDetailsById(TEST_COMMUNITY_ID);
+    verify(communityService).getCommunityDetailsByIdWithAdmins(TEST_COMMUNITY_ID);
     verifyNoInteractions(paymentApiMapper);
   }
 

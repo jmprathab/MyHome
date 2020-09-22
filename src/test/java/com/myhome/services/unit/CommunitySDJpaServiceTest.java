@@ -4,10 +4,12 @@ import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.mapper.CommunityMapper;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.UserRepository;
+import com.myhome.services.HouseService;
 import com.myhome.services.springdatajpa.CommunitySDJpaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -31,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class CommunitySDJpaServiceTest {
 
@@ -57,6 +60,8 @@ public class CommunitySDJpaServiceTest {
   private CommunityMapper communityMapper;
   @Mock
   private CommunityHouseRepository communityHouseRepository;
+  @Mock
+  private HouseService houseService;
 
   @InjectMocks
   private CommunitySDJpaService communitySDJpaService;
@@ -73,6 +78,22 @@ public class CommunitySDJpaServiceTest {
         TEST_ADMIN_EMAIL,
         TEST_ADMIN_PASSWORD,
         new HashSet<>());
+  }
+
+  @Test
+  void listAllCommunities() {
+    // given
+    Community testCommunity = getTestCommunity();
+    Set<Community> communities = Collections.singleton(testCommunity);
+    given(communityRepository.findAll())
+        .willReturn(communities);
+
+    // when
+    Set<Community> resultCommunities = communitySDJpaService.listAll();
+
+    // then
+    assertEquals(communities, resultCommunities);
+    verify(communityRepository).findAll();
   }
 
   @Test
@@ -155,6 +176,20 @@ public class CommunitySDJpaServiceTest {
   }
 
   @Test
+  void findCommunityAdminsByIdNotExists() {
+    // given
+    given(communityRepository.existsByCommunityId(TEST_COMMUNITY_ID))
+        .willReturn(false);
+
+    // when
+    Optional<List<User>> resultAdminsOptional = communitySDJpaService.findCommunityAdminsById(TEST_COMMUNITY_ID, null);
+
+    // then
+    assertFalse((resultAdminsOptional.isPresent()));
+    verify(communityRepository).existsByCommunityId(TEST_COMMUNITY_ID);
+  }
+
+  @Test
   void addAdminsToCommunity() {
     // given
     Community testCommunity = getTestCommunity();
@@ -163,12 +198,12 @@ public class CommunitySDJpaServiceTest {
         .map(admin -> admin.getUserId())
         .collect(Collectors.toSet());
 
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithAdmins(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(testCommunity));
     given(communityRepository.save(testCommunity))
         .willReturn(testCommunity);
     adminToAdd.forEach(admin -> {
-      given(communityAdminRepository.findByUserId(admin.getUserId()))
+      given(communityAdminRepository.findByUserIdWithCommunities(admin.getUserId()))
           .willReturn(Optional.of(admin));
     });
     adminToAdd.forEach(admin -> {
@@ -181,14 +216,14 @@ public class CommunitySDJpaServiceTest {
     // then
     assertTrue(updatedCommunityOptional.isPresent());
     adminToAdd.forEach(admin -> assertTrue(admin.getCommunities().contains(testCommunity)));
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
-    adminToAdd.forEach(admin -> verify(communityAdminRepository).findByUserId(admin.getUserId()));
+    verify(communityRepository).findByCommunityIdWithAdmins(TEST_COMMUNITY_ID);
+    adminToAdd.forEach(admin -> verify(communityAdminRepository).findByUserIdWithCommunities(admin.getUserId()));
   }
 
   @Test
   void addAdminsToCommunityNotExist() {
     // given
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithAdmins(TEST_COMMUNITY_ID))
         .willReturn(Optional.empty());
 
     // when
@@ -196,7 +231,39 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(updatedCommunityOptional.isPresent());
+    verify(communityRepository).findByCommunityIdWithAdmins(TEST_COMMUNITY_ID);
+  }
+
+  @Test
+  void communityDetailsById() {
+    // given
+    Community testCommunity = getTestCommunity();
+    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+        .willReturn(Optional.of(testCommunity));
+
+    // when
+    Optional<Community> communityOptional = communitySDJpaService.getCommunityDetailsById(TEST_COMMUNITY_ID);
+
+    // then
+    assertTrue(communityOptional.isPresent());
+    assertEquals(testCommunity, communityOptional.get());
     verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+  }
+
+  @Test
+  void communityDetailsByIdWithAdmins() {
+    // given
+    Community testCommunity = getTestCommunity();
+    given(communityRepository.findByCommunityIdWithAdmins(TEST_COMMUNITY_ID))
+        .willReturn(Optional.of(testCommunity));
+
+    // when
+    Optional<Community> communityOptional = communitySDJpaService.getCommunityDetailsByIdWithAdmins(TEST_COMMUNITY_ID);
+
+    // then
+    assertTrue(communityOptional.isPresent());
+    assertEquals(testCommunity, communityOptional.get());
+    verify(communityRepository).findByCommunityIdWithAdmins(TEST_COMMUNITY_ID);
   }
 
   @Test
@@ -205,7 +272,7 @@ public class CommunitySDJpaServiceTest {
     Community testCommunity = getTestCommunity();
     Set<CommunityHouse> housesToAdd = getTestHouses(TEST_HOUSES_COUNT);
 
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithHouses(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(testCommunity));
     given(communityRepository.save(testCommunity))
         .willReturn(testCommunity);
@@ -222,7 +289,7 @@ public class CommunitySDJpaServiceTest {
     housesToAdd.forEach(house -> {
       assertEquals(house.getCommunity(), testCommunity);
     });
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityRepository).findByCommunityIdWithHouses(TEST_COMMUNITY_ID);
     housesToAdd.forEach(house -> {
       verify(communityHouseRepository).save(house);
     });
@@ -233,7 +300,7 @@ public class CommunitySDJpaServiceTest {
     // given
     Set<CommunityHouse> housesToAdd = getTestHouses(TEST_HOUSES_COUNT);
 
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithHouses(TEST_COMMUNITY_ID))
         .willReturn(Optional.empty());
 
     // when
@@ -241,7 +308,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertTrue(addedHousesIds.isEmpty());
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityRepository).findByCommunityIdWithHouses(TEST_COMMUNITY_ID);
     verify(communityRepository, never()).save(any());
     verify(communityHouseRepository, never()).save(any());
   }
@@ -253,7 +320,7 @@ public class CommunitySDJpaServiceTest {
     Set<CommunityHouse> houses = getTestHouses(TEST_HOUSES_COUNT);
     testCommunity.setHouses(houses);
 
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithHouses(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(testCommunity));
     given(communityRepository.save(testCommunity))
         .willReturn(testCommunity);
@@ -267,7 +334,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertTrue(addedHousesIds.isEmpty());
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityRepository).findByCommunityIdWithHouses(TEST_COMMUNITY_ID);
     verify(communityRepository).save(testCommunity);
     verify(communityHouseRepository, never()).save(any());
   }
@@ -279,7 +346,7 @@ public class CommunitySDJpaServiceTest {
     User testAdmin = getTestAdmin();
     testCommunity.getAdmins().add(testAdmin);
 
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithAdmins(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(testCommunity));
     given(communityRepository.save(testCommunity))
         .willReturn(testCommunity);
@@ -289,14 +356,14 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertTrue(adminRemoved);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityRepository).findByCommunityIdWithAdmins(TEST_COMMUNITY_ID);
     verify(communityRepository).save(testCommunity);
   }
 
   @Test
   void removeAdminFromCommunityNotExists() {
     // given
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithAdmins(TEST_COMMUNITY_ID))
         .willReturn(Optional.empty());
 
     // when
@@ -304,7 +371,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(adminRemoved);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityRepository).findByCommunityIdWithAdmins(TEST_COMMUNITY_ID);
     verify(communityRepository, never()).save(any());
   }
 
@@ -313,7 +380,7 @@ public class CommunitySDJpaServiceTest {
     // given
     Community testCommunity = getTestCommunity();
 
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithAdmins(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(testCommunity));
     given(communityRepository.save(testCommunity))
         .willReturn(testCommunity);
@@ -323,7 +390,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(adminRemoved);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityRepository).findByCommunityIdWithAdmins(TEST_COMMUNITY_ID);
     verify(communityRepository, never()).save(testCommunity);
   }
 
@@ -334,16 +401,16 @@ public class CommunitySDJpaServiceTest {
     Set<CommunityHouse> testCommunityHouses = getTestHouses(TEST_HOUSES_COUNT);
     testCommunity.setHouses(testCommunityHouses);
 
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithHouses(TEST_COMMUNITY_ID))
         .willReturn(Optional.of(testCommunity));
     testCommunityHouses.forEach(house -> {
       given(communityHouseRepository.findByHouseId(house.getHouseId()))
-        .willReturn(house);
+        .willReturn(Optional.of(house));
     });
 
     testCommunityHouses.forEach(house -> {
       given(communityHouseRepository.findByHouseId(house.getHouseId()))
-        .willReturn(house);
+        .willReturn(Optional.of(house));
     });
 
     // when
@@ -351,10 +418,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertTrue(communityDeleted);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
-    testCommunityHouses.forEach(house -> {
-      verify(communityHouseRepository).deleteByHouseId(house.getHouseId());
-    });
+    verify(communityRepository).findByCommunityIdWithHouses(TEST_COMMUNITY_ID);
     verify(communityRepository).delete(testCommunity);
   }
 
@@ -363,7 +427,7 @@ public class CommunitySDJpaServiceTest {
     // given
     Community testCommunity = getTestCommunity();
 
-    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    given(communityRepository.findByCommunityIdWithHouses(TEST_COMMUNITY_ID))
         .willReturn(Optional.empty());
 
     // when
@@ -371,7 +435,7 @@ public class CommunitySDJpaServiceTest {
 
     // then
     assertFalse(communityDeleted);
-    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(communityRepository).findByCommunityIdWithHouses(TEST_COMMUNITY_ID);
     verify(communityHouseRepository, never()).deleteByHouseId(any());
     verify(communityRepository, never()).delete(testCommunity);
   }
@@ -381,10 +445,14 @@ public class CommunitySDJpaServiceTest {
     // given
     Community testCommunity = getTestCommunity();
     CommunityHouse testHouse = getTestCommunityHouse();
+    Set<HouseMember> testHouseMembers = getTestHouseMembers(2);
+    testHouse.setHouseMembers(testHouseMembers);
     testCommunity.getHouses().add(testHouse);
 
-    given(communityHouseRepository.findByHouseId(TEST_HOUSE_ID))
-        .willReturn(testHouse);
+    given(communityRepository.findByCommunityIdWithHouses(TEST_COMMUNITY_ID))
+        .willReturn(Optional.of(testCommunity));
+    given(communityHouseRepository.findByHouseIdWithHouseMembers(TEST_HOUSE_ID))
+        .willReturn(Optional.of(testHouse));
 
     // when
     boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(testCommunity, TEST_HOUSE_ID);
@@ -393,13 +461,18 @@ public class CommunitySDJpaServiceTest {
     assertTrue(houseDeleted);
     assertFalse(testCommunity.getHouses().contains(testHouse));
     verify(communityRepository).save(testCommunity);
-    verify(communityHouseRepository).findByHouseId(TEST_HOUSE_ID);
+    testHouse.getHouseMembers().forEach(houseMember -> verify(houseService).deleteMemberFromHouse(TEST_HOUSE_ID, houseMember.getMemberId()));
+    verify(communityHouseRepository).findByHouseIdWithHouseMembers(TEST_HOUSE_ID);
+    verify(communityHouseRepository).deleteByHouseId(TEST_HOUSE_ID);
   }
 
   @Test
-  void removeHouseFromCommunityByHouseIdNotExists() {
+  void removeHouseFromCommunityByHouseIdCommunityNotExists() {
     // given
     Community testCommunity = getTestCommunity();
+
+    given(communityRepository.findByCommunityIdWithHouses(TEST_COMMUNITY_ID))
+        .willReturn(Optional.empty());
 
     // when
     boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(null, TEST_HOUSE_ID);
@@ -407,6 +480,7 @@ public class CommunitySDJpaServiceTest {
     // then
     assertFalse(houseDeleted);
     verify(communityHouseRepository, never()).findByHouseId(TEST_HOUSE_ID);
+    verifyNoInteractions(houseService);
     verify(communityRepository, never()).save(testCommunity);
   }
 
@@ -414,17 +488,17 @@ public class CommunitySDJpaServiceTest {
   void removeHouseFromCommunityByHouseIdHouseNotExists() {
     // given
     Community testCommunity = getTestCommunity();
-    CommunityHouse testHouse = getTestCommunityHouse();
 
-    given(communityHouseRepository.findByHouseId(TEST_HOUSE_ID))
-        .willReturn(testHouse);
+    given(communityHouseRepository.findByHouseIdWithHouseMembers(TEST_HOUSE_ID))
+        .willReturn(Optional.empty());
 
     // when
     boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(testCommunity, TEST_HOUSE_ID);
 
     // then
     assertFalse(houseDeleted);
-    verify(communityHouseRepository).findByHouseId(TEST_HOUSE_ID);
+    verify(communityHouseRepository).findByHouseIdWithHouseMembers(TEST_HOUSE_ID);
+    verifyNoInteractions(houseService);
     verify(communityRepository, never()).save(testCommunity);
   }
 
@@ -433,15 +507,16 @@ public class CommunitySDJpaServiceTest {
     // given
     Community testCommunity = getTestCommunity();
 
-    given(communityHouseRepository.findByHouseId(TEST_HOUSE_ID))
-        .willReturn(null);
+    given(communityHouseRepository.findByHouseIdWithHouseMembers(TEST_HOUSE_ID))
+        .willReturn(Optional.empty());
 
     // when
     boolean houseDeleted = communitySDJpaService.removeHouseFromCommunityByHouseId(testCommunity, TEST_HOUSE_ID);
 
     // then
     assertFalse(houseDeleted);
-    verify(communityHouseRepository).findByHouseId(TEST_HOUSE_ID);
+    verify(communityHouseRepository).findByHouseIdWithHouseMembers(TEST_HOUSE_ID);
+    verifyNoInteractions(houseService);
     verify(communityRepository, never()).save(testCommunity);
   }
 
@@ -460,6 +535,13 @@ public class CommunitySDJpaServiceTest {
             String.format("test-community-house-%s", index),
             generateUniqueId(),
             new HashSet<>()))
+        .limit(count)
+        .collect(Collectors.toSet());
+  }
+
+  private Set<HouseMember> getTestHouseMembers(int count) {
+    return Stream
+        .generate(() -> new HouseMember().withMemberId(generateUniqueId()))
         .limit(count)
         .collect(Collectors.toSet());
   }

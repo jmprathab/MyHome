@@ -58,43 +58,45 @@ public class HouseSDJpaService implements HouseService {
   }
 
   @Override public Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers) {
-    CommunityHouse communityHouse = communityHouseRepository.findByHouseId(houseId);
-    Set<HouseMember> savedMembers = new HashSet<>();
-    if (communityHouse != null) {
+    Optional<CommunityHouse> communityHouseOptional = communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
+    return communityHouseOptional.map(communityHouse -> {
+      Set<HouseMember> savedMembers = new HashSet<>();
       houseMembers.forEach(member -> member.setMemberId(generateUniqueId()));
       houseMembers.forEach(member -> member.setCommunityHouse(communityHouse));
       houseMemberRepository.saveAll(houseMembers).forEach(savedMembers::add);
 
       communityHouse.getHouseMembers().addAll(savedMembers);
       communityHouseRepository.save(communityHouse);
-    }
-    return savedMembers;
+      return savedMembers;
+    }).orElse(new HashSet<>());
   }
 
   @Override
   public boolean deleteMemberFromHouse(String houseId, String memberId) {
-    CommunityHouse communityHouse = communityHouseRepository.findByHouseId(houseId);
-    boolean isMemberRemoved = false;
-    if (communityHouse != null && !CollectionUtils.isEmpty(communityHouse.getHouseMembers())) {
-      Set<HouseMember> houseMembers = communityHouse.getHouseMembers();
-      for (HouseMember member : houseMembers) {
-        if (member.getMemberId().equals(memberId)) {
-          houseMembers.remove(member);
-          communityHouse.setHouseMembers(houseMembers);
-          communityHouseRepository.save(communityHouse);
-          member.setCommunityHouse(null);
-          houseMemberRepository.save(member);
-          isMemberRemoved = true;
-          break;
+    Optional<CommunityHouse> communityHouseOptional = communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
+    return communityHouseOptional.map(communityHouse -> {
+      boolean isMemberRemoved = false;
+      if (!CollectionUtils.isEmpty(communityHouse.getHouseMembers())) {
+        Set<HouseMember> houseMembers = communityHouse.getHouseMembers();
+        for (HouseMember member : houseMembers) {
+          if (member.getMemberId().equals(memberId)) {
+            houseMembers.remove(member);
+            communityHouse.setHouseMembers(houseMembers);
+            communityHouseRepository.save(communityHouse);
+            member.setCommunityHouse(null);
+            houseMemberRepository.save(member);
+            isMemberRemoved = true;
+            break;
+          }
         }
       }
-    }
-    return isMemberRemoved;
-  }
+      return isMemberRemoved;
+    }).orElse(false);
+}
 
   @Override
   public Optional<CommunityHouse> getHouseDetailsById(String houseId) {
-    return Optional.ofNullable(communityHouseRepository.findByHouseId(houseId));
+    return communityHouseRepository.findByHouseId(houseId);
   }
 
   @Override

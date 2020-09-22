@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -96,8 +97,8 @@ class HouseSDJpaServiceTest {
     int membersToAddSize = membersToAdd.size();
     CommunityHouse communityHouse = getTestCommunityHouse();
 
-    given(communityHouseRepository.findByHouseId(HOUSE_ID))
-        .willReturn(communityHouse);
+    given(communityHouseRepository.findByHouseIdWithHouseMembers(HOUSE_ID))
+        .willReturn(Optional.of(communityHouse));
     given(houseMemberRepository.saveAll(membersToAdd))
         .willReturn(membersToAdd);
 
@@ -109,7 +110,7 @@ class HouseSDJpaServiceTest {
     assertEquals(membersToAddSize, communityHouse.getHouseMembers().size());
     verify(communityHouseRepository).save(communityHouse);
     verify(houseMemberRepository).saveAll(membersToAdd);
-    verify(communityHouseRepository).findByHouseId(HOUSE_ID);
+    verify(communityHouseRepository).findByHouseIdWithHouseMembers(HOUSE_ID);
   }
 
   @Test
@@ -117,15 +118,15 @@ class HouseSDJpaServiceTest {
     // given
     Set<HouseMember> membersToAdd = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
 
-    given(communityHouseRepository.findByHouseId(HOUSE_ID))
-        .willReturn(null);
+    given(communityHouseRepository.findByHouseIdWithHouseMembers(HOUSE_ID))
+        .willReturn(Optional.empty());
 
     // when
     Set<HouseMember> resultMembers = houseSDJpaService.addHouseMembers(HOUSE_ID, membersToAdd);
 
     // then
     assertTrue(resultMembers.isEmpty());
-    verify(communityHouseRepository).findByHouseId(HOUSE_ID);
+    verify(communityHouseRepository).findByHouseIdWithHouseMembers(HOUSE_ID);
     verify(communityHouseRepository, never()).save(any());
     verifyNoInteractions(houseMemberRepository);
   }
@@ -142,8 +143,8 @@ class HouseSDJpaServiceTest {
     houseMembers.add(memberToDelete);
     communityHouse.setHouseMembers(houseMembers);
 
-    given(communityHouseRepository.findByHouseId(HOUSE_ID))
-        .willReturn(communityHouse);
+    given(communityHouseRepository.findByHouseIdWithHouseMembers(HOUSE_ID))
+        .willReturn(Optional.of(communityHouse));
 
     // when
     boolean isMemberDeleted = houseSDJpaService.deleteMemberFromHouse(HOUSE_ID, MEMBER_ID);
@@ -152,7 +153,7 @@ class HouseSDJpaServiceTest {
     assertTrue(isMemberDeleted);
     assertNull(memberToDelete.getCommunityHouse());
     assertFalse(communityHouse.getHouseMembers().contains(memberToDelete));
-    verify(communityHouseRepository).findByHouseId(HOUSE_ID);
+    verify(communityHouseRepository).findByHouseIdWithHouseMembers(HOUSE_ID);
     verify(communityHouseRepository).save(communityHouse);
     verify(houseMemberRepository).save(memberToDelete);
   }
@@ -160,15 +161,15 @@ class HouseSDJpaServiceTest {
   @Test
   void deleteMemberFromHouseNotExists() {
     // given
-    given(communityHouseRepository.findByHouseId(HOUSE_ID))
-        .willReturn(null);
+    given(communityHouseRepository.findByHouseIdWithHouseMembers(HOUSE_ID))
+        .willReturn(Optional.empty());
 
     // when
     boolean isMemberDeleted = houseSDJpaService.deleteMemberFromHouse(HOUSE_ID, MEMBER_ID);
 
     // then
     assertFalse(isMemberDeleted);
-    verify(communityHouseRepository).findByHouseId(HOUSE_ID);
+    verify(communityHouseRepository).findByHouseIdWithHouseMembers(HOUSE_ID);
     verify(communityHouseRepository, never()).save(any());
     verifyNoInteractions(houseMemberRepository);
   }
@@ -181,15 +182,15 @@ class HouseSDJpaServiceTest {
 
     communityHouse.setHouseMembers(houseMembers);
 
-    given(communityHouseRepository.findByHouseId(HOUSE_ID))
-        .willReturn(communityHouse);
+    given(communityHouseRepository.findByHouseIdWithHouseMembers(HOUSE_ID))
+        .willReturn(Optional.of(communityHouse));
 
     // when
     boolean isMemberDeleted = houseSDJpaService.deleteMemberFromHouse(HOUSE_ID, MEMBER_ID);
 
     // then
     assertFalse(isMemberDeleted);
-    verify(communityHouseRepository).findByHouseId(HOUSE_ID);
+    verify(communityHouseRepository).findByHouseIdWithHouseMembers(HOUSE_ID);
     verify(communityHouseRepository, never()).save(communityHouse);
     verifyNoInteractions(houseMemberRepository);
   }

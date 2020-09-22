@@ -22,6 +22,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -36,15 +39,29 @@ import lombok.With;
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"houseId", "name"}, callSuper = false)
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "CommunityHouse.community",
+        attributeNodes = {
+            @NamedAttributeNode("community"),
+        }
+    ),
+    @NamedEntityGraph(
+        name = "CommunityHouse.houseMembers",
+        attributeNodes = {
+            @NamedAttributeNode("houseMembers"),
+        }
+    )
+})
 public class CommunityHouse extends BaseEntity {
   @With
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   private Community community;
   @Column(nullable = false)
   private String name;
   @With
   @Column(unique = true, nullable = false)
   private String houseId;
-  @OneToMany(fetch = FetchType.EAGER)
+  @OneToMany(fetch = FetchType.LAZY)
   private Set<HouseMember> houseMembers = new HashSet<>();
 }

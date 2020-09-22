@@ -213,8 +213,8 @@ INSERT INTO "PUBLIC"."USER"("ID", "EMAIL", "ENCRYPTED_PASSWORD", "NAME", "USER_I
 (50, 'testuser50@myhome.com', '$2a$10$h5NU47S7UstO/Belh6gySe/jsQZj/9pi1dJuhWxh9YvefzFvmioPC', 'Test User 50', '5fd328d9-8bd0-4ef0-b17d-a53208a9e45a');
 
 INSERT INTO "PUBLIC"."COMMUNITY_ADMINS"("COMMUNITIES_ID", "ADMINS_ID") VALUES
-(0, 1),
-(0, 2),
+(0, 0),
+(2, 0),
 (1, 1);
 
 

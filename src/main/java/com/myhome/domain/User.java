@@ -18,7 +18,11 @@ package com.myhome.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,6 +44,14 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false, of = {"userId", "email"})
 @Entity
 @With
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "User.communities",
+        attributeNodes = {
+            @NamedAttributeNode("communities"),
+        }
+    )
+})
 public class User extends BaseEntity {
   @Column(nullable = false)
   private String name;
@@ -49,6 +61,6 @@ public class User extends BaseEntity {
   private String email;
   @Column(nullable = false)
   private String encryptedPassword;
-  @ManyToMany(mappedBy = "admins")
+  @ManyToMany(mappedBy = "admins", fetch = FetchType.LAZY)
   private Set<Community> communities = new HashSet<>();
 }
