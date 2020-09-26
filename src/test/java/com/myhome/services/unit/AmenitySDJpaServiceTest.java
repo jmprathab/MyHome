@@ -1,28 +1,36 @@
 package com.myhome.services.unit;
 
-import com.myhome.domain.Community;
+import com.myhome.controllers.dto.AmenityDto;
+import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
+import com.myhome.domain.Community;
 import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
+import com.myhome.services.CommunityService;
 import com.myhome.services.springdatajpa.AmenitySDJpaService;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 class AmenitySDJpaServiceTest {
 
@@ -37,6 +45,10 @@ class AmenitySDJpaServiceTest {
   private AmenityRepository amenityRepository;
   @Mock
   private CommunityRepository communityRepository;
+  @Mock
+  private CommunityService communityService;
+  @Mock
+  private AmenityApiMapper amenityApiMapper;
 
   @InjectMocks
   private AmenitySDJpaService amenitySDJpaService;
@@ -111,6 +123,72 @@ class AmenitySDJpaServiceTest {
     verify(communityRepository).findByCommunityIdWithAmenities(TEST_COMMUNITY_ID);
   }
 
+  @Test
+  void shouldAddAmenityToExistingCommunity() {
+    // given
+    final String communityId = "communityId";
+    final Community community = new Community().withCommunityId(communityId);
+    final AmenityDto baseAmenityDto = AmenityDto.builder()
+        .id(1L)
+        .amenityId("amenityId")
+        .name("name")
+        .description("description")
+        .price(BigDecimal.valueOf(12))
+        .build();
+    final AmenityDto amenityDtoWithCommunity = baseAmenityDto.withCommunityId(communityId);
+    final Amenity baseAmenity = new Amenity();
+    final Amenity amenityWithCommunity = new Amenity().withCommunity(community);
+    final List<Amenity> amenitiesWithCommunity = singletonList(amenityWithCommunity);
+    final HashSet<AmenityDto> requestAmenitiesDto = new HashSet<>(singletonList(baseAmenityDto));
+    given(communityService.getCommunityDetailsById(communityId))
+        .willReturn(Optional.of(community));
+    given(amenityApiMapper.amenityDtoToAmenity(baseAmenityDto))
+        .willReturn(baseAmenity);
+    given(amenityRepository.saveAll(amenitiesWithCommunity))
+        .willReturn(amenitiesWithCommunity);
+    given(amenityApiMapper.amenityToAmenityDto(amenityWithCommunity))
+        .willReturn(amenityDtoWithCommunity);
+
+    // when
+    final Optional<List<AmenityDto>> actualResult =
+        amenitySDJpaService.createAmenities(requestAmenitiesDto, communityId);
+
+    // then
+    assertTrue(actualResult.isPresent());
+    final List<AmenityDto> actualResultAmenitiesDtos = actualResult.get();
+    assertEquals(singletonList(amenityDtoWithCommunity), actualResultAmenitiesDtos);
+    verify(communityService).getCommunityDetailsById(communityId);
+    verify(amenityApiMapper).amenityDtoToAmenity(baseAmenityDto);
+    verify(amenityRepository).saveAll(amenitiesWithCommunity);
+    verify(amenityApiMapper).amenityToAmenityDto(amenityWithCommunity);
+  }
+
+  @Test
+  void shouldFailOnAddAmenityToNotExistingCommunity() {
+    // given
+    final String communityId = "communityId";
+    final AmenityDto baseAmenityDto = AmenityDto.builder()
+        .id(1L)
+        .amenityId("amenityId")
+        .name("name")
+        .description("description")
+        .price(BigDecimal.valueOf(12))
+        .build();
+    final HashSet<AmenityDto> requestAmenitiesDto = new HashSet<>(singletonList(baseAmenityDto));
+    given(communityService.getCommunityDetailsById(communityId))
+        .willReturn(Optional.empty());
+
+    // when
+    final Optional<List<AmenityDto>> actualResult =
+        amenitySDJpaService.createAmenities(requestAmenitiesDto, communityId);
+
+    // then
+    assertFalse(actualResult.isPresent());
+    verify(communityService).getCommunityDetailsById(communityId);
+    verifyNoInteractions(amenityApiMapper);
+    verifyNoInteractions(amenityRepository);
+  }
+
   private Amenity getTestAmenity() {
     return new Amenity()
         .withAmenityId(TEST_AMENITY_ID)
@@ -128,5 +206,4 @@ class AmenitySDJpaServiceTest {
         new HashSet<>()
     );
   }
-
 }

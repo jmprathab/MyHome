@@ -1,10 +1,15 @@
 package com.myhome.controllers.unit;
 
 import com.myhome.controllers.AmenityController;
+import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
+import com.myhome.controllers.request.AddAmenityRequest;
+import com.myhome.controllers.response.amenity.AddAmenityResponse;
 import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
 import com.myhome.services.AmenityService;
+import java.math.BigDecimal;
+import java.util.HashSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
+import org.springframework.web.client.HttpStatusCodeException;
 
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,7 +51,8 @@ class AmenityControllerTest {
   void getAmenityDetails() {
     // given
     Amenity testAmenity = getTestAmenity();
-    GetAmenityDetailsResponse expectedResponseBody = new GetAmenityDetailsResponse(testAmenity.getAmenityId(), testAmenity.getDescription());
+    GetAmenityDetailsResponse expectedResponseBody =
+        new GetAmenityDetailsResponse(testAmenity.getAmenityId(), testAmenity.getDescription());
 
     given(amenitySDJpaService.getAmenityDetails(TEST_AMENITY_ID))
         .willReturn(Optional.of(testAmenity));
@@ -52,7 +60,8 @@ class AmenityControllerTest {
         .willReturn(expectedResponseBody);
 
     // when
-    ResponseEntity<GetAmenityDetailsResponse> response = amenityController.getAmenityDetails(TEST_AMENITY_ID);
+    ResponseEntity<GetAmenityDetailsResponse> response =
+        amenityController.getAmenityDetails(TEST_AMENITY_ID);
 
     // then
     assertEquals(expectedResponseBody, response.getBody());
@@ -68,7 +77,8 @@ class AmenityControllerTest {
         .willReturn(Optional.empty());
 
     // when
-    ResponseEntity<GetAmenityDetailsResponse> response = amenityController.getAmenityDetails(TEST_AMENITY_ID);
+    ResponseEntity<GetAmenityDetailsResponse> response =
+        amenityController.getAmenityDetails(TEST_AMENITY_ID);
 
     // then
     assertNull(response.getBody());
@@ -107,10 +117,46 @@ class AmenityControllerTest {
     verify(amenitySDJpaService).deleteAmenity(TEST_AMENITY_ID);
   }
 
+  @Test
+  void shouldAddAmenityToCommunity() {
+    // given
+    final String communityId = "communityId";
+    final AmenityDto amenityDto =
+        new AmenityDto(1L, "amenityId", "name", "description", BigDecimal.ONE, "");
+    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
+    final AddAmenityRequest request = new AddAmenityRequest(amenities);
+    given(amenitySDJpaService.createAmenities(amenities, communityId))
+        .willReturn(Optional.of(singletonList(amenityDto)));
+
+    // when
+    final ResponseEntity<AddAmenityResponse> response =
+        amenityController.addAmenityToCommunity(request, communityId);
+
+    // then
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  @Test
+  void shouldNotAddAmenityWhenCommunityNotExists() {
+    // given
+    final String communityId = "communityId";
+    final AmenityDto amenityDto = new AmenityDto();
+    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
+    final AddAmenityRequest request = new AddAmenityRequest(amenities);
+    given(amenitySDJpaService.createAmenities(amenities, communityId))
+        .willReturn(Optional.empty());
+
+    // when
+    final ResponseEntity<AddAmenityResponse> response =
+        amenityController.addAmenityToCommunity(request, communityId);
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
   private Amenity getTestAmenity() {
     return new Amenity()
         .withAmenityId(TEST_AMENITY_ID)
         .withDescription(TEST_AMENITY_DESCRIPTION);
   }
-
 }
