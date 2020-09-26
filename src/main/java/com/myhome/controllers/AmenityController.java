@@ -1,9 +1,9 @@
 package com.myhome.controllers;
 
-import com.myhome.controllers.mapper.CommunityAmenityApiMapper;
-import com.myhome.controllers.response.amenity.GetCommunityAmenityDetailsResponse;
-import com.myhome.domain.CommunityAmenity;
-import com.myhome.services.CommunityAmenityService;
+import com.myhome.controllers.mapper.AmenityApiMapper;
+import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
+import com.myhome.domain.Amenity;
+import com.myhome.services.AmenityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +20,10 @@ import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
-public class CommunityAmenityController {
+public class AmenityController {
 
-  private final CommunityAmenityService communityAmenitySDJpaService;
-  private final CommunityAmenityApiMapper communityAmenityApiMapper;
+  private final AmenityService amenitySDJpaService;
+  private final AmenityApiMapper amenityApiMapper;
 
   @Operation(
       description = "Get details about the amenity",
@@ -32,11 +32,10 @@ public class CommunityAmenityController {
       }
   )
   @GetMapping("/amenities/{amenityId}")
-  public ResponseEntity<GetCommunityAmenityDetailsResponse> getAmenityDetails(@PathVariable String amenityId) {
-    return communityAmenitySDJpaService.getCommunityAmenityDetails(amenityId)
-        .map(communityAmenity -> communityAmenityApiMapper
-              .communityAmenityToCommunityAmenityDetailsResponse(communityAmenity))
-        .map(communityAmenityResponse -> ResponseEntity.ok(communityAmenityResponse))
+  public ResponseEntity<GetAmenityDetailsResponse> getAmenityDetails(@PathVariable String amenityId) {
+    return amenitySDJpaService.getAmenityDetails(amenityId)
+        .map(amenityApiMapper::amenityToAmenityDetailsResponse)
+        .map(ResponseEntity::ok)
         .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
@@ -49,7 +48,7 @@ public class CommunityAmenityController {
   )
   @DeleteMapping(path = "/amenities/{amenityId}")
   public ResponseEntity deleteAmenity(@PathVariable String amenityId) {
-    boolean isAmenityDeleted = communityAmenitySDJpaService.deleteAmenity(amenityId);
+    boolean isAmenityDeleted = amenitySDJpaService.deleteAmenity(amenityId);
     if (isAmenityDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {
@@ -62,10 +61,9 @@ public class CommunityAmenityController {
       path = "/communities/{communityId}/amenities",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
   )
-  public ResponseEntity<Set<GetCommunityAmenityDetailsResponse>> listAllCommunityAmenities(@PathVariable String communityId) {
-    Set<CommunityAmenity> communityAmenities = communityAmenitySDJpaService.listAllCommunityAmenities(communityId);
-    Set<GetCommunityAmenityDetailsResponse> response = communityAmenityApiMapper
-        .communityAmenitiesSetToCommunityAmenityDetailsResponseSet(communityAmenities);
+  public ResponseEntity<Set<GetAmenityDetailsResponse>> listAllAmenities(@PathVariable String communityId) {
+    Set<Amenity> amenities = amenitySDJpaService.listAllAmenities(communityId);
+    Set<GetAmenityDetailsResponse> response = amenityApiMapper.amenitiesSetToAmenityDetailsResponseSet(amenities);
     return ResponseEntity.ok(response);
   }
 }

@@ -1,10 +1,10 @@
 package com.myhome.services.unit;
 
 import com.myhome.domain.Community;
-import com.myhome.domain.CommunityAmenity;
-import com.myhome.repositories.CommunityAmenityRepository;
+import com.myhome.domain.Amenity;
+import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
-import com.myhome.services.springdatajpa.CommunityAmenitySDJpaService;
+import com.myhome.services.springdatajpa.AmenitySDJpaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,7 +24,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-class CommunityAmenitySDJpaServiceTest {
+class AmenitySDJpaServiceTest {
 
   private final String TEST_AMENITY_ID = "test-amenity-id";
   private final String TEST_AMENITY_DESCRIPTION = "test-amenity-description";
@@ -34,12 +34,12 @@ class CommunityAmenitySDJpaServiceTest {
   private final String TEST_COMMUNITY_DISTRICT = "test-community-name";
 
   @Mock
-  private CommunityAmenityRepository communityAmenityRepository;
+  private AmenityRepository amenityRepository;
   @Mock
   private CommunityRepository communityRepository;
 
   @InjectMocks
-  private CommunityAmenitySDJpaService communityAmenitySDJpaService;
+  private AmenitySDJpaService amenitySDJpaService;
 
   @BeforeEach
   private void init() {
@@ -49,40 +49,40 @@ class CommunityAmenitySDJpaServiceTest {
   @Test
   void deleteAmenity() {
     // given
-    CommunityAmenity testAmenity = getTestAmenity();
+    Amenity testAmenity = getTestAmenity();
 
-    given(communityAmenityRepository.findByAmenityIdWithCommunity(TEST_AMENITY_ID))
+    given(amenityRepository.findByAmenityIdWithCommunity(TEST_AMENITY_ID))
         .willReturn(Optional.of(testAmenity));
 
     // when
-    boolean amenityDeleted = communityAmenitySDJpaService.deleteAmenity(TEST_AMENITY_ID);
+    boolean amenityDeleted = amenitySDJpaService.deleteAmenity(TEST_AMENITY_ID);
 
     // then
     assertTrue(amenityDeleted);
-    verify(communityAmenityRepository).findByAmenityIdWithCommunity(TEST_AMENITY_ID);
-    verify(communityAmenityRepository).delete(testAmenity);
+    verify(amenityRepository).findByAmenityIdWithCommunity(TEST_AMENITY_ID);
+    verify(amenityRepository).delete(testAmenity);
   }
 
   @Test
   void deleteAmenityNotExists() {
     // given
-    given(communityAmenityRepository.findByAmenityIdWithCommunity(TEST_AMENITY_ID))
+    given(amenityRepository.findByAmenityIdWithCommunity(TEST_AMENITY_ID))
         .willReturn(Optional.empty());
 
     // when
-    boolean amenityDeleted = communityAmenitySDJpaService.deleteAmenity(TEST_AMENITY_ID);
+    boolean amenityDeleted = amenitySDJpaService.deleteAmenity(TEST_AMENITY_ID);
 
     // then
     assertFalse(amenityDeleted);
-    verify(communityAmenityRepository).findByAmenityIdWithCommunity(TEST_AMENITY_ID);
-    verify(communityAmenityRepository, never()).delete(any());
+    verify(amenityRepository).findByAmenityIdWithCommunity(TEST_AMENITY_ID);
+    verify(amenityRepository, never()).delete(any());
   }
 
   @Test
-  void listAllCommunityAmenities() {
+  void listAllAmenities() {
     // given
-    CommunityAmenity testCommunityAmenity = getTestAmenity();
-    Set<CommunityAmenity> testAmenities = Collections.singleton(testCommunityAmenity);
+    Amenity testAmenity = getTestAmenity();
+    Set<Amenity> testAmenities = Collections.singleton(testAmenity);
     Community testCommunity = getTestCommunity();
     testCommunity.setAmenities(testAmenities);
 
@@ -90,7 +90,7 @@ class CommunityAmenitySDJpaServiceTest {
         .willReturn(Optional.of(testCommunity));
 
     // when
-    Set<CommunityAmenity> resultAmenities = communityAmenitySDJpaService.listAllCommunityAmenities(TEST_COMMUNITY_ID);
+    Set<Amenity> resultAmenities = amenitySDJpaService.listAllAmenities(TEST_COMMUNITY_ID);
 
     // then
     assertEquals(testAmenities, resultAmenities);
@@ -98,28 +98,28 @@ class CommunityAmenitySDJpaServiceTest {
   }
 
   @Test
-  void listAllCommunityAmenitiesNotExists() {
+  void listAllAmenitiesNotExists() {
     // given
     given(communityRepository.findByCommunityIdWithAmenities(TEST_COMMUNITY_ID))
         .willReturn(Optional.empty());
 
     // when
-    Set<CommunityAmenity> resultAmenities = communityAmenitySDJpaService.listAllCommunityAmenities(TEST_COMMUNITY_ID);
+    Set<Amenity> resultAmenities = amenitySDJpaService.listAllAmenities(TEST_COMMUNITY_ID);
 
     // then
     assertEquals(new HashSet<>(), resultAmenities);
     verify(communityRepository).findByCommunityIdWithAmenities(TEST_COMMUNITY_ID);
   }
 
-  private CommunityAmenity getTestAmenity() {
-    return new CommunityAmenity()
+  private Amenity getTestAmenity() {
+    return new Amenity()
         .withAmenityId(TEST_AMENITY_ID)
         .withDescription(TEST_AMENITY_DESCRIPTION)
         .withCommunity(getTestCommunity());
   }
 
   private Community getTestCommunity() {
-    Community testCommunity = new Community(
+    return new Community(
         new HashSet<>(),
         new HashSet<>(),
         TEST_COMMUNITY_NAME,
@@ -127,7 +127,6 @@ class CommunityAmenitySDJpaServiceTest {
         TEST_COMMUNITY_DISTRICT,
         new HashSet<>()
     );
-    return testCommunity;
   }
 
 }

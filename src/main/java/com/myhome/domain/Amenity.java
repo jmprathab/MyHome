@@ -24,13 +24,13 @@ import java.time.LocalDateTime;
 @With
 @NamedEntityGraphs({
     @NamedEntityGraph(
-        name = "CommunityAmenity.community",
+        name = "Amenity.community",
         attributeNodes = {
             @NamedAttributeNode("community"),
         }
     )
 })
-public class CommunityAmenity extends BaseEntity {
+public class Amenity extends BaseEntity {
 
   @Column(nullable = false, unique = true)
   private String amenityId;
