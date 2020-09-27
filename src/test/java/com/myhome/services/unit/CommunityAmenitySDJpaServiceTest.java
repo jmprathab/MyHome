@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
@@ -26,8 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class CommunityAmenitySDJpaServiceTest {
 
@@ -130,7 +131,7 @@ class CommunityAmenitySDJpaServiceTest {
       .willReturn(updatedAmenity);
 
     // when
-    boolean result = communityAmenitySDJpaService.updateAmenity(TEST_AMENITY_ID, updated);
+    boolean result = communityAmenitySDJpaService.updateAmenity(updated);
 
     // then
     assertTrue(result);
@@ -146,11 +147,11 @@ class CommunityAmenitySDJpaServiceTest {
         .willReturn(Optional.empty());
 
     // when
-    boolean result = communityAmenitySDJpaService.updateAmenity(TEST_AMENITY_ID, getTestAmenityDto());
+    boolean result = communityAmenitySDJpaService.updateAmenity(getTestAmenityDto());
 
     // then
     assertFalse(result);
-    verify(communityAmenityRepository, Mockito.times(0)).save(getUpdatedCommunityAmenity());
+    verify(communityAmenityRepository, times(0)).save(getUpdatedCommunityAmenity());
     verifyNoInteractions(communityRepository);
   }
 
@@ -170,7 +171,7 @@ class CommunityAmenitySDJpaServiceTest {
       .willReturn(null);
 
     // when
-    boolean result = communityAmenitySDJpaService.updateAmenity(TEST_AMENITY_ID, updatedDto);
+    boolean result = communityAmenitySDJpaService.updateAmenity(updatedDto);
 
     // then
     assertFalse(result);
@@ -191,13 +192,13 @@ class CommunityAmenitySDJpaServiceTest {
       .willReturn(Optional.empty());
 
     // when
-    boolean result = communityAmenitySDJpaService.updateAmenity(TEST_AMENITY_ID, updatedDto);
+    boolean result = communityAmenitySDJpaService.updateAmenity(updatedDto);
 
     // then
     assertFalse(result);
     verify(communityAmenityRepository).findByAmenityId(TEST_AMENITY_ID);
     verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
-    verify(communityAmenityRepository, Mockito.times(0)).save(getUpdatedCommunityAmenity());
+    verifyNoMoreInteractions(communityAmenityRepository);
   }
 
   private CommunityAmenity getTestAmenity() {
@@ -225,13 +226,14 @@ class CommunityAmenitySDJpaServiceTest {
     String TEST_AMENITY_END_DATE = "2020-09-20 19:00:00";
     boolean TEST_AMENITY_IS_BOOKED = false;
     Long TEST_AMENITY_ENTITY_ID = 1L;
+
     return new CommunityAmenityDto(
-    TEST_AMENITY_ENTITY_ID,
+      TEST_AMENITY_ENTITY_ID,
       TEST_AMENITY_ID,
       TEST_AMENITY_DESCRIPTION,
-    TEST_AMENITY_IS_BOOKED,
-    TEST_AMENITY_START_DATE,
-    TEST_AMENITY_END_DATE,
+      TEST_AMENITY_IS_BOOKED,
+      TEST_AMENITY_START_DATE,
+      TEST_AMENITY_END_DATE,
       TEST_COMMUNITY_ID
     );
   }

@@ -13,5 +13,5 @@ public interface CommunityAmenityService {
 
   Set<CommunityAmenity> listAllCommunityAmenities(String communityId);
 
-  boolean updateAmenity(String amenityId, CommunityAmenityDto updatedAmenity);
+  boolean updateAmenity(CommunityAmenityDto updatedAmenity);
 }

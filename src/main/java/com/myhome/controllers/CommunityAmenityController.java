@@ -1,5 +1,6 @@
 package com.myhome.controllers;
 
+import com.myhome.controllers.dto.CommunityAmenityDto;
 import com.myhome.controllers.mapper.CommunityAmenityApiMapper;
 import com.myhome.controllers.request.UpdateCommunityAmenityRequest;
 import com.myhome.controllers.response.amenity.GetCommunityAmenityDetailsResponse;
@@ -70,10 +71,11 @@ public class CommunityAmenityController {
   @PutMapping(path = "amenities/{amenityId}")
   public ResponseEntity<Void> updateAmenity(@PathVariable String amenityId,
                                             @Valid @RequestBody UpdateCommunityAmenityRequest request) {
-    boolean isUpdated = communityAmenitySDJpaService.updateAmenity(amenityId,
-      communityAmenityApiMapper.updateCommunityAmenityRequestToAmenityDto(request));
+    CommunityAmenityDto amenityDto = communityAmenityApiMapper.updateCommunityAmenityRequestToAmenityDto(request);
+    amenityDto.setAmenityId(amenityId);
+    boolean isUpdated = communityAmenitySDJpaService.updateAmenity(amenityDto);
     if (isUpdated) {
-      return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }

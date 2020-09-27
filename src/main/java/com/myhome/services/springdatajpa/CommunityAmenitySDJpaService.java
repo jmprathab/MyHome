@@ -47,7 +47,8 @@ public class CommunityAmenitySDJpaService implements CommunityAmenityService {
   }
 
   @Override
-  public boolean updateAmenity(String amenityId, CommunityAmenityDto updatedCommunityAmenity) {
+  public boolean updateAmenity(CommunityAmenityDto updatedCommunityAmenity) {
+    String amenityId = updatedCommunityAmenity.getAmenityId();
     return communityAmenityRepository.findByAmenityId(amenityId)
       .map(communityAmenity -> communityRepository.findByCommunityId(updatedCommunityAmenity.getCommunityId())
         .map(community -> {

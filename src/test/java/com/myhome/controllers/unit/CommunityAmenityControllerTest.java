@@ -123,7 +123,7 @@ class CommunityAmenityControllerTest {
 
     given(communityAmenityApiMapper.updateCommunityAmenityRequestToAmenityDto(request))
       .willReturn(communityAmenityDto);
-    given(communityAmenitySDJpaService.updateAmenity(TEST_AMENITY_ID, communityAmenityDto))
+    given(communityAmenitySDJpaService.updateAmenity(communityAmenityDto))
       .willReturn(true);
 
     // when
@@ -133,7 +133,7 @@ class CommunityAmenityControllerTest {
     // then
     assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     verify(communityAmenityApiMapper).updateCommunityAmenityRequestToAmenityDto(request);
-    verify(communityAmenitySDJpaService).updateAmenity(TEST_AMENITY_ID, communityAmenityDto);
+    verify(communityAmenitySDJpaService).updateAmenity(communityAmenityDto);
   }
 
   @Test
@@ -144,7 +144,7 @@ class CommunityAmenityControllerTest {
 
     given(communityAmenityApiMapper.updateCommunityAmenityRequestToAmenityDto(request))
       .willReturn(communityAmenityDto);
-    given(communityAmenitySDJpaService.updateAmenity(TEST_AMENITY_ID, communityAmenityDto))
+    given(communityAmenitySDJpaService.updateAmenity(communityAmenityDto))
       .willReturn(false);
 
     // when
@@ -154,7 +154,7 @@ class CommunityAmenityControllerTest {
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(communityAmenityApiMapper).updateCommunityAmenityRequestToAmenityDto(request);
-    verify(communityAmenitySDJpaService).updateAmenity(TEST_AMENITY_ID, communityAmenityDto);
+    verify(communityAmenitySDJpaService).updateAmenity(communityAmenityDto);
   }
 
   @Test
