@@ -16,7 +16,7 @@
 
 package com.myhome.repositories;
 
-import com.myhome.domain.CommunityAmenity;
+import com.myhome.domain.Amenity;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,11 +24,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface CommunityAmenityRepository extends JpaRepository<CommunityAmenity, Long> {
+public interface AmenityRepository extends JpaRepository<Amenity, Long> {
 
-  @Query("from CommunityAmenity comminityAmenity where comminityAmenity.amenityId = :amenityId")
-  @EntityGraph(value = "CommunityAmenity.community")
-  Optional<CommunityAmenity> findByAmenityIdWithCommunity(@Param("amenityId") String amenityId);
+  @Query("from Amenity amenity where amenity.amenityId = :amenityId")
+  @EntityGraph(value = "Amenity.community")
+  Optional<Amenity> findByAmenityIdWithCommunity(@Param("amenityId") String amenityId);
 
-  Optional<CommunityAmenity> findByAmenityId(String amenityId);
+  Optional<Amenity> findByAmenityId(String amenityId);
 }

@@ -77,5 +77,5 @@ public class Community extends BaseEntity {
   private String district;
   @ToString.Exclude
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "community", orphanRemoval = true)
-  private Set<CommunityAmenity> amenities = new HashSet<>();
+  private Set<Amenity> amenities = new HashSet<>();
 }

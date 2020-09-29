@@ -109,7 +109,7 @@ public class CommunityControllerTest {
   }
 
   private CommunityHouse createTestCommunityHouse(Community community) {
-    return new CommunityHouse(community, COMMUNITY_HOUSE_NAME, COMMUNITY_HOUSE_ID, new HashSet<>());
+    return new CommunityHouse(community, COMMUNITY_HOUSE_NAME, COMMUNITY_HOUSE_ID, new HashSet<>(), new HashSet<>());
   }
 
   private Community createTestCommunity() {

@@ -64,4 +64,6 @@ public class CommunityHouse extends BaseEntity {
   private String houseId;
   @OneToMany(fetch = FetchType.LAZY)
   private Set<HouseMember> houseMembers = new HashSet<>();
+  @OneToMany(fetch = FetchType.LAZY)
+  private Set<Amenity> amenities = new HashSet<>();
 }

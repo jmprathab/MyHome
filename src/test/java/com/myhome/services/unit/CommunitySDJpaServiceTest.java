@@ -534,6 +534,7 @@ public class CommunitySDJpaServiceTest {
             null,
             String.format("test-community-house-%s", index),
             generateUniqueId(),
+            new HashSet<>(),
             new HashSet<>()))
         .limit(count)
         .collect(Collectors.toSet());
