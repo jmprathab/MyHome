@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UpdateCommunityAmenityRequest {
+public class UpdateAmenityRequest {
+  private String name;
   private String description;
-  private boolean isBooked;
-  private String bookingStartDate;
-  private String bookingEndDate;
+  private long price;
   private String communityId;
 }

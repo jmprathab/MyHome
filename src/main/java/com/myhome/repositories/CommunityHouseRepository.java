@@ -18,15 +18,29 @@ package com.myhome.repositories;
 
 import com.myhome.domain.CommunityHouse;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommunityHouseRepository extends PagingAndSortingRepository<CommunityHouse, Long> {
 
-  CommunityHouse findByHouseId(String houseId);
+  Optional<CommunityHouse> findByHouseId(String houseId);
 
+  @Query("from CommunityHouse house where house.houseId = :houseId")
+  @EntityGraph(value = "CommunityHouse.community")
+  Optional<CommunityHouse> findByHouseIdWithCommunity(@Param("houseId") String houseId);
+
+  @Query("from CommunityHouse house where house.houseId = :houseId")
+  @EntityGraph(value = "CommunityHouse.houseMembers")
+  Optional<CommunityHouse> findByHouseIdWithHouseMembers(@Param("houseId") String houseId);
+
+  @EntityGraph(value = "CommunityHouse.community")
   List<CommunityHouse> findAllByCommunity_CommunityId(String communityId, Pageable pageable);
 
   void deleteByHouseId(String houseId);

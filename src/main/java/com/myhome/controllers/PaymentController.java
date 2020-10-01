@@ -126,7 +126,7 @@ public class PaymentController {
 
     Set<Payment> payments = paymentService.getPaymentsByAdmin(adminId);
 
-    return communityService.getCommunityDetailsById(communityId)
+    return communityService.getCommunityDetailsByIdWithAdmins(communityId)
         .map(community -> isAdminMatchingId(community.getAdmins(), adminId))
         .map(paymentsMatch -> isAdminMatchingPayment(payments, adminId))
         .map(matched -> schedulePaymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(

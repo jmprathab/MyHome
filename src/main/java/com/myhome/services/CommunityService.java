@@ -41,6 +41,8 @@ public interface CommunityService {
 
   Optional<User> findCommunityAdminById(String adminId);
 
+  Optional<Community> getCommunityDetailsByIdWithAdmins(String communityId);
+
   Optional<Community> addAdminsToCommunity(String communityId, Set<String> admins);
 
   Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses);

@@ -45,7 +45,6 @@ public class UserSDJpaService implements UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
   private final PasswordEncoder passwordEncoder;
-  private final CommunityService communityService;
 
   @Override public Optional<UserDto> createUser(UserDto request) {
     if (userRepository.findByEmail(request.getEmail()) == null) {
@@ -67,18 +66,13 @@ public class UserSDJpaService implements UserService {
 
   @Override
   public Optional<UserDto> getUserDetails(String userId) {
-    Optional<User> user = userRepository.findByUserId(userId);
-    return user.map(admin -> {
-      Set<String> communityIds = communityService.listAll().stream()
-      .filter(community -> community.getAdmins()
-            .stream()
-            .map(User::getUserId)
-            .collect(Collectors.toSet())
-            .contains(userId))
-      .map(Community::getCommunityId)
-      .collect(Collectors.toSet());
+    Optional<User> userOptional = userRepository.findByUserIdWithCommunities(userId);
+    return userOptional.map(admin -> {
+      Set<String> communityIds = admin.getCommunities().stream()
+          .map(community -> community.getCommunityId())
+          .collect(Collectors.toSet());
 
-      UserDto userDto = userMapper.userToUserDto(user.get());
+      UserDto userDto = userMapper.userToUserDto(admin);
       userDto.setCommunityIds(communityIds);
       return Optional.of(userDto);
     }).orElse(Optional.empty());

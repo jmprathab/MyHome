@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class GetCommunityAmenityDetailsResponse {
+public class GetAmenityDetailsResponse {
   private String amenityId;
   private String description;
 }

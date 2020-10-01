@@ -48,14 +48,26 @@ import lombok.With;
         attributeNodes = {
             @NamedAttributeNode("amenities"),
         }
+    ),
+    @NamedEntityGraph(
+        name = "Community.admins",
+        attributeNodes = {
+            @NamedAttributeNode("admins"),
+        }
+    ),
+    @NamedEntityGraph(
+        name = "Community.houses",
+        attributeNodes = {
+            @NamedAttributeNode("houses"),
+        }
     )
 })
 public class Community extends BaseEntity {
   @ToString.Exclude
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.LAZY)
   private Set<User> admins = new HashSet<>();
   @ToString.Exclude
-  @OneToMany(fetch = FetchType.EAGER)
+  @OneToMany(fetch = FetchType.LAZY)
   private Set<CommunityHouse> houses = new HashSet<>();
   @Column(nullable = false)
   private String name;
@@ -65,5 +77,5 @@ public class Community extends BaseEntity {
   private String district;
   @ToString.Exclude
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "community", orphanRemoval = true)
-  private Set<CommunityAmenity> amenities = new HashSet<>();
+  private Set<Amenity> amenities = new HashSet<>();
 }
