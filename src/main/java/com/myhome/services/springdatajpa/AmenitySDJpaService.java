@@ -81,6 +81,8 @@ public class AmenitySDJpaService implements AmenityService {
     .map(amenity -> communityRepository.findByCommunityId(updatedAmenity.getCommunityId())
     .map(community -> {
       Amenity updated = new Amenity();
+      updated.setName(updatedAmenity.getName());
+      updated.setPrice(updatedAmenity.getPrice());
       updated.setId(amenity.getId());
       updated.setAmenityId(amenityId);
       updated.setDescription(updatedAmenity.getDescription());
