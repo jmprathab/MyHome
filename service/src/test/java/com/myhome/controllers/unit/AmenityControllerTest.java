@@ -2,7 +2,6 @@ package com.myhome.controllers.unit;
 
 import com.myhome.controllers.AmenityController;
 import com.myhome.controllers.dto.AmenityDto;
-import com.myhome.controllers.dto.CommunityAmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.controllers.request.AddAmenityRequest;
 import com.myhome.controllers.request.UpdateAmenityRequest;
@@ -12,6 +11,7 @@ import com.myhome.domain.Amenity;
 import com.myhome.services.AmenityService;
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,9 +19,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Optional;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
