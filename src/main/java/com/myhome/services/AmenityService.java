@@ -15,4 +15,6 @@ public interface AmenityService {
   boolean deleteAmenity(String amenityId);
 
   Set<Amenity> listAllAmenities(String communityId);
+
+  boolean updateAmenity(AmenityDto updatedAmenityDto);
 }

@@ -1,6 +1,7 @@
 package com.myhome.services.springdatajpa;
 
 import com.myhome.controllers.dto.AmenityDto;
+import com.myhome.controllers.dto.CommunityAmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Community;
 import com.myhome.domain.Amenity;
@@ -8,6 +9,9 @@ import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -68,5 +72,23 @@ public class AmenitySDJpaService implements AmenityService {
     return communityRepository.findByCommunityIdWithAmenities(communityId)
         .map(Community::getAmenities)
         .orElse(new HashSet<>());
+  }
+
+  @Override
+  public boolean updateAmenity(AmenityDto updatedAmenity) {
+    String amenityId = updatedAmenity.getAmenityId();
+    return amenityRepository.findByAmenityId(amenityId)
+    .map(amenity -> communityRepository.findByCommunityId(updatedAmenity.getCommunityId())
+    .map(community -> {
+      Amenity updated = new Amenity();
+      updated.setName(updatedAmenity.getName());
+      updated.setPrice(updatedAmenity.getPrice());
+      updated.setId(amenity.getId());
+      updated.setAmenityId(amenityId);
+      updated.setDescription(updatedAmenity.getDescription());
+      return updated;
+    })
+    .orElse(null))
+    .map(amenityRepository::save).isPresent();
   }
 }

@@ -1,6 +1,7 @@
 package com.myhome.controllers.mapper;
 
 import com.myhome.controllers.dto.AmenityDto;
+import com.myhome.controllers.request.UpdateAmenityRequest;
 import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
 import java.util.Set;
@@ -16,4 +17,6 @@ public interface AmenityApiMapper {
   Amenity amenityDtoToAmenity(AmenityDto amenityDto);
 
   AmenityDto amenityToAmenityDto(Amenity amenity);
+
+  AmenityDto updateAmenityRequestToAmenityDto(UpdateAmenityRequest request);
 }

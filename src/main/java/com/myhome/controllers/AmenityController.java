@@ -1,7 +1,10 @@
 package com.myhome.controllers;
 
+import com.myhome.controllers.dto.AmenityDto;
+import com.myhome.controllers.dto.CommunityAmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.controllers.request.AddAmenityRequest;
+import com.myhome.controllers.request.UpdateAmenityRequest;
 import com.myhome.controllers.response.amenity.AddAmenityResponse;
 import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
@@ -18,8 +21,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -86,5 +92,25 @@ public class AmenityController {
         .map(AddAmenityResponse::new)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
+  }
+
+  @Operation(
+  description = "Update an amenity",
+  responses = {
+  @ApiResponse(responseCode = "204", description = "If updated successfully"),
+  @ApiResponse(responseCode = "400", description = "If amenity is not found"),
+  }
+  )
+  @PutMapping(path = "amenities/{amenityId}")
+  public ResponseEntity<Void> updateAmenity(@PathVariable String amenityId,
+                                            @Valid @RequestBody UpdateAmenityRequest request) {
+    AmenityDto amenityDto = amenityApiMapper.updateAmenityRequestToAmenityDto(request);
+    amenityDto.setAmenityId(amenityId);
+    boolean isUpdated = amenitySDJpaService.updateAmenity(amenityDto);
+    if (isUpdated) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 }

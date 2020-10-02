@@ -76,18 +76,16 @@ public interface SchedulePaymentApiMapper {
 
   @Named("adminIdToAdmin")
   static UserDto adminIdToAdminDto(String adminId) {
-    UserDto userDto = UserDto.builder()
+    return UserDto.builder()
                       .userId(adminId)
                       .build();
-    return userDto;
   }
 
   @Named("memberIdToMember")
   static HouseMemberDto memberIdToMemberDto(String memberId) {
-    HouseMemberDto houseMemberDto = HouseMemberDto.builder()
+    return HouseMemberDto.builder()
                                     .memberId(memberId)
                                     .build();
-    return houseMemberDto;
   }
 
   Set<ListMemberPaymentsResponse.MemberPayment> memberPaymentSetToRestApiResponseMemberPaymentSet(

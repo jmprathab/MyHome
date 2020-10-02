@@ -27,7 +27,6 @@ import javax.persistence.NamedEntityGraph;
     }
 )
 public class Amenity extends BaseEntity {
-
   @Column(nullable = false, unique = true)
   private String amenityId;
   @Column(nullable = false)

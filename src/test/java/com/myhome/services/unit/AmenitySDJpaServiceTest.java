@@ -29,8 +29,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class AmenitySDJpaServiceTest {
 
@@ -40,6 +42,8 @@ class AmenitySDJpaServiceTest {
   private final String TEST_COMMUNITY_ID = "test-community-id";
   private final String TEST_COMMUNITY_NAME = "test-community-name";
   private final String TEST_COMMUNITY_DISTRICT = "test-community-name";
+  private static final String TEST_AMENITY_NAME = "test-amenity-name";
+  private static final BigDecimal TEST_AMENITY_PRICE = BigDecimal.valueOf(1);
 
   @Mock
   private AmenityRepository amenityRepository;
@@ -189,6 +193,92 @@ class AmenitySDJpaServiceTest {
     verifyNoInteractions(amenityRepository);
   }
 
+  @Test
+  void shouldUpdateCommunityAmenitySuccessfully() {
+    // given
+    Amenity communityAmenity = getTestAmenity();
+    Community testCommunity = getTestCommunity();
+    AmenityDto updated = getTestAmenityDto();
+    Amenity updatedAmenity = getUpdatedCommunityAmenity();
+
+    given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
+    .willReturn(Optional.of(communityAmenity));
+    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    .willReturn(Optional.of(testCommunity));
+    given(amenityRepository.save(updatedAmenity))
+    .willReturn(updatedAmenity);
+
+    // when
+    boolean result = amenitySDJpaService.updateAmenity(updated);
+
+    // then
+    assertTrue(result);
+    verify(amenityRepository).findByAmenityId(TEST_AMENITY_ID);
+    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(amenityRepository).save(updatedAmenity);
+  }
+
+  @Test
+  void shouldNotUpdateCommunityAmenitySuccessfullyIfAmenityNotExists() {
+    // given
+    given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
+    .willReturn(Optional.empty());
+
+    // when
+    boolean result = amenitySDJpaService.updateAmenity(getTestAmenityDto());
+
+    // then
+    assertFalse(result);
+    verify(amenityRepository, times(0)).save(getUpdatedCommunityAmenity());
+    verifyNoInteractions(communityRepository);
+  }
+
+  @Test
+  void shouldNotUpdateCommunityAmenitySuccessfullyIfSavingFails() {
+    // given
+    Amenity testAmenity = getTestAmenity();
+    Amenity updatedAmenity = getUpdatedCommunityAmenity();
+    AmenityDto updatedDto = getTestAmenityDto();
+    Community community = getTestCommunity();
+
+    given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
+    .willReturn(Optional.of(testAmenity));
+    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    .willReturn(Optional.of(community));
+    given(amenityRepository.save(updatedAmenity))
+    .willReturn(null);
+
+    // when
+    boolean result = amenitySDJpaService.updateAmenity(updatedDto);
+
+    // then
+    assertFalse(result);
+    verify(amenityRepository).findByAmenityId(TEST_AMENITY_ID);
+    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verify(amenityRepository).save(updatedAmenity);
+  }
+
+  @Test
+  void shouldNotUpdateAmenityIfCommunityDoesNotExist() {
+    // given
+    Amenity communityAmenity = getTestAmenity();
+    AmenityDto updatedDto = getTestAmenityDto();
+
+    given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
+    .willReturn(Optional.of(communityAmenity));
+    given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
+    .willReturn(Optional.empty());
+
+    // when
+    boolean result = amenitySDJpaService.updateAmenity(updatedDto);
+
+    // then
+    assertFalse(result);
+    verify(amenityRepository).findByAmenityId(TEST_AMENITY_ID);
+    verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
+    verifyNoMoreInteractions(amenityRepository);
+  }
+
   private Amenity getTestAmenity() {
     return new Amenity()
         .withAmenityId(TEST_AMENITY_ID)
@@ -205,5 +295,28 @@ class AmenitySDJpaServiceTest {
         TEST_COMMUNITY_DISTRICT,
         new HashSet<>()
     );
+  }
+
+  private AmenityDto getTestAmenityDto() {
+    Long TEST_AMENITY_ENTITY_ID = 1L;
+
+    return new AmenityDto(
+    TEST_AMENITY_ENTITY_ID,
+    TEST_AMENITY_ID,
+    TEST_AMENITY_NAME,
+    TEST_AMENITY_DESCRIPTION,
+    TEST_AMENITY_PRICE,
+    TEST_COMMUNITY_ID
+    );
+  }
+
+  private Amenity getUpdatedCommunityAmenity() {
+    AmenityDto communityAmenityDto = getTestAmenityDto();
+    return new Amenity()
+    .withAmenityId(communityAmenityDto.getAmenityId())
+    .withName(communityAmenityDto.getName())
+    .withPrice(communityAmenityDto.getPrice())
+    .withDescription(communityAmenityDto.getDescription())
+    .withCommunity(getTestCommunity());
   }
 }

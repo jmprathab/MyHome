@@ -2,8 +2,10 @@ package com.myhome.controllers.unit;
 
 import com.myhome.controllers.AmenityController;
 import com.myhome.controllers.dto.AmenityDto;
+import com.myhome.controllers.dto.CommunityAmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.controllers.request.AddAmenityRequest;
+import com.myhome.controllers.request.UpdateAmenityRequest;
 import com.myhome.controllers.response.amenity.AddAmenityResponse;
 import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
@@ -31,8 +33,11 @@ import static org.mockito.Mockito.verify;
 
 class AmenityControllerTest {
 
+  private static final String TEST_AMENITY_NAME = "test-amenity-name";
+  private static final BigDecimal TEST_AMENITY_PRICE = BigDecimal.valueOf(1);
   private final String TEST_AMENITY_ID = "test-amenity-id";
   private final String TEST_AMENITY_DESCRIPTION = "test-amenity-description";
+  private final String TEST_COMMUNITY_ID = "1";
 
   @Mock
   private AmenityService amenitySDJpaService;
@@ -154,9 +159,71 @@ class AmenityControllerTest {
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
   }
 
+  @Test
+  void shouldUpdateAmenitySuccessfully() {
+    // given
+    AmenityDto amenityDto = getTestAmenityDto();
+    UpdateAmenityRequest request = getUpdateAmenityRequest();
+
+    given(amenityApiMapper.updateAmenityRequestToAmenityDto(request))
+    .willReturn(amenityDto);
+    given(amenitySDJpaService.updateAmenity(amenityDto))
+    .willReturn(true);
+
+    // when
+    ResponseEntity<Void> responseEntity =
+    amenityController.updateAmenity(TEST_AMENITY_ID, request);
+
+    // then
+    assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+    verify(amenityApiMapper).updateAmenityRequestToAmenityDto(request);
+    verify(amenitySDJpaService).updateAmenity(amenityDto);
+  }
+
+  @Test
+  void shouldNotUpdateCommunityAmenityIfAmenityNotExists() {
+    // given
+    AmenityDto amenityDto = getTestAmenityDto();
+    UpdateAmenityRequest request = getUpdateAmenityRequest();
+
+    given(amenityApiMapper.updateAmenityRequestToAmenityDto(request))
+    .willReturn(amenityDto);
+    given(amenitySDJpaService.updateAmenity(amenityDto))
+    .willReturn(false);
+
+    // when
+    ResponseEntity<Void> responseEntity =
+    amenityController.updateAmenity(TEST_AMENITY_ID, request);
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    verify(amenityApiMapper).updateAmenityRequestToAmenityDto(request);
+    verify(amenitySDJpaService).updateAmenity(amenityDto);
+  }
+
   private Amenity getTestAmenity() {
     return new Amenity()
         .withAmenityId(TEST_AMENITY_ID)
         .withDescription(TEST_AMENITY_DESCRIPTION);
+  }
+
+  private AmenityDto getTestAmenityDto() {
+    return new AmenityDto(
+    Long.valueOf(1),
+    TEST_AMENITY_ID,
+    TEST_AMENITY_NAME,
+    TEST_AMENITY_DESCRIPTION,
+    TEST_AMENITY_PRICE,
+    TEST_COMMUNITY_ID
+    );
+  }
+
+  private UpdateAmenityRequest getUpdateAmenityRequest() {
+    return new UpdateAmenityRequest(
+    TEST_AMENITY_NAME,
+    TEST_AMENITY_DESCRIPTION,
+    1,
+    TEST_COMMUNITY_ID
+    );
   }
 }
