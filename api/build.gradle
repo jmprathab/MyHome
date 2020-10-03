@@ -1,0 +1,60 @@
+/*
+ * Copyright 2020 Marcin Słowiak
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+plugins {
+  id "idea"
+  id "org.openapi.generator"
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation "io.swagger:swagger-annotations:${swaggerAnnotationsVersion}"
+  implementation "javax.validation:validation-api:${javaxValidationApiVersion}"
+  implementation "com.fasterxml.jackson.core:jackson-annotations:${fasterXmlJacksonAnnotationsVersion}"
+  implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+  implementation "org.openapitools:jackson-databind-nullable:${jacksonDatabindNullableVersion}"
+  implementation "io.springfox:springfox-swagger2:${springFoxVersion}"
+  implementation "io.springfox:springfox-swagger-ui:${springFoxVersion}"
+  implementation "io.springfox:springfox-spring-web:${springFoxVersion}"
+}
+
+task generateOpenApiSpec(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+  generatorName = "spring"
+  inputSpec = "$projectDir/src/main/resources/api.yaml".toString()
+  outputDir = "$buildDir/generated".toString()
+  apiPackage = "com.myhome.api"
+  invokerPackage = "com.myhome.utils"
+  modelPackage = "com.myhome.model"
+}
+compileJava.dependsOn(generateOpenApiSpec)
+
+def generatedSourcesDir = file("build/generated/src/main/java")
+sourceSets {
+  main {
+    java {
+      srcDir 'build/generated/src/main/java'
+    }
+  }
+}
+idea {
+  module {
+    sourceDirs += generatedSourcesDir
+    generatedSourceDirs += generatedSourcesDir
+  }
+}

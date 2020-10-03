@@ -22,6 +22,8 @@ plugins {
 
 dependencies {
 
+    implementation project(":api")
+
     // Spring web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -59,7 +61,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // Documentation
-    implementation "org.springdoc:springdoc-openapi-ui:${openApiVersion}"
+    implementation "org.springdoc:springdoc-openapi-ui:${springDocOpenApiVersion}"
 }
 
 
