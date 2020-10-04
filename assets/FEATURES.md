@@ -3,12 +3,12 @@
 - [MyHome Requirements Elicitation](#myhome-requirements-elicitation)
   * [Description](#description)
   * [User Management](#user-management)
-  * [Community Management](#community-management)
-  * [House Management](#house-management)
+  * [Community Management ✅](#community-management)
+  * [House Management ✅](#house-management)
   * [Payment Management](#payment-management)
-  * [Amenity Management](#amenity-management)
+  * [Amenity Management ✅](#amenity-management)
   * [Amenity Booking Management](#amenity-booking-management)
-  * [House Member Document Management](#house-member-document-management)
+  * [House Member Document Management ✅](#house-member-document-management)
   * [Application Deployment](#application-deployment)
   * [Report Generation](#report-generation)
   * [Troubleshooting/Prepare for Release](#troubleshooting-prepare-for-release)
@@ -23,25 +23,25 @@ MyHome is an application which helps people to manage their apartment.
 
 | Feature                                     | Description                                                  | Notes |
 | ------------------------------------------- | ------------------------------------------------------------ | ----- |
-| Create Account                              | Create a new user in the application. User gives email for registration. |       |
-| Login                                       | Users should login to the system to use the application.     |       |
+| Create Account                              | Create a new user in the application. User gives email for registration. | ✅     |
+| Login                                       | Users should login to the system to use the application.     | ✅     |
 | Forgot Password                             | Users should be able to reset their password.                |       |
 | Disclaimer/License agreement during signup. | Show Disclaimer/License during signup. User has to accept the terms and conditions for sign up. Anything special for GDPR? |       |
 
-## Community Management
+## Community Management ✅
 
 | Feature                   | Description                                                  | Notes |
 | ------------------------- | ------------------------------------------------------------ | ----- |
-| Create a community        | Add a new community. User who creates a community will be the admin of the community. |       |
-| Delete a community        | Deleting a community deletes all the houses in the community. Thereby deleting all the entities which belongs to the community. |       |
-| Add admins to a community | Admins should be an existing registered user of the application. |       |
+| Create a community        | Add a new community. User who creates a community will be the admin of the community. | ✅     |
+| Delete a community        | Deleting a community deletes all the houses in the community. Thereby deleting all the entities which belongs to the community. | ✅     |
+| Add admins to a community | Admins should be an existing registered user of the application. | ✅     |
 
-## House Management
+## House Management ✅
 
 | Feature                  | Description                                               | Notes |
 | ------------------------ | --------------------------------------------------------- | ----- |
-| Add house to a community | Houses can be added to a community.                       |       |
-| Add members to a house   | Community Admins should be able to add members to a house |       |
+| Add house to a community | Houses can be added to a community.                       | ✅     |
+| Add members to a house   | Community Admins should be able to add members to a house | ✅     |
 
 ## Payment Management
 
@@ -51,11 +51,11 @@ MyHome is an application which helps people to manage their apartment.
 | Schedule recurring payments        | Community admins should be able to schedule recurring payments for a house |       |
 | Marking payments as complete       | House members should be able to mark payments as paid.       |       |
 
-## Amenity Management
+## Amenity Management ✅
 
 | Feature                        | Description                                                  | Notes |
 | ------------------------------ | ------------------------------------------------------------ | ----- |
-| Add amenity by community admin | Community admins should be able to add amenities to a community |       |
+| Add amenity by community admin | Community admins should be able to add amenities to a community | ✅     |
 
 ## Amenity Booking Management
 
@@ -64,12 +64,12 @@ MyHome is an application which helps people to manage their apartment.
 | Booking amenities | House members should be able to book amenities for a time slot. |       |
 | Delete booking    | House members should be able to delete a future booking      |       |
 
-## House Member Document Management
+## House Member Document Management ✅
 
 | Feature                             | Description                                                  | Notes |
 | ----------------------------------- | ------------------------------------------------------------ | ----- |
-| Add documents for a house member    | Community Admin should be able to add documents for a house member |       |
-| Delete documents for a house member | Community Admin should be able to delete documents for a house member |       |
+| Add documents for a house member    | Community Admin should be able to add documents for a house member | ✅     |
+| Delete documents for a house member | Community Admin should be able to delete documents for a house member | ✅     |
 
 ## Application Deployment
 
@@ -94,6 +94,7 @@ MyHome is an application which helps people to manage their apartment.
 | MongoDB/MySQL integration | Switch from H2DB to MySQL/MongoDB                            |       |
 | Spring boot actuator      | Enable Spring boot actuator endpoints.                       |       |
 | Feedback                  | Users of the application to give feedback to the developers. |       |
+| Version all APIs          | REST APIs should be versioned                                |       |
 
 ## Frontend
 
