@@ -69,10 +69,10 @@ class UserControllerTest {
     // given
     CreateUserRequest request = new CreateUserRequest(TEST_NAME, TEST_EMAIL, TEST_PASSWORD);
     UserDto userDto = UserDto.builder()
-                      .name(TEST_NAME)
-                      .email(TEST_EMAIL)
-                      .password(TEST_PASSWORD)
-                      .build();
+        .name(TEST_NAME)
+        .email(TEST_EMAIL)
+        .password(TEST_PASSWORD)
+        .build();
     CreateUserResponse createUserResponse = new CreateUserResponse(TEST_ID, TEST_NAME, TEST_EMAIL);
 
     given(userApiMapper.createUserRequestToUserDto(request))
@@ -152,8 +152,8 @@ class UserControllerTest {
     // given
     String userId = TEST_ID;
     UserDto userDto = UserDto.builder()
-                      .userId(userId)
-                      .build();
+        .userId(userId)
+        .build();
     GetUserDetailsResponse.User expectedResponse = new GetUserDetailsResponse.User(
         TEST_ID,
         TEST_NAME,

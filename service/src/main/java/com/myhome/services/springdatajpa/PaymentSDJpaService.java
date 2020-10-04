@@ -84,7 +84,8 @@ public class PaymentSDJpaService implements PaymentService {
             "admin");
 
     Example<Payment> paymentExample =
-        Example.of(new Payment(null, null, null, null, false, null, null, new HouseMember().withMemberId(memberId)),
+        Example.of(new Payment(null, null, null, null, false, null, null,
+                new HouseMember().withMemberId(memberId)),
             ignoringMatcher);
 
     return new HashSet<>(paymentRepository.findAll(paymentExample));
@@ -99,7 +100,8 @@ public class PaymentSDJpaService implements PaymentService {
             "memberId");
 
     Example<Payment> paymentExample =
-        Example.of(new Payment(null, null, null, null, false, null, new User().withUserId(adminId), null),
+        Example.of(
+            new Payment(null, null, null, null, false, null, new User().withUserId(adminId), null),
             ignoringMatcher);
 
     return new HashSet<>(paymentRepository.findAll(paymentExample));

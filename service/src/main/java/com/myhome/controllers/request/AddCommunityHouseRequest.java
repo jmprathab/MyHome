@@ -16,11 +16,10 @@
 
 package com.myhome.controllers.request;
 
+import com.myhome.controllers.dto.CommunityHouseName;
 import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.NotEmpty;
-
-import com.myhome.controllers.dto.CommunityHouseName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

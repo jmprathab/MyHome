@@ -28,7 +28,6 @@ import com.myhome.domain.User;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
-
 import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
@@ -67,18 +66,21 @@ public class PaymentController {
     Optional<HouseMember> houseMember = paymentService.getHouseMember(request.getMemberId());
     Optional<User> adminOptional = communityService.findCommunityAdminById(request.getAdminId());
 
-     return houseMember.flatMap(member -> adminOptional.filter(admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin)))
-      .map(admin -> schedulePaymentApiMapper.enrichedSchedulePaymentRequestToPaymentDto(schedulePaymentApiMapper.enrichSchedulePaymentRequest(request, admin, houseMember.get())))
-      .map(paymentService::schedulePayment)
-      .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
-      .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
-      .orElseGet(() -> ResponseEntity.notFound().build());
+    return houseMember.flatMap(member -> adminOptional.filter(
+        admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin)))
+        .map(admin -> schedulePaymentApiMapper.enrichedSchedulePaymentRequestToPaymentDto(
+            schedulePaymentApiMapper.enrichSchedulePaymentRequest(request, admin,
+                houseMember.get())))
+        .map(paymentService::schedulePayment)
+        .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
+        .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   private Boolean isUserAdminOfCommunityHouse(CommunityHouse communityHouse, User admin) {
     return communityHouse.getCommunity()
-            .getAdmins()
-            .contains(admin);
+        .getAdmins()
+        .contains(admin);
   }
 
   @Operation(description = "Get details about a payment with the given payment id")

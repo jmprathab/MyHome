@@ -163,13 +163,13 @@ class AmenityControllerTest {
     UpdateAmenityRequest request = getUpdateAmenityRequest();
 
     given(amenityApiMapper.updateAmenityRequestToAmenityDto(request))
-    .willReturn(amenityDto);
+        .willReturn(amenityDto);
     given(amenitySDJpaService.updateAmenity(amenityDto))
-    .willReturn(true);
+        .willReturn(true);
 
     // when
     ResponseEntity<Void> responseEntity =
-    amenityController.updateAmenity(TEST_AMENITY_ID, request);
+        amenityController.updateAmenity(TEST_AMENITY_ID, request);
 
     // then
     assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
@@ -184,13 +184,13 @@ class AmenityControllerTest {
     UpdateAmenityRequest request = getUpdateAmenityRequest();
 
     given(amenityApiMapper.updateAmenityRequestToAmenityDto(request))
-    .willReturn(amenityDto);
+        .willReturn(amenityDto);
     given(amenitySDJpaService.updateAmenity(amenityDto))
-    .willReturn(false);
+        .willReturn(false);
 
     // when
     ResponseEntity<Void> responseEntity =
-    amenityController.updateAmenity(TEST_AMENITY_ID, request);
+        amenityController.updateAmenity(TEST_AMENITY_ID, request);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -206,21 +206,21 @@ class AmenityControllerTest {
 
   private AmenityDto getTestAmenityDto() {
     return new AmenityDto(
-    Long.valueOf(1),
-    TEST_AMENITY_ID,
-    TEST_AMENITY_NAME,
-    TEST_AMENITY_DESCRIPTION,
-    TEST_AMENITY_PRICE,
-    TEST_COMMUNITY_ID
+        Long.valueOf(1),
+        TEST_AMENITY_ID,
+        TEST_AMENITY_NAME,
+        TEST_AMENITY_DESCRIPTION,
+        TEST_AMENITY_PRICE,
+        TEST_COMMUNITY_ID
     );
   }
 
   private UpdateAmenityRequest getUpdateAmenityRequest() {
     return new UpdateAmenityRequest(
-    TEST_AMENITY_NAME,
-    TEST_AMENITY_DESCRIPTION,
-    1,
-    TEST_COMMUNITY_ID
+        TEST_AMENITY_NAME,
+        TEST_AMENITY_DESCRIPTION,
+        1,
+        TEST_COMMUNITY_ID
     );
   }
 }

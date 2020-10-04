@@ -27,10 +27,9 @@ import com.myhome.controllers.response.SchedulePaymentResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
+import com.myhome.domain.User;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.myhome.domain.User;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -41,34 +40,23 @@ import org.mapstruct.Named;
 @Mapper
 public interface SchedulePaymentApiMapper {
 
-  @Mappings({
-    @Mapping(source = "adminId", target = "admin", qualifiedByName = "adminIdToAdmin"),
-    @Mapping(source = "memberId", target = "member", qualifiedByName = "memberIdToMember")
-  })
-  PaymentDto schedulePaymentRequestToPaymentDto(SchedulePaymentRequest schedulePaymentRequest);
-
-  @Mappings({
-    @Mapping(target = "admin", ignore = true),
-    @Mapping(target = "member", ignore = true)
-  })
-  PaymentDto enrichedSchedulePaymentRequestToPaymentDto(EnrichedSchedulePaymentRequest enrichedSchedulePaymentRequest);
-
   @AfterMapping
-  static void setUpUserAndAdmin(@MappingTarget PaymentDto paymentDto, EnrichedSchedulePaymentRequest enrichedSchedulePaymentRequest) {
+  static void setUpUserAndAdmin(@MappingTarget PaymentDto paymentDto,
+      EnrichedSchedulePaymentRequest enrichedSchedulePaymentRequest) {
     UserDto userDto = UserDto.builder()
-                      .id(enrichedSchedulePaymentRequest.getAdminEntityId())
-                      .userId(enrichedSchedulePaymentRequest.getAdminId())
-                      .encryptedPassword(enrichedSchedulePaymentRequest.getAdminEncryptedPassword())
-                      .name(enrichedSchedulePaymentRequest.getAdminName())
-                      .email(enrichedSchedulePaymentRequest.getAdminEmail())
-                      .communityIds(enrichedSchedulePaymentRequest.getAdminCommunityIds())
-                      .build();
+        .id(enrichedSchedulePaymentRequest.getAdminEntityId())
+        .userId(enrichedSchedulePaymentRequest.getAdminId())
+        .encryptedPassword(enrichedSchedulePaymentRequest.getAdminEncryptedPassword())
+        .name(enrichedSchedulePaymentRequest.getAdminName())
+        .email(enrichedSchedulePaymentRequest.getAdminEmail())
+        .communityIds(enrichedSchedulePaymentRequest.getAdminCommunityIds())
+        .build();
 
     HouseMemberDto houseMemberDto = HouseMemberDto.builder()
-                                    .id(enrichedSchedulePaymentRequest.getMemberEntityId())
-                                    .memberId(enrichedSchedulePaymentRequest.getMemberId())
-                                    .name(enrichedSchedulePaymentRequest.getHouseMemberName())
-                                    .build();
+        .id(enrichedSchedulePaymentRequest.getMemberEntityId())
+        .memberId(enrichedSchedulePaymentRequest.getMemberId())
+        .name(enrichedSchedulePaymentRequest.getHouseMemberName())
+        .build();
 
     paymentDto.setAdmin(userDto);
     paymentDto.setMember(houseMemberDto);
@@ -77,16 +65,39 @@ public interface SchedulePaymentApiMapper {
   @Named("adminIdToAdmin")
   static UserDto adminIdToAdminDto(String adminId) {
     return UserDto.builder()
-                      .userId(adminId)
-                      .build();
+        .userId(adminId)
+        .build();
   }
 
   @Named("memberIdToMember")
   static HouseMemberDto memberIdToMemberDto(String memberId) {
     return HouseMemberDto.builder()
-                                    .memberId(memberId)
-                                    .build();
+        .memberId(memberId)
+        .build();
   }
+
+  @Named("adminToAdminId")
+  static String adminToAdminId(UserDto userDto) {
+    return userDto.getUserId();
+  }
+
+  @Named("memberToMemberId")
+  static String memberToMemberId(HouseMemberDto houseMemberDto) {
+    return houseMemberDto.getMemberId();
+  }
+
+  @Mappings({
+      @Mapping(source = "adminId", target = "admin", qualifiedByName = "adminIdToAdmin"),
+      @Mapping(source = "memberId", target = "member", qualifiedByName = "memberIdToMember")
+  })
+  PaymentDto schedulePaymentRequestToPaymentDto(SchedulePaymentRequest schedulePaymentRequest);
+
+  @Mappings({
+      @Mapping(target = "admin", ignore = true),
+      @Mapping(target = "member", ignore = true)
+  })
+  PaymentDto enrichedSchedulePaymentRequestToPaymentDto(
+      EnrichedSchedulePaymentRequest enrichedSchedulePaymentRequest);
 
   Set<ListMemberPaymentsResponse.MemberPayment> memberPaymentSetToRestApiResponseMemberPaymentSet(
       Set<Payment> memberPaymentSet);
@@ -101,41 +112,33 @@ public interface SchedulePaymentApiMapper {
   ListAdminPaymentsResponse.AdminPayment paymentToAdminPayment(Payment payment);
 
   @Mappings({
-    @Mapping(source = "admin", target = "adminId", qualifiedByName = "adminToAdminId"),
-    @Mapping(source = "member", target = "memberId", qualifiedByName = "memberToMemberId")
+      @Mapping(source = "admin", target = "adminId", qualifiedByName = "adminToAdminId"),
+      @Mapping(source = "member", target = "memberId", qualifiedByName = "memberToMemberId")
   })
   SchedulePaymentResponse paymentToSchedulePaymentResponse(PaymentDto payment);
 
-  @Named("adminToAdminId")
-  static String adminToAdminId(UserDto userDto) {
-    return userDto.getUserId();
-  }
-
-  @Named("memberToMemberId")
-  static String memberToMemberId(HouseMemberDto houseMemberDto) {
-    return houseMemberDto.getMemberId();
-  }
-
-  default EnrichedSchedulePaymentRequest enrichSchedulePaymentRequest(SchedulePaymentRequest request, User admin, HouseMember member) {
+  default EnrichedSchedulePaymentRequest enrichSchedulePaymentRequest(
+      SchedulePaymentRequest request, User admin, HouseMember member) {
     Set<String> communityIds = admin.getCommunities()
-                                .stream()
-                                .map(Community::getCommunityId)
-                                .collect(Collectors.toSet());
+        .stream()
+        .map(Community::getCommunityId)
+        .collect(Collectors.toSet());
     return new EnrichedSchedulePaymentRequest(request.getType(),
-    request.getDescription(),
-    request.isRecurring(),
-    request.getCharge(),
-    request.getDueDate(),
-    request.getAdminId(),
-    admin.getId(),
-    admin.getName(),
-    admin.getEmail(),
-    admin.getEncryptedPassword(),
-    communityIds,
-    member.getMemberId(),
-    member.getId(),
-    member.getHouseMemberDocument() != null ? member.getHouseMemberDocument().getDocumentFilename():"",
-    member.getName(),
-    member.getCommunityHouse() != null ? member.getCommunityHouse().getHouseId():"");
+        request.getDescription(),
+        request.isRecurring(),
+        request.getCharge(),
+        request.getDueDate(),
+        request.getAdminId(),
+        admin.getId(),
+        admin.getName(),
+        admin.getEmail(),
+        admin.getEncryptedPassword(),
+        communityIds,
+        member.getMemberId(),
+        member.getId(),
+        member.getHouseMemberDocument() != null ? member.getHouseMemberDocument()
+            .getDocumentFilename() : "",
+        member.getName(),
+        member.getCommunityHouse() != null ? member.getCommunityHouse().getHouseId() : "");
   }
 }

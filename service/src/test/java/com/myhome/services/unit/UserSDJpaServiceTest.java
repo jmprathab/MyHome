@@ -5,21 +5,19 @@ import com.myhome.controllers.dto.mapper.UserMapper;
 import com.myhome.domain.Community;
 import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
-import com.myhome.services.CommunityService;
 import com.myhome.services.springdatajpa.UserSDJpaService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -128,12 +126,14 @@ class UserSDJpaServiceTest {
   void getUserDetailsSuccessWithCommunityIds() {
     // given
     UserDto userDto = getDefaultUserDtoRequest();
-    User user = new User(userDto.getName(), userDto.getUserId(), userDto.getEmail(), userDto.getEncryptedPassword(), new HashSet<>());
+    User user = new User(userDto.getName(), userDto.getUserId(), userDto.getEmail(),
+        userDto.getEncryptedPassword(), new HashSet<>());
 
     Community firstCommunity = createCommunityWithUserAdmin(user);
     Community secCommunity = createCommunityWithUserAdmin(user);
 
-    Set<Community> communities = Stream.of(firstCommunity, secCommunity).collect(Collectors.toSet());
+    Set<Community> communities =
+        Stream.of(firstCommunity, secCommunity).collect(Collectors.toSet());
     user.setCommunities(communities);
 
     Set<String> communitiesIds = communities
@@ -201,5 +201,4 @@ class UserSDJpaServiceTest {
   private String generateUniqueId() {
     return UUID.randomUUID().toString();
   }
-
 }

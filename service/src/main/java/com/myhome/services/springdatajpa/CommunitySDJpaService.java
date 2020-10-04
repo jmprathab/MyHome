@@ -26,28 +26,18 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
-
+import com.myhome.services.HouseService;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import com.myhome.services.HouseService;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 
 @Slf4j
 @RequiredArgsConstructor
@@ -83,7 +73,7 @@ public class CommunitySDJpaService implements CommunityService {
 
   @Override
   public Optional<List<CommunityHouse>> findCommunityHousesById(String communityId,
-                                                                Pageable pageable) {
+      Pageable pageable) {
     boolean exists = communityRepository.existsByCommunityId(communityId);
     if (exists) {
       return Optional.of(
@@ -94,7 +84,7 @@ public class CommunitySDJpaService implements CommunityService {
 
   @Override
   public Optional<List<User>> findCommunityAdminsById(String communityId,
-                                                      Pageable pageable) {
+      Pageable pageable) {
     boolean exists = communityRepository.existsByCommunityId(communityId);
     if (exists) {
       return Optional.of(
@@ -120,7 +110,8 @@ public class CommunitySDJpaService implements CommunityService {
 
   @Override
   public Optional<Community> addAdminsToCommunity(String communityId, Set<String> adminsIds) {
-    Optional<Community> communitySearch = communityRepository.findByCommunityIdWithAdmins(communityId);
+    Optional<Community> communitySearch =
+        communityRepository.findByCommunityIdWithAdmins(communityId);
 
     return communitySearch.map(community -> {
       adminsIds.forEach(adminId -> {
@@ -136,7 +127,8 @@ public class CommunitySDJpaService implements CommunityService {
 
   @Override
   public Set<String> addHousesToCommunity(String communityId, Set<CommunityHouse> houses) {
-    Optional<Community> communitySearch = communityRepository.findByCommunityIdWithHouses(communityId);
+    Optional<Community> communitySearch =
+        communityRepository.findByCommunityIdWithHouses(communityId);
 
     return communitySearch.map(community -> {
       Set<String> addedIds = new HashSet<>();
@@ -166,7 +158,8 @@ public class CommunitySDJpaService implements CommunityService {
 
   @Override
   public boolean removeAdminFromCommunity(String communityId, String adminId) {
-    Optional<Community> communitySearch = communityRepository.findByCommunityIdWithAdmins(communityId);
+    Optional<Community> communitySearch =
+        communityRepository.findByCommunityIdWithAdmins(communityId);
     return communitySearch.map(community -> {
       boolean adminRemoved =
           community.getAdmins().removeIf(admin -> admin.getUserId().equals(adminId));
@@ -207,15 +200,18 @@ public class CommunitySDJpaService implements CommunityService {
     if (community == null) {
       return false;
     } else {
-      Optional<CommunityHouse> houseOptional = communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
+      Optional<CommunityHouse> houseOptional =
+          communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
       return houseOptional.map(house -> {
         Set<CommunityHouse> houses = community.getHouses();
-        houses.remove(house); //remove the house before deleting house members because otherwise the Set relationship would be broken and remove would not work
+        houses.remove(
+            house); //remove the house before deleting house members because otherwise the Set relationship would be broken and remove would not work
 
         Set<String> memberIds = house.getHouseMembers()
             .stream()
             .map(HouseMember::getMemberId)
-            .collect(Collectors.toSet()); //streams are immutable so need to collect all the member IDs and then delete them from the house
+            .collect(
+                Collectors.toSet()); //streams are immutable so need to collect all the member IDs and then delete them from the house
 
         memberIds.forEach(id -> houseService.deleteMemberFromHouse(houseId, id));
 

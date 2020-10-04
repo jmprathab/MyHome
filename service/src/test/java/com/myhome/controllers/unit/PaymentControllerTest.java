@@ -99,29 +99,29 @@ class PaymentControllerTest {
 
   private PaymentDto createTestPaymentDto() {
     UserDto userDto = UserDto.builder()
-                      .userId(TEST_ADMIN_ID)
-                      .communityIds(new HashSet<>(Arrays.asList(TEST_COMMUNITY_ID)))
-                      .id(Long.valueOf(TEST_ADMIN_ID))
-                      .encryptedPassword(TEST_ADMIN_PASSWORD)
-                      .name(TEST_ADMIN_NAME)
-                      .email(TEST_ADMIN_EMAIL)
-                      .build();
+        .userId(TEST_ADMIN_ID)
+        .communityIds(new HashSet<>(Arrays.asList(TEST_COMMUNITY_ID)))
+        .id(Long.valueOf(TEST_ADMIN_ID))
+        .encryptedPassword(TEST_ADMIN_PASSWORD)
+        .name(TEST_ADMIN_NAME)
+        .email(TEST_ADMIN_EMAIL)
+        .build();
     HouseMemberDto houseMemberDto = HouseMemberDto.builder()
-                                    .memberId(TEST_MEMBER_ID)
-                                    .name(TEST_MEMBER_NAME)
-                                    .id(Long.valueOf(TEST_MEMBER_ID))
-                                    .build();
+        .memberId(TEST_MEMBER_ID)
+        .name(TEST_MEMBER_NAME)
+        .id(Long.valueOf(TEST_MEMBER_ID))
+        .build();
 
     return PaymentDto.builder()
-            .paymentId(TEST_ID)
-            .type(TEST_TYPE)
-            .description(TEST_DESCRIPTION)
-            .charge(TEST_CHARGE)
-            .dueDate(TEST_DUE_DATE)
-            .recurring(TEST_RECURRING)
-            .admin(userDto)
-            .member(houseMemberDto)
-            .build();
+        .paymentId(TEST_ID)
+        .type(TEST_TYPE)
+        .description(TEST_DESCRIPTION)
+        .charge(TEST_CHARGE)
+        .dueDate(TEST_DUE_DATE)
+        .recurring(TEST_RECURRING)
+        .admin(userDto)
+        .member(houseMemberDto)
+        .build();
   }
 
   private CommunityDto createTestCommunityDto() {
@@ -133,9 +133,11 @@ class PaymentControllerTest {
   }
 
   private Community getMockCommunity(Set<User> admins) {
-    Community community = new Community(admins, new HashSet<>(), TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID,
-        TEST_COMMUNITY_DISTRICT, new HashSet<>());
-    User admin = new User(COMMUNITY_ADMIN_NAME, TEST_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, COMMUNITY_ADMIN_PASSWORD, new HashSet<>());
+    Community community =
+        new Community(admins, new HashSet<>(), TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID,
+            TEST_COMMUNITY_DISTRICT, new HashSet<>());
+    User admin = new User(COMMUNITY_ADMIN_NAME, TEST_ADMIN_ID, COMMUNITY_ADMIN_EMAIL,
+        COMMUNITY_ADMIN_PASSWORD, new HashSet<>());
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
 
@@ -156,23 +158,28 @@ class PaymentControllerTest {
   }
 
   private Payment getMockPayment() {
-    User admin = new User(TEST_ADMIN_NAME, TEST_ADMIN_ID, TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD, new HashSet<>());
+    User admin = new User(TEST_ADMIN_NAME, TEST_ADMIN_ID, TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD,
+        new HashSet<>());
     Community community = getMockCommunity(new HashSet<>());
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
     return new Payment(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING,
         LocalDate.parse(TEST_DUE_DATE, DateTimeFormatter.ofPattern("yyyy-MM-dd")), admin,
-        new HouseMember(TEST_MEMBER_ID, new HouseMemberDocument(), TEST_MEMBER_NAME, new CommunityHouse()));
+        new HouseMember(TEST_MEMBER_ID, new HouseMemberDocument(), TEST_MEMBER_NAME,
+            new CommunityHouse()));
   }
 
   @Test
   void shouldSchedulePaymentSuccessful() {
     // given
     SchedulePaymentRequest request =
-      new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
+            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
     EnrichedSchedulePaymentRequest enrichedRequest =
         new EnrichedSchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
-            TEST_DUE_DATE, TEST_ADMIN_ID, Long.valueOf(1), TEST_ADMIN_NAME, TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD, new HashSet<>(Arrays.asList(TEST_COMMUNITY_ID)), TEST_MEMBER_ID, Long.valueOf(2), "", TEST_MEMBER_NAME, COMMUNITY_HOUSE_ID);
+            TEST_DUE_DATE, TEST_ADMIN_ID, Long.valueOf(1), TEST_ADMIN_NAME, TEST_ADMIN_EMAIL,
+            TEST_ADMIN_PASSWORD, new HashSet<>(Arrays.asList(TEST_COMMUNITY_ID)), TEST_MEMBER_ID,
+            Long.valueOf(2), "", TEST_MEMBER_NAME, COMMUNITY_HOUSE_ID);
     PaymentDto paymentDto = createTestPaymentDto();
     SchedulePaymentResponse response =
         new SchedulePaymentResponse(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION,
@@ -180,14 +187,15 @@ class PaymentControllerTest {
 
     Community community = getMockCommunity(new HashSet<>());
 
-    HouseMember member = new HouseMember(TEST_MEMBER_ID, null, TEST_MEMBER_NAME, community.getHouses().iterator().next());
+    HouseMember member = new HouseMember(TEST_MEMBER_ID, null, TEST_MEMBER_NAME,
+        community.getHouses().iterator().next());
 
     community.getHouses().iterator().next().getHouseMembers().add(member);
 
     User admin = community.getAdmins().iterator().next();
 
     given(paymentApiMapper.enrichSchedulePaymentRequest(request, admin, member))
-      .willReturn(enrichedRequest);
+        .willReturn(enrichedRequest);
     given(paymentApiMapper.enrichedSchedulePaymentRequestToPaymentDto(enrichedRequest))
         .willReturn(paymentDto);
     given(paymentService.schedulePayment(paymentDto))
@@ -197,7 +205,7 @@ class PaymentControllerTest {
     given(paymentService.getHouseMember(TEST_MEMBER_ID))
         .willReturn(Optional.of(member));
     given(communityService.findCommunityAdminById(TEST_ADMIN_ID))
-      .willReturn(Optional.of(community.getAdmins().iterator().next()));
+        .willReturn(Optional.of(community.getAdmins().iterator().next()));
 
     //when
     ResponseEntity<SchedulePaymentResponse> responseEntity =
@@ -242,29 +250,29 @@ class PaymentControllerTest {
   void shouldNotScheduleIfAdminDoesntExist() {
     // given
     SchedulePaymentRequest request =
-     new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
-    TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
+            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
     SchedulePaymentResponse response =
-      new SchedulePaymentResponse(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION,
-    TEST_RECURRING, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentResponse(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION,
+            TEST_RECURRING, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
 
     HouseMember member = new HouseMember(TEST_MEMBER_ID, null, TEST_MEMBER_NAME, null);
 
     given(paymentApiMapper.schedulePaymentRequestToPaymentDto(request))
-      .willReturn(paymentDto);
+        .willReturn(paymentDto);
     given(paymentService.schedulePayment(paymentDto))
-      .willReturn(paymentDto);
+        .willReturn(paymentDto);
     given(paymentApiMapper.paymentToSchedulePaymentResponse(paymentDto))
-      .willReturn(response);
+        .willReturn(response);
     given(paymentService.getHouseMember(TEST_MEMBER_ID))
-      .willReturn(Optional.of(member));
+        .willReturn(Optional.of(member));
     given(communityService.findCommunityAdminById(TEST_ADMIN_ID))
-      .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     //when
     ResponseEntity<SchedulePaymentResponse> responseEntity =
-    paymentController.schedulePayment(request);
+        paymentController.schedulePayment(request);
 
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -278,12 +286,12 @@ class PaymentControllerTest {
   void shouldNotScheduleIfAdminIsNotInCommunity() {
     // given
     SchedulePaymentRequest request =
-      new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
-      TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
+            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
     SchedulePaymentResponse response =
-      new SchedulePaymentResponse(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION,
-       TEST_RECURRING, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentResponse(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION,
+            TEST_RECURRING, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
 
     Community community = getMockCommunity(new HashSet<>());
     Set<User> admins = community.getAdmins();
@@ -295,19 +303,19 @@ class PaymentControllerTest {
     HouseMember member = new HouseMember(TEST_MEMBER_ID, null, TEST_MEMBER_NAME, communityHouse);
 
     given(paymentApiMapper.schedulePaymentRequestToPaymentDto(request))
-    .willReturn(paymentDto);
+        .willReturn(paymentDto);
     given(paymentService.schedulePayment(paymentDto))
-    .willReturn(paymentDto);
+        .willReturn(paymentDto);
     given(paymentApiMapper.paymentToSchedulePaymentResponse(paymentDto))
-    .willReturn(response);
+        .willReturn(response);
     given(paymentService.getHouseMember(TEST_MEMBER_ID))
-    .willReturn(Optional.of(member));
+        .willReturn(Optional.of(member));
     given(communityService.findCommunityAdminById(TEST_ADMIN_ID))
-    .willReturn(Optional.of(admin));
+        .willReturn(Optional.of(admin));
 
     //when
     ResponseEntity<SchedulePaymentResponse> responseEntity =
-    paymentController.schedulePayment(request);
+        paymentController.schedulePayment(request);
 
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());

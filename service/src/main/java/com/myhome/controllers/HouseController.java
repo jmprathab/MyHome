@@ -27,6 +27,10 @@ import com.myhome.domain.HouseMember;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -40,11 +44,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -152,7 +151,7 @@ public class HouseController {
       path = "/houses/{houseId}/members/{memberId}"
   )
   public ResponseEntity<Void> deleteHouseMember(@PathVariable String houseId,
-                                                @PathVariable String memberId) {
+      @PathVariable String memberId) {
     log.trace("Received request to delete a member from house with house id[{}] and member id[{}]",
         houseId, memberId);
     boolean isMemberDeleted = houseService.deleteMemberFromHouse(houseId, memberId);

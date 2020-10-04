@@ -25,10 +25,8 @@ import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
-
-import java.util.Set;
-
 import com.myhome.domain.User;
+import java.util.Set;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -45,7 +43,7 @@ public interface CommunityApiMapper {
   CreateCommunityResponse communityToCreateCommunityResponse(Community community);
 
   Set<ListCommunityAdminsResponse.CommunityAdmin> communityAdminSetToRestApiResponseCommunityAdminSet(
-    Set<User> communityAdminSet);
+      Set<User> communityAdminSet);
 
   @Mapping(source = "userId", target = "adminId")
   ListCommunityAdminsResponse.CommunityAdmin userAdminToResponseAdmin(User user);

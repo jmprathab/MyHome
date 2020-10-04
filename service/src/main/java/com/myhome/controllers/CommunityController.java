@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -255,9 +254,10 @@ public class CommunityController {
 
     Optional<Community> communityOptional = communityService.getCommunityDetailsById(communityId);
 
-    return communityOptional.filter(community -> communityService.removeHouseFromCommunityByHouseId(community, houseId))
-            .map(removed -> ResponseEntity.noContent().<Void>build())
-            .orElseGet(() -> ResponseEntity.notFound().build());
+    return communityOptional.filter(
+        community -> communityService.removeHouseFromCommunityByHouseId(community, houseId))
+        .map(removed -> ResponseEntity.noContent().<Void>build())
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @Operation(

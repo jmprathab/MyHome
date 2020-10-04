@@ -93,15 +93,15 @@ public class AmenityController {
   }
 
   @Operation(
-  description = "Update an amenity",
-  responses = {
-  @ApiResponse(responseCode = "204", description = "If updated successfully"),
-  @ApiResponse(responseCode = "400", description = "If amenity is not found"),
-  }
+      description = "Update an amenity",
+      responses = {
+          @ApiResponse(responseCode = "204", description = "If updated successfully"),
+          @ApiResponse(responseCode = "400", description = "If amenity is not found"),
+      }
   )
   @PutMapping(path = "amenities/{amenityId}")
   public ResponseEntity<Void> updateAmenity(@PathVariable String amenityId,
-                                            @Valid @RequestBody UpdateAmenityRequest request) {
+      @Valid @RequestBody UpdateAmenityRequest request) {
     AmenityDto amenityDto = amenityApiMapper.updateAmenityRequestToAmenityDto(request);
     amenityDto.setAmenityId(amenityId);
     boolean isUpdated = amenitySDJpaService.updateAmenity(amenityDto);

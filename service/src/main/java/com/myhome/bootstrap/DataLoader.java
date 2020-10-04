@@ -24,7 +24,6 @@ import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.repositories.UserRepository;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
@@ -106,16 +105,16 @@ class DataLoader implements CommandLineRunner {
 
   private User saveCommunityAdmin(Community savedCommunity) {
     User communityAdmin = new User()
-      .withUserId(TestDataConstants.ADMIN_ID)
-      .withCommunities(new HashSet<>(Arrays.asList(savedCommunity)));
+        .withUserId(TestDataConstants.ADMIN_ID)
+        .withCommunities(new HashSet<>(Arrays.asList(savedCommunity)));
     return userRepository.save(communityAdmin);
   }
 
   private Community saveCommunity() {
     Community community = new Community()
-      .withName(TestDataConstants.COMMUNITY_NAME)
-      .withCommunityId(TestDataConstants.COMMUNITY_ID)
-      .withDistrict(TestDataConstants.COMMUNITY_DISTRICT);
+        .withName(TestDataConstants.COMMUNITY_NAME)
+        .withCommunityId(TestDataConstants.COMMUNITY_ID)
+        .withDistrict(TestDataConstants.COMMUNITY_DISTRICT);
     return communityRepository.save(community);
   }
 }

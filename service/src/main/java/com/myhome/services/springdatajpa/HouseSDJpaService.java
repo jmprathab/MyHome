@@ -58,7 +58,8 @@ public class HouseSDJpaService implements HouseService {
   }
 
   @Override public Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers) {
-    Optional<CommunityHouse> communityHouseOptional = communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
+    Optional<CommunityHouse> communityHouseOptional =
+        communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
     return communityHouseOptional.map(communityHouse -> {
       Set<HouseMember> savedMembers = new HashSet<>();
       houseMembers.forEach(member -> member.setMemberId(generateUniqueId()));
@@ -73,7 +74,8 @@ public class HouseSDJpaService implements HouseService {
 
   @Override
   public boolean deleteMemberFromHouse(String houseId, String memberId) {
-    Optional<CommunityHouse> communityHouseOptional = communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
+    Optional<CommunityHouse> communityHouseOptional =
+        communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
     return communityHouseOptional.map(communityHouse -> {
       boolean isMemberRemoved = false;
       if (!CollectionUtils.isEmpty(communityHouse.getHouseMembers())) {
@@ -92,7 +94,7 @@ public class HouseSDJpaService implements HouseService {
       }
       return isMemberRemoved;
     }).orElse(false);
-}
+  }
 
   @Override
   public Optional<CommunityHouse> getHouseDetailsById(String houseId) {

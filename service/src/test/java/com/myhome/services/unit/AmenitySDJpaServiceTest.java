@@ -9,7 +9,6 @@ import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import com.myhome.services.springdatajpa.AmenitySDJpaService;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -36,15 +34,13 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class AmenitySDJpaServiceTest {
 
+  private static final String TEST_AMENITY_NAME = "test-amenity-name";
+  private static final BigDecimal TEST_AMENITY_PRICE = BigDecimal.valueOf(1);
   private final String TEST_AMENITY_ID = "test-amenity-id";
   private final String TEST_AMENITY_DESCRIPTION = "test-amenity-description";
-
   private final String TEST_COMMUNITY_ID = "test-community-id";
   private final String TEST_COMMUNITY_NAME = "test-community-name";
   private final String TEST_COMMUNITY_DISTRICT = "test-community-name";
-  private static final String TEST_AMENITY_NAME = "test-amenity-name";
-  private static final BigDecimal TEST_AMENITY_PRICE = BigDecimal.valueOf(1);
-
   @Mock
   private AmenityRepository amenityRepository;
   @Mock
@@ -202,11 +198,11 @@ class AmenitySDJpaServiceTest {
     Amenity updatedAmenity = getUpdatedCommunityAmenity();
 
     given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
-    .willReturn(Optional.of(communityAmenity));
+        .willReturn(Optional.of(communityAmenity));
     given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
-    .willReturn(Optional.of(testCommunity));
+        .willReturn(Optional.of(testCommunity));
     given(amenityRepository.save(updatedAmenity))
-    .willReturn(updatedAmenity);
+        .willReturn(updatedAmenity);
 
     // when
     boolean result = amenitySDJpaService.updateAmenity(updated);
@@ -222,7 +218,7 @@ class AmenitySDJpaServiceTest {
   void shouldNotUpdateCommunityAmenitySuccessfullyIfAmenityNotExists() {
     // given
     given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
-    .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     // when
     boolean result = amenitySDJpaService.updateAmenity(getTestAmenityDto());
@@ -242,11 +238,11 @@ class AmenitySDJpaServiceTest {
     Community community = getTestCommunity();
 
     given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
-    .willReturn(Optional.of(testAmenity));
+        .willReturn(Optional.of(testAmenity));
     given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
-    .willReturn(Optional.of(community));
+        .willReturn(Optional.of(community));
     given(amenityRepository.save(updatedAmenity))
-    .willReturn(null);
+        .willReturn(null);
 
     // when
     boolean result = amenitySDJpaService.updateAmenity(updatedDto);
@@ -265,9 +261,9 @@ class AmenitySDJpaServiceTest {
     AmenityDto updatedDto = getTestAmenityDto();
 
     given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
-    .willReturn(Optional.of(communityAmenity));
+        .willReturn(Optional.of(communityAmenity));
     given(communityRepository.findByCommunityId(TEST_COMMUNITY_ID))
-    .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     // when
     boolean result = amenitySDJpaService.updateAmenity(updatedDto);
@@ -301,22 +297,22 @@ class AmenitySDJpaServiceTest {
     Long TEST_AMENITY_ENTITY_ID = 1L;
 
     return new AmenityDto(
-    TEST_AMENITY_ENTITY_ID,
-    TEST_AMENITY_ID,
-    TEST_AMENITY_NAME,
-    TEST_AMENITY_DESCRIPTION,
-    TEST_AMENITY_PRICE,
-    TEST_COMMUNITY_ID
+        TEST_AMENITY_ENTITY_ID,
+        TEST_AMENITY_ID,
+        TEST_AMENITY_NAME,
+        TEST_AMENITY_DESCRIPTION,
+        TEST_AMENITY_PRICE,
+        TEST_COMMUNITY_ID
     );
   }
 
   private Amenity getUpdatedCommunityAmenity() {
     AmenityDto communityAmenityDto = getTestAmenityDto();
     return new Amenity()
-    .withAmenityId(communityAmenityDto.getAmenityId())
-    .withName(communityAmenityDto.getName())
-    .withPrice(communityAmenityDto.getPrice())
-    .withDescription(communityAmenityDto.getDescription())
-    .withCommunity(getTestCommunity());
+        .withAmenityId(communityAmenityDto.getAmenityId())
+        .withName(communityAmenityDto.getName())
+        .withPrice(communityAmenityDto.getPrice())
+        .withDescription(communityAmenityDto.getDescription())
+        .withCommunity(getTestCommunity());
   }
 }

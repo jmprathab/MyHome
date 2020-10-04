@@ -11,14 +11,6 @@ import com.myhome.controllers.response.ListHouseMembersResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.services.HouseService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +19,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -64,7 +63,8 @@ class HouseControllerTest {
     // given
     Set<CommunityHouse> testHouses = getTestHouses(TEST_HOUSES_COUNT);
     Set<GetHouseDetailsResponse.CommunityHouse> testHousesResponse = testHouses.stream()
-        .map(house -> new GetHouseDetailsResponse.CommunityHouse(house.getHouseId(), house.getName()))
+        .map(house -> new GetHouseDetailsResponse.CommunityHouse(house.getHouseId(),
+            house.getName()))
         .collect(Collectors.toSet());
     GetHouseDetailsResponse expectedResponseBody = new GetHouseDetailsResponse();
     expectedResponseBody.setHouses(testHousesResponse);
@@ -87,7 +87,8 @@ class HouseControllerTest {
     // given
     CommunityHouse testCommunityHouse = getTestCommunityHouse();
     GetHouseDetailsResponse.CommunityHouse houseDetailsResponse =
-        new GetHouseDetailsResponse.CommunityHouse(testCommunityHouse.getHouseId(), testCommunityHouse.getName());
+        new GetHouseDetailsResponse.CommunityHouse(testCommunityHouse.getHouseId(),
+            testCommunityHouse.getName());
     GetHouseDetailsResponse expectedResponseBody = new GetHouseDetailsResponse();
     expectedResponseBody.getHouses().add(houseDetailsResponse);
 
@@ -97,7 +98,8 @@ class HouseControllerTest {
         .willReturn(houseDetailsResponse);
 
     // when
-    ResponseEntity<GetHouseDetailsResponse> response = houseController.getHouseDetails(TEST_HOUSE_ID);
+    ResponseEntity<GetHouseDetailsResponse> response =
+        houseController.getHouseDetails(TEST_HOUSE_ID);
 
     // then
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -115,37 +117,45 @@ class HouseControllerTest {
         .willReturn(Optional.empty());
 
     // when
-    ResponseEntity<GetHouseDetailsResponse> response = houseController.getHouseDetails(TEST_HOUSE_ID);
+    ResponseEntity<GetHouseDetailsResponse> response =
+        houseController.getHouseDetails(TEST_HOUSE_ID);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertNull(response.getBody());
     verify(houseService).getHouseDetailsById(TEST_HOUSE_ID);
-    verify(houseApiMapper, never()).communityHouseToRestApiResponseCommunityHouse(testCommunityHouse);
+    verify(houseApiMapper, never()).communityHouseToRestApiResponseCommunityHouse(
+        testCommunityHouse);
   }
 
   @Test
   void listAllMembersOfHouse() {
     // given
-    List<HouseMember> testHouseMembers = new ArrayList<>(getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT));
+    List<HouseMember> testHouseMembers =
+        new ArrayList<>(getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT));
     Set<ListHouseMembersResponse.HouseMember> testHouseMemberDetails = testHouseMembers.stream()
-        .map(member -> new ListHouseMembersResponse.HouseMember(member.getMemberId(), member.getName()))
+        .map(member -> new ListHouseMembersResponse.HouseMember(member.getMemberId(),
+            member.getName()))
         .collect(Collectors.toSet());
-    ListHouseMembersResponse expectedResponseBody = new ListHouseMembersResponse(testHouseMemberDetails);
+    ListHouseMembersResponse expectedResponseBody =
+        new ListHouseMembersResponse(testHouseMemberDetails);
 
     given(houseService.getHouseMembersById(TEST_HOUSE_ID, null))
         .willReturn(Optional.of(testHouseMembers));
-    given(houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(new HashSet<>(testHouseMembers)))
+    given(houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(
+        new HashSet<>(testHouseMembers)))
         .willReturn(testHouseMemberDetails);
 
     // when
-    ResponseEntity<ListHouseMembersResponse> response = houseController.listAllMembersOfHouse(TEST_HOUSE_ID, null);
+    ResponseEntity<ListHouseMembersResponse> response =
+        houseController.listAllMembersOfHouse(TEST_HOUSE_ID, null);
 
     // then
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(expectedResponseBody, response.getBody());
     verify(houseService).getHouseMembersById(TEST_HOUSE_ID, null);
-    verify(houseMemberMapper).houseMemberSetToRestApiResponseHouseMemberSet(new HashSet<>(testHouseMembers));
+    verify(houseMemberMapper).houseMemberSetToRestApiResponseHouseMemberSet(
+        new HashSet<>(testHouseMembers));
   }
 
   @Test
@@ -155,7 +165,8 @@ class HouseControllerTest {
         .willReturn(Optional.empty());
 
     // when
-    ResponseEntity<ListHouseMembersResponse> response = houseController.listAllMembersOfHouse(TEST_HOUSE_ID, null);
+    ResponseEntity<ListHouseMembersResponse> response =
+        houseController.listAllMembersOfHouse(TEST_HOUSE_ID, null);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -169,13 +180,17 @@ class HouseControllerTest {
     // given
     Set<HouseMember> testMembers = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
     Set<HouseMemberDto> testMembersDto = testMembers.stream()
-        .map(member -> HouseMemberDto.builder().memberId(member.getMemberId()).name(member.getName()).build())
+        .map(member -> HouseMemberDto.builder()
+            .memberId(member.getMemberId())
+            .name(member.getName())
+            .build())
         .collect(Collectors.toSet());
 
     AddHouseMemberRequest request = new AddHouseMemberRequest(testMembersDto);
 
     Set<AddHouseMemberResponse.HouseMember> addedMembers = testMembers.stream()
-        .map(member -> new AddHouseMemberResponse.HouseMember(member.getMemberId(), member.getName()))
+        .map(member -> new AddHouseMemberResponse.HouseMember(member.getMemberId(),
+            member.getName()))
         .collect(Collectors.toSet());
 
     AddHouseMemberResponse expectedResponseBody = new AddHouseMemberResponse();
@@ -189,7 +204,8 @@ class HouseControllerTest {
         .willReturn(addedMembers);
 
     // when
-    ResponseEntity<AddHouseMemberResponse> response = houseController.addHouseMembers(TEST_HOUSE_ID, request);
+    ResponseEntity<AddHouseMemberResponse> response =
+        houseController.addHouseMembers(TEST_HOUSE_ID, request);
 
     // then
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -204,13 +220,17 @@ class HouseControllerTest {
     // given
     Set<HouseMember> testMembers = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
     Set<HouseMemberDto> testMembersDto = testMembers.stream()
-        .map(member -> HouseMemberDto.builder().memberId(member.getMemberId()).name(member.getName()).build())
+        .map(member -> HouseMemberDto.builder()
+            .memberId(member.getMemberId())
+            .name(member.getName())
+            .build())
         .collect(Collectors.toSet());
 
     AddHouseMemberRequest request = new AddHouseMemberRequest(testMembersDto);
 
     Set<AddHouseMemberResponse.HouseMember> addedMembers = testMembers.stream()
-        .map(member -> new AddHouseMemberResponse.HouseMember(member.getMemberId(), member.getName()))
+        .map(member -> new AddHouseMemberResponse.HouseMember(member.getMemberId(),
+            member.getName()))
         .collect(Collectors.toSet());
 
     AddHouseMemberResponse expectedResponseBody = new AddHouseMemberResponse();
@@ -222,14 +242,16 @@ class HouseControllerTest {
         willReturn(new HashSet<>());
 
     // when
-    ResponseEntity<AddHouseMemberResponse> response = houseController.addHouseMembers(TEST_HOUSE_ID, request);
+    ResponseEntity<AddHouseMemberResponse> response =
+        houseController.addHouseMembers(TEST_HOUSE_ID, request);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertNull(response.getBody());
     verify(houseMemberMapper).houseMemberDtoSetToHouseMemberSet(testMembersDto);
     verify(houseService).addHouseMembers(TEST_HOUSE_ID, testMembers);
-    verify(houseMemberMapper, never()).houseMemberSetToRestApiResponseAddHouseMemberSet(testMembers);
+    verify(houseMemberMapper, never()).houseMemberSetToRestApiResponseAddHouseMemberSet(
+        testMembers);
   }
 
   @Test
@@ -238,7 +260,8 @@ class HouseControllerTest {
     given(houseService.deleteMemberFromHouse(TEST_HOUSE_ID, TEST_MEMBER_ID))
         .willReturn(true);
     // when
-    ResponseEntity<Void> response = houseController.deleteHouseMember(TEST_HOUSE_ID, TEST_MEMBER_ID);
+    ResponseEntity<Void> response =
+        houseController.deleteHouseMember(TEST_HOUSE_ID, TEST_MEMBER_ID);
 
     // then
     assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
@@ -252,7 +275,8 @@ class HouseControllerTest {
         .willReturn(false);
 
     // when
-    ResponseEntity<Void> response = houseController.deleteHouseMember(TEST_HOUSE_ID, TEST_MEMBER_ID);
+    ResponseEntity<Void> response =
+        houseController.deleteHouseMember(TEST_HOUSE_ID, TEST_MEMBER_ID);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -286,5 +310,4 @@ class HouseControllerTest {
   private CommunityHouse getTestCommunityHouse() {
     return new CommunityHouse().withHouseId(TEST_HOUSE_ID);
   }
-
 }
