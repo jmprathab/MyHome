@@ -41,6 +41,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -116,9 +118,14 @@ public class CommunitySDJpaServiceTest {
     // given
     CommunityDto testCommunityDto = getTestCommunityDto();
     Community testCommunity = getTestCommunity();
+    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(TEST_ADMIN_ID,
+            null, Collections.emptyList());
+    SecurityContextHolder.getContext().setAuthentication(authentication);
 
     given(communityMapper.communityDtoToCommunity(testCommunityDto))
         .willReturn(testCommunity);
+    given(communityAdminRepository.findByUserIdWithCommunities(TEST_ADMIN_ID))
+            .willReturn(Optional.of(getTestAdmin()));
     given(communityRepository.save(testCommunity))
         .willReturn(testCommunity);
 
@@ -130,6 +137,7 @@ public class CommunitySDJpaServiceTest {
     assertEquals(testCommunityDto.getName(), createdCommunity.getName());
     assertEquals(testCommunityDto.getDistrict(), createdCommunity.getDistrict());
     verify(communityMapper).communityDtoToCommunity(testCommunityDto);
+    verify(communityAdminRepository).findByUserIdWithCommunities(TEST_ADMIN_ID);
     verify(communityRepository).save(testCommunity);
   }
 

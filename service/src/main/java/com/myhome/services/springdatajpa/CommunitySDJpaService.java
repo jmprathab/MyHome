@@ -37,6 +37,7 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -52,10 +53,22 @@ public class CommunitySDJpaService implements CommunityService {
   @Override
   public Community createCommunity(CommunityDto communityDto) {
     communityDto.setCommunityId(generateUniqueId());
-    Community community = communityMapper.communityDtoToCommunity(communityDto);
+    String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Community community = addAdminToCommunity(communityMapper.communityDtoToCommunity(communityDto),
+            userId);
     Community savedCommunity = communityRepository.save(community);
     log.trace("saved community with id[{}] to repository", savedCommunity.getId());
     return savedCommunity;
+  }
+
+  private Community addAdminToCommunity(Community community, String userId) {
+    communityAdminRepository.findByUserIdWithCommunities(userId).ifPresent(admin -> {
+      admin.getCommunities().add(community);
+      Set<User> admins = new HashSet<>();
+      admins.add(admin);
+      community.setAdmins(admins);
+    });
+    return community;
   }
 
   @Override
