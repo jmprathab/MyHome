@@ -111,3 +111,4 @@ MyHome is an application which helps people to manage their apartment.
 | Chat system                                | Users to Chat with Community Admin                           |       |
 | Raise a concern                            | User should be able to raise a concern with community admin. Community admin will be notified of the user's concern and can update the status of the concern(To do, Doing, Complete) |       |
 | Approve entry to Community by House member | Security desk can request approval from house members before allowing visitors to enter the community. |       |
+| Social Login                               | Users should be able to login using Google and Facebook      |       |
