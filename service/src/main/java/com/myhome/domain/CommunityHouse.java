@@ -57,6 +57,7 @@ public class CommunityHouse extends BaseEntity {
   @With
   @ManyToOne(fetch = FetchType.LAZY)
   private Community community;
+  @With
   @Column(nullable = false)
   private String name;
   @With
