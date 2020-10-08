@@ -31,9 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import helpers.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,7 +100,7 @@ class HouseControllerTest {
   @Test
   void getHouseDetails() {
     // given
-    CommunityHouse testCommunityHouse = TestUtils.CommunityHouseHelpers.getTestCommunityHouse();
+    CommunityHouse testCommunityHouse = TestUtils.CommunityHouseHelpers.getTestCommunityHouse(TEST_HOUSE_ID);
     GetHouseDetailsResponse.CommunityHouse houseDetailsResponse =
         new GetHouseDetailsResponse.CommunityHouse(testCommunityHouse.getHouseId(),
             testCommunityHouse.getName());
@@ -128,7 +126,7 @@ class HouseControllerTest {
   @Test
   void getHouseDetailsNotExists() {
     // given
-    CommunityHouse testCommunityHouse = TestUtils.CommunityHouseHelpers.getTestCommunityHouse();
+    CommunityHouse testCommunityHouse = TestUtils.CommunityHouseHelpers.getTestCommunityHouse(TEST_HOUSE_ID);
 
     given(houseService.getHouseDetailsById(TEST_HOUSE_ID))
         .willReturn(Optional.empty());
@@ -148,8 +146,7 @@ class HouseControllerTest {
   @Test
   void listAllMembersOfHouse() {
     // given
-    List<HouseMember> testHouseMembers =
-        new ArrayList<>(TestUtils.HouseMemberHelpers.getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT));
+    Set<HouseMember> testHouseMembers = TestUtils.HouseMemberHelpers.getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
     Set<ListHouseMembersResponse.HouseMember> testHouseMemberDetails = testHouseMembers.stream()
         .map(member -> new ListHouseMembersResponse.HouseMember(member.getMemberId(),
             member.getName()))
@@ -158,7 +155,7 @@ class HouseControllerTest {
         new ListHouseMembersResponse(testHouseMemberDetails);
 
     given(houseService.getHouseMembersById(TEST_HOUSE_ID, null))
-        .willReturn(Optional.of(testHouseMembers));
+        .willReturn(Optional.of(new ArrayList<>(testHouseMembers)));
     given(houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(
         new HashSet<>(testHouseMembers)))
         .willReturn(testHouseMemberDetails);
