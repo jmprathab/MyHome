@@ -41,6 +41,14 @@ spring:
     enabled: true
     settings.web-allow-others: true
 
+management:
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
 ###############################################################################
 # Spring doc
 ###############################################################################
@@ -66,9 +74,9 @@ api:
   docs:
     url:
       path: "/docs/**"
-  status:
+  actuator:
     url:
-      path: "/status/**"
+      path: "/actuator/**"
 
 authorization:
   token:

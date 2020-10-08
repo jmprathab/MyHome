@@ -52,7 +52,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .permitAll()
         .antMatchers(environment.getProperty("api.docs.url.path"))
         .permitAll()
-        .antMatchers(environment.getProperty("api.status.url.path"))
+        .antMatchers(environment.getProperty("api.actuator.url.path"))
         .permitAll()
         .antMatchers(HttpMethod.POST, environment.getProperty("api.registration.url.path"))
         .permitAll()
