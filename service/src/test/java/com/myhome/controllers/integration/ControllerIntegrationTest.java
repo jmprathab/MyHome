@@ -16,7 +16,6 @@
 
 package com.myhome.controllers.integration;
 
-import com.myhome.controllers.HealthCheckController;
 import com.myhome.controllers.request.CreateUserRequest;
 import com.myhome.controllers.request.LoginUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
@@ -88,8 +87,8 @@ public class ControllerIntegrationTest extends ControllerIntegrationTestBase {
   @Test
   @DisplayName("HealthCheckControllerIntegrationTest statusCheck()")
   void statusCheck() throws Exception {
-    mockMvc.perform(get("/status"))
+    mockMvc.perform(get("/actuator/health"))
         .andExpect(status().isOk())
-        .andExpect(content().string(containsString(HealthCheckController.STATUS_HEALTHY)));
+        .andExpect(content().string(containsString("UP")));
   }
 }
