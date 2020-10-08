@@ -16,6 +16,7 @@
 
 package com.myhome.services.unit;
 
+import helpers.TestUtils;
 import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
@@ -55,8 +56,7 @@ class AmenitySDJpaServiceTest {
   private final String TEST_AMENITY_ID = "test-amenity-id";
   private final String TEST_AMENITY_DESCRIPTION = "test-amenity-description";
   private final String TEST_COMMUNITY_ID = "test-community-id";
-  private final String TEST_COMMUNITY_NAME = "test-community-name";
-  private final String TEST_COMMUNITY_DISTRICT = "test-community-name";
+  private final int TEST_AMENITIES_COUNT = 2;
   @Mock
   private AmenityRepository amenityRepository;
   @Mock
@@ -77,7 +77,7 @@ class AmenitySDJpaServiceTest {
   @Test
   void deleteAmenity() {
     // given
-    Amenity testAmenity = getTestAmenity();
+    Amenity testAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
 
     given(amenityRepository.findByAmenityIdWithCommunity(TEST_AMENITY_ID))
         .willReturn(Optional.of(testAmenity));
@@ -109,9 +109,8 @@ class AmenitySDJpaServiceTest {
   @Test
   void listAllAmenities() {
     // given
-    Amenity testAmenity = getTestAmenity();
-    Set<Amenity> testAmenities = Collections.singleton(testAmenity);
-    Community testCommunity = getTestCommunity();
+    Set<Amenity> testAmenities = TestUtils.AmenityHelpers.getTestAmenities(TEST_AMENITIES_COUNT);
+    Community testCommunity = TestUtils.CommunityHelpers.getTestCommunity();
     testCommunity.setAmenities(testAmenities);
 
     given(communityRepository.findByCommunityIdWithAmenities(TEST_COMMUNITY_ID))
@@ -208,8 +207,8 @@ class AmenitySDJpaServiceTest {
   @Test
   void shouldUpdateCommunityAmenitySuccessfully() {
     // given
-    Amenity communityAmenity = getTestAmenity();
-    Community testCommunity = getTestCommunity();
+    Amenity communityAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
+    Community testCommunity = TestUtils.CommunityHelpers.getTestCommunity();
     AmenityDto updated = getTestAmenityDto();
     Amenity updatedAmenity = getUpdatedCommunityAmenity();
 
@@ -248,10 +247,10 @@ class AmenitySDJpaServiceTest {
   @Test
   void shouldNotUpdateCommunityAmenitySuccessfullyIfSavingFails() {
     // given
-    Amenity testAmenity = getTestAmenity();
+    Amenity testAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
     Amenity updatedAmenity = getUpdatedCommunityAmenity();
     AmenityDto updatedDto = getTestAmenityDto();
-    Community community = getTestCommunity();
+    Community community = TestUtils.CommunityHelpers.getTestCommunity();
 
     given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
         .willReturn(Optional.of(testAmenity));
@@ -273,7 +272,7 @@ class AmenitySDJpaServiceTest {
   @Test
   void shouldNotUpdateAmenityIfCommunityDoesNotExist() {
     // given
-    Amenity communityAmenity = getTestAmenity();
+    Amenity communityAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
     AmenityDto updatedDto = getTestAmenityDto();
 
     given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
@@ -289,24 +288,6 @@ class AmenitySDJpaServiceTest {
     verify(amenityRepository).findByAmenityId(TEST_AMENITY_ID);
     verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
     verifyNoMoreInteractions(amenityRepository);
-  }
-
-  private Amenity getTestAmenity() {
-    return new Amenity()
-        .withAmenityId(TEST_AMENITY_ID)
-        .withDescription(TEST_AMENITY_DESCRIPTION)
-        .withCommunity(getTestCommunity());
-  }
-
-  private Community getTestCommunity() {
-    return new Community(
-        new HashSet<>(),
-        new HashSet<>(),
-        TEST_COMMUNITY_NAME,
-        TEST_COMMUNITY_ID,
-        TEST_COMMUNITY_DISTRICT,
-        new HashSet<>()
-    );
   }
 
   private AmenityDto getTestAmenityDto() {
@@ -329,6 +310,6 @@ class AmenitySDJpaServiceTest {
         .withName(communityAmenityDto.getName())
         .withPrice(communityAmenityDto.getPrice())
         .withDescription(communityAmenityDto.getDescription())
-        .withCommunity(getTestCommunity());
+        .withCommunity(TestUtils.CommunityHelpers.getTestCommunity());
   }
 }
