@@ -17,10 +17,11 @@
 package com.myhome.controllers.integration;
 
 import com.myhome.controllers.HealthCheckController;
-import com.myhome.controllers.request.CreateUserRequest;
+import com.myhome.model.CreateUserRequest;
 import com.myhome.controllers.request.LoginUserRequest;
 import com.myhome.controllers.response.CreateUserResponse;
-import com.myhome.controllers.response.GetUserDetailsResponse;
+import com.myhome.model.GetUserDetailsResponse;
+import com.myhome.model.GetUserDetailsResponseUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -34,14 +35,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ControllerIntegrationTest extends ControllerIntegrationTestBase {
+class ControllerIntegrationTest extends ControllerIntegrationTestBase {
 
   private static final String testUserName = "Test User";
   private static final String testUserEmail = "testuser@myhome.com";
   private static final String testUserPassword = "testpassword";
 
   private static CreateUserRequest getUserRequest() {
-    return new CreateUserRequest(testUserName, testUserEmail, testUserPassword);
+    return new CreateUserRequest()
+        .name(testUserName)
+        .email(testUserEmail)
+        .password(testUserPassword);
   }
 
   @Test
@@ -58,8 +62,8 @@ public class ControllerIntegrationTest extends ControllerIntegrationTestBase {
         sendRequest(HttpMethod.GET, String.format("users/%s", createUserResponse.getUserId()),
             null);
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    GetUserDetailsResponse.User getUserDetailsResponse =
-        readValue(response, GetUserDetailsResponse.User.class);
+    GetUserDetailsResponseUser getUserDetailsResponse =
+        readValue(response, GetUserDetailsResponseUser.class);
     assertEquals(testUserName, getUserDetailsResponse.getName());
     assertEquals(testUserEmail, getUserDetailsResponse.getEmail());
   }
@@ -76,9 +80,14 @@ public class ControllerIntegrationTest extends ControllerIntegrationTestBase {
   @Test
   @DisplayName("test get /users listAllUsers() positive")
   void listAllUsersPositive() {
+    // given
     sendRequest(HttpMethod.POST, "users", getUserRequest());
     updateJwtToken(new LoginUserRequest(testUserEmail, testUserPassword));
+
+    // when
     ResponseEntity<String> response = sendRequest(HttpMethod.GET, "users", null);
+
+    // then
     assertEquals(HttpStatus.OK, response.getStatusCode());
     GetUserDetailsResponse getUserDetailsResponse =
         readValue(response, GetUserDetailsResponse.class);
