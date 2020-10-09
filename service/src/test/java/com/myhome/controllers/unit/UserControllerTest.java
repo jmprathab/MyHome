@@ -19,10 +19,11 @@ package com.myhome.controllers.unit;
 import com.myhome.controllers.UserController;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.UserApiMapper;
+import com.myhome.domain.User;
 import com.myhome.model.CreateUserRequest;
 import com.myhome.model.CreateUserResponse;
-import com.myhome.controllers.response.GetUserDetailsResponse;
-import com.myhome.domain.User;
+import com.myhome.model.GetUserDetailsResponse;
+import com.myhome.model.GetUserDetailsResponseUser;
 import com.myhome.services.UserService;
 import java.util.Collections;
 import java.util.HashSet;
@@ -109,16 +110,16 @@ class UserControllerTest {
     Set<User> users = new HashSet<>();
     users.add(new User(TEST_NAME, TEST_ID, TEST_EMAIL, TEST_PASSWORD, new HashSet<>()));
 
-    Set<GetUserDetailsResponse.User> responseUsers = new HashSet<>();
+    Set<GetUserDetailsResponseUser> responseUsers = new HashSet<>();
     responseUsers.add(
-        new GetUserDetailsResponse.User(
-            TEST_ID,
-            TEST_NAME,
-            TEST_EMAIL,
-            Collections.emptySet()
-        )
+        new GetUserDetailsResponseUser()
+            .userId(TEST_ID)
+            .name(TEST_NAME)
+            .email(TEST_EMAIL)
+            .communityIds(Collections.emptySet())
     );
-    GetUserDetailsResponse expectedResponse = new GetUserDetailsResponse(responseUsers);
+    GetUserDetailsResponse expectedResponse = new GetUserDetailsResponse();
+    expectedResponse.setUsers(responseUsers);
 
     given(userService.listAll(pageRequest))
         .willReturn(users);
@@ -144,7 +145,7 @@ class UserControllerTest {
         .willReturn(Optional.empty());
 
     // when
-    ResponseEntity<GetUserDetailsResponse.User> response = userController.getUserDetails(userId);
+    ResponseEntity<GetUserDetailsResponseUser> response = userController.getUserDetails(userId);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -160,19 +161,19 @@ class UserControllerTest {
     UserDto userDto = UserDto.builder()
         .userId(userId)
         .build();
-    GetUserDetailsResponse.User expectedResponse = new GetUserDetailsResponse.User(
-        TEST_ID,
-        TEST_NAME,
-        TEST_EMAIL,
-        Collections.emptySet()
-    );
+    GetUserDetailsResponseUser expectedResponse = new GetUserDetailsResponseUser()
+        .userId(TEST_ID)
+        .name(TEST_NAME)
+        .email(TEST_EMAIL)
+        .communityIds(Collections.emptySet());
+
     given(userService.getUserDetails(userId))
         .willReturn(Optional.of(userDto));
     given(userApiMapper.userDtoToGetUserDetailsResponse(userDto))
         .willReturn(expectedResponse);
 
     // when
-    ResponseEntity<GetUserDetailsResponse.User> response = userController.getUserDetails(userId);
+    ResponseEntity<GetUserDetailsResponseUser> response = userController.getUserDetails(userId);
 
     // then
     assertEquals(HttpStatus.OK, response.getStatusCode());
