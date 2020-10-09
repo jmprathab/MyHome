@@ -86,6 +86,8 @@ components:
   schemas:
     CreateUserRequest:
       type: object
+      required:
+        - name
       properties:
         name:
           type: string
