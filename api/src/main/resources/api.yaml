@@ -36,7 +36,27 @@ paths:
                 $ref: '#/components/schemas/CreateUserResponse'
         '409':
           description: "if user already exists"
-
+    get:
+      tags:
+        - Users
+      description: "Lists all users"
+      operationId: listAllUsers
+      parameters:
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: "Returns list of users"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetUserDetailsResponse'
 components:
   schemas:
     CreateUserRequest:
@@ -60,3 +80,35 @@ components:
           type: string
         email:
           type: string
+    GetUserDetailsResponse:
+      type: object
+      required:
+        - users
+      properties:
+        users:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/GetUserDetailsResponseUser'
+    GetUserDetailsResponseUser:
+      type: object
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        communityIds:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+    Pageable:
+      description: Pageable query parameters
+      type: object
+      properties:
+        page:
+          type: integer
+        size:
+          type: integer

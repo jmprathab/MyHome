@@ -19,10 +19,11 @@ package com.myhome.controllers;
 import com.myhome.api.UsersApi;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.UserApiMapper;
-import com.myhome.controllers.response.GetUserDetailsResponse;
 import com.myhome.domain.User;
 import com.myhome.model.CreateUserRequest;
 import com.myhome.model.CreateUserResponse;
+import com.myhome.model.GetUserDetailsResponse;
+import com.myhome.model.GetUserDetailsResponseUser;
 import com.myhome.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -64,17 +65,17 @@ public class UserController implements UsersApi {
         .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).build());
   }
 
-  @GetMapping(path = "/users",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<GetUserDetailsResponse> listAllUsers(
-      @PageableDefault(size = 200) Pageable pageable) {
+  @Override
+  public ResponseEntity<GetUserDetailsResponse> listAllUsers(Pageable pageable) {
     log.trace("Received request to list all users");
 
     Set<User> userDetails = userService.listAll(pageable);
-    Set<GetUserDetailsResponse.User> userDetailsResponse =
+    Set<GetUserDetailsResponseUser> userDetailsResponse =
         userApiMapper.userSetToRestApiResponseUserSet(userDetails);
 
-    GetUserDetailsResponse response = new GetUserDetailsResponse(userDetailsResponse);
+    GetUserDetailsResponse response = new GetUserDetailsResponse();
+    response.setUsers(userDetailsResponse);
+
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
@@ -92,7 +93,7 @@ public class UserController implements UsersApi {
   )
   @GetMapping(path = "/users/{userId}",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<GetUserDetailsResponse.User> getUserDetails(
+  public ResponseEntity<GetUserDetailsResponseUser> getUserDetails(
       @Valid @PathVariable @NonNull String userId) {
     log.trace("Received request to get details of user with Id[{}]", userId);
 
