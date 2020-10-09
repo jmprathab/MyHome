@@ -19,8 +19,8 @@ package com.myhome.controllers.unit;
 import com.myhome.controllers.UserController;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.UserApiMapper;
-import com.myhome.controllers.request.CreateUserRequest;
-import com.myhome.controllers.response.CreateUserResponse;
+import com.myhome.model.CreateUserRequest;
+import com.myhome.model.CreateUserResponse;
 import com.myhome.controllers.response.GetUserDetailsResponse;
 import com.myhome.domain.User;
 import com.myhome.services.UserService;
@@ -67,13 +67,19 @@ class UserControllerTest {
   @Test
   void shouldSignUpSuccessful() {
     // given
-    CreateUserRequest request = new CreateUserRequest(TEST_NAME, TEST_EMAIL, TEST_PASSWORD);
+    CreateUserRequest request = new CreateUserRequest()
+        .name(TEST_NAME)
+        .email(TEST_EMAIL)
+        .password(TEST_PASSWORD);
     UserDto userDto = UserDto.builder()
         .name(TEST_NAME)
         .email(TEST_EMAIL)
         .password(TEST_PASSWORD)
         .build();
-    CreateUserResponse createUserResponse = new CreateUserResponse(TEST_ID, TEST_NAME, TEST_EMAIL);
+    CreateUserResponse createUserResponse = new CreateUserResponse()
+        .userId(TEST_ID)
+        .name(TEST_NAME)
+        .email(TEST_EMAIL);
 
     given(userApiMapper.createUserRequestToUserDto(request))
         .willReturn(userDto);

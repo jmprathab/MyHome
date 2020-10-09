@@ -17,11 +17,11 @@
 package com.myhome.controllers.mapper;
 
 import com.myhome.controllers.dto.UserDto;
-import com.myhome.controllers.request.CreateUserRequest;
-import com.myhome.controllers.response.CreateUserResponse;
 import com.myhome.controllers.response.GetUserDetailsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.User;
+import com.myhome.model.CreateUserRequest;
+import com.myhome.model.CreateUserResponse;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
