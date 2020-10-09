@@ -57,6 +57,31 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/GetUserDetailsResponse'
+  /users/{userId}:
+    get:
+      tags:
+        - Users
+      description: "Get details of a user given userId"
+      operationId: getUserDetails
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID of the user to get
+      responses:
+        '200':
+          description: "If userId is valid. Response body has the details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserDetailsResponseUser'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetUserDetailsResponseUser'
+        '404':
+          description: "If userId is invalid"
 components:
   schemas:
     CreateUserRequest:

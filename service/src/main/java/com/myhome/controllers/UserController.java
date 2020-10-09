@@ -25,21 +25,14 @@ import com.myhome.model.CreateUserResponse;
 import com.myhome.model.GetUserDetailsResponse;
 import com.myhome.model.GetUserDetailsResponseUser;
 import com.myhome.services.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -79,22 +72,8 @@ public class UserController implements UsersApi {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @Operation(
-      description = "Get details of a user given userId",
-      responses = {
-          @ApiResponse(
-              responseCode = "404",
-              description = "If userId is invalid"
-          ),
-          @ApiResponse(
-              responseCode = "200",
-              description = "If userId is valid. Response body has the details")
-      }
-  )
-  @GetMapping(path = "/users/{userId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<GetUserDetailsResponseUser> getUserDetails(
-      @Valid @PathVariable @NonNull String userId) {
+  @Override
+  public ResponseEntity<GetUserDetailsResponseUser> getUserDetails(String userId) {
     log.trace("Received request to get details of user with Id[{}]", userId);
 
     return userService.getUserDetails(userId)
