@@ -1,9 +1,14 @@
 package com.myhome.domain;
 
-import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.OneToOne;
+import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import java.time.LocalDateTime;
+
+@Data
+@Entity
 public class AmenityBookingItem extends BaseEntity {
 
   @Column(nullable = false, unique = true)

@@ -729,6 +729,32 @@
 			"response": []
 		},
 		{
+			"name": "Get amenity bookings",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/amenities/{{AMENITY_ID}}/bookings",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"amenities",
+						"{{AMENITY_ID}}",
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Delete community amenity",
 			"request": {
 				"method": "DELETE",
