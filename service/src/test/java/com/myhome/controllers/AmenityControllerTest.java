@@ -20,6 +20,7 @@ import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.controllers.mapper.AmenityBookingItemApiMapper;
 import com.myhome.controllers.request.AddAmenityRequest;
+import com.myhome.controllers.response.GetAmenityBookingsResponse;
 import com.myhome.controllers.request.UpdateAmenityRequest;
 import com.myhome.controllers.response.GetAmenityBookingsResponse;
 import com.myhome.controllers.response.amenity.AddAmenityResponse;

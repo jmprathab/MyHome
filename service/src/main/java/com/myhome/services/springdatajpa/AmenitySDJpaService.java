@@ -123,6 +123,6 @@ public class AmenitySDJpaService implements AmenityService {
       LocalDateTime startDate,
       LocalDateTime endDate,
       Pageable pageable) {
-    return amenityBookingRepository.findAllByAmenity(amenityId, startDate, endDate, pageable);
+    return bookingRepository.findAllByAmenity(amenityId, startDate, endDate, pageable);
   }
 }
