@@ -24,3 +24,7 @@ Please note we have a [code of conduct](CODE_OF_CONDUCT.md), please follow it in
 ## How to set up your environment and run tests?
 
 1. Building and installation instructions are present in README.md file.
+
+## Coding Style
+Coding style helps to have consistent code. 
+This project uses coding style from https://github.com/square/java-code-styles
