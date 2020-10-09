@@ -82,6 +82,32 @@ paths:
                 $ref: '#/components/schemas/GetUserDetailsResponseUser'
         '404':
           description: "If userId is invalid"
+  /payments:
+    post:
+      tags:
+        - Payments
+      description: "Schedule a new payment"
+      operationId: schedulePayment
+      requestBody:
+        description: CreateUserRequest aggregate fields
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchedulePaymentRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/SchedulePaymentRequest'
+      responses:
+        '201':
+          description: "If schedule payment is created"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
 components:
   schemas:
     CreateUserRequest:
@@ -139,3 +165,43 @@ components:
           type: integer
         size:
           type: integer
+    SchedulePaymentRequest:
+      type: object
+      required:
+        - description
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+          minLength: 5
+          maxLength: 300
+        recurring:
+          type: boolean
+        charge:
+          type: number
+        dueDate:
+          type: string
+        adminId:
+          type: string
+        memberId:
+          type: string
+    SchedulePaymentResponse:
+      type: object
+      properties:
+        paymentId:
+          type: string
+        charge:
+          type: number
+        type:
+          type: string
+        description:
+          type: string
+        recurring:
+          type: boolean
+        dueDate:
+          type: string
+        adminId:
+          type: string
+        memberId:
+          type: string
