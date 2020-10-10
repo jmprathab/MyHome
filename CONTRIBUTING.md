@@ -28,3 +28,16 @@ Please note we have a [code of conduct](CODE_OF_CONDUCT.md), please follow it in
 ## Coding Style
 Coding style helps to have consistent code. 
 This project uses coding style from https://github.com/square/java-code-styles
+
+
+### Set Code Style XML
+The easiest way is download the xml file from: https://github.com/square/java-code-styles/blob/main/configs/codestyles/Square.xml.
+Then you can import it in Intellij.
+* File → Settings → Editor → Code Style
+* Select the small gear icon next to "Scheme", select "Import Scheme" → "IntelliJ IDEA code style XML"
+* Select the Square.xml
+* Select OK, then Apply, then OK
+* Ensure the "Square" Code Style Scheme is selected.
+
+Note: Above instructions are based on IntelliJ 2019.2.3 version.
+If above steps are not working/changed, refer Intellij documentation corresponding to your version.
