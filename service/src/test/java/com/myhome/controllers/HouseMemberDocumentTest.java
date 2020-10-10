@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.unit;
+package com.myhome.controllers;
 
-import com.myhome.controllers.HouseMemberDocumentController;
 import com.myhome.domain.HouseMemberDocument;
 import com.myhome.services.HouseMemberDocumentService;
 import java.io.IOException;
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-public class HouseMemberDocumentTest {
+class HouseMemberDocumentTest {
 
   private static final String MEMBER_ID = "test-member-id";
   private static final MockMultipartFile MULTIPART_FILE =

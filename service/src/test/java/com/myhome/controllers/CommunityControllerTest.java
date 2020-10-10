@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.unit;
+package com.myhome.controllers;
 
-import com.myhome.controllers.CommunityController;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.CommunityHouseName;
 import com.myhome.controllers.dto.UserDto;
@@ -58,7 +57,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-public class CommunityControllerTest {
+class CommunityControllerTest {
   private static final String COMMUNITY_ADMIN_ID = "1";
   private static final String COMMUNITY_ADMIN_NAME = "Test Name";
   private static final String COMMUNITY_ADMIN_EMAIL = "testadmin@myhome.com";
