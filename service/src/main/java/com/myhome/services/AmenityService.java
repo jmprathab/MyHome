@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-pluginManagement {
-  plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-    id 'net.researchgate.release' version "${researchgateReleaseVersion}"
-    id "org.openapi.generator" version "${openApiVersion}"
-  }
-}
+package com.myhome.services;
 
-rootProject.name = 'myhome-service'
-include 'integration-tests'
-include 'service'
-include 'api'
+import com.myhome.controllers.dto.AmenityDto;
+import com.myhome.domain.Amenity;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+public interface AmenityService {
+
+  Optional<List<AmenityDto>> createAmenities(Set<AmenityDto> amenities, String communityId);
+
+  Optional<Amenity> getAmenityDetails(String amenityId);
+
+  boolean deleteAmenity(String amenityId);
+
+  Set<Amenity> listAllAmenities(String communityId);
+
+  boolean updateAmenity(AmenityDto updatedAmenityDto);
+}

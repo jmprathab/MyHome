@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-pluginManagement {
-  plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-    id 'net.researchgate.release' version "${researchgateReleaseVersion}"
-    id "org.openapi.generator" version "${openApiVersion}"
-  }
-}
+package com.myhome.domain;
 
-rootProject.name = 'myhome-service'
-include 'integration-tests'
-include 'service'
-include 'api'
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.OneToOne;
+
+public class AmenityBookingItem extends BaseEntity {
+
+  @Column(nullable = false, unique = true)
+  private String amenityBookingItemId;
+  @OneToOne
+  private Amenity amenity;
+  @Column
+  private LocalDateTime bookingStartDate;
+  @Column
+  private LocalDateTime bookingEndDate;
+  @Column
+  private User bookingUser;
+}

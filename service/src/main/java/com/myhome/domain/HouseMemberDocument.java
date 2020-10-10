@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-pluginManagement {
-  plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-    id 'net.researchgate.release' version "${researchgateReleaseVersion}"
-    id "org.openapi.generator" version "${openApiVersion}"
-  }
-}
+package com.myhome.domain;
 
-rootProject.name = 'myhome-service'
-include 'integration-tests'
-include 'service'
-include 'api'
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@EqualsAndHashCode(of = {"documentFilename"}, callSuper = false)
+public class HouseMemberDocument extends BaseEntity {
+
+  @Column(unique = true)
+  private String documentFilename;
+
+  @Lob
+  @Column
+  private byte[] documentContent = new byte[0];
+}

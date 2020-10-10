@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-pluginManagement {
-  plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-    id 'net.researchgate.release' version "${researchgateReleaseVersion}"
-    id "org.openapi.generator" version "${openApiVersion}"
-  }
-}
+package com.myhome.controllers.dto;
 
-rootProject.name = 'myhome-service'
-include 'integration-tests'
-include 'service'
-include 'api'
+import java.math.BigDecimal;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Builder
+@Getter
+@Setter
+public class PaymentDto {
+  private String paymentId;
+  private BigDecimal charge;
+  private String type;
+  private String description;
+  private boolean recurring;
+  private String dueDate;
+  private UserDto admin;
+  private HouseMemberDto member;
+}

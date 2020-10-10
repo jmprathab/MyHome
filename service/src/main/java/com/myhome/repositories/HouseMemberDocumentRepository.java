@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-pluginManagement {
-  plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-    id 'net.researchgate.release' version "${researchgateReleaseVersion}"
-    id "org.openapi.generator" version "${openApiVersion}"
-  }
-}
+package com.myhome.repositories;
 
-rootProject.name = 'myhome-service'
-include 'integration-tests'
-include 'service'
-include 'api'
+import com.myhome.domain.HouseMemberDocument;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface HouseMemberDocumentRepository extends JpaRepository<HouseMemberDocument, Long> {
+}

@@ -1,0 +1,108 @@
+/*
+ * Copyright 2020 Marcin Słowiak
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+plugins {
+  id 'org.springframework.boot'
+  id 'jacoco'
+  id 'net.researchgate.release'
+}
+
+dependencies {
+
+  implementation project(":api")
+
+  // Spring web
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+
+  // Spring test
+  testImplementation('org.springframework.boot:spring-boot-starter-test') {
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+
+  // Spring security
+  implementation 'org.springframework.boot:spring-boot-starter-security'
+  testImplementation 'org.springframework.security:spring-security-test'
+
+  // Spring JPA
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+  // H2
+  runtimeOnly 'com.h2database:h2'
+
+  // Devtools
+  developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+  // Json web token
+  implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"
+  runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwtVersion}",
+          "org.bouncycastle:bcprov-jdk15on:${bouncycastleVersion}",
+          "io.jsonwebtoken:jjwt-jackson:${jwtVersion}"
+
+  // Mapstruct
+  compileOnly "org.mapstruct:mapstruct-jdk8:${mapstructVersion}"
+  annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+  testImplementation "org.mapstruct:mapstruct-jdk8:${mapstructVersion}"
+
+  // Lombok
+  compileOnly 'org.projectlombok:lombok'
+  annotationProcessor 'org.projectlombok:lombok'
+
+  // Documentation
+  implementation "org.springdoc:springdoc-openapi-ui:${springDocOpenApiVersion}"
+}
+
+bootJar {
+  mainClassName = 'com.myhome.MyHomeServiceApplication'
+  manifest {
+    attributes(
+            'Implementation-Title': 'myhome-service',
+            'Implementation-Version': archiveVersion
+    )
+  }
+}
+
+compileJava {
+  // Mapstruct options
+  options.annotationProcessorPath = configurations.annotationProcessor
+  options.compilerArgs << "-Amapstruct.defaultComponentModel=spring"
+  options.compilerArgs << "-Amapstruct.unmappedTargetPolicy=IGNORE"
+}
+
+test {
+  useJUnitPlatform()
+}
+
+// Jacoco
+test.finalizedBy jacocoTestReport
+
+jacocoTestReport {
+  dependsOn {
+    test
+  }
+  reports {
+    xml.enabled true
+    csv.enabled false
+    html.destination file("${buildDir}/jacoco/jacocoHtml")
+  }
+
+  // Keep this until mapstruct comes up with a better solution
+  // https://github.com/mapstruct/mapstruct/issues/1528
+  afterEvaluate {
+    classDirectories.setFrom(files(classDirectories.files.collect {
+      fileTree(dir: it, exclude: ['**/mapper/**', '**/mapper'])
+    }))
+  }
+}

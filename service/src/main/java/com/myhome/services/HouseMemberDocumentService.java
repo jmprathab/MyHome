@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-pluginManagement {
-  plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-    id 'net.researchgate.release' version "${researchgateReleaseVersion}"
-    id "org.openapi.generator" version "${openApiVersion}"
-  }
-}
+package com.myhome.services;
 
-rootProject.name = 'myhome-service'
-include 'integration-tests'
-include 'service'
-include 'api'
+import com.myhome.domain.HouseMemberDocument;
+import java.util.Optional;
+import org.springframework.web.multipart.MultipartFile;
+
+public interface HouseMemberDocumentService {
+
+  boolean deleteHouseMemberDocument(String memberId);
+
+  Optional<HouseMemberDocument> findHouseMemberDocument(String memberId);
+
+  Optional<HouseMemberDocument> updateHouseMemberDocument(MultipartFile multipartFile,
+      String memberId);
+
+  Optional<HouseMemberDocument> createHouseMemberDocument(MultipartFile multipartFile,
+      String memberId);
+}

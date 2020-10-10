@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-pluginManagement {
-  plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-    id 'net.researchgate.release' version "${researchgateReleaseVersion}"
-    id "org.openapi.generator" version "${openApiVersion}"
+package com.myhome.controllers.response;
+
+import java.util.HashSet;
+import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class ListCommunityAdminsResponse {
+  private Set<CommunityAdmin> admins = new HashSet<>();
+
+  @AllArgsConstructor
+  @NoArgsConstructor
+  @Data
+  public static class CommunityAdmin {
+    private String adminId;
   }
 }
-
-rootProject.name = 'myhome-service'
-include 'integration-tests'
-include 'service'
-include 'api'
