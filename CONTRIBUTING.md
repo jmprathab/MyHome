@@ -8,6 +8,10 @@ Please note we have a [code of conduct](CODE_OF_CONDUCT.md), please follow it in
 
 1. This repository has issue, feature request and pull request templates which would autofill when you raise a bug, request for a new feature or when you raise a PR. Do your best to fill out the template completely.
 
+## Where I can find the issue to work with?
+
+https://github.com/jmprathab/MyHome/issues?q=is%3Aissue+is%3Aopen+no%3Aassignee+-label%3Afeature-task+label%3Aup-for-grabs
+
 ## Pull Request Process
 
 1. Ensure any install or build dependencies are removed before the end of the layer when doing a
