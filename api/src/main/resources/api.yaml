@@ -1,6 +1,6 @@
 openapi: 3.0.2
 servers:
-  - url: /v3
+  - url: http://localhost:8080/
 info:
   description: This is a OpenApi specification for MyHome backend service.
   version: 2.0.0
