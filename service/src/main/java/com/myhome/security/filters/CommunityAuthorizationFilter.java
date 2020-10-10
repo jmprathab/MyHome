@@ -16,8 +16,10 @@ import java.util.regex.Pattern;
 
 public class CommunityAuthorizationFilter extends BasicAuthenticationFilter {
     private final CommunityService communityService;
-    private static final String UUID_PATTERN = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
-    private static final Pattern ADD_AMENITY_REQUEST_PATTERN = Pattern.compile("/communities/" + UUID_PATTERN + "/amenities");
+    private static final String UUID_PATTERN =
+        "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+    private static final Pattern ADD_AMENITY_REQUEST_PATTERN =
+        Pattern.compile("/communities/" + UUID_PATTERN + "/amenities");
 
 
     public CommunityAuthorizationFilter(AuthenticationManager authenticationManager,
