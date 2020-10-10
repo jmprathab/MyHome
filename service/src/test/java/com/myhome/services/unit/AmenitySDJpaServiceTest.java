@@ -19,7 +19,9 @@ package com.myhome.services.unit;
 import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
+import com.myhome.domain.AmenityBookingItem;
 import com.myhome.domain.Community;
+import com.myhome.repositories.AmenityBookingItemRepository;
 import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
@@ -57,6 +59,7 @@ class AmenitySDJpaServiceTest {
   private final String TEST_COMMUNITY_ID = "test-community-id";
   private final String TEST_COMMUNITY_NAME = "test-community-name";
   private final String TEST_COMMUNITY_DISTRICT = "test-community-name";
+  private static final String TEST_BOOKING_ID = "test-booking-id";
   @Mock
   private AmenityRepository amenityRepository;
   @Mock
@@ -65,6 +68,8 @@ class AmenitySDJpaServiceTest {
   private CommunityService communityService;
   @Mock
   private AmenityApiMapper amenityApiMapper;
+  @Mock
+  private AmenityBookingItemRepository bookingItemRepository;
 
   @InjectMocks
   private AmenitySDJpaService amenitySDJpaService;
@@ -291,6 +296,37 @@ class AmenitySDJpaServiceTest {
     verifyNoMoreInteractions(amenityRepository);
   }
 
+  @Test
+  void deleteBookingItem() {
+    // given
+    AmenityBookingItem testBookingItem = getTestBookingItem();
+
+    given(bookingItemRepository.findByAmenityBookingItemId(TEST_BOOKING_ID))
+            .willReturn(Optional.of(testBookingItem));
+
+    // when
+    boolean bookingDeleted = amenitySDJpaService.deleteBooking(TEST_BOOKING_ID);
+
+    // then
+    assertTrue(bookingDeleted);
+    verify(bookingItemRepository).findByAmenityBookingItemId(TEST_BOOKING_ID);
+    verify(bookingItemRepository).delete(testBookingItem);
+  }
+  @Test
+  void deleteBookingNotExists() {
+    // given
+    given(bookingItemRepository.findByAmenityBookingItemId(TEST_BOOKING_ID))
+            .willReturn(Optional.empty());
+
+    // when
+    boolean amenityDeleted = amenitySDJpaService.deleteBooking(TEST_BOOKING_ID);
+
+    // then
+    assertFalse(amenityDeleted);
+    verify(bookingItemRepository).findByAmenityBookingItemId(TEST_BOOKING_ID);
+    verify(bookingItemRepository, never()).delete(any());
+  }
+
   private Amenity getTestAmenity() {
     return new Amenity()
         .withAmenityId(TEST_AMENITY_ID)
@@ -330,5 +366,10 @@ class AmenitySDJpaServiceTest {
         .withPrice(communityAmenityDto.getPrice())
         .withDescription(communityAmenityDto.getDescription())
         .withCommunity(getTestCommunity());
+  }
+
+  private AmenityBookingItem getTestBookingItem() {
+    return new AmenityBookingItem()
+            .withAmenityBookingItemId(TEST_BOOKING_ID);
   }
 }
