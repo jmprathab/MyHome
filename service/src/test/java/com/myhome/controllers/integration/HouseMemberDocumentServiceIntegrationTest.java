@@ -16,7 +16,7 @@
 
 package com.myhome.controllers.integration;
 
-import com.myhome.controllers.request.CreateUserRequest;
+import com.myhome.model.CreateUserRequest;
 import com.myhome.controllers.request.LoginUserRequest;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.HouseMemberDocument;
@@ -48,14 +48,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@AutoConfigureMockMvc
 @TestPropertySource(properties = {
     "files.maxSizeKBytes=1",
     "files.compressionBorderSizeKBytes=99",
     "files.compressedImageQuality=0.99",
     "spring.datasource.initialization-mode=never"
 })
-public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegrationTestBase {
+class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegrationTestBase {
 
   private static final String MEMBER_ID = "default-member-id-for-testing";
   private static final String TEST_DOCUMENT_NAME = "test-document";
@@ -287,8 +286,10 @@ public class HouseMemberDocumentServiceIntegrationTest extends ControllerIntegra
 
   private void authDefaultUser() {
     if (userRepository.findByEmail(TEST_USER_EMAIL) == null) {
-      CreateUserRequest createUserRequest =
-          new CreateUserRequest(TEST_USERNAME, TEST_USER_EMAIL, TEST_USER_PASSWORD);
+      CreateUserRequest createUserRequest = new CreateUserRequest()
+          .name(TEST_USERNAME)
+          .email(TEST_USER_EMAIL)
+          .password(TEST_USER_PASSWORD);
       sendRequest(HttpMethod.POST, "users", createUserRequest);
     }
     updateJwtToken(new LoginUserRequest(TEST_USER_EMAIL, TEST_USER_PASSWORD));

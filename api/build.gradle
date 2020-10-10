@@ -32,6 +32,7 @@ dependencies {
   implementation "io.springfox:springfox-swagger2:${springFoxVersion}"
   implementation "io.springfox:springfox-swagger-ui:${springFoxVersion}"
   implementation "io.springfox:springfox-spring-web:${springFoxVersion}"
+  implementation "org.springframework.data:spring-data-commons:${springBootVersion}"
 }
 
 task generateOpenApiSpec(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
@@ -41,6 +42,14 @@ task generateOpenApiSpec(type: org.openapitools.generator.gradle.plugin.tasks.Ge
   apiPackage = "com.myhome.api"
   invokerPackage = "com.myhome.utils"
   modelPackage = "com.myhome.model"
+
+  additionalProperties = [
+          "skipDefaultInterface" : "true",
+          "interfaceOnly": "true"
+  ]
+  importMappings = [
+          'Pageable': 'org.springframework.data.domain.Pageable'
+  ]
 }
 compileJava.dependsOn(generateOpenApiSpec)
 
