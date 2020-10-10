@@ -27,6 +27,9 @@ dependencies {
   // Spring web
   implementation 'org.springframework.boot:spring-boot-starter-web'
 
+  // Spring actuator
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
   // Spring test
   testImplementation('org.springframework.boot:spring-boot-starter-test') {
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
