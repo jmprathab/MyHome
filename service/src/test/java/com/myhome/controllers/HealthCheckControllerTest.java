@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.unit;
+package com.myhome.controllers;
 
-import com.myhome.controllers.HealthCheckController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +25,7 @@ import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HealthCheckControllerTest {
+class HealthCheckControllerTest {
 
   @InjectMocks
   private HealthCheckController healthCheckController;

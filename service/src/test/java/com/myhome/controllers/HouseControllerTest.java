@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.unit;
+package com.myhome.controllers;
 
-import com.myhome.controllers.HouseController;
 import com.myhome.controllers.dto.HouseMemberDto;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;

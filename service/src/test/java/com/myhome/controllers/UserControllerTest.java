@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.unit;
+package com.myhome.controllers;
 
-import com.myhome.controllers.UserController;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.UserApiMapper;
 import com.myhome.domain.User;
