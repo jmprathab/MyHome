@@ -16,6 +16,7 @@
 
 package com.myhome.services.unit;
 
+import helpers.TestUtils;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
@@ -25,9 +26,7 @@ import com.myhome.services.springdatajpa.HouseSDJpaService;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -72,7 +71,8 @@ class HouseSDJpaServiceTest {
   @Test
   void listAllHousesDefault() {
     // given
-    Set<CommunityHouse> housesInDatabase = getTestHouses(TEST_HOUSES_COUNT);
+    Set<CommunityHouse> housesInDatabase = TestUtils.CommunityHouseHelpers.getTestHouses(TEST_HOUSES_COUNT);
+    
     given(communityHouseRepository.findAll())
         .willReturn(housesInDatabase);
 
@@ -87,7 +87,7 @@ class HouseSDJpaServiceTest {
   @Test
   void listAllHousesCustomPageable() {
     // given
-    Set<CommunityHouse> housesInDatabase = getTestHouses(TEST_HOUSES_COUNT);
+    Set<CommunityHouse> housesInDatabase = TestUtils.CommunityHouseHelpers.getTestHouses(TEST_HOUSES_COUNT);
     Pageable pageRequest = PageRequest.of(0, TEST_HOUSES_COUNT);
     Page<CommunityHouse> housesPage = new PageImpl<>(
         new ArrayList<>(housesInDatabase),
@@ -108,9 +108,9 @@ class HouseSDJpaServiceTest {
   @Test
   void addHouseMembers() {
     // given
-    Set<HouseMember> membersToAdd = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
+    Set<HouseMember> membersToAdd = TestUtils.HouseMemberHelpers.getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
     int membersToAddSize = membersToAdd.size();
-    CommunityHouse communityHouse = getTestCommunityHouse();
+    CommunityHouse communityHouse = TestUtils.CommunityHouseHelpers.getTestCommunityHouse();
 
     given(communityHouseRepository.findByHouseIdWithHouseMembers(HOUSE_ID))
         .willReturn(Optional.of(communityHouse));
@@ -131,7 +131,7 @@ class HouseSDJpaServiceTest {
   @Test
   void addHouseMembersHouseNotExists() {
     // given
-    Set<HouseMember> membersToAdd = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
+    Set<HouseMember> membersToAdd = TestUtils.HouseMemberHelpers.getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
 
     given(communityHouseRepository.findByHouseIdWithHouseMembers(HOUSE_ID))
         .willReturn(Optional.empty());
@@ -149,8 +149,8 @@ class HouseSDJpaServiceTest {
   @Test
   void deleteMemberFromHouse() {
     // given
-    Set<HouseMember> houseMembers = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
-    CommunityHouse communityHouse = getTestCommunityHouse();
+    Set<HouseMember> houseMembers = TestUtils.HouseMemberHelpers.getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
+    CommunityHouse communityHouse = TestUtils.CommunityHouseHelpers.getTestCommunityHouse();
 
     HouseMember memberToDelete = new HouseMember().withMemberId(MEMBER_ID);
     memberToDelete.setCommunityHouse(communityHouse);
@@ -192,8 +192,8 @@ class HouseSDJpaServiceTest {
   @Test
   void deleteMemberFromHouseMemberNotPresent() {
     // given
-    Set<HouseMember> houseMembers = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
-    CommunityHouse communityHouse = getTestCommunityHouse();
+    Set<HouseMember> houseMembers = TestUtils.HouseMemberHelpers.getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
+    CommunityHouse communityHouse = TestUtils.CommunityHouseHelpers.getTestCommunityHouse();
 
     communityHouse.setHouseMembers(houseMembers);
 
@@ -208,45 +208,5 @@ class HouseSDJpaServiceTest {
     verify(communityHouseRepository).findByHouseIdWithHouseMembers(HOUSE_ID);
     verify(communityHouseRepository, never()).save(communityHouse);
     verifyNoInteractions(houseMemberRepository);
-  }
-
-  @Test
-  void getHouseDetailsById() {
-    // given
-
-    // when
-
-    // then
-  }
-
-  @Test
-  void getHouseMembersById() {
-    // given
-
-    // when
-
-    // then
-  }
-
-  private String generateUniqueId() {
-    return UUID.randomUUID().toString();
-  }
-
-  private Set<CommunityHouse> getTestHouses(int count) {
-    return Stream
-        .generate(() -> new CommunityHouse().withHouseId(generateUniqueId()))
-        .limit(count)
-        .collect(Collectors.toSet());
-  }
-
-  private Set<HouseMember> getTestHouseMembers(int count) {
-    return Stream
-        .generate(() -> new HouseMember().withMemberId(generateUniqueId()))
-        .limit(count)
-        .collect(Collectors.toSet());
-  }
-
-  private CommunityHouse getTestCommunityHouse() {
-    return new CommunityHouse();
   }
 }

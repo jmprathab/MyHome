@@ -1,0 +1,28 @@
+*   [33mea904a9[m[33m ([m[1;35mrefs/stash[m[33m)[m WIP on iss#87-House-member-documents-integration-tests: 627a541 Merge branch 'master' into iss#87-House-member-documents-integration-tests
+[31m|[m[32m\[m  
+[31m|[m * [33m53e928d[m index on iss#87-House-member-documents-integration-tests: 627a541 Merge branch 'master' into iss#87-House-member-documents-integration-tests
+[31m|[m[31m/[m  
+*   [33m627a541[m Merge branch 'master' into iss#87-House-member-documents-integration-tests
+[33m|[m[34m\[m  
+[33m|[m *   [33m35d38a2[m Merge pull request #85 from amirabramovich/issue80-insert-data-on-startup
+[33m|[m [35m|[m[36m\[m  
+[33m|[m [35m|[m * [33mb57b422[m fixed banner to display application name + version from gradle, merged test classes to improve performance
+[33m|[m [35m|[m * [33m3625c92[m added banner for application and moved the table's data initiation into sql file
+[33m|[m * [36m|[m   [33m2824c98[m Merge pull request #89 from DDmit04/iss#88-User-controller-create-throws-500
+[33m|[m [1;31m|[m[1;32m\[m [36m\[m  
+[33m|[m * [1;32m\[m [36m\[m   [33ma645ace[m Merge pull request #86 from DDmit04/iss#84-Create-part-of-tests-for-HouseMemberDocument-service
+[33m|[m [36m|[m[1;34m\[m [1;32m\[m [36m\[m  
+[33m|[m [36m|[m [1;34m|[m[36m_[m[1;32m|[m[36m/[m  
+[33m|[m [36m|[m[36m/[m[1;34m|[m [1;32m|[m   
+* [36m|[m [1;34m|[m [1;32m|[m [33m77810db[m try fix
+* [36m|[m [1;34m|[m [1;32m|[m [33m6d7cc7f[m relocate test class
+* [36m|[m [1;34m|[m [1;32m|[m [33m630f7d7[m try understand why tests runs too long
+* [36m|[m [1;34m|[m [1;32m|[m [33ma808057[m[33m ([m[1;36mHEAD -> [m[1;32miss#87-House-member-documents-integration-tests[m[33m, [m[1;31morigin/iss#87-House-member-documents-integration-tests[m[33m)[m clean up
+* [36m|[m [1;34m|[m [1;32m|[m [33mb401096[m fix given-when-then blanks
+* [36m|[m [1;34m|[m [1;32m|[m [33ma917fc1[m extract testing URL to const var
+* [36m|[m [1;34m|[m [1;32m|[m [33m2ea089f[m add using @DirtiesContext
+* [36m|[m [1;34m|[m [1;32m|[m [33m90651dc[m fix static final vars names
+* [36m|[m [1;34m|[m [1;32m|[m [33mad8f9bb[m fix imports
+* [36m|[m [1;34m|[m [1;32m|[m [33mad9fbed[m try understand error
+* [36m|[m [1;34m|[m [1;32m|[m [33m1b44e0d[m clean up
+* [36m|[m [1;34m|[m [1;32m|[m [33m10bc44e[m strange error fix
