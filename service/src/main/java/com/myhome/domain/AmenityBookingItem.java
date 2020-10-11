@@ -47,7 +47,7 @@ public class AmenityBookingItem extends BaseEntity {
   private String amenityBookingItemId;
   @ManyToOne(fetch = FetchType.LAZY)
   private Amenity amenity;
-  @Column(nullable = false)
+  @Column
   private LocalDateTime bookingStartDate;
   @Column
   private LocalDateTime bookingEndDate;
