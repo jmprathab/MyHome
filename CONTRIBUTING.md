@@ -21,9 +21,12 @@ https://github.com/jmprathab/MyHome/issues?q=is%3Aissue+is%3Aopen+no%3Aassignee+
 3. Increase the version numbers in any examples files and the README.md to the new version that this
    Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
 4. Pull requests will be approved by one of the owners of this repository.
-5. Pattern for git branch name has to be `feature/<ISSUE_NUMBER>--<ISSUE_SHORT_NAME>`
-6. Pattern for pull request title has to be `Issue <ISSUE_NUMBER>: <ISSUE_NAME>`
-7. One PR for one feature/bug. Don't target multiple Features or Bugs in a single PR unless they are related and cannot be breaken down further.
+5. Pattern for feature git branch name has to be `feature/issue-<ISSUE_NUMBER>--<ISSUE_SHORT_NAME>`
+6. Pattern for defect git branch name has to be `bugfix/issue-<ISSUE_NUMBER>--<ISSUE_SHORT_NAME>`
+7. Pattern for pull request title has to be `Issue #<ISSUE_NUMBER>: <ISSUE_NAME>`
+8. Pattern for commit names has to be `Issue #<ISSUE_NUMBER>: <COMMIT_NAME>`
+9. We prefer rebase instead of merge. So in case to sync with master, please do the rebase.
+9. One PR for one feature/bug. Don't target multiple Features or Bugs in a single PR unless they are related and cannot be breaken down further.
 
 ## How to set up your environment and run tests?
 
