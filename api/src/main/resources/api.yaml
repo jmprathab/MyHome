@@ -82,6 +82,139 @@ paths:
                 $ref: '#/components/schemas/GetUserDetailsResponseUser'
         '404':
           description: "If userId is invalid"
+  /houses:
+    get:
+      tags:
+        - house
+      summary: Get list of houses
+      description: ''
+      operationId: listAllHouses
+      parameters:
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+  '/houses/{houseId}':
+    get:
+      tags:
+        - house
+      summary: Get house by id
+      description: ''
+      operationId: getHouseDetails
+      parameters:
+        - in: path
+          name: houseId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+        '400':
+          description: House with given id not found
+  '/houses/{houseId}/members':
+    get:
+      tags:
+        - house
+      summary: Get list of members of a house
+      description: ''
+      operationId: listAllMembersOfHouse
+      parameters:
+        - in: path
+          name: houseId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListHouseMembersResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListHouseMembersResponse'
+    post:
+      tags:
+        - house
+      summary: Add members of a house
+      description: ''
+      operationId: addHouseMembers
+      parameters:
+        - in: path
+          name: houseId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Add members request body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddHouseMemberRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AddHouseMemberRequest'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddHouseMemberResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AddHouseMemberResponse'
+        '404':
+          description: House with given Id not found
+  '/houses/{houseId}/members/{memberId}':
+    delete:
+      tags:
+        - house
+      summary: Delete member from a house
+      description: ''
+      operationId: deleteHouseMember
+      parameters:
+        - in: path
+          name: houseId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: memberId
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: successful operation
+        '404':
+          description: Member with given Id not found
 components:
   schemas:
     CreateUserRequest:
@@ -139,3 +272,74 @@ components:
           type: integer
         size:
           type: integer
+    GetHouseDetailsResponse:
+      description: List of houses response
+      type: object
+      properties:
+        houses:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/CommunityHouse'
+    CommunityHouse:
+      description: Community house
+      type: object
+      properties:
+        houseId:
+          type: string
+          example: '123'
+        name:
+          type: string
+          example: 'MyHome Community House'
+    ListHouseMembersResponse:
+      description: List of house members response
+      type: object
+      properties:
+        members:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/HouseMember'
+    HouseMember:
+      description: Community house member
+      type: object
+      properties:
+        memberId:
+          type: string
+          example: '123'
+        name:
+          type: string
+          example: 'John Doe'
+    AddHouseMemberRequest:
+      description: Add House Member Request
+      type: object
+      properties:
+        members:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/HouseMemberRequest'
+    HouseMemberRequest:
+      description: House Member Request
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        memberId:
+          type: string
+          example: '123'
+        name:
+          type: string
+          example: 'John Doe'
+
+    AddHouseMemberResponse:
+      description: List of house members response
+      type: object
+      properties:
+        members:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/HouseMember'

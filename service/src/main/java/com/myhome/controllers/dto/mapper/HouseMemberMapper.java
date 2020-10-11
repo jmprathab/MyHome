@@ -17,19 +17,19 @@
 package com.myhome.controllers.dto.mapper;
 
 import com.myhome.controllers.dto.HouseMemberDto;
-import com.myhome.controllers.response.AddHouseMemberResponse;
-import com.myhome.controllers.response.ListHouseMembersResponse;
 import com.myhome.domain.HouseMember;
 import java.util.Set;
+
+import com.myhome.model.HouseMemberRequest;
 import org.mapstruct.Mapper;
 
 @Mapper
 public interface HouseMemberMapper {
-  Set<ListHouseMembersResponse.HouseMember> houseMemberSetToRestApiResponseHouseMemberSet(
+  Set<com.myhome.model.HouseMember> houseMemberSetToRestApiResponseHouseMemberSet(
       Set<HouseMember> houseMemberSet);
 
-  Set<HouseMember> houseMemberDtoSetToHouseMemberSet(Set<HouseMemberDto> houseMemberDtoSet);
+  Set<HouseMember> houseMemberDtoSetToHouseMemberSet(Set<HouseMemberRequest> houseMemberDtoSet);
 
-  Set<AddHouseMemberResponse.HouseMember> houseMemberSetToRestApiResponseAddHouseMemberSet(
+  Set<com.myhome.model.HouseMember> houseMemberSetToRestApiResponseAddHouseMemberSet(
       Set<HouseMember> houseMemberSet);
 }
