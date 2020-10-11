@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.unit;
+package com.myhome.controllers;
 
-import com.myhome.controllers.PaymentController;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.HouseMemberDto;
 import com.myhome.controllers.dto.PaymentDto;

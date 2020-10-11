@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.unit;
+package com.myhome.controllers;
 
-import com.myhome.controllers.AmenityController;
 import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.controllers.mapper.AmenityBookingItemApiMapper;
