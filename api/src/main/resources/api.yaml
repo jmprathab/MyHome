@@ -7,6 +7,7 @@ info:
   title: Swagger MyHome - OpenAPI 3.0
 tags:
   - name: Users
+  - name: Payments
 paths:
   /users:
     post:

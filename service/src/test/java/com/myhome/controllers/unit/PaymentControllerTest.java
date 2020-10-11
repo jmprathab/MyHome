@@ -23,16 +23,16 @@ import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
 import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
-import com.myhome.controllers.request.SchedulePaymentRequest;
 import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.controllers.response.ListMemberPaymentsResponse;
-import com.myhome.controllers.response.SchedulePaymentResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.HouseMemberDocument;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
+import com.myhome.model.SchedulePaymentRequest;
+import com.myhome.model.SchedulePaymentResponse;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import java.math.BigDecimal;
@@ -173,8 +173,15 @@ class PaymentControllerTest {
   void shouldSchedulePaymentSuccessful() {
     // given
     SchedulePaymentRequest request =
-        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
-            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentRequest()
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(TEST_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
+
     EnrichedSchedulePaymentRequest enrichedRequest =
         new EnrichedSchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
             TEST_DUE_DATE, TEST_ADMIN_ID, Long.valueOf(1), TEST_ADMIN_NAME, TEST_ADMIN_EMAIL,
@@ -182,8 +189,15 @@ class PaymentControllerTest {
             Long.valueOf(2), "", TEST_MEMBER_NAME, COMMUNITY_HOUSE_ID);
     PaymentDto paymentDto = createTestPaymentDto();
     SchedulePaymentResponse response =
-        new SchedulePaymentResponse(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION,
-            TEST_RECURRING, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentResponse()
+          .paymentId(TEST_ID)
+          .charge(TEST_CHARGE)
+          .type(TEST_TYPE)
+          .description(TEST_DESCRIPTION)
+          .recurring(TEST_RECURRING)
+          .dueDate(TEST_DUE_DATE)
+          .adminId(TEST_ADMIN_ID)
+          .memberId(TEST_MEMBER_ID);
 
     Community community = getMockCommunity(new HashSet<>());
 
@@ -225,8 +239,14 @@ class PaymentControllerTest {
   void shouldNotScheduleIfMemberDoesNotExist() {
     // given
     SchedulePaymentRequest request =
-        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
-            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentRequest()
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(TEST_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
 
     given(paymentApiMapper.schedulePaymentRequestToPaymentDto(request))
@@ -250,12 +270,25 @@ class PaymentControllerTest {
   void shouldNotScheduleIfAdminDoesntExist() {
     // given
     SchedulePaymentRequest request =
-        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
-            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentRequest()
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(TEST_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
     SchedulePaymentResponse response =
-        new SchedulePaymentResponse(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION,
-            TEST_RECURRING, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentResponse()
+            .paymentId(TEST_ID)
+            .charge(TEST_CHARGE)
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(TEST_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
 
     HouseMember member = new HouseMember(TEST_MEMBER_ID, null, TEST_MEMBER_NAME, null);
 
@@ -286,12 +319,25 @@ class PaymentControllerTest {
   void shouldNotScheduleIfAdminIsNotInCommunity() {
     // given
     SchedulePaymentRequest request =
-        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
-            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentRequest()
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(TEST_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
     SchedulePaymentResponse response =
-        new SchedulePaymentResponse(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION,
-            TEST_RECURRING, TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentResponse()
+            .paymentId(TEST_ID)
+            .charge(TEST_CHARGE)
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(TEST_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
 
     Community community = getMockCommunity(new HashSet<>());
     Set<User> admins = community.getAdmins();
@@ -330,16 +376,15 @@ class PaymentControllerTest {
     // given
     PaymentDto paymentDto = createTestPaymentDto();
 
-    SchedulePaymentResponse expectedResponse = new SchedulePaymentResponse(
-        TEST_ID,
-        TEST_CHARGE,
-        TEST_TYPE,
-        TEST_DESCRIPTION,
-        TEST_RECURRING,
-        TEST_DUE_DATE,
-        TEST_ADMIN_ID,
-        TEST_MEMBER_ID
-    );
+    SchedulePaymentResponse expectedResponse =         new SchedulePaymentResponse()
+        .paymentId(TEST_ID)
+        .charge(TEST_CHARGE)
+        .type(TEST_TYPE)
+        .description(TEST_DESCRIPTION)
+        .recurring(TEST_RECURRING)
+        .dueDate(TEST_DUE_DATE)
+        .adminId(TEST_ADMIN_ID)
+        .memberId(TEST_MEMBER_ID);
     given(paymentService.getPaymentDetails(TEST_ID))
         .willReturn(Optional.of(paymentDto));
     given(paymentApiMapper.paymentToSchedulePaymentResponse(paymentDto))
@@ -377,8 +422,14 @@ class PaymentControllerTest {
   void shouldGetMemberPaymentsSuccess() {
     // given
     SchedulePaymentRequest request =
-        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
-            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentRequest()
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(TEST_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
 
     given(paymentService.schedulePayment(paymentDto))
@@ -444,8 +495,14 @@ class PaymentControllerTest {
   void shouldGetAdminPaymentsSuccess() {
     // given
     SchedulePaymentRequest request =
-        new SchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
-            TEST_DUE_DATE, TEST_ADMIN_ID, TEST_MEMBER_ID);
+        new SchedulePaymentRequest()
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(TEST_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
 
     given(paymentService.schedulePayment(paymentDto))
