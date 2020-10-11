@@ -21,13 +21,19 @@ import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.controllers.mapper.AmenityBookingItemApiMapper;
 import com.myhome.controllers.request.AddAmenityRequest;
-import com.myhome.controllers.response.GetAmenityBookingsResponse;
 import com.myhome.controllers.request.UpdateAmenityRequest;
+import com.myhome.controllers.response.GetAmenityBookingsResponse;
 import com.myhome.controllers.response.amenity.AddAmenityResponse;
 import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.services.AmenityService;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -35,13 +41,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -226,6 +225,7 @@ class AmenityControllerTest {
 
   @Test
   void shouldReturnListOfBookingsOfGivenAmenityId() {
+    // given
     AmenityBookingItem amenityBookingItem = new AmenityBookingItem();
     amenityBookingItem.setAmenity(getTestAmenity());
     LocalDateTime currentDate = LocalDateTime.now();
@@ -233,31 +233,140 @@ class AmenityControllerTest {
     getAmenityBookingsResponse.setAmenityId(TEST_AMENITY_ID);
 
     List<AmenityBookingItem> amenityBookingItems = Collections.singletonList(amenityBookingItem);
-    given(amenitySDJpaService.listAllAmenityBookings(TEST_AMENITY_ID, currentDate, currentDate.plusDays(5), null))
-            .willReturn(amenityBookingItems);
-
+    given(amenitySDJpaService.listAllAmenityBookings(TEST_AMENITY_ID,
+        currentDate,
+        currentDate.plusDays(5),
+        null))
+        .willReturn(amenityBookingItems);
     given(amenityBookingItemApiMapper.amenityBookingToAmenityBookingsResponse(amenityBookingItems))
-            .willReturn(Collections.singletonList(getAmenityBookingsResponse));
+        .willReturn(Collections.singletonList(getAmenityBookingsResponse));
 
+    // when
     ResponseEntity<List<GetAmenityBookingsResponse>> amenitiesBookings =
-            amenityController.getAmenitiesBookings(TEST_AMENITY_ID, currentDate, currentDate.plusDays(5), null);
+        amenityController.getAmenitiesBookings(TEST_AMENITY_ID,
+            currentDate,
+            currentDate.plusDays(5),
+            null);
 
+    // then
     assertEquals(HttpStatus.OK, amenitiesBookings.getStatusCode());
     assertNotNull(amenitiesBookings.getBody());
     assertEquals(1, amenitiesBookings.getBody().size());
   }
 
   @Test
-  void shouldReturn404WhenNoBookingsFound() {
+  void shouldReturnEmptyListWhenNoBookingsFound() {
+    // given
     LocalDateTime currentDate = LocalDateTime.now();
-    given(amenitySDJpaService.listAllAmenityBookings(TEST_AMENITY_ID, currentDate, currentDate.plusDays(5), null))
-            .willReturn(Collections.emptyList());
+    given(amenitySDJpaService.listAllAmenityBookings(TEST_AMENITY_ID,
+        currentDate,
+        currentDate.plusDays(5),
+        null))
+        .willReturn(Collections.emptyList());
 
+    // when
     ResponseEntity<List<GetAmenityBookingsResponse>> amenitiesBookings =
-            amenityController.getAmenitiesBookings(TEST_AMENITY_ID, currentDate, currentDate.plusDays(5), null);
+        amenityController.getAmenitiesBookings(TEST_AMENITY_ID,
+            currentDate,
+            currentDate.plusDays(5),
+            null);
 
-    assertEquals(HttpStatus.NOT_FOUND, amenitiesBookings.getStatusCode());
-    assertNull(amenitiesBookings.getBody());
+    // then
+    assertEquals(HttpStatus.OK, amenitiesBookings.getStatusCode());
+    assertNotNull(amenitiesBookings.getBody());
+    assertEquals(0, amenitiesBookings.getBody().size());
+  }
+
+  @Test
+  void shouldReturnBookingsWithoutDateRange() {
+    // given
+    AmenityBookingItem amenityBookingItem = new AmenityBookingItem();
+    amenityBookingItem.setAmenity(getTestAmenity());
+    GetAmenityBookingsResponse getAmenityBookingsResponse = new GetAmenityBookingsResponse();
+    getAmenityBookingsResponse.setAmenityId(TEST_AMENITY_ID);
+
+    List<AmenityBookingItem> amenityBookingItems = Collections.singletonList(amenityBookingItem);
+    given(amenitySDJpaService.listAllAmenityBookings(TEST_AMENITY_ID,
+        null,
+        null,
+        null))
+        .willReturn(amenityBookingItems);
+    given(amenityBookingItemApiMapper.amenityBookingToAmenityBookingsResponse(amenityBookingItems))
+        .willReturn(Collections.singletonList(getAmenityBookingsResponse));
+
+    // when
+    ResponseEntity<List<GetAmenityBookingsResponse>> amenitiesBookings =
+        amenityController.getAmenitiesBookings(TEST_AMENITY_ID,
+            null,
+            null,
+            null);
+
+    // then
+    assertEquals(HttpStatus.OK, amenitiesBookings.getStatusCode());
+    assertNotNull(amenitiesBookings.getBody());
+    assertEquals(1, amenitiesBookings.getBody().size());
+  }
+
+  @Test
+  void shouldReturnBookingsWithStartDateRange() {
+    // given
+    AmenityBookingItem amenityBookingItem = new AmenityBookingItem();
+    amenityBookingItem.setAmenity(getTestAmenity());
+    GetAmenityBookingsResponse getAmenityBookingsResponse = new GetAmenityBookingsResponse();
+    getAmenityBookingsResponse.setAmenityId(TEST_AMENITY_ID);
+    LocalDateTime currentTime = LocalDateTime.now();
+
+    List<AmenityBookingItem> amenityBookingItems = Collections.singletonList(amenityBookingItem);
+    given(amenitySDJpaService.listAllAmenityBookings(TEST_AMENITY_ID,
+        currentTime,
+        null,
+        null))
+        .willReturn(amenityBookingItems);
+    given(amenityBookingItemApiMapper.amenityBookingToAmenityBookingsResponse(amenityBookingItems))
+        .willReturn(Collections.singletonList(getAmenityBookingsResponse));
+
+    // when
+    ResponseEntity<List<GetAmenityBookingsResponse>> amenitiesBookings =
+        amenityController.getAmenitiesBookings(TEST_AMENITY_ID,
+            currentTime,
+            null,
+            null);
+
+    // then
+    assertEquals(HttpStatus.OK, amenitiesBookings.getStatusCode());
+    assertNotNull(amenitiesBookings.getBody());
+    assertEquals(1, amenitiesBookings.getBody().size());
+  }
+
+  @Test
+  void shouldReturnBookingsWithEndDateRange() {
+    // given
+    AmenityBookingItem amenityBookingItem = new AmenityBookingItem();
+    amenityBookingItem.setAmenity(getTestAmenity());
+    GetAmenityBookingsResponse getAmenityBookingsResponse = new GetAmenityBookingsResponse();
+    getAmenityBookingsResponse.setAmenityId(TEST_AMENITY_ID);
+    LocalDateTime futureTime = LocalDateTime.now().plusWeeks(2);
+
+    List<AmenityBookingItem> amenityBookingItems = Collections.singletonList(amenityBookingItem);
+    given(amenitySDJpaService.listAllAmenityBookings(TEST_AMENITY_ID,
+        null,
+        futureTime,
+        null))
+        .willReturn(amenityBookingItems);
+    given(amenityBookingItemApiMapper.amenityBookingToAmenityBookingsResponse(amenityBookingItems))
+        .willReturn(Collections.singletonList(getAmenityBookingsResponse));
+
+    // when
+    ResponseEntity<List<GetAmenityBookingsResponse>> amenitiesBookings =
+        amenityController.getAmenitiesBookings(TEST_AMENITY_ID,
+            null,
+            futureTime,
+            null);
+
+    // then
+    assertEquals(HttpStatus.OK, amenitiesBookings.getStatusCode());
+    assertNotNull(amenitiesBookings.getBody());
+    assertEquals(1, amenitiesBookings.getBody().size());
   }
 
   private Amenity getTestAmenity() {

@@ -30,6 +30,10 @@ import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -44,10 +48,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -140,18 +140,15 @@ public class AmenityController {
   @Operation(description = "Get all bookings for an amenity")
   @GetMapping(path = "/amenities/{amenityId}/bookings")
   public ResponseEntity<List<GetAmenityBookingsResponse>> getAmenitiesBookings(
-          @PathVariable String amenityId,
-          @RequestParam(required = false) LocalDateTime start,
-          @RequestParam(required = false) LocalDateTime end,
-          @PageableDefault(size = 200) Pageable pageable) {
+      @PathVariable String amenityId,
+      @RequestParam(required = false) LocalDateTime start,
+      @RequestParam(required = false) LocalDateTime end,
+      @PageableDefault(size = 200) Pageable pageable) {
 
     List<AmenityBookingItem> amenityBookingItems =
-            amenitySDJpaService.listAllAmenityBookings(amenityId, start, end, pageable);
-    if (amenityBookingItems.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
+        amenitySDJpaService.listAllAmenityBookings(amenityId, start, end, pageable);
     List<GetAmenityBookingsResponse> response =
-            amenityBookingItemApiMapper.amenityBookingToAmenityBookingsResponse(amenityBookingItems);
+        amenityBookingItemApiMapper.amenityBookingToAmenityBookingsResponse(amenityBookingItems);
     return ResponseEntity.ok(response);
   }
 }

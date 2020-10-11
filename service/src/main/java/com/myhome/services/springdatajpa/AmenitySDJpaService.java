@@ -22,21 +22,19 @@ import com.myhome.domain.Amenity;
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.domain.Community;
 import com.myhome.repositories.AmenityBookingRepository;
-import com.myhome.domain.Community;
 import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -110,11 +108,11 @@ public class AmenitySDJpaService implements AmenityService {
         .map(amenityRepository::save).isPresent();
   }
 
-    @Override
-    public List<AmenityBookingItem> listAllAmenityBookings(String amenityId,
-                                                           LocalDateTime startDate,
-                                                           LocalDateTime endDate,
-                                                           Pageable pageable) {
-        return amenityBookingRepository.findAllByAmenity(amenityId, startDate, endDate, pageable);
-    }
+  @Override
+  public List<AmenityBookingItem> listAllAmenityBookings(String amenityId,
+      LocalDateTime startDate,
+      LocalDateTime endDate,
+      Pageable pageable) {
+    return amenityBookingRepository.findAllByAmenity(amenityId, startDate, endDate, pageable);
+  }
 }
