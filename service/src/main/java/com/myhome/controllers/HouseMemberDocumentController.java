@@ -16,10 +16,9 @@
 
 package com.myhome.controllers;
 
+import com.myhome.api.MembersApi;
 import com.myhome.domain.HouseMemberDocument;
 import com.myhome.services.HouseMemberDocumentService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.CacheControl;
@@ -28,11 +27,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,7 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @Slf4j
-public class HouseMemberDocumentController {
+public class HouseMemberDocumentController implements MembersApi {
 
   private final HouseMemberDocumentService houseMemberDocumentService;
 
@@ -50,17 +45,8 @@ public class HouseMemberDocumentController {
     this.houseMemberDocumentService = houseMemberDocumentService;
   }
 
-  @Operation(description = "Returns house member's documents",
-      responses = {
-          @ApiResponse(responseCode = "200", description = "if document present"),
-          @ApiResponse(responseCode = "404", description = "if params are invalid")
-      }
-  )
-  @GetMapping(
-      path = "/members/{memberId}/documents",
-      produces = {MediaType.IMAGE_JPEG_VALUE}
-  )
-  public ResponseEntity<byte[]> getHoseMemberDocument(@PathVariable String memberId) {
+  @Override
+  public ResponseEntity<byte[]> getHouseMemberDocument(@PathVariable String memberId) {
     log.trace("Received request to get house member documents");
     Optional<HouseMemberDocument> houseMemberDocumentOptional =
         houseMemberDocumentService.findHouseMemberDocument(memberId);
@@ -84,19 +70,8 @@ public class HouseMemberDocumentController {
     }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
-  @Operation(description = "Add house member's documents",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "if document saved"),
-          @ApiResponse(responseCode = "409", description = "if document save error"),
-          @ApiResponse(responseCode = "413", description = "if document file too large"),
-          @ApiResponse(responseCode = "404", description = "if params are invalid")
-      }
-  )
-  @PostMapping(
-      path = "/members/{memberId}/documents",
-      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-  )
-  public ResponseEntity uploadHoseMemberDocument(
+  @Override
+  public ResponseEntity uploadHouseMemberDocument(
       @PathVariable String memberId, @RequestParam("memberDocument") MultipartFile memberDocument) {
     log.trace("Received request to add house member documents");
 
@@ -107,19 +82,8 @@ public class HouseMemberDocumentController {
         .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
-  @Operation(description = "Update house member's documents",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "if document updated"),
-          @ApiResponse(responseCode = "409", description = "if document update error"),
-          @ApiResponse(responseCode = "413", description = "if document file too large"),
-          @ApiResponse(responseCode = "404", description = "if params are invalid")
-      }
-  )
-  @PutMapping(
-      path = "/members/{memberId}/documents",
-      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-  )
-  public ResponseEntity updateHoseMemberDocument(
+  @Override
+  public ResponseEntity updateHouseMemberDocument(
       @PathVariable String memberId, @RequestParam("memberDocument") MultipartFile memberDocument) {
     log.trace("Received request to update house member documents");
     Optional<HouseMemberDocument> houseMemberDocumentOptional =
@@ -129,15 +93,8 @@ public class HouseMemberDocumentController {
         .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
-  @Operation(
-      description = "Delete house member's documents",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "id document deleted"),
-          @ApiResponse(responseCode = "404", description = "if params are invalid")
-      }
-  )
-  @DeleteMapping("/members/{memberId}/documents")
-  public ResponseEntity<Void> deleteHoseMemberDocument(@PathVariable String memberId) {
+  @Override
+  public ResponseEntity<Void> deleteHouseMemberDocument(@PathVariable String memberId) {
     log.trace("Received request to delete house member documents");
     boolean isDocumentDeleted = houseMemberDocumentService.deleteHouseMemberDocument(memberId);
     if (isDocumentDeleted) {
