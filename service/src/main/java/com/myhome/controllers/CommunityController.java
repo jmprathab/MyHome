@@ -16,21 +16,23 @@
 
 package com.myhome.controllers;
 
+import com.myhome.api.CommunitiesApi;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.CommunityHouseName;
 import com.myhome.controllers.mapper.CommunityApiMapper;
 import com.myhome.controllers.request.AddCommunityAdminRequest;
 import com.myhome.controllers.request.AddCommunityHouseRequest;
-import com.myhome.controllers.request.CreateCommunityRequest;
 import com.myhome.controllers.response.AddCommunityAdminResponse;
 import com.myhome.controllers.response.AddCommunityHouseResponse;
-import com.myhome.controllers.response.CreateCommunityResponse;
-import com.myhome.controllers.response.GetCommunityDetailsResponse;
 import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.User;
+import com.myhome.model.CreateCommunityRequest;
+import com.myhome.model.CreateCommunityResponse;
+import com.myhome.model.GetCommunityDetailsResponse;
+import com.myhome.model.GetCommunityDetailsResponseCommunity;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -60,22 +62,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @Slf4j
-public class CommunityController {
+public class CommunityController implements CommunitiesApi {
   private final CommunityService communityService;
   private final CommunityApiMapper communityApiMapper;
 
-  @Operation(
-      description = "Create a new community",
-      responses = {
-          @ApiResponse(responseCode = "201", description = "If community was created"),
-      }
-  )
-
-  @PostMapping(
-      path = "/communities",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
   public ResponseEntity<CreateCommunityResponse> createCommunity(@Valid @RequestBody
       CreateCommunityRequest request) {
     log.trace("Received create community request");
@@ -87,17 +77,12 @@ public class CommunityController {
     return ResponseEntity.status(HttpStatus.CREATED).body(createdCommunityResponse);
   }
 
-  @Operation(description = "List all communities which are registered")
-  @GetMapping(
-      path = "/communities",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
   public ResponseEntity<GetCommunityDetailsResponse> listAllCommunity(
       @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all community");
 
     Set<Community> communityDetails = communityService.listAll(pageable);
-    Set<GetCommunityDetailsResponse.Community> communityDetailsResponse =
+    Set<GetCommunityDetailsResponseCommunity> communityDetailsResponse =
         communityApiMapper.communitySetToRestApiResponseCommunitySet(communityDetails);
 
     GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
@@ -125,7 +110,7 @@ public class CommunityController {
         .map(communityApiMapper::communityToRestApiResponseCommunity)
         .map(Arrays::asList)
         .map(HashSet::new)
-        .map(GetCommunityDetailsResponse::new)
+        .map(communities -> new GetCommunityDetailsResponse().communities(communities))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
   }

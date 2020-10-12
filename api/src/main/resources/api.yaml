@@ -8,6 +8,7 @@ info:
 tags:
   - name: Users
   - name: Documents
+  - name: Communities
 paths:
   /users:
     post:
@@ -179,6 +180,53 @@ paths:
           description: if document deleted
         '404':
           description: if params are invalid
+  /communities:
+    post:
+      tags:
+        - Communities
+      description: Create a new community
+      operationId: createCommunity
+      requestBody:
+        description: CreateCommunityRequest aggregate fields
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCommunityRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CreateCommunityRequest'
+      responses:
+        '201':
+          description: if community was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCommunityResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CreateCommunityResponse'
+    get:
+      tags:
+        - Communities
+      description: List all communities which are registered
+      operationId: listAllCommunity
+      parameters:
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: Returns list of communities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCommunityDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetCommunityDetailsResponse'
 components:
   schemas:
     CreateUserRequest:
@@ -236,3 +284,39 @@ components:
           type: integer
         size:
           type: integer
+    CreateCommunityRequest:
+      type: object
+      required:
+        - name
+        - district
+      properties:
+        name:
+          type: string
+        district:
+          type: string
+    CreateCommunityResponse:
+      type: object
+      required:
+        - communityId
+      properties:
+        communityId:
+          type: string
+    GetCommunityDetailsResponse:
+      type: object
+      required:
+        - communities
+      properties:
+        communities:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/GetCommunityDetailsResponseCommunity'
+    GetCommunityDetailsResponseCommunity:
+      type: object
+      properties:
+        communityId:
+          type: string
+        name:
+          type: string
+        district:
+          type: string
