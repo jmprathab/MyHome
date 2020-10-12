@@ -7,6 +7,7 @@ info:
   title: Swagger MyHome - OpenAPI 3.0
 tags:
   - name: Users
+  - name: Houses
 paths:
   /users:
     post:
@@ -85,7 +86,7 @@ paths:
   /houses:
     get:
       tags:
-        - house
+        - Houses
       summary: Get list of houses
       description: ''
       operationId: listAllHouses
@@ -108,7 +109,7 @@ paths:
   '/houses/{houseId}':
     get:
       tags:
-        - house
+        - Houses
       summary: Get house by id
       description: ''
       operationId: getHouseDetails
@@ -133,7 +134,7 @@ paths:
   '/houses/{houseId}/members':
     get:
       tags:
-        - house
+        - Houses
       summary: Get list of members of a house
       description: ''
       operationId: listAllMembersOfHouse
@@ -160,7 +161,7 @@ paths:
                 $ref: '#/components/schemas/ListHouseMembersResponse'
     post:
       tags:
-        - house
+        - Houses
       summary: Add members of a house
       description: ''
       operationId: addHouseMembers
@@ -195,7 +196,7 @@ paths:
   '/houses/{houseId}/members/{memberId}':
     delete:
       tags:
-        - house
+        - Houses
       summary: Delete member from a house
       description: ''
       operationId: deleteHouseMember

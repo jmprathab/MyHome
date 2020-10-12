@@ -65,7 +65,7 @@ public class HouseController implements HousesApi {
     return houseService.getHouseDetailsById(houseId)
         .map(houseApiMapper::communityHouseToRestApiResponseCommunityHouse)
         .map(Collections::singleton)
-        .map(e -> new GetHouseDetailsResponse().houses(e))
+        .map(communityHouses -> new GetHouseDetailsResponse().houses(communityHouses))
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
@@ -78,7 +78,7 @@ public class HouseController implements HousesApi {
     return houseService.getHouseMembersById(houseId, pageable)
         .map(HashSet::new)
         .map(houseMemberMapper::houseMemberSetToRestApiResponseHouseMemberSet)
-        .map(e -> new ListHouseMembersResponse().members(e))
+        .map(houseMembers -> new ListHouseMembersResponse().members(houseMembers))
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
