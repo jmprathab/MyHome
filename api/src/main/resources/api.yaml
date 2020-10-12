@@ -7,6 +7,7 @@ info:
   title: Swagger MyHome - OpenAPI 3.0
 tags:
   - name: Users
+  - name: Documents
 paths:
   /users:
     post:
@@ -82,6 +83,102 @@ paths:
                 $ref: '#/components/schemas/GetUserDetailsResponseUser'
         '404':
           description: "If userId is invalid"
+  /members/{memberId}/documents:
+    get:
+      tags:
+        - Documents
+      description: Returns house member's documents
+      operationId: getHouseMemberDocument
+      parameters:
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: if document present
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: byte
+        '404':
+          description: if params are invalid
+    post:
+      tags:
+        - Documents
+      description: Add house member's documents
+      operationId: uploadHouseMemberDocument
+      parameters:
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                memberDocument:
+                  type: string
+                  format: binary
+      responses:
+        '204':
+          description: if document saved
+        '409':
+          description: if document save error
+        '413':
+          description: if document file too large
+        '404':
+          description: if params are invalid
+    put:
+      tags:
+        - Documents
+      description: Update house member's documents
+      operationId: updateHouseMemberDocument
+      parameters:
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                memberDocument:
+                  type: string
+                  format: binary
+      responses:
+        '204':
+          description: if document updated
+        '409':
+          description: if document update error
+        '413':
+          description: if document file too large
+        '404':
+          description: if params are invalid
+    delete:
+      tags:
+        - Documents
+      description: Delete house member's documents
+      operationId: deleteHouseMemberDocument
+      parameters:
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: if document deleted
+        '404':
+          description: if params are invalid
 components:
   schemas:
     CreateUserRequest:
