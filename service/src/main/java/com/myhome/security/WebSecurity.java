@@ -17,8 +17,11 @@
 package com.myhome.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myhome.security.filters.CommunityAuthorizationFilter;
 import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import javax.servlet.Filter;
+
+import com.myhome.services.CommunityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -41,11 +44,13 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final PasswordEncoder passwordEncoder;
   private final UserDetailFetcher userDetailFetcher;
   private final AppJwtEncoderDecoder appJwtEncoderDecoder;
+  private final CommunityService communityService;
 
   @Override protected void configure(HttpSecurity http) throws Exception {
     http.cors().and().csrf().disable();
     http.headers().frameOptions().disable();
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    http.addFilterAfter(getCommunityFilter(), MyHomeAuthorizationFilter.class);
 
     http.authorizeRequests()
         .antMatchers(environment.getProperty("api.h2console.url.path"))
@@ -66,6 +71,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .addFilter(getAuthenticationFilter())
         .addFilter(new MyHomeAuthorizationFilter(authenticationManager(), environment,
             appJwtEncoderDecoder));
+  }
+
+  private Filter getCommunityFilter() throws Exception {
+    return new CommunityAuthorizationFilter(authenticationManager(), communityService);
   }
 
   private Filter getAuthenticationFilter() throws Exception {
