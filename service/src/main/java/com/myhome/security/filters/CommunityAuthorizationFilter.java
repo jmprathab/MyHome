@@ -15,43 +15,42 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommunityAuthorizationFilter extends BasicAuthenticationFilter {
-    private final CommunityService communityService;
-    private static final String UUID_PATTERN =
-        "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
-    private static final Pattern ADD_AMENITY_REQUEST_PATTERN =
-        Pattern.compile("/communities/" + UUID_PATTERN + "/amenities");
+  private final CommunityService communityService;
+  private static final String UUID_PATTERN =
+      "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+  private static final Pattern ADD_AMENITY_REQUEST_PATTERN =
+      Pattern.compile("/communities/" + UUID_PATTERN + "/amenities");
 
+  public CommunityAuthorizationFilter(AuthenticationManager authenticationManager,
+      CommunityService communityService) {
+    super(authenticationManager);
+    this.communityService = communityService;
+  }
 
-    public CommunityAuthorizationFilter(AuthenticationManager authenticationManager,
-        CommunityService communityService) {
-        super(authenticationManager);
-        this.communityService = communityService;
+  @Override
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+      FilterChain chain) throws IOException, ServletException {
+
+    Matcher urlMatcher = ADD_AMENITY_REQUEST_PATTERN.matcher(request.getRequestURI());
+
+    if (urlMatcher.find() && !isUserCommunityAdmin(request)) {
+      response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+      return;
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain chain) throws IOException, ServletException {
+    super.doFilterInternal(request, response, chain);
+  }
 
-        Matcher urlMatcher = ADD_AMENITY_REQUEST_PATTERN.matcher(request.getRequestURI());
+  private boolean isUserCommunityAdmin(HttpServletRequest request) {
+    String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    String communityId = request.getRequestURI().split("/")[2];
 
-        if (urlMatcher.find() && !isUserCommunityAdmin(request)) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
-
-        super.doFilterInternal(request, response, chain);
-    }
-
-    private boolean isUserCommunityAdmin(HttpServletRequest request) {
-        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String communityId = request.getRequestURI().split("/")[2];
-
-        return communityService.findCommunityAdminsById(communityId, null)
-                .flatMap(admins -> admins.stream()
-                        .map(User::getUserId)
-                        .filter(userId::equals)
-                        .findFirst()
-                )
-                .isPresent();
-    }
+    return communityService.findCommunityAdminsById(communityId, null)
+        .flatMap(admins -> admins.stream()
+            .map(User::getUserId)
+            .filter(userId::equals)
+            .findFirst()
+        )
+        .isPresent();
+  }
 }
