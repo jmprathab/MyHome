@@ -16,16 +16,16 @@
 
 package com.myhome.services.unit;
 
+import helpers.TestUtils;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.HouseMemberDocument;
 import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.springdatajpa.HouseMemberDocumentSDJpaService;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
 import java.util.Optional;
-import javax.imageio.ImageIO;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -167,7 +167,7 @@ public class HouseMemberDocumentServiceTest {
   @Test
   void updateHouseMemberDocumentSuccess() throws IOException {
     // given
-    byte[] imageBytes = getImageAsByteArray(10, 10);
+    byte[] imageBytes = TestUtils.General.getImageAsByteArray(10, 10);
     MockMultipartFile newDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
     HouseMemberDocument savedDocument =
         new HouseMemberDocument(String.format("member_%s_document.jpg", MEMBER_ID), imageBytes);
@@ -192,7 +192,7 @@ public class HouseMemberDocumentServiceTest {
   @Test
   void updateHouseMemberDocumentMemberNotExists() throws IOException {
     // given
-    byte[] imageBytes = getImageAsByteArray(10, 10);
+    byte[] imageBytes = TestUtils.General.getImageAsByteArray(10, 10);
     MockMultipartFile newDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
 
     given(houseMemberRepository.findByMemberId(MEMBER_ID))
@@ -212,7 +212,7 @@ public class HouseMemberDocumentServiceTest {
   @Test
   void updateHouseMemberDocumentTooLargeFile() throws IOException {
     // given
-    byte[] imageBytes = getImageAsByteArray(1000, 1000);
+    byte[] imageBytes = TestUtils.General.getImageAsByteArray(1000, 1000);
     MockMultipartFile tooLargeDocumentFile =
         new MockMultipartFile("new-test-file-name", imageBytes);
     HouseMemberDocument savedDocument =
@@ -238,7 +238,7 @@ public class HouseMemberDocumentServiceTest {
   @Test
   void createHouseMemberDocumentSuccess() throws IOException {
     // given
-    byte[] imageBytes = getImageAsByteArray(10, 10);
+    byte[] imageBytes = TestUtils.General.getImageAsByteArray(10, 10);
     HouseMemberDocument savedDocument =
         new HouseMemberDocument(String.format("member_%s_document.jpg", MEMBER_ID), imageBytes);
     MockMultipartFile newDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
@@ -264,7 +264,7 @@ public class HouseMemberDocumentServiceTest {
   @Test
   void createHouseMemberDocumentMemberNotExists() throws IOException {
     // given
-    byte[] imageBytes = getImageAsByteArray(10, 10);
+    byte[] imageBytes = TestUtils.General.getImageAsByteArray(10, 10);
     MockMultipartFile newDocumentFile = new MockMultipartFile("new-test-file-name", imageBytes);
 
     given(houseMemberRepository.findByMemberId(MEMBER_ID))
@@ -283,7 +283,7 @@ public class HouseMemberDocumentServiceTest {
   @Test
   void createHouseMemberDocumentTooLargeFile() throws IOException {
     // given
-    byte[] imageBytes = getImageAsByteArray(1000, 1000);
+    byte[] imageBytes = TestUtils.General.getImageAsByteArray(1000, 1000);
     MockMultipartFile tooLargeDocumentFile =
         new MockMultipartFile("new-test-file-name", imageBytes);
     HouseMember testMember = new HouseMember(MEMBER_ID, MEMBER_DOCUMENT, MEMBER_NAME, null);
@@ -300,13 +300,5 @@ public class HouseMemberDocumentServiceTest {
     verify(houseMemberRepository).findByMemberId(MEMBER_ID);
     verify(houseMemberDocumentRepository, never()).save(any());
     verify(houseMemberRepository, never()).save(any());
-  }
-
-  private byte[] getImageAsByteArray(int height, int width) throws IOException {
-    BufferedImage documentImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-    try (ByteArrayOutputStream imageBytesStream = new ByteArrayOutputStream()) {
-      ImageIO.write(documentImage, "jpg", imageBytesStream);
-      return imageBytesStream.toByteArray();
-    }
   }
 }

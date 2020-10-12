@@ -16,6 +16,7 @@
 
 package com.myhome.services.unit;
 
+import helpers.TestUtils;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
 import com.myhome.domain.Community;
@@ -25,7 +26,6 @@ import com.myhome.services.springdatajpa.UserSDJpaService;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -145,12 +145,11 @@ class UserSDJpaServiceTest {
     User user = new User(userDto.getName(), userDto.getUserId(), userDto.getEmail(),
         userDto.getEncryptedPassword(), new HashSet<>());
 
-    Community firstCommunity = createCommunityWithUserAdmin(user);
-    Community secCommunity = createCommunityWithUserAdmin(user);
+    Community firstCommunity = TestUtils.CommunityHelpers.getTestCommunity(user);
+    Community secCommunity = TestUtils.CommunityHelpers.getTestCommunity(user);
 
     Set<Community> communities =
         Stream.of(firstCommunity, secCommunity).collect(Collectors.toSet());
-    user.setCommunities(communities);
 
     Set<String> communitiesIds = communities
         .stream()
@@ -187,13 +186,6 @@ class UserSDJpaServiceTest {
     verify(userRepository).findByUserIdWithCommunities(USER_ID);
   }
 
-  private Community createCommunityWithUserAdmin(User communityUserAdmin) {
-    Community community = new Community();
-    community.setCommunityId(generateUniqueId());
-    community.getAdmins().add(communityUserAdmin);
-    return community;
-  }
-
   private UserDto getDefaultUserDtoRequest() {
     return UserDto.builder()
         .userId(USER_ID)
@@ -212,9 +204,5 @@ class UserSDJpaServiceTest {
         request.getEncryptedPassword(),
         new HashSet<>()
     );
-  }
-
-  private String generateUniqueId() {
-    return UUID.randomUUID().toString();
   }
 }
