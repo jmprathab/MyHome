@@ -16,30 +16,27 @@
 
 package com.myhome.controllers;
 
+import com.myhome.api.CommunitiesApi;
 import com.myhome.api.MembersApi;
 import com.myhome.api.PaymentsApi;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
-import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
+import com.myhome.model.ListAdminPaymentsResponse;
 import com.myhome.model.ListMemberPaymentsResponse;
 import com.myhome.model.SchedulePaymentRequest;
 import com.myhome.model.SchedulePaymentResponse;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
-import io.swagger.v3.oas.annotations.Operation;
 import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -48,7 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class PaymentController implements PaymentsApi, MembersApi {
+public class PaymentController implements PaymentsApi, MembersApi, CommunitiesApi {
   private final PaymentService paymentService;
   private final CommunityService communityService;
   private final SchedulePaymentApiMapper schedulePaymentApiMapper;
@@ -101,13 +98,9 @@ public class PaymentController implements PaymentsApi, MembersApi {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Operation(description = "Get all payments scheduled by the specified admin")
-  @GetMapping(
-      path = "/communities/{communityId}/admins/{adminId}/payments",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
+  @Override
   public ResponseEntity<ListAdminPaymentsResponse> listAllAdminScheduledPayments(
-      @PathVariable String communityId, @PathVariable String adminId) {
+      String communityId, String adminId) {
     log.trace("Received request to list all the payments scheduled by the admin with id[{}]",
         adminId);
 
@@ -118,7 +111,7 @@ public class PaymentController implements PaymentsApi, MembersApi {
         .map(paymentsMatch -> isAdminMatchingPayment(payments, adminId))
         .map(matched -> schedulePaymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(
             payments))
-        .map(ListAdminPaymentsResponse::new)
+        .map(adminPayments -> new ListAdminPaymentsResponse().payments(adminPayments))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
   }

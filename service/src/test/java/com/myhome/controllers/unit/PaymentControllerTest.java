@@ -23,13 +23,14 @@ import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
 import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
-import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.HouseMemberDocument;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
+import com.myhome.model.AdminPayment;
+import com.myhome.model.ListAdminPaymentsResponse;
 import com.myhome.model.ListMemberPaymentsResponse;
 import com.myhome.model.MemberPayment;
 import com.myhome.model.SchedulePaymentRequest;
@@ -529,17 +530,12 @@ class PaymentControllerTest {
     given(communityService.addAdminsToCommunity(TEST_COMMUNITY_ID, adminIds))
         .willReturn(Optional.of(community));
 
-    Set<ListAdminPaymentsResponse.AdminPayment> responsePayments = new HashSet<>();
+    Set<AdminPayment> responsePayments = new HashSet<>();
     responsePayments.add(
-        new ListAdminPaymentsResponse.AdminPayment(
-            TEST_ADMIN_ID,
-            TEST_ID,
-            TEST_CHARGE,
-            TEST_DUE_DATE
-        )
+        new AdminPayment().adminId(TEST_ADMIN_ID).paymentId(TEST_ID).charge(TEST_CHARGE).dueDate(TEST_DUE_DATE)
     );
 
-    ListAdminPaymentsResponse expectedResponse = new ListAdminPaymentsResponse(responsePayments);
+    ListAdminPaymentsResponse expectedResponse = new ListAdminPaymentsResponse().payments(responsePayments);
 
     given(paymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(payments))
         .willReturn(responsePayments);

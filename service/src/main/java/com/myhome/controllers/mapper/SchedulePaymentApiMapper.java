@@ -20,11 +20,12 @@ import com.myhome.controllers.dto.HouseMemberDto;
 import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
-import com.myhome.controllers.response.ListAdminPaymentsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
+import com.myhome.model.AdminPayment;
+import com.myhome.model.ListAdminPaymentsResponse;
 import com.myhome.model.MemberPayment;
 import com.myhome.model.SchedulePaymentRequest;
 import com.myhome.model.SchedulePaymentResponse;
@@ -105,11 +106,11 @@ public interface SchedulePaymentApiMapper {
   @Mapping(target = "memberId", expression = "java(payment.getMember().getMemberId())")
   MemberPayment paymentToMemberPayment(Payment payment);
 
-  Set<ListAdminPaymentsResponse.AdminPayment> adminPaymentSetToRestApiResponseAdminPaymentSet(
+  Set<AdminPayment> adminPaymentSetToRestApiResponseAdminPaymentSet(
       Set<Payment> memberPaymentSet);
 
   @Mapping(target = "adminId", expression = "java(payment.getAdmin().getUserId())")
-  ListAdminPaymentsResponse.AdminPayment paymentToAdminPayment(Payment payment);
+  AdminPayment paymentToAdminPayment(Payment payment);
 
   @Mappings({
       @Mapping(source = "admin", target = "adminId", qualifiedByName = "adminToAdminId"),

@@ -8,6 +8,8 @@ info:
 tags:
   - name: Users
   - name: Payments
+  - name: Members
+  - name: communities
 paths:
   /users:
     post:
@@ -137,8 +139,8 @@ paths:
   /members/{memberId}/payments:
     get:
       tags:
-        - Payments
-      description: Get all payments for the specified member"
+        - Members
+      description: "Get all payments for the specified member"
       operationId: listAllMemberPayments
       parameters:
         - in: path
@@ -146,7 +148,7 @@ paths:
           schema:
             type: string
           required: true
-          description: Member Id to use for getting all payments
+          description: "Member Id to use for getting all payments"
       responses:
         '200':
           description: "If memberId is valid. Response body has the details"
@@ -159,6 +161,37 @@ paths:
                 $ref: '#/components/schemas/ListMemberPaymentsResponse'
         '404':
           description: "If memberId is invalid"
+  /communities/{communityId}/admins/{adminId}/payments:
+    get:
+      tags:
+        - Communities
+      description: "Get all payments scheduled by the specified admin"
+      operationId: listAllAdminScheduledPayments
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+          description: "communityId for getting all admin scheduled"
+        - in: path
+          name: adminId
+          schema:
+            type: string
+          required: true
+          description: "adminId for getting all admin scheduled"
+      responses:
+        '200':
+          description: "If communityId and adminId are valid. Response body has the details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListAdminPaymentsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListAdminPaymentsResponse'
+        '404':
+          description: "If communityId and adminId are invalid"
 components:
   schemas:
     CreateUserRequest:
@@ -274,4 +307,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MemberPayment'
+          uniqueItems: true
+    AdminPayment:
+      type: object
+      properties:
+        adminId:
+          type: string
+        paymentId:
+          type: string
+        charge:
+          type: number
+        dueDate:
+          type: string
+    ListAdminPaymentsResponse:
+      type: object
+      properties:
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminPayment'
           uniqueItems: true
