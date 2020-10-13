@@ -227,6 +227,46 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/GetCommunityDetailsResponse'
+  /communities/{communityId}:
+    get:
+      tags:
+        - Communities
+      description: Get details about the community given a community id
+      operationId: listCommunityDetails
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: if community exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCommunityDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetCommunityDetailsResponse'
+        '404':
+          description: if params are invalid
+    delete:
+      tags:
+        - Communities
+      description: Deletion community with given community id
+      operationId: deleteCommunity
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: if community was removed
+        '404':
+          description: if params are invalid
 components:
   schemas:
     CreateUserRequest:

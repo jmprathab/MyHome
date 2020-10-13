@@ -66,6 +66,7 @@ public class CommunityController implements CommunitiesApi {
   private final CommunityService communityService;
   private final CommunityApiMapper communityApiMapper;
 
+  @Override
   public ResponseEntity<CreateCommunityResponse> createCommunity(@Valid @RequestBody
       CreateCommunityRequest request) {
     log.trace("Received create community request");
@@ -77,6 +78,7 @@ public class CommunityController implements CommunitiesApi {
     return ResponseEntity.status(HttpStatus.CREATED).body(createdCommunityResponse);
   }
 
+  @Override
   public ResponseEntity<GetCommunityDetailsResponse> listAllCommunity(
       @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all community");
@@ -91,17 +93,7 @@ public class CommunityController implements CommunitiesApi {
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @Operation(
-      description = "Get details about the community given a community id",
-      responses = {
-          @ApiResponse(responseCode = "200", description = "If community exists"),
-          @ApiResponse(responseCode = "404", description = "If params are invalid"),
-      }
-  )
-  @GetMapping(
-      path = "/communities/{communityId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
+  @Override
   public ResponseEntity<GetCommunityDetailsResponse> listCommunityDetails(
       @PathVariable String communityId) {
     log.trace("Received request to get details about community with id[{}]", communityId);
@@ -268,16 +260,7 @@ public class CommunityController implements CommunitiesApi {
     }
   }
 
-  @Operation(
-      description = "Deletion community with given community id",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "If community was removed"),
-          @ApiResponse(responseCode = "404", description = "If parameters are invalid")
-      }
-  )
-  @DeleteMapping(
-      path = "/communities/{communityId}"
-  )
+  @Override
   public ResponseEntity<Void> deleteCommunity(@PathVariable String communityId) {
     log.trace("Received delete community request");
     boolean isDeleted = communityService.deleteCommunity(communityId);
