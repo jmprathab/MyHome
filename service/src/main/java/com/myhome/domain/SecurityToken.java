@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.Date;
 
 @Entity
@@ -14,6 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class SecurityToken extends BaseEntity {
   @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
   private MyHomeTokenType tokenType;
   @Column(nullable = false, unique = true)
   private String token;
