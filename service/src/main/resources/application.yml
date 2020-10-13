@@ -26,6 +26,13 @@ server:
 # Spring
 ###############################################################################
 spring:
+  mail:
+    host: ''
+    username: ''
+    password: ''
+    port: 465
+    protocol: 'smtps'
+    debug: false
   jpa:
     show-sql: true
     properties:
@@ -84,6 +91,8 @@ authorization:
       name: "Authorization"
       prefix: "Bearer"
 
+users:
+  passResetTokenTime: 86400
 files:
   maxSizeKBytes: 480
   compressionBorderSizeKBytes: 240
