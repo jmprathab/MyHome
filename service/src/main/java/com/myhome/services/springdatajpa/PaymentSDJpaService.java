@@ -55,16 +55,6 @@ public class PaymentSDJpaService implements PaymentService {
   }
 
   @Override
-  public Set<Payment> listAll() {
-    return listAll(200, 0);
-  }
-
-  @Override
-  public Set<Payment> listAll(Integer limit, Integer start) {
-    return paymentRepository.findAll(PageRequest.of(start, limit)).toSet();
-  }
-
-  @Override
   public Optional<PaymentDto> getPaymentDetails(String paymentId) {
     return paymentRepository.findByPaymentId(paymentId)
         .map(paymentMapper::paymentToPaymentDto);
