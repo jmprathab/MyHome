@@ -17,14 +17,14 @@
 package com.myhome.controllers.mapper;
 
 import com.myhome.controllers.dto.CommunityDto;
-import com.myhome.controllers.dto.CommunityHouseName;
-import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.User;
+import com.myhome.model.CommunityHouseName;
 import com.myhome.model.CreateCommunityRequest;
 import com.myhome.model.CreateCommunityResponse;
 import com.myhome.model.GetCommunityDetailsResponseCommunity;
+import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
 import com.myhome.model.ListCommunityAdminsResponseCommunityAdmin;
 import java.util.Set;
 import org.mapstruct.Mapper;
@@ -51,6 +51,6 @@ public interface CommunityApiMapper {
   Set<CommunityHouse> communityHouseNamesSetToCommunityHouseSet(
       Set<CommunityHouseName> communityHouseNamesSet);
 
-  Set<GetHouseDetailsResponse.CommunityHouse> communityHouseSetToRestApiResponseCommunityHouseSet(
+  Set<GetHouseDetailsResponseCommunityHouse> communityHouseSetToRestApiResponseCommunityHouseSet(
       Set<CommunityHouse> communityHouse);
 }

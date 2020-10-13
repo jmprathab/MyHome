@@ -18,20 +18,20 @@ package com.myhome.controllers;
 
 import com.myhome.api.CommunitiesApi;
 import com.myhome.controllers.dto.CommunityDto;
-import com.myhome.controllers.dto.CommunityHouseName;
 import com.myhome.controllers.mapper.CommunityApiMapper;
-import com.myhome.controllers.request.AddCommunityHouseRequest;
-import com.myhome.controllers.response.AddCommunityHouseResponse;
-import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.User;
 import com.myhome.model.AddCommunityAdminRequest;
 import com.myhome.model.AddCommunityAdminResponse;
+import com.myhome.model.AddCommunityHouseRequest;
+import com.myhome.model.AddCommunityHouseResponse;
+import com.myhome.model.CommunityHouseName;
 import com.myhome.model.CreateCommunityRequest;
 import com.myhome.model.CreateCommunityResponse;
 import com.myhome.model.GetCommunityDetailsResponse;
 import com.myhome.model.GetCommunityDetailsResponseCommunity;
+import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.ListCommunityAdminsResponse;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,12 +47,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -121,17 +118,7 @@ public class CommunityController implements CommunitiesApi {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Operation(
-      description = "List all houses of the community given a community id",
-      responses = {
-          @ApiResponse(responseCode = "200", description = "If community exists"),
-          @ApiResponse(responseCode = "404", description = "If params are invalid"),
-      }
-  )
-  @GetMapping(
-      path = "/communities/{communityId}/houses",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
+  @Override
   public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
       @PathVariable String communityId,
       @PageableDefault(size = 200) Pageable pageable) {
@@ -140,7 +127,7 @@ public class CommunityController implements CommunitiesApi {
     return communityService.findCommunityHousesById(communityId, pageable)
         .map(HashSet::new)
         .map(communityApiMapper::communityHouseSetToRestApiResponseCommunityHouseSet)
-        .map(GetHouseDetailsResponse::new)
+        .map(houses -> new GetHouseDetailsResponse().houses(houses))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
@@ -162,18 +149,7 @@ public class CommunityController implements CommunitiesApi {
     }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
-  @Operation(
-      description = "Add a new house to the community given a community id",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "If houses were added"),
-          @ApiResponse(responseCode = "400", description = "If params are invalid"),
-      }
-  )
-  @PostMapping(
-      path = "/communities/{communityId}/houses",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
+  @Override
   public ResponseEntity<AddCommunityHouseResponse> addCommunityHouses(
       @PathVariable String communityId, @Valid @RequestBody
       AddCommunityHouseRequest request) {
