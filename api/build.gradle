@@ -43,8 +43,7 @@ task generateOpenApiSpec(type: org.openapitools.generator.gradle.plugin.tasks.Ge
   invokerPackage = "com.myhome.utils"
   modelPackage = "com.myhome.model"
   typeMappings = [
-          'bigdecimal': 'java.math.BigDecimal',
-          'Set'       : 'java.util.Set'
+          'bigdecimal': 'java.math.BigDecimal'
   ]
 
   additionalProperties = [
