@@ -126,7 +126,7 @@ public interface SchedulePaymentApiMapper {
         .collect(Collectors.toSet());
     return new EnrichedSchedulePaymentRequest(request.getType(),
         request.getDescription(),
-        request.getRecurring(),
+        request.isRecurring(),
         request.getCharge(),
         request.getDueDate(),
         request.getAdminId(),
