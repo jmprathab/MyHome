@@ -21,8 +21,6 @@ import com.myhome.security.filters.CommunityAuthorizationFilter;
 import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import com.myhome.services.CommunityService;
 import javax.servlet.Filter;
-
-import com.myhome.services.CommunityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -46,9 +44,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final PasswordEncoder passwordEncoder;
   private final UserDetailFetcher userDetailFetcher;
   private final AppJwtEncoderDecoder appJwtEncoderDecoder;
-  private final CommunityService communityService;
 
-  @Override protected void configure(HttpSecurity http) throws Exception {
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
     http.cors().and().csrf().disable();
     http.headers().frameOptions().disable();
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -88,11 +86,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     return authFilter;
   }
 
-  private Filter getCommunityFilter() throws Exception {
-    return new CommunityAuthorizationFilter(authenticationManager(), communityService);
-  }
-
-  @Override protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
   }
 }
