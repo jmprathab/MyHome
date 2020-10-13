@@ -18,6 +18,8 @@ package com.myhome.controllers;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.UserApiMapper;
+import com.myhome.controllers.request.ForgotPasswordRequest;
+import com.myhome.domain.PasswordActionType;
 import com.myhome.domain.User;
 import com.myhome.model.CreateUserRequest;
 import com.myhome.model.CreateUserResponse;
@@ -40,6 +42,7 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -49,6 +52,9 @@ class UserControllerTest {
   private static final String TEST_NAME = "name";
   private static final String TEST_EMAIL = "email@mail.com";
   private static final String TEST_PASSWORD = "password";
+  private static final String TEST_NEW_PASSWORD = "new-password";
+  private static final String TEST_TOKEN = "test-token";
+
 
   @Mock
   private UserService userService;
@@ -179,5 +185,69 @@ class UserControllerTest {
     assertEquals(expectedResponse, response.getBody());
     verify(userService).getUserDetails(userId);
     verify(userApiMapper).userDtoToGetUserDetailsResponse(userDto);
+  }
+
+  private ForgotPasswordRequest getForgotPasswordRequest() {
+    return new ForgotPasswordRequest(TEST_EMAIL, TEST_TOKEN, TEST_NEW_PASSWORD);
+  }
+
+  @Test
+  void userForgotPasswordRequestResetSuccess() {
+    // given
+    ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
+    given(userService.requestResetPassword(forgotPasswordRequest))
+        .willReturn(true);
+    // when
+    ResponseEntity<Void> response = userController.userForgotPassword(PasswordActionType.FORGOT, forgotPasswordRequest);
+
+    // then
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    verify(userService).requestResetPassword(forgotPasswordRequest);
+    verify(userService, never()).resetPassword(forgotPasswordRequest);
+  }
+
+  @Test
+  void userForgotPasswordRequestResetFailure() {
+    // given
+    ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
+    given(userService.requestResetPassword(forgotPasswordRequest))
+        .willReturn(false);
+    // when
+    ResponseEntity<Void> response = userController.userForgotPassword(PasswordActionType.FORGOT, forgotPasswordRequest);
+
+    // then
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    verify(userService).requestResetPassword(forgotPasswordRequest);
+    verify(userService, never()).resetPassword(forgotPasswordRequest);
+  }
+
+  @Test
+  void userForgotPasswordResetSuccess() {
+    // given
+    ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
+    given(userService.resetPassword(forgotPasswordRequest))
+        .willReturn(true);
+    // when
+    ResponseEntity<Void> response = userController.userForgotPassword(PasswordActionType.RESET, forgotPasswordRequest);
+
+    // then
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    verify(userService, never()).requestResetPassword(forgotPasswordRequest);
+    verify(userService).resetPassword(forgotPasswordRequest);
+  }
+
+  @Test
+  void userForgotPasswordResetFailure() {
+    // given
+    ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
+    given(userService.resetPassword(forgotPasswordRequest))
+        .willReturn(false);
+    // when
+    ResponseEntity<Void> response = userController.userForgotPassword(PasswordActionType.RESET, forgotPasswordRequest);
+
+    // then
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    verify(userService, never()).requestResetPassword(forgotPasswordRequest);
+    verify(userService).resetPassword(forgotPasswordRequest);
   }
 }
