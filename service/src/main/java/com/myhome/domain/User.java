@@ -18,13 +18,18 @@ package com.myhome.domain;
 
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapsId;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
+import javax.persistence.OneToOne;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -48,6 +53,12 @@ import lombok.With;
         attributeNodes = {
             @NamedAttributeNode("communities"),
         }
+    ),
+    @NamedEntityGraph(
+        name = "User.passwordResetToken",
+        attributeNodes = {
+            @NamedAttributeNode("passwordResetToken"),
+        }
     )
 })
 public class User extends BaseEntity {
@@ -61,4 +72,7 @@ public class User extends BaseEntity {
   private String encryptedPassword;
   @ManyToMany(mappedBy = "admins", fetch = FetchType.LAZY)
   private Set<Community> communities = new HashSet<>();
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "pass_reset_token_id")
+  private SecurityToken passwordResetToken;
 }
