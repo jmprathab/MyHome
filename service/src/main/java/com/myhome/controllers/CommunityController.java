@@ -216,16 +216,7 @@ public class CommunityController implements CommunitiesApi {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Operation(
-      description = "Remove of admin associated with a community",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "If admin was removed"),
-          @ApiResponse(responseCode = "404", description = "If parameters are invalid")
-      }
-  )
-  @DeleteMapping(
-      path = "/communities/{communityId}/admins/{adminId}"
-  )
+  @Override
   public ResponseEntity<Void> removeAdminFromCommunity(
       @PathVariable String communityId, @PathVariable String adminId) {
     log.trace(

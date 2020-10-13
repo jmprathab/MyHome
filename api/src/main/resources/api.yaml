@@ -329,6 +329,28 @@ paths:
                 $ref: '#/components/schemas/AddCommunityAdminResponse'
         '404':
           description: if params are invalid
+  /communities/{communityId}/admins/{adminId}:
+    delete:
+      tags:
+        - Communities
+      description: Remove of admin associated with a community
+      operationId: removeAdminFromCommunity
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: adminId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: if admin was removed
+        '404':
+          description: if params are invalid
 components:
   schemas:
     CreateUserRequest:
