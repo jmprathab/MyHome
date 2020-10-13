@@ -9,7 +9,7 @@ tags:
   - name: Users
   - name: Payments
   - name: Members
-  - name: communities
+  - name: Communities
 paths:
   /users:
     post:
