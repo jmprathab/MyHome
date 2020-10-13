@@ -17,6 +17,7 @@
 package com.myhome.services;
 
 import com.myhome.controllers.dto.UserDto;
+import com.myhome.controllers.request.ForgotPasswordRequest;
 import com.myhome.domain.User;
 import java.util.Optional;
 import java.util.Set;
@@ -33,4 +34,8 @@ public interface UserService {
   Set<User> listAll(Pageable pageable);
 
   Optional<UserDto> getUserDetails(String userId);
+
+  boolean requestResetPassword(ForgotPasswordRequest forgotPasswordRequest);
+
+  boolean resetPassword(ForgotPasswordRequest passwordResetRequest);
 }
