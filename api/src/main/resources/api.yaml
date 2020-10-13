@@ -267,6 +267,68 @@ paths:
           description: if community was removed
         '404':
           description: if params are invalid
+  /communities/{communityId}/admins:
+    get:
+      tags:
+        - Communities
+      description: List all admins of the community given a community id
+      operationId: listCommunityAdmins
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: if community exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCommunityAdminsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListCommunityAdminsResponse'
+        '404':
+          description: if params are invalid
+    post:
+      tags:
+        - Communities
+      description: Add a new admin to the community given a community id
+      operationId: addCommunityAdmins
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: AddCommunityAdminRequest aggregate fields
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCommunityAdminRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AddCommunityAdminRequest'
+      responses:
+        '204':
+          description: if admins were created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddCommunityAdminResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AddCommunityAdminResponse'
+        '404':
+          description: if params are invalid
 components:
   schemas:
     CreateUserRequest:
@@ -360,3 +422,38 @@ components:
           type: string
         district:
           type: string
+    ListCommunityAdminsResponse:
+      type: object
+      required:
+        - admins
+      properties:
+        admins:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/ListCommunityAdminsResponseCommunityAdmin'
+    ListCommunityAdminsResponseCommunityAdmin:
+      type: object
+      properties:
+        adminId:
+          type: string
+    AddCommunityAdminRequest:
+      type: object
+      required:
+        - admins
+      properties:
+        admins:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+    AddCommunityAdminResponse:
+      type: object
+      required:
+        - admins
+      properties:
+        admins:
+          type: array
+          uniqueItems: true
+          items:
+            type: string

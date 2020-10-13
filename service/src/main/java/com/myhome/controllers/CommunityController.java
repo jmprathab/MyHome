@@ -20,19 +20,19 @@ import com.myhome.api.CommunitiesApi;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.CommunityHouseName;
 import com.myhome.controllers.mapper.CommunityApiMapper;
-import com.myhome.controllers.request.AddCommunityAdminRequest;
 import com.myhome.controllers.request.AddCommunityHouseRequest;
-import com.myhome.controllers.response.AddCommunityAdminResponse;
 import com.myhome.controllers.response.AddCommunityHouseResponse;
 import com.myhome.controllers.response.GetHouseDetailsResponse;
-import com.myhome.controllers.response.ListCommunityAdminsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.User;
+import com.myhome.model.AddCommunityAdminRequest;
+import com.myhome.model.AddCommunityAdminResponse;
 import com.myhome.model.CreateCommunityRequest;
 import com.myhome.model.CreateCommunityResponse;
 import com.myhome.model.GetCommunityDetailsResponse;
 import com.myhome.model.GetCommunityDetailsResponseCommunity;
+import com.myhome.model.ListCommunityAdminsResponse;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -107,17 +107,7 @@ public class CommunityController implements CommunitiesApi {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Operation(
-      description = "List all admins of the community given a community id",
-      responses = {
-          @ApiResponse(responseCode = "200", description = "If community exists"),
-          @ApiResponse(responseCode = "404", description = "If params are invalid"),
-      }
-  )
-  @GetMapping(
-      path = "/communities/{communityId}/admins",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
+  @Override
   public ResponseEntity<ListCommunityAdminsResponse> listCommunityAdmins(
       @PathVariable String communityId,
       @PageableDefault(size = 200) Pageable pageable) {
@@ -126,7 +116,7 @@ public class CommunityController implements CommunitiesApi {
     return communityService.findCommunityAdminsById(communityId, pageable)
         .map(HashSet::new)
         .map(communityApiMapper::communityAdminSetToRestApiResponseCommunityAdminSet)
-        .map(ListCommunityAdminsResponse::new)
+        .map(admins -> new ListCommunityAdminsResponse().admins(admins))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
@@ -155,18 +145,7 @@ public class CommunityController implements CommunitiesApi {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Operation(
-      description = "Add a new admin to the community given a community id",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "If admins were added"),
-          @ApiResponse(responseCode = "404", description = "If params are invalid"),
-      }
-  )
-  @PostMapping(
-      path = "/communities/{communityId}/admins",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
+  @Override
   public ResponseEntity<AddCommunityAdminResponse> addCommunityAdmins(
       @PathVariable String communityId, @Valid @RequestBody
       AddCommunityAdminRequest request) {
@@ -178,7 +157,7 @@ public class CommunityController implements CommunitiesApi {
           .stream()
           .map(User::getUserId)
           .collect(Collectors.toSet());
-      AddCommunityAdminResponse response = new AddCommunityAdminResponse(adminsSet);
+      AddCommunityAdminResponse response = new AddCommunityAdminResponse().admins(adminsSet);
       return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
