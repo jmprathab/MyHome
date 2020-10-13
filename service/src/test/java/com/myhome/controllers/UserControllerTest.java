@@ -187,10 +187,6 @@ class UserControllerTest {
     verify(userApiMapper).userDtoToGetUserDetailsResponse(userDto);
   }
 
-  private ForgotPasswordRequest getForgotPasswordRequest() {
-    return new ForgotPasswordRequest(TEST_EMAIL, TEST_TOKEN, TEST_NEW_PASSWORD);
-  }
-
   @Test
   void userForgotPasswordRequestResetSuccess() {
     // given
@@ -249,5 +245,9 @@ class UserControllerTest {
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     verify(userService, never()).requestResetPassword(forgotPasswordRequest);
     verify(userService).resetPassword(forgotPasswordRequest);
+  }
+
+  private ForgotPasswordRequest getForgotPasswordRequest() {
+    return new ForgotPasswordRequest(TEST_EMAIL, TEST_TOKEN, TEST_NEW_PASSWORD);
   }
 }
