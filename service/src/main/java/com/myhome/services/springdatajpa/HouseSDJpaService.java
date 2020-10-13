@@ -16,9 +16,13 @@
 
 package com.myhome.services.springdatajpa;
 
+import com.myhome.controllers.dto.HouseHistoryDto;
+import com.myhome.controllers.dto.mapper.HouseHistoryMapper;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseHistory;
 import com.myhome.domain.HouseMember;
 import com.myhome.repositories.CommunityHouseRepository;
+import com.myhome.repositories.HouseHistoryRepository;
 import com.myhome.repositories.HouseMemberDocumentRepository;
 import com.myhome.repositories.HouseMemberRepository;
 import com.myhome.services.HouseService;
@@ -38,6 +42,8 @@ public class HouseSDJpaService implements HouseService {
   private final HouseMemberRepository houseMemberRepository;
   private final HouseMemberDocumentRepository houseMemberDocumentRepository;
   private final CommunityHouseRepository communityHouseRepository;
+  private final HouseHistoryRepository houseHistoryRepository;
+  private final HouseHistoryMapper houseHistoryMapper;
 
   private String generateUniqueId() {
     return UUID.randomUUID().toString();
@@ -108,6 +114,7 @@ public class HouseSDJpaService implements HouseService {
     );
   }
 
+
   @Override
   public Optional<List<HouseMember>> listHouseMembersForHousesOfUserId(String userId,
       Pageable pageable) {
@@ -115,4 +122,15 @@ public class HouseSDJpaService implements HouseService {
         houseMemberRepository.findAllByCommunityHouse_Community_Admins_UserId(userId, pageable)
     );
   }
+
+  @Override public Optional<Set<HouseHistory>> getHouseHistory(String memberId, String houseId) {
+    return Optional.ofNullable(
+      houseHistoryRepository.findByMemberIdAndAndHouseId(memberId,houseId)
+    );
+  }
+
+  @Override public HouseHistory captureStay(HouseHistoryDto houseHistoryDto) {
+    return houseHistoryRepository.save(houseHistoryMapper.HouseHistoryDtoToHouseHistory(houseHistoryDto));
+  }
+
 }
