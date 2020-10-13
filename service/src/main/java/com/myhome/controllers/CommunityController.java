@@ -34,8 +34,6 @@ import com.myhome.model.GetCommunityDetailsResponseCommunity;
 import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.ListCommunityAdminsResponse;
 import com.myhome.services.CommunityService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -48,7 +46,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -167,16 +164,7 @@ public class CommunityController implements CommunitiesApi {
     }
   }
 
-  @Operation(
-      description = "Remove of house from the community given a community id and a house id",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "If house was added"),
-          @ApiResponse(responseCode = "400", description = "If params are invalid"),
-      }
-  )
-  @DeleteMapping(
-      path = "/communities/{communityId}/houses/{houseId}"
-  )
+  @Override
   public ResponseEntity<Void> removeCommunityHouse(
       @PathVariable String communityId, @PathVariable String houseId
   ) {
