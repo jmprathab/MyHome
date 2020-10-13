@@ -16,19 +16,18 @@
 
 package com.myhome.services.unit;
 
-import helpers.TestUtils;
-import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.domain.Community;
+import com.myhome.model.AmenityDto;
 import com.myhome.repositories.AmenityBookingItemRepository;
 import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import com.myhome.services.springdatajpa.AmenitySDJpaService;
+import helpers.TestUtils;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -55,10 +54,10 @@ class AmenitySDJpaServiceTest {
 
   private static final String TEST_AMENITY_NAME = "test-amenity-name";
   private static final BigDecimal TEST_AMENITY_PRICE = BigDecimal.valueOf(1);
+  private static final String TEST_BOOKING_ID = "test-booking-id";
   private final String TEST_AMENITY_ID = "test-amenity-id";
   private final String TEST_AMENITY_DESCRIPTION = "test-amenity-description";
   private final String TEST_COMMUNITY_ID = "test-community-id";
-  private static final String TEST_BOOKING_ID = "test-booking-id";
   private final int TEST_AMENITIES_COUNT = 2;
   @Mock
   private AmenityRepository amenityRepository;
@@ -82,7 +81,8 @@ class AmenitySDJpaServiceTest {
   @Test
   void deleteAmenity() {
     // given
-    Amenity testAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
+    Amenity testAmenity =
+        TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
 
     given(amenityRepository.findByAmenityIdWithCommunity(TEST_AMENITY_ID))
         .willReturn(Optional.of(testAmenity));
@@ -148,14 +148,13 @@ class AmenitySDJpaServiceTest {
     // given
     final String communityId = "communityId";
     final Community community = new Community().withCommunityId(communityId);
-    final AmenityDto baseAmenityDto = AmenityDto.builder()
+    final AmenityDto baseAmenityDto = new AmenityDto()
         .id(1L)
         .amenityId("amenityId")
         .name("name")
         .description("description")
-        .price(BigDecimal.valueOf(12))
-        .build();
-    final AmenityDto amenityDtoWithCommunity = baseAmenityDto.withCommunityId(communityId);
+        .price(BigDecimal.valueOf(12));
+    final AmenityDto amenityDtoWithCommunity = baseAmenityDto.communityId(communityId);
     final Amenity baseAmenity = new Amenity();
     final Amenity amenityWithCommunity = new Amenity().withCommunity(community);
     final List<Amenity> amenitiesWithCommunity = singletonList(amenityWithCommunity);
@@ -187,13 +186,12 @@ class AmenitySDJpaServiceTest {
   void shouldFailOnAddAmenityToNotExistingCommunity() {
     // given
     final String communityId = "communityId";
-    final AmenityDto baseAmenityDto = AmenityDto.builder()
+    final AmenityDto baseAmenityDto = new AmenityDto()
         .id(1L)
         .amenityId("amenityId")
         .name("name")
         .description("description")
-        .price(BigDecimal.valueOf(12))
-        .build();
+        .price(BigDecimal.valueOf(12));
     final HashSet<AmenityDto> requestAmenitiesDto = new HashSet<>(singletonList(baseAmenityDto));
     given(communityService.getCommunityDetailsById(communityId))
         .willReturn(Optional.empty());
@@ -212,7 +210,8 @@ class AmenitySDJpaServiceTest {
   @Test
   void shouldUpdateCommunityAmenitySuccessfully() {
     // given
-    Amenity communityAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
+    Amenity communityAmenity =
+        TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
     Community testCommunity = TestUtils.CommunityHelpers.getTestCommunity();
     AmenityDto updated = getTestAmenityDto();
     Amenity updatedAmenity = getUpdatedCommunityAmenity();
@@ -252,7 +251,8 @@ class AmenitySDJpaServiceTest {
   @Test
   void shouldNotUpdateCommunityAmenitySuccessfullyIfSavingFails() {
     // given
-    Amenity testAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
+    Amenity testAmenity =
+        TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
     Amenity updatedAmenity = getUpdatedCommunityAmenity();
     AmenityDto updatedDto = getTestAmenityDto();
     Community community = TestUtils.CommunityHelpers.getTestCommunity();
@@ -277,7 +277,8 @@ class AmenitySDJpaServiceTest {
   @Test
   void shouldNotUpdateAmenityIfCommunityDoesNotExist() {
     // given
-    Amenity communityAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
+    Amenity communityAmenity =
+        TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
     AmenityDto updatedDto = getTestAmenityDto();
 
     given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
@@ -301,7 +302,7 @@ class AmenitySDJpaServiceTest {
     AmenityBookingItem testBookingItem = getTestBookingItem();
 
     given(bookingItemRepository.findByAmenityBookingItemId(TEST_BOOKING_ID))
-            .willReturn(Optional.of(testBookingItem));
+        .willReturn(Optional.of(testBookingItem));
 
     // when
     boolean bookingDeleted = amenitySDJpaService.deleteBooking(TEST_BOOKING_ID);
@@ -311,11 +312,12 @@ class AmenitySDJpaServiceTest {
     verify(bookingItemRepository).findByAmenityBookingItemId(TEST_BOOKING_ID);
     verify(bookingItemRepository).delete(testBookingItem);
   }
+
   @Test
   void deleteBookingNotExists() {
     // given
     given(bookingItemRepository.findByAmenityBookingItemId(TEST_BOOKING_ID))
-            .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     // when
     boolean amenityDeleted = amenitySDJpaService.deleteBooking(TEST_BOOKING_ID);
@@ -329,14 +331,13 @@ class AmenitySDJpaServiceTest {
   private AmenityDto getTestAmenityDto() {
     Long TEST_AMENITY_ENTITY_ID = 1L;
 
-    return new AmenityDto(
-        TEST_AMENITY_ENTITY_ID,
-        TEST_AMENITY_ID,
-        TEST_AMENITY_NAME,
-        TEST_AMENITY_DESCRIPTION,
-        TEST_AMENITY_PRICE,
-        TEST_COMMUNITY_ID
-    );
+    return new AmenityDto()
+        .id(TEST_AMENITY_ENTITY_ID)
+        .amenityId(TEST_AMENITY_ID)
+        .name(TEST_AMENITY_NAME)
+        .description(TEST_AMENITY_DESCRIPTION)
+        .price(TEST_AMENITY_PRICE)
+        .communityId(TEST_COMMUNITY_ID);
   }
 
   private Amenity getUpdatedCommunityAmenity() {
@@ -351,6 +352,6 @@ class AmenitySDJpaServiceTest {
 
   private AmenityBookingItem getTestBookingItem() {
     return new AmenityBookingItem()
-            .withAmenityBookingItemId(TEST_BOOKING_ID);
+        .withAmenityBookingItemId(TEST_BOOKING_ID);
   }
 }

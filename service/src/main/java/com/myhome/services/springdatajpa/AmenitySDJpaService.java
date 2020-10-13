@@ -16,10 +16,10 @@
 
 package com.myhome.services.springdatajpa;
 
-import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
 import com.myhome.domain.Community;
+import com.myhome.model.AmenityDto;
 import com.myhome.repositories.AmenityBookingItemRepository;
 import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
@@ -105,13 +105,13 @@ public class AmenitySDJpaService implements AmenityService {
         .map(amenityRepository::save).isPresent();
   }
 
-    @Override
-    public boolean deleteBooking(String bookingId) {
-        return bookingRepository.findByAmenityBookingItemId(bookingId)
-                .map(bookingItem -> {
-                    bookingRepository.delete(bookingItem);
-                    return true;
-                })
-                .orElse(false);
-    }
+  @Override
+  public boolean deleteBooking(String bookingId) {
+    return bookingRepository.findByAmenityBookingItemId(bookingId)
+        .map(bookingItem -> {
+          bookingRepository.delete(bookingItem);
+          return true;
+        })
+        .orElse(false);
+  }
 }

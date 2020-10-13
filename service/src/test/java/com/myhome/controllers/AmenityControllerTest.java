@@ -16,13 +16,13 @@
 
 package com.myhome.controllers;
 
-import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
-import com.myhome.controllers.request.AddAmenityRequest;
-import com.myhome.controllers.request.UpdateAmenityRequest;
-import com.myhome.controllers.response.amenity.AddAmenityResponse;
-import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
+import com.myhome.model.AddAmenityRequest;
+import com.myhome.model.AddAmenityResponse;
+import com.myhome.model.AmenityDto;
+import com.myhome.model.GetAmenityDetailsResponse;
+import com.myhome.model.UpdateAmenityRequest;
 import com.myhome.services.AmenityService;
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -71,8 +71,9 @@ class AmenityControllerTest {
   void getAmenityDetails() {
     // given
     Amenity testAmenity = getTestAmenity();
-    GetAmenityDetailsResponse expectedResponseBody =
-        new GetAmenityDetailsResponse(testAmenity.getAmenityId(), testAmenity.getDescription());
+    GetAmenityDetailsResponse expectedResponseBody = new GetAmenityDetailsResponse()
+        .amenityId(testAmenity.getAmenityId())
+        .description(testAmenity.getDescription());
 
     given(amenitySDJpaService.getAmenityDetails(TEST_AMENITY_ID))
         .willReturn(Optional.of(testAmenity));
@@ -142,15 +143,20 @@ class AmenityControllerTest {
     // given
     final String communityId = "communityId";
     final AmenityDto amenityDto =
-        new AmenityDto(1L, "amenityId", "name", "description", BigDecimal.ONE, "");
+        new AmenityDto().id(1L)
+            .amenityId("amenityId")
+            .name("name")
+            .description("description")
+            .price(BigDecimal.ONE)
+            .communityId("");
     final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
-    final AddAmenityRequest request = new AddAmenityRequest(amenities);
+    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
     given(amenitySDJpaService.createAmenities(amenities, communityId))
         .willReturn(Optional.of(singletonList(amenityDto)));
 
     // when
     final ResponseEntity<AddAmenityResponse> response =
-        amenityController.addAmenityToCommunity(request, communityId);
+        amenityController.addAmenityToCommunity(communityId, request);
 
     // then
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -162,13 +168,13 @@ class AmenityControllerTest {
     final String communityId = "communityId";
     final AmenityDto amenityDto = new AmenityDto();
     final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
-    final AddAmenityRequest request = new AddAmenityRequest(amenities);
+    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
     given(amenitySDJpaService.createAmenities(amenities, communityId))
         .willReturn(Optional.empty());
 
     // when
     final ResponseEntity<AddAmenityResponse> response =
-        amenityController.addAmenityToCommunity(request, communityId);
+        amenityController.addAmenityToCommunity(communityId, request);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -252,22 +258,20 @@ class AmenityControllerTest {
   }
 
   private AmenityDto getTestAmenityDto() {
-    return new AmenityDto(
-        Long.valueOf(1),
-        TEST_AMENITY_ID,
-        TEST_AMENITY_NAME,
-        TEST_AMENITY_DESCRIPTION,
-        TEST_AMENITY_PRICE,
-        TEST_COMMUNITY_ID
-    );
+    return new AmenityDto()
+        .id(1L)
+        .amenityId(TEST_AMENITY_ID)
+        .name(TEST_AMENITY_NAME)
+        .description(TEST_AMENITY_DESCRIPTION)
+        .price(TEST_AMENITY_PRICE)
+        .communityId(TEST_COMMUNITY_ID);
   }
 
   private UpdateAmenityRequest getUpdateAmenityRequest() {
-    return new UpdateAmenityRequest(
-        TEST_AMENITY_NAME,
-        TEST_AMENITY_DESCRIPTION,
-        1,
-        TEST_COMMUNITY_ID
-    );
+    return new UpdateAmenityRequest()
+        .name(TEST_AMENITY_NAME)
+        .description(TEST_AMENITY_DESCRIPTION)
+        .price(1L)
+        .communityId(TEST_COMMUNITY_ID);
   }
 }

@@ -16,8 +16,8 @@
 
 package com.myhome.services;
 
-import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.domain.Amenity;
+import com.myhome.model.AmenityDto;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

@@ -98,12 +98,16 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/GetAmenityDetailsResponse'
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/GetAmenityDetailsResponse'
             application/xml:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/GetAmenityDetailsResponse'
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/GetAmenityDetailsResponse'
         '404':
           description: "If params are invalid"
     post:
@@ -111,12 +115,6 @@ paths:
         - Community
       description: "Adds amenity to community"
       operationId: addAmenityToCommunity
-      parameters:
-        - in: path
-          name: communityId
-          required: true
-          schema:
-            type: string
       requestBody:
         required: false
         content:
@@ -126,6 +124,12 @@ paths:
           application/xml:
             schema:
               $ref: '#/components/schemas/AddAmenityRequest'
+      parameters:
+        - in: path
+          name: communityId
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: "if amenity add successful"
@@ -870,14 +874,17 @@ components:
       type: object
       properties:
         amenities:
-          allOf:
-            - $ref: '#/components/schemas/AmenityDto'
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/AmenityDto'
     AddAmenityResponse:
       type: object
       properties:
         amenities:
-          allOf:
-            - $ref: '#/components/schemas/AmenityDto'
+          type: array
+          items:
+            $ref: '#/components/schemas/AmenityDto'
     CreateUserRequest:
       type: object
       required:

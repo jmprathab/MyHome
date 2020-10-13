@@ -16,13 +16,15 @@
 
 package com.myhome.controllers;
 
-import com.myhome.controllers.dto.AmenityDto;
+import com.myhome.api.AmenitiesApi;
+import com.myhome.api.CommunitiesApi;
 import com.myhome.controllers.mapper.AmenityApiMapper;
-import com.myhome.controllers.request.AddAmenityRequest;
-import com.myhome.controllers.request.UpdateAmenityRequest;
-import com.myhome.controllers.response.amenity.AddAmenityResponse;
-import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
+import com.myhome.model.AddAmenityRequest;
+import com.myhome.model.AddAmenityResponse;
+import com.myhome.model.AmenityDto;
+import com.myhome.model.GetAmenityDetailsResponse;
+import com.myhome.model.UpdateAmenityRequest;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import java.util.Set;
@@ -38,7 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-public class AmenityController implements AmenityApi, CommunityApi {
+public class AmenityController implements AmenitiesApi, CommunitiesApi {
 
   private final AmenityService amenitySDJpaService;
   private final AmenityApiMapper amenityApiMapper;
@@ -74,10 +76,10 @@ public class AmenityController implements AmenityApi, CommunityApi {
 
   @Override
   public ResponseEntity<AddAmenityResponse> addAmenityToCommunity(
-      @RequestBody AddAmenityRequest request,
-      @PathVariable String communityId) {
+      @PathVariable String communityId,
+      @RequestBody AddAmenityRequest request) {
     return amenitySDJpaService.createAmenities(request.getAmenities(), communityId)
-        .map(AddAmenityResponse::new)
+        .map(amenityList -> new AddAmenityResponse().amenities(amenityList))
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
