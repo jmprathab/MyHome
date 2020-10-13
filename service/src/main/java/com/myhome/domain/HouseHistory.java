@@ -3,14 +3,20 @@ package com.myhome.domain;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+<<<<<<< HEAD
 import javax.persistence.JoinColumn;
+=======
+>>>>>>> Added Entity
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+<<<<<<< HEAD
 import lombok.With;
+=======
+>>>>>>> Added Entity
 
 @Entity
 @AllArgsConstructor
@@ -26,6 +32,7 @@ public class HouseHistory extends BaseEntity{
   private Date stayFromDate;
   @Column
   private Date stayToDate;
+<<<<<<< HEAD
   @With
   @OneToOne
   @JoinColumn(name = "Id")
@@ -33,6 +40,11 @@ public class HouseHistory extends BaseEntity{
   @With
   @OneToOne
   @JoinColumn(name = "Id")
+=======
+  @ManyToOne
+  private HouseMember houseMember;
+  @OneToOne
+>>>>>>> Added Entity
   private CommunityHouse communityHouse;
 
 
