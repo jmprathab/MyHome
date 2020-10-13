@@ -16,14 +16,15 @@
 
 package com.myhome.controllers;
 
+import com.myhome.api.MembersApi;
 import com.myhome.api.PaymentsApi;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
 import com.myhome.controllers.response.ListAdminPaymentsResponse;
-import com.myhome.controllers.response.ListMemberPaymentsResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
+import com.myhome.model.ListMemberPaymentsResponse;
 import com.myhome.model.SchedulePaymentRequest;
 import com.myhome.model.SchedulePaymentResponse;
 import com.myhome.services.CommunityService;
@@ -47,7 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class PaymentController implements PaymentsApi {
+public class PaymentController implements PaymentsApi, MembersApi {
   private final PaymentService paymentService;
   private final CommunityService communityService;
   private final SchedulePaymentApiMapper schedulePaymentApiMapper;
@@ -87,20 +88,15 @@ public class PaymentController implements PaymentsApi {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Operation(description = "Get all payments for the specified member")
-  @GetMapping(
-      path = "/members/{memberId}/payments",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<ListMemberPaymentsResponse> listAllMemberPayments(
-      @PathVariable String memberId) {
+  @Override
+  public ResponseEntity<ListMemberPaymentsResponse> listAllMemberPayments(String memberId) {
     log.trace("Received request to list all the payments for the house member with id[{}]",
         memberId);
 
     return paymentService.getHouseMember(memberId)
         .map(payments -> paymentService.getPaymentsByMember(memberId))
         .map(schedulePaymentApiMapper::memberPaymentSetToRestApiResponseMemberPaymentSet)
-        .map(ListMemberPaymentsResponse::new)
+        .map(memberPayments -> new ListMemberPaymentsResponse().payments(memberPayments))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
   }

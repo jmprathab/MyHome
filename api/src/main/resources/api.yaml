@@ -124,7 +124,7 @@ paths:
           description: Payment ID
       responses:
         '200':
-          description: "If userId is valid. Response body has the details"
+          description: "If payment is valid. Response body has the details"
           content:
             application/json:
               schema:
@@ -134,6 +134,31 @@ paths:
                 $ref: '#/components/schemas/SchedulePaymentResponse'
         '404':
           description: "If paymentId is invalid"
+  /members/{memberId}/payments:
+    get:
+      tags:
+        - Payments
+      description: Get all payments for the specified member"
+      operationId: listAllMemberPayments
+      parameters:
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+          description: Member Id to use for getting all payments
+      responses:
+        '200':
+          description: "If memberId is valid. Response body has the details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListMemberPaymentsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListMemberPaymentsResponse'
+        '404':
+          description: "If memberId is invalid"
 components:
   schemas:
     CreateUserRequest:
@@ -231,3 +256,22 @@ components:
           type: string
         memberId:
           type: string
+    MemberPayment:
+      type: object
+      properties:
+        memberId:
+          type: string
+        paymentId:
+          type: string
+        charge:
+          type: number
+        dueDate:
+          type: string
+    ListMemberPaymentsResponse:
+      type: object
+      properties:
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberPayment'
+          uniqueItems: true

@@ -24,13 +24,14 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
 import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
 import com.myhome.controllers.response.ListAdminPaymentsResponse;
-import com.myhome.controllers.response.ListMemberPaymentsResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.HouseMemberDocument;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
+import com.myhome.model.ListMemberPaymentsResponse;
+import com.myhome.model.MemberPayment;
 import com.myhome.model.SchedulePaymentRequest;
 import com.myhome.model.SchedulePaymentResponse;
 import com.myhome.services.CommunityService;
@@ -448,25 +449,22 @@ class PaymentControllerTest {
     given(paymentService.getPaymentsByMember(TEST_MEMBER_ID))
         .willReturn(payments);
 
-    Set<ListMemberPaymentsResponse.MemberPayment> paymentResponses = new HashSet<>();
+    Set<MemberPayment> paymentResponses = new HashSet<>();
     paymentResponses.add(
-        new ListMemberPaymentsResponse.MemberPayment(
-            TEST_MEMBER_ID,
-            TEST_ID,
-            TEST_CHARGE,
-            TEST_DUE_DATE
-        )
-    );
+        new MemberPayment()
+            .memberId(TEST_MEMBER_ID)
+            .paymentId(TEST_ID)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE));
 
-    ListMemberPaymentsResponse expectedResponse =
-        new ListMemberPaymentsResponse(paymentResponses);
+
+    ListMemberPaymentsResponse expectedResponse = new ListMemberPaymentsResponse().payments(paymentResponses);
 
     given(paymentApiMapper.memberPaymentSetToRestApiResponseMemberPaymentSet(payments))
         .willReturn(paymentResponses);
 
     // when
-    ResponseEntity<ListMemberPaymentsResponse> responseEntity =
-        paymentController.listAllMemberPayments(TEST_MEMBER_ID);
+    ResponseEntity<ListMemberPaymentsResponse> responseEntity = paymentController.listAllMemberPayments(TEST_MEMBER_ID);
 
     // then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -482,8 +480,7 @@ class PaymentControllerTest {
         .willReturn(Optional.empty());
 
     //when
-    ResponseEntity<ListMemberPaymentsResponse> responseEntity =
-        paymentController.listAllMemberPayments(TEST_MEMBER_ID);
+    ResponseEntity<ListMemberPaymentsResponse> responseEntity = paymentController.listAllMemberPayments(TEST_MEMBER_ID);
 
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
