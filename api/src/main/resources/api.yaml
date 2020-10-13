@@ -413,6 +413,28 @@ paths:
                 $ref: '#/components/schemas/AddCommunityHouseResponse'
         '400':
           description: if params are invalid
+  /communities/{communityId}/houses/{houseId}:
+    delete:
+      tags:
+        - Communities
+      description: Remove of house from the community given a community id and a house id
+      operationId: removeCommunityHouse
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: if house was removed
+        '400':
+          description: if params are invalid
 components:
   schemas:
     CreateUserRequest:
