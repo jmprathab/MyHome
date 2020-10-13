@@ -109,6 +109,31 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/SchedulePaymentResponse'
+  /payments/{paymentId}:
+    get:
+      tags:
+        - Payments
+      description: "Get details about a payment with the given payment id"
+      operationId: listPaymentDetails
+      parameters:
+        - in: path
+          name: paymentId
+          schema:
+            type: string
+          required: true
+          description: Payment ID
+      responses:
+        '200':
+          description: "If userId is valid. Response body has the details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
+        '404':
+          description: "If paymentId is invalid"
 components:
   schemas:
     CreateUserRequest:

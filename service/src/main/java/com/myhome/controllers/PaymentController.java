@@ -77,13 +77,8 @@ public class PaymentController implements PaymentsApi {
         .contains(admin);
   }
 
-  @Operation(description = "Get details about a payment with the given payment id")
-  @GetMapping(
-      path = "/payments/{paymentId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<SchedulePaymentResponse> listPaymentDetails(
-      @PathVariable String paymentId) {
+  @Override
+  public ResponseEntity<SchedulePaymentResponse> listPaymentDetails(String paymentId) {
     log.trace("Received request to get details about a payment with id[{}]", paymentId);
 
     return paymentService.getPaymentDetails(paymentId)
