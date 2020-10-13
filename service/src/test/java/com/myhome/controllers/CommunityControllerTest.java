@@ -23,6 +23,7 @@ import com.myhome.model.AddCommunityAdminRequest;
 import com.myhome.model.AddCommunityAdminResponse;
 import com.myhome.model.AddCommunityHouseRequest;
 import com.myhome.model.AddCommunityHouseResponse;
+import com.myhome.model.CommunityHouseDto;
 import com.myhome.model.CommunityHouseName;
 import com.myhome.model.CreateCommunityRequest;
 import com.myhome.model.CreateCommunityResponse;
@@ -32,7 +33,6 @@ import com.myhome.domain.User;
 import com.myhome.model.GetCommunityDetailsResponse;
 import com.myhome.model.GetCommunityDetailsResponseCommunity;
 import com.myhome.model.GetHouseDetailsResponse;
-import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
 import com.myhome.model.ListCommunityAdminsResponse;
 import com.myhome.model.ListCommunityAdminsResponseCommunityAdmin;
 import com.myhome.repositories.CommunityRepository;
@@ -357,8 +357,8 @@ class CommunityControllerTest {
     Community community = createTestCommunity();
     List<CommunityHouse> houses = new ArrayList<>(community.getHouses());
     Set<CommunityHouse> housesSet = new HashSet<>(houses);
-    Set<GetHouseDetailsResponseCommunityHouse> getHouseDetailsSet = new HashSet<>();
-    getHouseDetailsSet.add(new GetHouseDetailsResponseCommunityHouse()
+    Set<CommunityHouseDto> getHouseDetailsSet = new HashSet<>();
+    getHouseDetailsSet.add(new CommunityHouseDto()
         .houseId(COMMUNITY_HOUSE_ID)
         .name(COMMUNITY_NAME)
     );

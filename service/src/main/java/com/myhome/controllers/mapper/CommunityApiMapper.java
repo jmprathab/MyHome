@@ -20,11 +20,11 @@ import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.User;
+import com.myhome.model.CommunityHouseDto;
 import com.myhome.model.CommunityHouseName;
 import com.myhome.model.CreateCommunityRequest;
 import com.myhome.model.CreateCommunityResponse;
 import com.myhome.model.GetCommunityDetailsResponseCommunity;
-import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
 import com.myhome.model.ListCommunityAdminsResponseCommunityAdmin;
 import java.util.Set;
 import org.mapstruct.Mapper;
@@ -51,6 +51,6 @@ public interface CommunityApiMapper {
   Set<CommunityHouse> communityHouseNamesSetToCommunityHouseSet(
       Set<CommunityHouseName> communityHouseNamesSet);
 
-  Set<GetHouseDetailsResponseCommunityHouse> communityHouseSetToRestApiResponseCommunityHouseSet(
+  Set<CommunityHouseDto> communityHouseSetToRestApiResponseCommunityHouseSet(
       Set<CommunityHouse> communityHouse);
 }
