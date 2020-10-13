@@ -17,21 +17,24 @@
 package com.myhome.controllers;
 
 import com.myhome.controllers.dto.CommunityDto;
-import com.myhome.controllers.dto.CommunityHouseName;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.CommunityApiMapper;
-import com.myhome.controllers.request.AddCommunityAdminRequest;
-import com.myhome.controllers.request.AddCommunityHouseRequest;
-import com.myhome.controllers.request.CreateCommunityRequest;
-import com.myhome.controllers.response.AddCommunityAdminResponse;
-import com.myhome.controllers.response.AddCommunityHouseResponse;
-import com.myhome.controllers.response.CreateCommunityResponse;
-import com.myhome.controllers.response.GetCommunityDetailsResponse;
-import com.myhome.controllers.response.GetHouseDetailsResponse;
-import com.myhome.controllers.response.ListCommunityAdminsResponse;
+import com.myhome.model.AddCommunityAdminRequest;
+import com.myhome.model.AddCommunityAdminResponse;
+import com.myhome.model.AddCommunityHouseRequest;
+import com.myhome.model.AddCommunityHouseResponse;
+import com.myhome.model.CommunityHouseName;
+import com.myhome.model.CreateCommunityRequest;
+import com.myhome.model.CreateCommunityResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.User;
+import com.myhome.model.GetCommunityDetailsResponse;
+import com.myhome.model.GetCommunityDetailsResponseCommunity;
+import com.myhome.model.GetHouseDetailsResponse;
+import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
+import com.myhome.model.ListCommunityAdminsResponse;
+import com.myhome.model.ListCommunityAdminsResponseCommunityAdmin;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import java.util.ArrayList;
@@ -127,10 +130,13 @@ class CommunityControllerTest {
   void shouldCreateCommunitySuccessfully() {
     // given
     CreateCommunityRequest request =
-        new CreateCommunityRequest(COMMUNITY_NAME, COMMUNITY_DISTRICT);
+        new CreateCommunityRequest()
+            .name(COMMUNITY_NAME)
+            .district(COMMUNITY_DISTRICT);
     CommunityDto communityDto = createTestCommunityDto();
     CreateCommunityResponse response =
-        new CreateCommunityResponse(COMMUNITY_ID);
+        new CreateCommunityResponse()
+            .communityId(COMMUNITY_ID);
     Community community = createTestCommunity();
 
     given(communityApiMapper.createCommunityRequestToCommunityDto(request))
@@ -159,14 +165,13 @@ class CommunityControllerTest {
     Community community = createTestCommunity();
     communities.add(community);
 
-    Set<GetCommunityDetailsResponse.Community> communityDetailsResponse
+    Set<GetCommunityDetailsResponseCommunity> communityDetailsResponse
         = new HashSet<>();
     communityDetailsResponse.add(
-        new GetCommunityDetailsResponse.Community(
-            COMMUNITY_ID,
-            COMMUNITY_NAME,
-            COMMUNITY_DISTRICT
-        )
+        new GetCommunityDetailsResponseCommunity()
+        .communityId(COMMUNITY_ID)
+        .name(COMMUNITY_NAME)
+        .district(COMMUNITY_DISTRICT)
     );
 
     GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
@@ -194,19 +199,18 @@ class CommunityControllerTest {
     // given
     Optional<Community> communityOptional = Optional.of(createTestCommunity());
     Community community = communityOptional.get();
-    GetCommunityDetailsResponse.Community communityDetails =
-        new GetCommunityDetailsResponse.Community(
-            COMMUNITY_ID,
-            COMMUNITY_NAME,
-            COMMUNITY_DISTRICT
-        );
+    GetCommunityDetailsResponseCommunity communityDetails =
+        new GetCommunityDetailsResponseCommunity()
+        .communityId(COMMUNITY_ID)
+        .name(COMMUNITY_NAME)
+        .district(COMMUNITY_DISTRICT);
 
-    Set<GetCommunityDetailsResponse.Community> communityDetailsResponse
+    Set<GetCommunityDetailsResponseCommunity> communityDetailsResponse
         = new HashSet<>();
     communityDetailsResponse.add(communityDetails);
 
     GetCommunityDetailsResponse response =
-        new GetCommunityDetailsResponse(communityDetailsResponse);
+        new GetCommunityDetailsResponse().communities(communityDetailsResponse);
 
     given(communityService.getCommunityDetailsById(COMMUNITY_ID))
         .willReturn(communityOptional);
@@ -255,17 +259,16 @@ class CommunityControllerTest {
 
     Set<User> adminsSet = new HashSet<>(admins);
 
-    Set<ListCommunityAdminsResponse.CommunityAdmin> listAdminsResponses = new HashSet<>();
+    Set<ListCommunityAdminsResponseCommunityAdmin> listAdminsResponses = new HashSet<>();
     listAdminsResponses.add(
-        new ListCommunityAdminsResponse.CommunityAdmin(
-            COMMUNITY_ADMIN_ID
-        )
+        new ListCommunityAdminsResponseCommunityAdmin()
+        .adminId(COMMUNITY_ADMIN_ID)
     );
 
     given(communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminsSet))
         .willReturn(listAdminsResponses);
 
-    ListCommunityAdminsResponse response = new ListCommunityAdminsResponse(listAdminsResponses);
+    ListCommunityAdminsResponse response = new ListCommunityAdminsResponse().admins(listAdminsResponses);
 
     // when
     ResponseEntity<ListCommunityAdminsResponse> responseEntity =
@@ -308,7 +311,7 @@ class CommunityControllerTest {
     }
 
     Set<String> adminIds = addRequest.getAdmins();
-    AddCommunityAdminResponse response = new AddCommunityAdminResponse(adminIds);
+    AddCommunityAdminResponse response = new AddCommunityAdminResponse().admins(adminIds);
 
     given(communityService.addAdminsToCommunity(COMMUNITY_ID, adminIds))
         .willReturn(Optional.of(community));
@@ -353,13 +356,13 @@ class CommunityControllerTest {
     Community community = createTestCommunity();
     List<CommunityHouse> houses = new ArrayList<>(community.getHouses());
     Set<CommunityHouse> housesSet = new HashSet<>(houses);
-    Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsSet = new HashSet<>();
-    getHouseDetailsSet.add(new GetHouseDetailsResponse.CommunityHouse(
-        COMMUNITY_HOUSE_ID,
-        COMMUNITY_HOUSE_NAME
-    ));
+    Set<GetHouseDetailsResponseCommunityHouse> getHouseDetailsSet = new HashSet<>();
+    getHouseDetailsSet.add(new GetHouseDetailsResponseCommunityHouse()
+        .houseId(COMMUNITY_HOUSE_ID)
+        .name(COMMUNITY_NAME)
+    );
 
-    GetHouseDetailsResponse response = new GetHouseDetailsResponse(getHouseDetailsSet);
+    GetHouseDetailsResponse response = new GetHouseDetailsResponse().houses(getHouseDetailsSet);
     Pageable pageable = PageRequest.of(0, 1);
 
     given(communityService.findCommunityHousesById(COMMUNITY_ID, pageable))
@@ -403,7 +406,7 @@ class CommunityControllerTest {
     Community community = createTestCommunity();
     Set<CommunityHouse> communityHouses = community.getHouses();
     Set<CommunityHouseName> communityHouseNames = new HashSet<>();
-    communityHouseNames.add(new CommunityHouseName(COMMUNITY_HOUSE_NAME));
+    communityHouseNames.add(new CommunityHouseName().name(COMMUNITY_HOUSE_NAME));
 
     Set<String> houseIds = new HashSet<>();
     for (CommunityHouse house : communityHouses) {
@@ -412,7 +415,7 @@ class CommunityControllerTest {
 
     addCommunityHouseRequest.getHouses().addAll(communityHouseNames);
 
-    AddCommunityHouseResponse response = new AddCommunityHouseResponse(houseIds);
+    AddCommunityHouseResponse response = new AddCommunityHouseResponse().houses(houseIds);
 
     given(communityApiMapper.communityHouseNamesSetToCommunityHouseSet(communityHouseNames))
         .willReturn(communityHouses);
