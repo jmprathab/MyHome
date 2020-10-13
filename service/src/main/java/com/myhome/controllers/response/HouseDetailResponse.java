@@ -16,7 +16,7 @@
 
 package com.myhome.controllers.response;
 
-import com.myhome.controllers.dto.CommunityHouseDto;
+import com.myhome.model.CommunityHouseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

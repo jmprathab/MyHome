@@ -23,6 +23,7 @@ import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.model.AddHouseMemberRequest;
 import com.myhome.model.AddHouseMemberResponse;
+import com.myhome.model.CommunityHouseDto;
 import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.ListHouseMembersResponse;
 import com.myhome.services.HouseService;
@@ -50,7 +51,7 @@ public class HouseController implements HousesApi {
 
     Set<CommunityHouse> houseDetails =
         houseService.listAllHouses(pageable);
-    Set<com.myhome.model.CommunityHouse> getHouseDetailsResponseSet =
+    Set<CommunityHouseDto> getHouseDetailsResponseSet =
         houseApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
     GetHouseDetailsResponse response = new GetHouseDetailsResponse();

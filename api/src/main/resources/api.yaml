@@ -378,8 +378,8 @@ components:
           type: array
           uniqueItems: true
           items:
-            $ref: '#/components/schemas/CommunityHouse'
-    CommunityHouse:
+            $ref: '#/components/schemas/CommunityHouseDto'
+    CommunityHouseDto:
       description: Community house
       type: object
       properties:
@@ -397,8 +397,8 @@ components:
           type: array
           uniqueItems: true
           items:
-            $ref: '#/components/schemas/HouseMember'
-    HouseMember:
+            $ref: '#/components/schemas/HouseMemberDto'
+    HouseMemberDto:
       description: Community house member
       type: object
       properties:
@@ -440,4 +440,4 @@ components:
           type: array
           uniqueItems: true
           items:
-            $ref: '#/components/schemas/HouseMember'
+            $ref: '#/components/schemas/HouseMemberDto'

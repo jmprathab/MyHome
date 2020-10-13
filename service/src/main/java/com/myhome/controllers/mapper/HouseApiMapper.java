@@ -17,14 +17,15 @@
 package com.myhome.controllers.mapper;
 
 import com.myhome.domain.CommunityHouse;
+import com.myhome.model.CommunityHouseDto;
 import java.util.Set;
 import org.mapstruct.Mapper;
 
 @Mapper
 public interface HouseApiMapper {
-  Set<com.myhome.model.CommunityHouse> communityHouseSetToRestApiResponseCommunityHouseSet(
+  Set<CommunityHouseDto> communityHouseSetToRestApiResponseCommunityHouseSet(
       Set<CommunityHouse> communityHouse);
 
-  com.myhome.model.CommunityHouse communityHouseToRestApiResponseCommunityHouse(
+  CommunityHouseDto communityHouseToRestApiResponseCommunityHouse(
       CommunityHouse communityHouse);
 }

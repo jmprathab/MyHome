@@ -22,7 +22,9 @@ import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.model.AddHouseMemberRequest;
 import com.myhome.model.AddHouseMemberResponse;
+import com.myhome.model.CommunityHouseDto;
 import com.myhome.model.GetHouseDetailsResponse;
+import com.myhome.model.HouseMemberDto;
 import com.myhome.model.HouseMemberRequest;
 import com.myhome.model.ListHouseMembersResponse;
 import com.myhome.services.HouseService;
@@ -76,9 +78,9 @@ class HouseControllerTest {
     // given
     Set<CommunityHouse> testHouses =
         TestUtils.CommunityHouseHelpers.getTestHouses(TEST_HOUSES_COUNT);
-    Set<com.myhome.model.CommunityHouse> testHousesResponse = testHouses.stream()
-        .map(house -> new com.myhome.model.CommunityHouse().houseId(house.getHouseId())
-            .name(house.getName()))
+    Set<CommunityHouseDto> testHousesResponse = testHouses
+        .stream()
+        .map(house -> new CommunityHouseDto().houseId(house.getHouseId()).name(house.getName()))
         .collect(Collectors.toSet());
     GetHouseDetailsResponse expectedResponseBody = new GetHouseDetailsResponse();
     expectedResponseBody.setHouses(testHousesResponse);
@@ -102,8 +104,8 @@ class HouseControllerTest {
     // given
     CommunityHouse testCommunityHouse =
         TestUtils.CommunityHouseHelpers.getTestCommunityHouse(TEST_HOUSE_ID);
-    com.myhome.model.CommunityHouse houseDetailsResponse =
-        new com.myhome.model.CommunityHouse().houseId(testCommunityHouse.getHouseId()).name(
+    CommunityHouseDto houseDetailsResponse =
+        new CommunityHouseDto().houseId(testCommunityHouse.getHouseId()).name(
             testCommunityHouse.getName());
     GetHouseDetailsResponse expectedResponseBody =
         new GetHouseDetailsResponse().addHousesItem(houseDetailsResponse);
@@ -150,8 +152,8 @@ class HouseControllerTest {
     // given
     Set<HouseMember> testHouseMembers =
         TestUtils.HouseMemberHelpers.getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
-    Set<com.myhome.model.HouseMember> testHouseMemberDetails = testHouseMembers.stream()
-        .map(member -> new com.myhome.model.HouseMember().memberId(member.getMemberId()).name(
+    Set<HouseMemberDto> testHouseMemberDetails = testHouseMembers.stream()
+        .map(member -> new HouseMemberDto().memberId(member.getMemberId()).name(
             member.getName()))
         .collect(Collectors.toSet());
     ListHouseMembersResponse expectedResponseBody =
@@ -204,8 +206,8 @@ class HouseControllerTest {
 
     AddHouseMemberRequest request = new AddHouseMemberRequest().members(testMembersDto);
 
-    Set<com.myhome.model.HouseMember> addedMembers = testMembers.stream()
-        .map(member -> new com.myhome.model.HouseMember().memberId(member.getMemberId()).name(
+    Set<HouseMemberDto> addedMembers = testMembers.stream()
+        .map(member -> new HouseMemberDto().memberId(member.getMemberId()).name(
             member.getName()))
         .collect(Collectors.toSet());
 
@@ -244,8 +246,8 @@ class HouseControllerTest {
 
     AddHouseMemberRequest request = new AddHouseMemberRequest().members(testMembersDto);
 
-    Set<com.myhome.model.HouseMember> addedMembers = testMembers.stream()
-        .map(member -> new com.myhome.model.HouseMember().memberId(member.getMemberId()).name(
+    Set<HouseMemberDto> addedMembers = testMembers.stream()
+        .map(member -> new HouseMemberDto().memberId(member.getMemberId()).name(
             member.getName()))
         .collect(Collectors.toSet());
 

@@ -16,8 +16,8 @@
 
 package com.myhome.controllers.dto.mapper;
 
-import com.myhome.controllers.dto.HouseMemberDto;
 import com.myhome.domain.HouseMember;
+import com.myhome.model.HouseMemberDto;
 import java.util.Set;
 
 import com.myhome.model.HouseMemberRequest;
@@ -25,11 +25,11 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public interface HouseMemberMapper {
-  Set<com.myhome.model.HouseMember> houseMemberSetToRestApiResponseHouseMemberSet(
+  Set<HouseMemberDto> houseMemberSetToRestApiResponseHouseMemberSet(
       Set<HouseMember> houseMemberSet);
 
   Set<HouseMember> houseMemberDtoSetToHouseMemberSet(Set<HouseMemberRequest> houseMemberDtoSet);
 
-  Set<com.myhome.model.HouseMember> houseMemberSetToRestApiResponseAddHouseMemberSet(
+  Set<HouseMemberDto> houseMemberSetToRestApiResponseAddHouseMemberSet(
       Set<HouseMember> houseMemberSet);
 }
