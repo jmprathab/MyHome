@@ -96,7 +96,8 @@ public class CommunitySDJpaServiceTest {
         TEST_ADMIN_ID,
         TEST_ADMIN_EMAIL,
         TEST_ADMIN_PASSWORD,
-        new HashSet<>());
+        new HashSet<>(),
+        null);
   }
 
   @Test

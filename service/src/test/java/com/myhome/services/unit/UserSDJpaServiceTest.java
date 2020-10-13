@@ -143,7 +143,7 @@ class UserSDJpaServiceTest {
     // given
     UserDto userDto = getDefaultUserDtoRequest();
     User user = new User(userDto.getName(), userDto.getUserId(), userDto.getEmail(),
-        userDto.getEncryptedPassword(), new HashSet<>());
+        userDto.getEncryptedPassword(), new HashSet<>(), null);
 
     Community firstCommunity = TestUtils.CommunityHelpers.getTestCommunity(user);
     Community secCommunity = TestUtils.CommunityHelpers.getTestCommunity(user);
@@ -202,7 +202,8 @@ class UserSDJpaServiceTest {
         request.getUserId(),
         request.getEmail(),
         request.getEncryptedPassword(),
-        new HashSet<>()
+        new HashSet<>(),
+        null
     );
   }
 }
