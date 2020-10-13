@@ -19,10 +19,14 @@ package com.myhome.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myhome.security.filters.CommunityAuthorizationFilter;
 import com.myhome.security.jwt.AppJwtEncoderDecoder;
+<<<<<<< HEAD
 import com.myhome.services.CommunityService;
 import javax.servlet.Filter;
 
+=======
+>>>>>>> d2296b5446c7535f7d19d15b87df5987642e2180
 import com.myhome.services.CommunityService;
+import javax.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -46,9 +50,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final PasswordEncoder passwordEncoder;
   private final UserDetailFetcher userDetailFetcher;
   private final AppJwtEncoderDecoder appJwtEncoderDecoder;
-  private final CommunityService communityService;
 
-  @Override protected void configure(HttpSecurity http) throws Exception {
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
     http.cors().and().csrf().disable();
     http.headers().frameOptions().disable();
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -88,11 +92,16 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     return authFilter;
   }
 
+<<<<<<< HEAD
   private Filter getCommunityFilter() throws Exception {
     return new CommunityAuthorizationFilter(authenticationManager(), communityService);
   }
 
   @Override protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+=======
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+>>>>>>> d2296b5446c7535f7d19d15b87df5987642e2180
     auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
   }
 }
