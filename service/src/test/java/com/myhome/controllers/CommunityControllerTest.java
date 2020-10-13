@@ -169,9 +169,9 @@ class CommunityControllerTest {
         = new HashSet<>();
     communityDetailsResponse.add(
         new GetCommunityDetailsResponseCommunity()
-        .communityId(COMMUNITY_ID)
-        .name(COMMUNITY_NAME)
-        .district(COMMUNITY_DISTRICT)
+            .communityId(COMMUNITY_ID)
+            .name(COMMUNITY_NAME)
+            .district(COMMUNITY_DISTRICT)
     );
 
     GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
@@ -201,9 +201,9 @@ class CommunityControllerTest {
     Community community = communityOptional.get();
     GetCommunityDetailsResponseCommunity communityDetails =
         new GetCommunityDetailsResponseCommunity()
-        .communityId(COMMUNITY_ID)
-        .name(COMMUNITY_NAME)
-        .district(COMMUNITY_DISTRICT);
+            .communityId(COMMUNITY_ID)
+            .name(COMMUNITY_NAME)
+            .district(COMMUNITY_DISTRICT);
 
     Set<GetCommunityDetailsResponseCommunity> communityDetailsResponse
         = new HashSet<>();
@@ -262,13 +262,14 @@ class CommunityControllerTest {
     Set<ListCommunityAdminsResponseCommunityAdmin> listAdminsResponses = new HashSet<>();
     listAdminsResponses.add(
         new ListCommunityAdminsResponseCommunityAdmin()
-        .adminId(COMMUNITY_ADMIN_ID)
+            .adminId(COMMUNITY_ADMIN_ID)
     );
 
     given(communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminsSet))
         .willReturn(listAdminsResponses);
 
-    ListCommunityAdminsResponse response = new ListCommunityAdminsResponse().admins(listAdminsResponses);
+    ListCommunityAdminsResponse response =
+        new ListCommunityAdminsResponse().admins(listAdminsResponses);
 
     // when
     ResponseEntity<ListCommunityAdminsResponse> responseEntity =
