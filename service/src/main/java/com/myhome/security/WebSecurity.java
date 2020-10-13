@@ -19,12 +19,6 @@ package com.myhome.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myhome.security.filters.CommunityAuthorizationFilter;
 import com.myhome.security.jwt.AppJwtEncoderDecoder;
-<<<<<<< HEAD
-import com.myhome.services.CommunityService;
-import javax.servlet.Filter;
-
-=======
->>>>>>> d2296b5446c7535f7d19d15b87df5987642e2180
 import com.myhome.services.CommunityService;
 import javax.servlet.Filter;
 import lombok.RequiredArgsConstructor;
@@ -92,16 +86,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     return authFilter;
   }
 
-<<<<<<< HEAD
-  private Filter getCommunityFilter() throws Exception {
-    return new CommunityAuthorizationFilter(authenticationManager(), communityService);
-  }
-
-  @Override protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-=======
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
->>>>>>> d2296b5446c7535f7d19d15b87df5987642e2180
     auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
   }
 }
