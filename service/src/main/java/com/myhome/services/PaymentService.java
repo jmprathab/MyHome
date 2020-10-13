@@ -28,10 +28,6 @@ import java.util.Set;
 public interface PaymentService {
   PaymentDto schedulePayment(PaymentDto request);
 
-  Set<Payment> listAll();
-
-  Set<Payment> listAll(Integer limit, Integer start);
-
   Optional<PaymentDto> getPaymentDetails(String paymentId);
 
   Set<Payment> getPaymentsByMember(String memberId);
