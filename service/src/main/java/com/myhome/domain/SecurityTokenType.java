@@ -1,5 +1,5 @@
 package com.myhome.domain;
 
-public enum MyHomeTokenType {
+public enum SecurityTokenType {
   RESET
 }

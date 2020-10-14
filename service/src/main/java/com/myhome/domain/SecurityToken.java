@@ -17,7 +17,7 @@ import java.util.Date;
 public class SecurityToken extends BaseEntity {
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  private MyHomeTokenType tokenType;
+  private SecurityTokenType tokenType;
   @Column(nullable = false, unique = true)
   private String token;
   @Column(nullable = false)

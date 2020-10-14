@@ -21,7 +21,7 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
 import com.myhome.controllers.request.ForgotPasswordRequest;
 import com.myhome.domain.Community;
-import com.myhome.domain.MyHomeTokenType;
+import com.myhome.domain.SecurityTokenType;
 import com.myhome.domain.SecurityToken;
 import com.myhome.domain.User;
 import com.myhome.repositories.SecurityTokenRepository;
@@ -411,7 +411,7 @@ class UserSDJpaServiceTest {
     Calendar cal = Calendar.getInstance();
     cal.setTime(date);
     cal.add(Calendar.SECOND, lifetime);
-    return new SecurityToken(MyHomeTokenType.RESET, PASSWORD_RESET_TOKEN, new Date(), cal.getTime());
+    return new SecurityToken(SecurityTokenType.RESET, PASSWORD_RESET_TOKEN, new Date(), cal.getTime());
   }
 
   private SecurityToken getTestSecurityToken() {

@@ -1,6 +1,6 @@
 package com.myhome.services.unit;
 
-import com.myhome.domain.MyHomeTokenType;
+import com.myhome.domain.SecurityTokenType;
 import com.myhome.domain.SecurityToken;
 import com.myhome.repositories.SecurityTokenRepository;
 import com.myhome.services.springdatajpa.SecurityTokenSDJpaService;
@@ -42,7 +42,7 @@ public class SecurityTokenSDJpaServiceTest {
   @Test
   void createSecurityToken() {
     // given
-    MyHomeTokenType testTokenType = MyHomeTokenType.RESET;
+    SecurityTokenType testTokenType = SecurityTokenType.RESET;
     when(securityTokenRepository.save(any()))
         .then(returnsFirstArg());
 
@@ -73,7 +73,7 @@ public class SecurityTokenSDJpaServiceTest {
     long lifetime = expiryDate.getTime() - creationDate.getTime();
 
     // then
-    assertEquals(actualSecurityToken.getTokenType(), MyHomeTokenType.RESET);
+    assertEquals(actualSecurityToken.getTokenType(), SecurityTokenType.RESET);
     assertTrue(creationDate.before(expiryDate));
     assertEquals(lifetime, TEST_TOKEN_LIFETIME_SECONDS_UNIX);
     assertNotNull(actualSecurityToken.getToken());

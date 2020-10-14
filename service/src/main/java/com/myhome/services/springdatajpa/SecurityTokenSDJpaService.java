@@ -1,6 +1,6 @@
 package com.myhome.services.springdatajpa;
 
-import com.myhome.domain.MyHomeTokenType;
+import com.myhome.domain.SecurityTokenType;
 import com.myhome.domain.SecurityToken;
 import com.myhome.repositories.SecurityTokenRepository;
 import com.myhome.services.SecurityTokenService;
@@ -22,7 +22,7 @@ public class SecurityTokenSDJpaService implements SecurityTokenService {
   private int passResetTokenTime;
 
   @Override
-  public SecurityToken createSecurityToken(MyHomeTokenType tokenType, int liveTimeSeconds) {
+  public SecurityToken createSecurityToken(SecurityTokenType tokenType, int liveTimeSeconds) {
     String token = UUID.randomUUID().toString();
     Date creationDate = new Date();
     Date expiryDate = getDateAfterDays(creationDate, liveTimeSeconds);
@@ -33,7 +33,7 @@ public class SecurityTokenSDJpaService implements SecurityTokenService {
 
   @Override
   public SecurityToken createPasswordResetToken() {
-    return createSecurityToken(MyHomeTokenType.RESET, passResetTokenTime);
+    return createSecurityToken(SecurityTokenType.RESET, passResetTokenTime);
   }
 
   private Date getDateAfterDays(Date date, int liveTimeSeconds) {
