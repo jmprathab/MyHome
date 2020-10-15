@@ -17,7 +17,6 @@
 package com.myhome.controllers;
 
 import com.myhome.api.AmenitiesApi;
-import com.myhome.api.CommunitiesApi;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
 import com.myhome.model.AddAmenityRequest;
@@ -40,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-public class AmenityController implements AmenitiesApi, CommunitiesApi {
+public class AmenityController implements AmenitiesApi {
 
   private final AmenityService amenitySDJpaService;
   private final AmenityApiMapper amenityApiMapper;
@@ -63,25 +62,6 @@ public class AmenityController implements AmenitiesApi, CommunitiesApi {
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
-  }
-
-  @Override
-  public ResponseEntity<Set<GetAmenityDetailsResponse>> listAllAmenities(
-      @PathVariable String communityId) {
-    Set<Amenity> amenities = amenitySDJpaService.listAllAmenities(communityId);
-    Set<GetAmenityDetailsResponse> response =
-        amenityApiMapper.amenitiesSetToAmenityDetailsResponseSet(amenities);
-    return ResponseEntity.ok(response);
-  }
-
-  @Override
-  public ResponseEntity<AddAmenityResponse> addAmenityToCommunity(
-      @PathVariable String communityId,
-      @RequestBody AddAmenityRequest request) {
-    return amenitySDJpaService.createAmenities(request.getAmenities(), communityId)
-        .map(amenityList -> new AddAmenityResponse().amenities(amenityList))
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
   }
 
   @Override

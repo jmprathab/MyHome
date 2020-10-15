@@ -9,6 +9,7 @@ tags:
   - name: Users
   - name: Documents
   - name: Communities
+  - name: Amentities
   - name: Houses
   - name: Payments
   - name: Members
@@ -852,14 +853,16 @@ components:
         description:
           type: string
         price:
-          type: long
+          type: integer
+          format: int64
         communityId:
           type: string
     AmenityDto:
       type: object
       properties:
         id:
-          type: long
+          type: integer
+          format: int64
         amenityId:
           type: string
         name:
