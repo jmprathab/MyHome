@@ -21,7 +21,7 @@ import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.domain.Community;
-import com.myhome.repositories.AmenityBookingRepository;
+import com.myhome.repositories.AmenityBookingItemRepository;
 import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.AmenityService;
@@ -41,10 +41,10 @@ import org.springframework.stereotype.Service;
 public class AmenitySDJpaService implements AmenityService {
 
   private final AmenityRepository amenityRepository;
-  private final AmenityBookingRepository amenityBookingRepository;
   private final CommunityRepository communityRepository;
   private final CommunityService communityService;
   private final AmenityApiMapper amenityApiMapper;
+  private final AmenityBookingItemRepository bookingRepository;
 
   @Override
   public Optional<List<AmenityDto>> createAmenities(Set<AmenityDto> amenities, String communityId) {
@@ -107,6 +107,16 @@ public class AmenitySDJpaService implements AmenityService {
             .orElse(null))
         .map(amenityRepository::save).isPresent();
   }
+
+    @Override
+    public boolean deleteBooking(String bookingId) {
+        return bookingRepository.findByAmenityBookingItemId(bookingId)
+                .map(bookingItem -> {
+                    bookingRepository.delete(bookingItem);
+                    return true;
+                })
+                .orElse(false);
+    }
 
   @Override
   public List<AmenityBookingItem> listAllAmenityBookings(String amenityId,

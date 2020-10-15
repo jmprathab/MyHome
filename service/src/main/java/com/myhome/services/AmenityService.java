@@ -37,6 +37,8 @@ public interface AmenityService {
 
   boolean updateAmenity(AmenityDto updatedAmenityDto);
 
+  boolean deleteBooking(String bookingId);
+
   List<AmenityBookingItem> listAllAmenityBookings(String amenityId,
       LocalDateTime startDate,
       LocalDateTime endDate,
