@@ -752,6 +752,31 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Delete amenity booking",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/bookings/{{BOOKING_ID}}",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"bookings",
+						"{{BOOKING_ID}}"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -816,6 +841,11 @@
 			"id": "acf764d2-557b-4ab2-bba9-d30164acc4ea",
 			"key": "AMENITY_ID",
 			"value": "244282d9-d71b-4824-ae72-1f5d4f9b067c"
+		},
+		{
+			"id": "3a7f153b-f5a5-4e94-812b-d4012ab1d9bb",
+			"key": "BOOKING_ID",
+			"value": "7f8c2547-fcd5-42fe-8fcb-32c4d5a55c5d"
 		}
 	],
 	"protocolProfileBehavior": {}

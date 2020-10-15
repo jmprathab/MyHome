@@ -127,4 +127,21 @@ public class AmenityController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
   }
+
+  @Operation(
+          description = "Remove amenity booking",
+          responses = {
+                  @ApiResponse(responseCode = "204", description = "If booking deleted"),
+                  @ApiResponse(responseCode = "404", description = "If params are invalid"),
+          }
+  )
+  @DeleteMapping(path = "/bookings/{bookingId}")
+  public ResponseEntity deleteBooking(@PathVariable String bookingId) {
+    boolean isBookingDeleted = amenitySDJpaService.deleteBooking(bookingId);
+    if (isBookingDeleted) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
 }
