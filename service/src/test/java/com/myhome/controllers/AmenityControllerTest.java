@@ -27,12 +27,6 @@ import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.services.AmenityService;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 
 import helpers.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +36,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -281,8 +282,9 @@ class AmenityControllerTest {
 
     // then
     assertEquals(HttpStatus.OK, amenitiesBookings.getStatusCode());
-    assertNotNull(amenitiesBookings.getBody());
-    assertEquals(1, amenitiesBookings.getBody().size());
+    List<GetAmenityBookingsResponse> responseBody = amenitiesBookings.getBody();
+    assertNotNull(responseBody);
+    assertEquals(1, responseBody.size());
   }
 
   @Test
@@ -304,8 +306,9 @@ class AmenityControllerTest {
 
     // then
     assertEquals(HttpStatus.OK, amenitiesBookings.getStatusCode());
-    assertNotNull(amenitiesBookings.getBody());
-    assertEquals(0, amenitiesBookings.getBody().size());
+    List<GetAmenityBookingsResponse> responseBody = amenitiesBookings.getBody();
+    assertNotNull(responseBody);
+    assertEquals(0, responseBody.size());
   }
 
   @Test
@@ -334,8 +337,9 @@ class AmenityControllerTest {
 
     // then
     assertEquals(HttpStatus.OK, amenitiesBookings.getStatusCode());
-    assertNotNull(amenitiesBookings.getBody());
-    assertEquals(1, amenitiesBookings.getBody().size());
+    List<GetAmenityBookingsResponse> responseBody = amenitiesBookings.getBody();
+    assertNotNull(responseBody);
+    assertEquals(1, responseBody.size());
   }
 
   @Test
@@ -365,8 +369,9 @@ class AmenityControllerTest {
 
     // then
     assertEquals(HttpStatus.OK, amenitiesBookings.getStatusCode());
-    assertNotNull(amenitiesBookings.getBody());
-    assertEquals(1, amenitiesBookings.getBody().size());
+    List<GetAmenityBookingsResponse> responseBody = amenitiesBookings.getBody();
+    assertNotNull(responseBody);
+    assertEquals(1, responseBody.size());
   }
 
   @Test
@@ -396,8 +401,9 @@ class AmenityControllerTest {
 
     // then
     assertEquals(HttpStatus.OK, amenitiesBookings.getStatusCode());
-    assertNotNull(amenitiesBookings.getBody());
-    assertEquals(1, amenitiesBookings.getBody().size());
+    List<GetAmenityBookingsResponse> responseBody = amenitiesBookings.getBody();
+    assertNotNull(responseBody);
+    assertEquals(1, responseBody.size());
   }
 
   private Amenity getTestAmenity() {
