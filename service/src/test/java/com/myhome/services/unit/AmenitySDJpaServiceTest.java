@@ -16,7 +16,6 @@
 
 package com.myhome.services.unit;
 
-import helpers.TestUtils;
 import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
@@ -27,7 +26,9 @@ import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import com.myhome.services.springdatajpa.AmenitySDJpaService;
+import helpers.TestUtils;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -82,7 +83,8 @@ class AmenitySDJpaServiceTest {
   @Test
   void deleteAmenity() {
     // given
-    Amenity testAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
+    Amenity testAmenity =
+        TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
 
     given(amenityRepository.findByAmenityIdWithCommunity(TEST_AMENITY_ID))
         .willReturn(Optional.of(testAmenity));
@@ -212,7 +214,8 @@ class AmenitySDJpaServiceTest {
   @Test
   void shouldUpdateCommunityAmenitySuccessfully() {
     // given
-    Amenity communityAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
+    Amenity communityAmenity =
+        TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
     Community testCommunity = TestUtils.CommunityHelpers.getTestCommunity();
     AmenityDto updated = getTestAmenityDto();
     Amenity updatedAmenity = getUpdatedCommunityAmenity();
@@ -252,7 +255,8 @@ class AmenitySDJpaServiceTest {
   @Test
   void shouldNotUpdateCommunityAmenitySuccessfullyIfSavingFails() {
     // given
-    Amenity testAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
+    Amenity testAmenity =
+        TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
     Amenity updatedAmenity = getUpdatedCommunityAmenity();
     AmenityDto updatedDto = getTestAmenityDto();
     Community community = TestUtils.CommunityHelpers.getTestCommunity();
@@ -277,7 +281,8 @@ class AmenitySDJpaServiceTest {
   @Test
   void shouldNotUpdateAmenityIfCommunityDoesNotExist() {
     // given
-    Amenity communityAmenity = TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
+    Amenity communityAmenity =
+        TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
     AmenityDto updatedDto = getTestAmenityDto();
 
     given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
@@ -301,7 +306,7 @@ class AmenitySDJpaServiceTest {
     AmenityBookingItem testBookingItem = getTestBookingItem();
 
     given(bookingItemRepository.findByAmenityBookingItemId(TEST_BOOKING_ID))
-            .willReturn(Optional.of(testBookingItem));
+        .willReturn(Optional.of(testBookingItem));
 
     // when
     boolean bookingDeleted = amenitySDJpaService.deleteBooking(TEST_BOOKING_ID);
@@ -311,11 +316,12 @@ class AmenitySDJpaServiceTest {
     verify(bookingItemRepository).findByAmenityBookingItemId(TEST_BOOKING_ID);
     verify(bookingItemRepository).delete(testBookingItem);
   }
+
   @Test
   void deleteBookingNotExists() {
     // given
     given(bookingItemRepository.findByAmenityBookingItemId(TEST_BOOKING_ID))
-            .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     // when
     boolean amenityDeleted = amenitySDJpaService.deleteBooking(TEST_BOOKING_ID);
@@ -324,6 +330,73 @@ class AmenitySDJpaServiceTest {
     assertFalse(amenityDeleted);
     verify(bookingItemRepository).findByAmenityBookingItemId(TEST_BOOKING_ID);
     verify(bookingItemRepository, never()).delete(any());
+  }
+
+  @Test
+  void ListAllBookingsShouldReturnEmptyOptionalWhenAmenityIdNotFound() {
+    // given
+    String nonExistingId = "NonExistingId";
+    given(bookingItemRepository.findAllByAmenity(nonExistingId, null, null, null))
+        .willReturn(Collections.emptyList());
+    given(amenityRepository.findByAmenityId(nonExistingId)).willReturn(Optional.empty());
+
+    // when
+    Optional<List<AmenityBookingItem>> result =
+        amenitySDJpaService.listAllAmenityBookings(nonExistingId, null, null, null);
+
+    // then
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void ListAllBookingsShouldReturnListOfAmenityBookingsWithTimeRange() {
+    // given
+    AmenityBookingItem amenityBookingItem = getTestBookingItem();
+    LocalDateTime currentTime = LocalDateTime.now();
+    String amenityId = amenityBookingItem.getAmenity().getAmenityId();
+
+    List<AmenityBookingItem> amenityBookingItems = Collections.singletonList(amenityBookingItem);
+    given(bookingItemRepository.findAllByAmenity(amenityId,
+        currentTime,
+        currentTime.plusDays(5),
+        null))
+        .willReturn(amenityBookingItems);
+
+    // when
+    Optional<List<AmenityBookingItem>> result =
+        amenitySDJpaService.listAllAmenityBookings(amenityId,
+            currentTime,
+            currentTime.plusDays(5),
+            null);
+
+    // then
+    assertTrue(result.isPresent());
+    assertEquals(1, result.get().size());
+  }
+
+  @Test
+  void ListAllBookingsShouldReturnListOfAmenityBookingsWithoutTimeRange() {
+    // given
+    AmenityBookingItem amenityBookingItem = getTestBookingItem();
+    String amenityId = amenityBookingItem.getAmenity().getAmenityId();
+
+    List<AmenityBookingItem> amenityBookingItems = Collections.singletonList(amenityBookingItem);
+    given(bookingItemRepository.findAllByAmenity(amenityId,
+        null,
+        null,
+        null))
+        .willReturn(amenityBookingItems);
+
+    // when
+    Optional<List<AmenityBookingItem>> result =
+        amenitySDJpaService.listAllAmenityBookings(amenityId,
+            null,
+            null,
+            null);
+
+    // then
+    assertTrue(result.isPresent());
+    assertEquals(1, result.get().size());
   }
 
   private AmenityDto getTestAmenityDto() {
@@ -351,6 +424,7 @@ class AmenitySDJpaServiceTest {
 
   private AmenityBookingItem getTestBookingItem() {
     return new AmenityBookingItem()
-            .withAmenityBookingItemId(TEST_BOOKING_ID);
+        .withAmenityBookingItemId(TEST_BOOKING_ID)
+        .withAmenity(new Amenity().withAmenityId(TEST_AMENITY_ID));
   }
 }

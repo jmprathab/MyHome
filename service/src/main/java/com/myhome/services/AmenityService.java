@@ -39,7 +39,7 @@ public interface AmenityService {
 
   boolean deleteBooking(String bookingId);
 
-  List<AmenityBookingItem> listAllAmenityBookings(String amenityId,
+  Optional<List<AmenityBookingItem>> listAllAmenityBookings(String amenityId,
       LocalDateTime startDate,
       LocalDateTime endDate,
       Pageable pageable);

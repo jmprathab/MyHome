@@ -13,6 +13,7 @@ public interface AmenityBookingItemRepository extends JpaRepository<AmenityBooki
     Optional<AmenityBookingItem> findByAmenityBookingItemId(String amenityBookingItemId);
 
     @Query("select ab from AmenityBookingItem ab " +
+        "left join fetch ab.amenity " +
         "where ab.amenity.amenityId = :amenityId " +
         "and (ab.bookingStartDate >= :startDate or :startDate is null) " +
         "and (ab.bookingEndDate <= :endDate or :endDate is null)")

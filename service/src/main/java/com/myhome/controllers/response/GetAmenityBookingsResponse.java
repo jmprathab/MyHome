@@ -1,5 +1,6 @@
 package com.myhome.controllers.response;
 
+import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class GetAmenityBookingsResponse {
-  private String amenityId;
+  private GetAmenityDetailsResponse amenity;
   private String bookingStartDate;
   private String bookingEndDate;
 }

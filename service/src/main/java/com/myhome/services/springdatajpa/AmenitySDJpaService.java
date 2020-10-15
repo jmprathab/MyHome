@@ -118,11 +118,16 @@ public class AmenitySDJpaService implements AmenityService {
                 .orElse(false);
     }
 
-  @Override
-  public List<AmenityBookingItem> listAllAmenityBookings(String amenityId,
-      LocalDateTime startDate,
-      LocalDateTime endDate,
-      Pageable pageable) {
-    return bookingRepository.findAllByAmenity(amenityId, startDate, endDate, pageable);
-  }
+    @Override
+    public Optional<List<AmenityBookingItem>> listAllAmenityBookings(String amenityId,
+        LocalDateTime startDate,
+        LocalDateTime endDate,
+        Pageable pageable) {
+      List<AmenityBookingItem> bookingItems =
+          bookingRepository.findAllByAmenity(amenityId, startDate, endDate, pageable);
+      if (bookingItems.isEmpty() && amenityRepository.findByAmenityId(amenityId).isEmpty()) {
+        return Optional.empty();
+      }
+      return Optional.of(bookingItems);
+    }
 }

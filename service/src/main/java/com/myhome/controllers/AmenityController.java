@@ -25,7 +25,6 @@ import com.myhome.controllers.response.GetAmenityBookingsResponse;
 import com.myhome.controllers.response.amenity.AddAmenityResponse;
 import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
-import com.myhome.domain.AmenityBookingItem;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -139,11 +138,11 @@ public class AmenityController {
   }
 
   @Operation(
-          description = "Remove amenity booking",
-          responses = {
-                  @ApiResponse(responseCode = "204", description = "If booking deleted"),
-                  @ApiResponse(responseCode = "404", description = "If params are invalid"),
-          }
+      description = "Remove amenity booking",
+      responses = {
+          @ApiResponse(responseCode = "204", description = "If booking deleted"),
+          @ApiResponse(responseCode = "404", description = "If params are invalid"),
+      }
   )
   @DeleteMapping(path = "/bookings/{bookingId}")
   public ResponseEntity deleteBooking(@PathVariable String bookingId) {
@@ -155,7 +154,12 @@ public class AmenityController {
     }
   }
 
-  @Operation(description = "Get all bookings for an amenity")
+  @Operation(description = "Get all bookings for an amenity",
+      responses = {
+          @ApiResponse(responseCode = "200",
+              description = "If Amenity exists, with or without bookings"),
+          @ApiResponse(responseCode = "404", description = "If AmenityId is not found"),
+      })
   @GetMapping(path = "/amenities/{amenityId}/bookings")
   public ResponseEntity<List<GetAmenityBookingsResponse>> getAmenitiesBookings(
       @PathVariable String amenityId,
@@ -163,10 +167,9 @@ public class AmenityController {
       @RequestParam(required = false) LocalDateTime end,
       @PageableDefault(size = 200) Pageable pageable) {
 
-    List<AmenityBookingItem> amenityBookingItems =
-        amenitySDJpaService.listAllAmenityBookings(amenityId, start, end, pageable);
-    List<GetAmenityBookingsResponse> response =
-        amenityBookingItemApiMapper.amenityBookingToAmenityBookingsResponse(amenityBookingItems);
-    return ResponseEntity.ok(response);
+    return amenitySDJpaService.listAllAmenityBookings(amenityId, start, end, pageable)
+        .map(amenityBookingItemApiMapper::amenityBookingToAmenityBookingsResponse)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
   }
 }
