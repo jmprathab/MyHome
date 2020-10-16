@@ -345,7 +345,7 @@ class AmenitySDJpaServiceTest {
         amenitySDJpaService.listAllAmenityBookings(nonExistingId, null, null, null);
 
     // then
-    assertTrue(result.isEmpty());
+    assertFalse(result.isPresent());
   }
 
   @Test
