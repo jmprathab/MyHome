@@ -125,7 +125,7 @@ public class AmenitySDJpaService implements AmenityService {
         Pageable pageable) {
       List<AmenityBookingItem> bookingItems =
           bookingRepository.findAllByAmenity(amenityId, startDate, endDate, pageable);
-      if (bookingItems.isEmpty() && amenityRepository.findByAmenityId(amenityId).isEmpty()) {
+      if (bookingItems.isEmpty() && !amenityRepository.findByAmenityId(amenityId).isPresent()) {
         return Optional.empty();
       }
       return Optional.of(bookingItems);
