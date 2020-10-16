@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -21,7 +22,7 @@ public class SecurityToken extends BaseEntity {
   @Column(nullable = false, unique = true)
   private String token;
   @Column(nullable = false)
-  private Date creationDate;
+  private LocalDate creationDate;
   @Column(nullable = false)
-  private Date expiryDate;
+  private LocalDate expiryDate;
 }

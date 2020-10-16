@@ -91,8 +91,10 @@ authorization:
       name: "Authorization"
       prefix: "Bearer"
 
-users:
-  passResetTokenTime: 86400
+tokens:
+  reset:
+    expiration: 1d
+
 files:
   maxSizeKBytes: 480
   compressionBorderSizeKBytes: 240

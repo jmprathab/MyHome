@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -18,15 +18,15 @@ public class SecurityTokenSDJpaService implements SecurityTokenService {
 
   private final SecurityTokenRepository securityTokenRepository;
 
-  @Value("${users.passResetTokenTime}")
-  private int passResetTokenTime;
+  @Value("${tokens.reset.expiration}")
+  private Duration passResetTokenTime;
 
   @Override
-  public SecurityToken createSecurityToken(SecurityTokenType tokenType, int liveTimeSeconds) {
+  public SecurityToken createSecurityToken(SecurityTokenType tokenType, Duration liveTimeSeconds) {
     String token = UUID.randomUUID().toString();
-    Date creationDate = new Date();
-    Date expiryDate = getDateAfterDays(creationDate, liveTimeSeconds);
-    SecurityToken newSecurityToken = new SecurityToken(tokenType, token, creationDate, expiryDate);
+    LocalDate creationDate = LocalDate.now();
+    LocalDate expiryDate = getDateAfterDays(LocalDate.now(), liveTimeSeconds);
+    SecurityToken newSecurityToken = new SecurityToken(tokenType, token, creationDate, expiryDate, false);
     newSecurityToken = securityTokenRepository.save(newSecurityToken);
     return newSecurityToken;
   }
@@ -41,5 +41,10 @@ public class SecurityTokenSDJpaService implements SecurityTokenService {
     cal.setTime(date);
     cal.add(Calendar.SECOND, liveTimeSeconds);
     return cal.getTime();
+  }
+
+  private LocalDate getDateAfterDays(LocalDate date, Duration liveTimeSeconds) {
+    date.plus(liveTimeSeconds);
+    return date;
   }
 }

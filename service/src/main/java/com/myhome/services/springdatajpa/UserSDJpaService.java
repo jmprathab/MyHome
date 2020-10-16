@@ -112,8 +112,8 @@ public class UserSDJpaService implements UserService {
       return userOptional.map(user -> {
         SecurityToken userPasswordResetToken = user.getPasswordResetToken();
         boolean isTokenExists = userPasswordResetToken != null;
-        boolean isTokenExpired = isTokenExists && userPasswordResetToken.getExpiryDate().before(new Date());
-        boolean isTokenMatches = isTokenExists && userPasswordResetToken.getToken().equals(passwordResetRequest.token);
+        boolean isTokenExpired = isTokenExists && userPasswordResetToken.getExpiryDate().isBefore(LocalDate.now());
+        boolean isTokenMatches = isTokenExists && userPasswordResetToken.getToken().equals(passwordResetRequest.getToken());
         if (isTokenExists && !isTokenExpired && isTokenMatches) {
           user.setPasswordResetToken(null);
           securityTokenRepository.delete(userPasswordResetToken);
