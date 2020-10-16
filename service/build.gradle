@@ -67,7 +67,7 @@ dependencies {
   implementation "org.springdoc:springdoc-openapi-ui:${springDocOpenApiVersion}"
 
   // mail
-  compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.0.4.RELEASE'
+  implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 }
 
