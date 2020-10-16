@@ -18,7 +18,7 @@
 # Server properties
 ###############################################################################
 server:
-  port: 8081
+  port: 8080
   cors.allowedOrigins: http://localhost:3000
 
 
@@ -27,9 +27,9 @@ server:
 ###############################################################################
 spring:
   mail:
-    host: ''
-    username: ''
-    password: ''
+    host: ${spring.mail.host}
+    username: ${spring.mail.username}
+    password: ${spring.mail.password}
     port: 465
     protocol: 'smtps'
     debug: false
