@@ -17,10 +17,11 @@
 package com.myhome.services;
 
 import com.myhome.controllers.dto.UserDto;
-import com.myhome.controllers.request.ForgotPasswordRequest;
 import com.myhome.domain.User;
 import java.util.Optional;
 import java.util.Set;
+
+import com.myhome.model.ForgotPasswordRequest;
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -35,7 +36,7 @@ public interface UserService {
 
   Optional<UserDto> getUserDetails(String userId);
 
-  boolean requestResetPassword(ForgotPasswordRequest forgotPasswordRequest);
+  void requestResetPassword(ForgotPasswordRequest forgotPasswordRequest);
 
   boolean resetPassword(ForgotPasswordRequest passwordResetRequest);
 }

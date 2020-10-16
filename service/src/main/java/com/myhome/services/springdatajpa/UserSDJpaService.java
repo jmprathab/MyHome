@@ -18,9 +18,9 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
-import com.myhome.controllers.request.ForgotPasswordRequest;
 import com.myhome.domain.SecurityToken;
 import com.myhome.domain.User;
+import com.myhome.model.ForgotPasswordRequest;
 import com.myhome.repositories.SecurityTokenRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.MailService;
@@ -33,7 +33,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -90,25 +90,23 @@ public class UserSDJpaService implements UserService {
   }
 
   @Override
-  public boolean requestResetPassword(ForgotPasswordRequest forgotPasswordRequest) {
-    if(forgotPasswordRequest.email != null) {
+  public void requestResetPassword(ForgotPasswordRequest forgotPasswordRequest) {
+    if (forgotPasswordRequest.getEmail() != null) {
       SecurityToken newSecurityToken = securityTokenService.createPasswordResetToken();
-      Optional<User> userOptional = userRepository.findByEmailWithPasswordResetToken(forgotPasswordRequest.email);
-      return userOptional.map(user -> {
+      Optional<User> userOptional = userRepository.findByEmailWithPasswordResetToken(forgotPasswordRequest.getEmail());
+      userOptional.map(user -> {
         user.setPasswordResetToken(newSecurityToken);
         userRepository.save(user);
         mailService.sendPasswordRecoverCode(user, newSecurityToken.getToken());
-        return true;
-      }).orElse(false);
-    } else {
-      return false;
+        return user;
+      });
     }
   }
 
   @Override
   public boolean resetPassword(ForgotPasswordRequest passwordResetRequest) {
     if (passwordResetRequest != null) {
-      Optional<User> userOptional = userRepository.findByEmailWithPasswordResetToken(passwordResetRequest.email);
+      Optional<User> userOptional = userRepository.findByEmailWithPasswordResetToken(passwordResetRequest.getEmail());
       return userOptional.map(user -> {
         SecurityToken userPasswordResetToken = user.getPasswordResetToken();
         boolean isTokenExists = userPasswordResetToken != null;

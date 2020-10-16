@@ -19,28 +19,24 @@ package com.myhome.controllers;
 import com.myhome.api.UsersApi;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.UserApiMapper;
-import com.myhome.controllers.request.ForgotPasswordRequest;
 import com.myhome.domain.PasswordActionType;
 import com.myhome.domain.User;
 import com.myhome.model.CreateUserRequest;
 import com.myhome.model.CreateUserResponse;
+import com.myhome.model.ForgotPasswordRequest;
 import com.myhome.model.GetUserDetailsResponse;
 import com.myhome.model.GetUserDetailsResponseUser;
 import com.myhome.services.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 import java.util.Set;
 
@@ -91,33 +87,20 @@ public class UserController implements UsersApi {
         .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
-  @Operation(
-      description = "Request reset user password",
-      responses = {
-          @ApiResponse(
-              responseCode = "200",
-              description = "If password reset request accepted"
-          ),
-          @ApiResponse(
-              responseCode = "400",
-              description = "If password reset request rejected"
-          )
-      })
-  @PostMapping(path = "/user/password",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
-  public ResponseEntity<Void> userForgotPassword(@RequestParam("action") PasswordActionType action, @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+  @Override
+  public ResponseEntity<Void> usersPasswordPost(@NotNull @Valid String action, @Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
     boolean result = false;
-    if (action == PasswordActionType.FORGOT) {
-      result = userService.requestResetPassword(forgotPasswordRequest);
-    } else if (action == PasswordActionType.RESET) {
+    PasswordActionType parsedAction = PasswordActionType.valueOf(action);
+    if (parsedAction == PasswordActionType.FORGOT) {
+      result = true;
+      userService.requestResetPassword(forgotPasswordRequest);
+    } else if (parsedAction == PasswordActionType.RESET) {
       result = userService.resetPassword(forgotPasswordRequest);
     }
     if (result) {
       return ResponseEntity.ok().build();
     } else {
       return ResponseEntity.badRequest().build();
-    }
-  }
-
+    }  }
 
 }
