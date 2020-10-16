@@ -27,8 +27,12 @@ import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.services.AmenityService;
-
-import helpers.TestUtils;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -36,13 +40,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -262,7 +259,6 @@ class AmenityControllerTest {
     amenityBookingItem.setAmenity(getTestAmenity());
     LocalDateTime currentDate = LocalDateTime.now();
     GetAmenityBookingsResponse getAmenityBookingsResponse = new GetAmenityBookingsResponse();
-    //getAmenityBookingsResponse.setAmenityId(TEST_AMENITY_ID);
     getAmenityBookingsResponse.setAmenity(null);
 
     List<AmenityBookingItem> amenityBookingItems = Collections.singletonList(amenityBookingItem);
@@ -339,7 +335,6 @@ class AmenityControllerTest {
     AmenityBookingItem amenityBookingItem = new AmenityBookingItem();
     amenityBookingItem.setAmenity(getTestAmenity());
     GetAmenityBookingsResponse getAmenityBookingsResponse = new GetAmenityBookingsResponse();
-    //getAmenityBookingsResponse.setAmenityId(TEST_AMENITY_ID);
     getAmenityBookingsResponse.setAmenity(null);
 
     List<AmenityBookingItem> amenityBookingItems = Collections.singletonList(amenityBookingItem);
@@ -371,7 +366,6 @@ class AmenityControllerTest {
     AmenityBookingItem amenityBookingItem = new AmenityBookingItem();
     amenityBookingItem.setAmenity(getTestAmenity());
     GetAmenityBookingsResponse getAmenityBookingsResponse = new GetAmenityBookingsResponse();
-    //getAmenityBookingsResponse.setAmenityId(TEST_AMENITY_ID);
     getAmenityBookingsResponse.setAmenity(null);
     LocalDateTime currentTime = LocalDateTime.now();
 
@@ -404,7 +398,6 @@ class AmenityControllerTest {
     AmenityBookingItem amenityBookingItem = new AmenityBookingItem();
     amenityBookingItem.setAmenity(getTestAmenity());
     GetAmenityBookingsResponse getAmenityBookingsResponse = new GetAmenityBookingsResponse();
-    //getAmenityBookingsResponse.setAmenityId(TEST_AMENITY_ID);
     getAmenityBookingsResponse.setAmenity(null);
     LocalDateTime futureTime = LocalDateTime.now().plusWeeks(2);
 
