@@ -25,4 +25,5 @@ public class SecurityToken extends BaseEntity {
   private LocalDate creationDate;
   @Column(nullable = false)
   private LocalDate expiryDate;
+  private boolean isUsed;
 }

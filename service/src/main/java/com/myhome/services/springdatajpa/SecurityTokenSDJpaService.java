@@ -36,11 +36,10 @@ public class SecurityTokenSDJpaService implements SecurityTokenService {
     return createSecurityToken(SecurityTokenType.RESET, passResetTokenTime);
   }
 
-  private Date getDateAfterDays(Date date, int liveTimeSeconds) {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    cal.add(Calendar.SECOND, liveTimeSeconds);
-    return cal.getTime();
+  @Override
+  public void useToken(SecurityToken token) {
+    token.setUsed(true);
+    securityTokenRepository.save(token);
   }
 
   private LocalDate getDateAfterDays(LocalDate date, Duration liveTimeSeconds) {

@@ -10,4 +10,6 @@ public interface SecurityTokenService {
   SecurityToken createSecurityToken(SecurityTokenType tokenType, Duration liveTimeSeconds);
 
   SecurityToken createPasswordResetToken();
+
+  void useToken(SecurityToken token);
 }

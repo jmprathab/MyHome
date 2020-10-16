@@ -115,9 +115,8 @@ public class UserSDJpaService implements UserService {
         boolean isTokenExpired = isTokenExists && userPasswordResetToken.getExpiryDate().isBefore(LocalDate.now());
         boolean isTokenMatches = isTokenExists && userPasswordResetToken.getToken().equals(passwordResetRequest.getToken());
         if (isTokenExists && !isTokenExpired && isTokenMatches) {
-          user.setPasswordResetToken(null);
-          securityTokenRepository.delete(userPasswordResetToken);
-          user.setEncryptedPassword(passwordEncoder.encode(passwordResetRequest.newPassword));
+          securityTokenService.useToken(userPasswordResetToken);
+          user.setEncryptedPassword(passwordEncoder.encode(passwordResetRequest.getNewPassword()));
           user = userRepository.save(user);
           mailService.sendPasswordSuccessfullyChanged(user);
           return true;
