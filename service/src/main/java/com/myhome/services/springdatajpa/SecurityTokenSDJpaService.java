@@ -26,7 +26,7 @@ public class SecurityTokenSDJpaService implements SecurityTokenService {
     String token = UUID.randomUUID().toString();
     LocalDate creationDate = LocalDate.now();
     LocalDate expiryDate = getDateAfterDays(LocalDate.now(), liveTimeSeconds);
-    SecurityToken newSecurityToken = new SecurityToken(tokenType, token, creationDate, expiryDate, false);
+    SecurityToken newSecurityToken = new SecurityToken(tokenType, token, creationDate, expiryDate, false, null);
     newSecurityToken = securityTokenRepository.save(newSecurityToken);
     return newSecurityToken;
   }
@@ -42,8 +42,5 @@ public class SecurityTokenSDJpaService implements SecurityTokenService {
     securityTokenRepository.save(token);
   }
 
-  private LocalDate getDateAfterDays(LocalDate date, Duration liveTimeSeconds) {
-    date.plus(liveTimeSeconds);
-    return date;
-  }
+  private LocalDate getDateAfterDays(LocalDate date, Duration liveTime) { return date.plus(liveTime); }
 }

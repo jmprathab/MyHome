@@ -38,8 +38,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findByUserIdWithCommunities(@Param("userId") String userId);
 
   @Query("from User user where user.email = :email")
-  @EntityGraph(value = "User.passwordResetToken")
-  Optional<User> findByEmailWithPasswordResetToken(@Param("email") String email);
+  @EntityGraph(value = "User.userTokens")
+  Optional<User> findByEmailWithTokens(@Param("email") String email);
 
   List<User> findAllByCommunities_CommunityId(String communityId, Pageable pageable);
 }

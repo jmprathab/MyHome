@@ -8,8 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Data
@@ -26,4 +26,6 @@ public class SecurityToken extends BaseEntity {
   @Column(nullable = false)
   private LocalDate expiryDate;
   private boolean isUsed;
+  @ManyToOne()
+  private User tokenOwner;
 }

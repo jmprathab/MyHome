@@ -19,9 +19,9 @@ package com.myhome.services.springdatajpa;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
 import com.myhome.domain.SecurityToken;
+import com.myhome.domain.SecurityTokenType;
 import com.myhome.domain.User;
 import com.myhome.model.ForgotPasswordRequest;
-import com.myhome.repositories.SecurityTokenRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.MailService;
 import com.myhome.services.SecurityTokenService;
@@ -52,7 +52,6 @@ public class UserSDJpaService implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final SecurityTokenService securityTokenService;
   private final MailService mailService;
-  private final SecurityTokenRepository securityTokenRepository;
 
   @Override
   public Optional<UserDto> createUser(UserDto request) {
@@ -93,9 +92,9 @@ public class UserSDJpaService implements UserService {
   public void requestResetPassword(ForgotPasswordRequest forgotPasswordRequest) {
     if (forgotPasswordRequest.getEmail() != null) {
       SecurityToken newSecurityToken = securityTokenService.createPasswordResetToken();
-      Optional<User> userOptional = userRepository.findByEmailWithPasswordResetToken(forgotPasswordRequest.getEmail());
+      Optional<User> userOptional = userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail());
       userOptional.map(user -> {
-        user.setPasswordResetToken(newSecurityToken);
+        user.getUserTokens().add(newSecurityToken);
         userRepository.save(user);
         mailService.sendPasswordRecoverCode(user, newSecurityToken.getToken());
         return user;
@@ -106,13 +105,17 @@ public class UserSDJpaService implements UserService {
   @Override
   public boolean resetPassword(ForgotPasswordRequest passwordResetRequest) {
     if (passwordResetRequest != null) {
-      Optional<User> userOptional = userRepository.findByEmailWithPasswordResetToken(passwordResetRequest.getEmail());
+      Optional<User> userOptional = userRepository.findByEmailWithTokens(passwordResetRequest.getEmail());
       return userOptional.map(user -> {
-        SecurityToken userPasswordResetToken = user.getPasswordResetToken();
-        boolean isTokenExists = userPasswordResetToken != null;
-        boolean isTokenExpired = isTokenExists && userPasswordResetToken.getExpiryDate().isBefore(LocalDate.now());
-        boolean isTokenMatches = isTokenExists && userPasswordResetToken.getToken().equals(passwordResetRequest.getToken());
-        if (isTokenExists && !isTokenExpired && isTokenMatches) {
+        SecurityToken userPasswordResetToken = user.getUserTokens()
+            .stream()
+            .filter(token -> !token.isUsed()
+                && token.getTokenType() == SecurityTokenType.RESET
+                && token.getToken().equals(passwordResetRequest.getToken())
+                && token.getExpiryDate().isAfter(LocalDate.now()))
+            .findFirst()
+            .orElse(null);
+        if (userPasswordResetToken != null) {
           securityTokenService.useToken(userPasswordResetToken);
           user.setEncryptedPassword(passwordEncoder.encode(passwordResetRequest.getNewPassword()));
           user = userRepository.save(user);
