@@ -18,11 +18,11 @@ package com.myhome.controllers;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.UserApiMapper;
-import com.myhome.controllers.request.ForgotPasswordRequest;
 import com.myhome.domain.PasswordActionType;
 import com.myhome.domain.User;
 import com.myhome.model.CreateUserRequest;
 import com.myhome.model.CreateUserResponse;
+import com.myhome.model.ForgotPasswordRequest;
 import com.myhome.model.GetUserDetailsResponse;
 import com.myhome.model.GetUserDetailsResponseUser;
 import com.myhome.services.UserService;
@@ -191,10 +191,9 @@ class UserControllerTest {
   void userForgotPasswordRequestResetSuccess() {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
-    given(userService.requestResetPassword(forgotPasswordRequest))
-        .willReturn(true);
+
     // when
-    ResponseEntity<Void> response = userController.userForgotPassword(PasswordActionType.FORGOT, forgotPasswordRequest);
+    ResponseEntity<Void> response = userController.usersPasswordPost(PasswordActionType.FORGOT.toString(), forgotPasswordRequest);
 
     // then
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -206,13 +205,12 @@ class UserControllerTest {
   void userForgotPasswordRequestResetFailure() {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
-    given(userService.requestResetPassword(forgotPasswordRequest))
-        .willReturn(false);
+
     // when
-    ResponseEntity<Void> response = userController.userForgotPassword(PasswordActionType.FORGOT, forgotPasswordRequest);
+    ResponseEntity<Void> response = userController.usersPasswordPost(PasswordActionType.FORGOT.toString(), forgotPasswordRequest);
 
     // then
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals(HttpStatus.OK, response.getStatusCode());
     verify(userService).requestResetPassword(forgotPasswordRequest);
     verify(userService, never()).resetPassword(forgotPasswordRequest);
   }
@@ -224,7 +222,7 @@ class UserControllerTest {
     given(userService.resetPassword(forgotPasswordRequest))
         .willReturn(true);
     // when
-    ResponseEntity<Void> response = userController.userForgotPassword(PasswordActionType.RESET, forgotPasswordRequest);
+    ResponseEntity<Void> response = userController.usersPasswordPost(PasswordActionType.RESET.toString(), forgotPasswordRequest);
 
     // then
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -239,7 +237,7 @@ class UserControllerTest {
     given(userService.resetPassword(forgotPasswordRequest))
         .willReturn(false);
     // when
-    ResponseEntity<Void> response = userController.userForgotPassword(PasswordActionType.RESET, forgotPasswordRequest);
+    ResponseEntity<Void> response = userController.usersPasswordPost(PasswordActionType.RESET.toString(), forgotPasswordRequest);
 
     // then
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -248,6 +246,10 @@ class UserControllerTest {
   }
 
   private ForgotPasswordRequest getForgotPasswordRequest() {
-    return new ForgotPasswordRequest(TEST_EMAIL, TEST_TOKEN, TEST_NEW_PASSWORD);
+    ForgotPasswordRequest request = new ForgotPasswordRequest();
+    request.setEmail(TEST_EMAIL);
+    request.setNewPassword(TEST_NEW_PASSWORD);
+    request.setToken(TEST_TOKEN);
+    return request;
   }
 }
