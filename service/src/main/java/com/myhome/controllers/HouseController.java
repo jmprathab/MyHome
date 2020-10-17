@@ -16,14 +16,15 @@
 
 package com.myhome.controllers;
 
+import com.myhome.api.HousesApi;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;
 import com.myhome.controllers.request.AddHouseMemberRequest;
 import com.myhome.controllers.response.AddHouseMemberResponse;
-import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListHouseMembersResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -48,46 +49,37 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class HouseController {
+public class HouseController implements HousesApi {
   private final HouseMemberMapper houseMemberMapper;
   private final HouseService houseService;
   private final HouseApiMapper houseApiMapper;
 
-  @Operation(description = "List all houses of the community given a community id")
-  @GetMapping(
-      path = "/houses",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<GetHouseDetailsResponse> listAllHouses(
+  @Override
+  public ResponseEntity<com.myhome.model.GetHouseDetailsResponse> listAllHouses(
       @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all houses");
 
     Set<CommunityHouse> houseDetails =
         houseService.listAllHouses(pageable);
-    Set<GetHouseDetailsResponse.CommunityHouse> getHouseDetailsResponseSet =
+    Set<GetHouseDetailsResponseCommunityHouse> getHouseDetailsResponseSet =
         houseApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
-    GetHouseDetailsResponse response = new GetHouseDetailsResponse();
+    com.myhome.model.GetHouseDetailsResponse response = new com.myhome.model.GetHouseDetailsResponse();
+
     response.setHouses(getHouseDetailsResponseSet);
 
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
-  @Operation(description = "List all houses of the community given a community id",
-      responses = {
-          @ApiResponse(responseCode = "200", description = "if house present"),
-          @ApiResponse(responseCode = "404", description = "if params are invalid")
-      })
-  @GetMapping(
-      path = "/houses/{houseId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<GetHouseDetailsResponse> getHouseDetails(@PathVariable String houseId) {
+  @Override
+  public ResponseEntity<com.myhome.model.GetHouseDetailsResponse> getHouseDetails(String houseId) {
     log.trace("Received request to get details of a house with id[{}]", houseId);
     return houseService.getHouseDetailsById(houseId)
         .map(houseApiMapper::communityHouseToRestApiResponseCommunityHouse)
         .map(Collections::singleton)
-        .map(GetHouseDetailsResponse::new)
+        .map(getHouseDetailsResponseCommunityHouses -> {
+          return new com.myhome.model.GetHouseDetailsResponse().houses(getHouseDetailsResponseCommunityHouses);
+        })
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }

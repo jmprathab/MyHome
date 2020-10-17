@@ -9,6 +9,7 @@ tags:
   - name: Users
   - name: Documents
   - name: Communities
+  - name: Houses
 paths:
   /users:
     post:
@@ -435,6 +436,56 @@ paths:
           description: if house was removed
         '400':
           description: if params are invalid
+  /houses:
+    get:
+      tags:
+        - Houses
+      description: List all houses of the community given a community id
+      operationId: listAllHouses
+      parameters:
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: if community exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+        '404':
+          description: if params are invalid
+  /houses/{houseId}:
+    get:
+      tags:
+        - Houses
+      description: "Get house detail by a given ID"
+      operationId: getHouseDetails
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+          description: ID of the house to get
+      responses:
+        '200':
+          description: "if house present"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+        '404':
+          description: "if params are invalid"
+
 components:
   schemas:
     CreateUserRequest:

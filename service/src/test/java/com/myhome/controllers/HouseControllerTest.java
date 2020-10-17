@@ -25,6 +25,7 @@ import com.myhome.controllers.response.GetHouseDetailsResponse;
 import com.myhome.controllers.response.ListHouseMembersResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
 import com.myhome.services.HouseService;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -77,11 +78,10 @@ class HouseControllerTest {
   void listAllHouses() {
     // given
     Set<CommunityHouse> testHouses = TestUtils.CommunityHouseHelpers.getTestHouses(TEST_HOUSES_COUNT);
-    Set<GetHouseDetailsResponse.CommunityHouse> testHousesResponse = testHouses.stream()
-        .map(house -> new GetHouseDetailsResponse.CommunityHouse(house.getHouseId(),
-            house.getName()))
+    Set<GetHouseDetailsResponseCommunityHouse> testHousesResponse = testHouses.stream()
+        .map(house -> new GetHouseDetailsResponseCommunityHouse().houseId(house.getHouseId()).name(house.getName()))
         .collect(Collectors.toSet());
-    GetHouseDetailsResponse expectedResponseBody = new GetHouseDetailsResponse();
+    com.myhome.model.GetHouseDetailsResponse expectedResponseBody = new com.myhome.model.GetHouseDetailsResponse();
     expectedResponseBody.setHouses(testHousesResponse);
 
     given(houseService.listAllHouses(any()))
@@ -90,7 +90,7 @@ class HouseControllerTest {
         .willReturn(testHousesResponse);
 
     // when
-    ResponseEntity<GetHouseDetailsResponse> response = houseController.listAllHouses(null);
+    ResponseEntity<com.myhome.model.GetHouseDetailsResponse> response = houseController.listAllHouses(null);
 
     // then
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -101,10 +101,12 @@ class HouseControllerTest {
   void getHouseDetails() {
     // given
     CommunityHouse testCommunityHouse = TestUtils.CommunityHouseHelpers.getTestCommunityHouse(TEST_HOUSE_ID);
-    GetHouseDetailsResponse.CommunityHouse houseDetailsResponse =
-        new GetHouseDetailsResponse.CommunityHouse(testCommunityHouse.getHouseId(),
-            testCommunityHouse.getName());
-    GetHouseDetailsResponse expectedResponseBody = new GetHouseDetailsResponse();
+    GetHouseDetailsResponseCommunityHouse houseDetailsResponse =
+            new GetHouseDetailsResponseCommunityHouse()
+                .houseId(testCommunityHouse.getHouseId())
+                .name(testCommunityHouse.getName());
+
+    com.myhome.model.GetHouseDetailsResponse expectedResponseBody = new com.myhome.model.GetHouseDetailsResponse();
     expectedResponseBody.getHouses().add(houseDetailsResponse);
 
     given(houseService.getHouseDetailsById(TEST_HOUSE_ID))
@@ -113,7 +115,7 @@ class HouseControllerTest {
         .willReturn(houseDetailsResponse);
 
     // when
-    ResponseEntity<GetHouseDetailsResponse> response =
+    ResponseEntity<com.myhome.model.GetHouseDetailsResponse> response =
         houseController.getHouseDetails(TEST_HOUSE_ID);
 
     // then
@@ -132,7 +134,7 @@ class HouseControllerTest {
         .willReturn(Optional.empty());
 
     // when
-    ResponseEntity<GetHouseDetailsResponse> response =
+    ResponseEntity<com.myhome.model.GetHouseDetailsResponse> response =
         houseController.getHouseDetails(TEST_HOUSE_ID);
 
     // then
