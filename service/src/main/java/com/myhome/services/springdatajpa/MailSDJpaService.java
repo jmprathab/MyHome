@@ -4,12 +4,15 @@ import com.myhome.domain.User;
 import com.myhome.services.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
+@ConditionalOnProperty(value = "spring.mail.debug", havingValue = "false", matchIfMissing = false)
 @RequiredArgsConstructor
 public class MailSDJpaService implements MailService {
 
