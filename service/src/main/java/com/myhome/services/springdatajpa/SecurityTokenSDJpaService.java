@@ -42,5 +42,5 @@ public class SecurityTokenSDJpaService implements SecurityTokenService {
     securityTokenRepository.save(token);
   }
 
-  private LocalDate getDateAfterDays(LocalDate date, Duration liveTime) { return date.plus(liveTime); }
+  private LocalDate getDateAfterDays(LocalDate date, Duration liveTime) { return date.plusDays(liveTime.toDays()); }
 }
