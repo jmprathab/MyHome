@@ -16,34 +16,33 @@
 
 package com.myhome.services.unit;
 
-import helpers.TestUtils;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
-import com.myhome.controllers.request.ForgotPasswordRequest;
 import com.myhome.domain.Community;
-import com.myhome.domain.SecurityTokenType;
 import com.myhome.domain.SecurityToken;
+import com.myhome.domain.SecurityTokenType;
 import com.myhome.domain.User;
+import com.myhome.model.ForgotPasswordRequest;
 import com.myhome.repositories.SecurityTokenRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.springdatajpa.MailSDJpaService;
 import com.myhome.services.springdatajpa.SecurityTokenSDJpaService;
 import com.myhome.services.springdatajpa.UserSDJpaService;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import helpers.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -66,8 +65,7 @@ class UserSDJpaServiceTest {
   private final String USER_PASSWORD = "test-user-password";
   private final String NEW_USER_PASSWORD = "test-user-new-password";
   private final String PASSWORD_RESET_TOKEN = "test-token";
-  private final int TOKEN_LIFETIME = 10000;
-  private final int EXPIRED_TOKEN_LIFETIME = -10000;
+  private final Duration TOKEN_LIFETIME = Duration.ofDays(1);
 
   @Mock
   private UserRepository userRepository;
@@ -212,6 +210,14 @@ class UserSDJpaServiceTest {
     assertFalse(createdUserDto.isPresent());
     verify(userRepository).findByUserIdWithCommunities(USER_ID);
   }
+  
+  private SecurityToken getUserSecurityToken(User user) {
+    return user.getUserTokens()
+        .stream()
+        .filter(token -> token.getTokenType() == SecurityTokenType.RESET)
+        .findFirst()
+        .orElse(null);
+  }
 
   @Test
   void requestResetPassword() {
@@ -221,17 +227,16 @@ class UserSDJpaServiceTest {
     SecurityToken testSecurityToken = getTestSecurityToken();
     given(securityTokenService.createPasswordResetToken())
         .willReturn(testSecurityToken);
-    given(userRepository.findByEmailWithPasswordResetToken(forgotPasswordRequest.email))
+    given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.of(user));
 
     // when
-    boolean passwordResetRequested = userService.requestResetPassword(forgotPasswordRequest);
+    userService.requestResetPassword(forgotPasswordRequest);
 
     // then
-    assertTrue(passwordResetRequested);
-    assertEquals(user.getPasswordResetToken(), testSecurityToken);
+    assertEquals(getUserSecurityToken(user), testSecurityToken);
     verify(securityTokenService).createPasswordResetToken();
-    verify(userRepository).findByEmailWithPasswordResetToken(forgotPasswordRequest.email);
+    verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
     verify(userRepository).save(user);
     verify(mailService).sendPasswordRecoverCode(user, testSecurityToken.getToken());
   }
@@ -244,17 +249,16 @@ class UserSDJpaServiceTest {
     SecurityToken testSecurityToken = getTestSecurityToken();
     given(securityTokenService.createPasswordResetToken())
         .willReturn(testSecurityToken);
-    given(userRepository.findByEmailWithPasswordResetToken(forgotPasswordRequest.email))
+    given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.empty());
 
     // when
-    boolean passwordResetRequested = userService.requestResetPassword(forgotPasswordRequest);
+    userService.requestResetPassword(forgotPasswordRequest);
 
     // then
-    assertFalse(passwordResetRequested);
-    assertNotEquals(user.getPasswordResetToken(), testSecurityToken);
+    assertNotEquals(getUserSecurityToken(user), testSecurityToken);
     verify(securityTokenService).createPasswordResetToken();
-    verify(userRepository).findByEmailWithPasswordResetToken(forgotPasswordRequest.email);
+    verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
     verify(userRepository, never()).save(user);
     verifyNoInteractions(mailService);
   }
@@ -265,11 +269,11 @@ class UserSDJpaServiceTest {
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
     SecurityToken testSecurityToken = getTestSecurityToken();
     User user = getDefaultUser();
-    user.setPasswordResetToken(testSecurityToken);
-    given(userRepository.findByEmailWithPasswordResetToken(forgotPasswordRequest.email))
+    user.getUserTokens().add(testSecurityToken);
+    given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.of(user));
-    given(passwordEncoder.encode(forgotPasswordRequest.newPassword))
-        .willReturn(forgotPasswordRequest.newPassword);
+    given(passwordEncoder.encode(forgotPasswordRequest.getNewPassword()))
+        .willReturn(forgotPasswordRequest.getNewPassword());
     when(userRepository.save(user))
         .then(returnsFirstArg());
 
@@ -278,12 +282,11 @@ class UserSDJpaServiceTest {
 
     // then
     assertTrue(passwordChanged);
-    assertEquals(user.getEncryptedPassword(), forgotPasswordRequest.newPassword);
-    assertNull(user.getPasswordResetToken());
-    verify(userRepository).findByEmailWithPasswordResetToken(forgotPasswordRequest.email);
-    verify(securityTokenRepository).delete(testSecurityToken);
-    verify(passwordEncoder).encode(forgotPasswordRequest.newPassword);
+    assertEquals(user.getEncryptedPassword(), forgotPasswordRequest.getNewPassword());
+    verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
+    verify(passwordEncoder).encode(forgotPasswordRequest.getNewPassword());
     verify(mailService).sendPasswordSuccessfullyChanged(user);
+    verify(securityTokenService).useToken(testSecurityToken);
   }
 
   @Test
@@ -292,8 +295,8 @@ class UserSDJpaServiceTest {
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
     SecurityToken testSecurityToken = getTestSecurityToken();
     User user = getDefaultUser();
-    user.setPasswordResetToken(testSecurityToken);
-    given(userRepository.findByEmailWithPasswordResetToken(forgotPasswordRequest.email))
+    user.getUserTokens().add(testSecurityToken);;
+    given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.empty());
 
     // when
@@ -301,9 +304,8 @@ class UserSDJpaServiceTest {
 
     // then
     assertFalse(passwordChanged);
-    assertNotEquals(user.getEncryptedPassword(), forgotPasswordRequest.newPassword);
-    assertNotNull(user.getPasswordResetToken());
-    verify(userRepository).findByEmailWithPasswordResetToken(forgotPasswordRequest.email);
+    assertNotEquals(user.getEncryptedPassword(), forgotPasswordRequest.getNewPassword());
+    verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
     verifyNoInteractions(securityTokenRepository);
     verifyNoInteractions(passwordEncoder);
     verifyNoInteractions(mailService);
@@ -315,8 +317,8 @@ class UserSDJpaServiceTest {
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
     SecurityToken testSecurityToken = getExpiredTestToken();
     User user = getDefaultUser();
-    user.setPasswordResetToken(testSecurityToken);
-    given(userRepository.findByEmailWithPasswordResetToken(forgotPasswordRequest.email))
+    user.getUserTokens().add(testSecurityToken);;
+    given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.of(user));
 
     // when
@@ -324,9 +326,9 @@ class UserSDJpaServiceTest {
 
     // then
     assertFalse(passwordChanged);
-    assertNotEquals(user.getEncryptedPassword(), forgotPasswordRequest.newPassword);
-    assertNotNull(user.getPasswordResetToken());
-    verify(userRepository).findByEmailWithPasswordResetToken(forgotPasswordRequest.email);
+    assertNotEquals(user.getEncryptedPassword(), forgotPasswordRequest.getNewPassword());
+    assertFalse(getUserSecurityToken(user).isUsed());
+    verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
     verifyNoInteractions(securityTokenRepository);
     verifyNoInteractions(passwordEncoder);
     verifyNoInteractions(mailService);
@@ -337,8 +339,7 @@ class UserSDJpaServiceTest {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
     User user = getDefaultUser();
-    user.setPasswordResetToken(null);
-    given(userRepository.findByEmailWithPasswordResetToken(forgotPasswordRequest.email))
+    given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.of(user));
 
     // when
@@ -346,8 +347,8 @@ class UserSDJpaServiceTest {
 
     // then
     assertFalse(passwordChanged);
-    assertNotEquals(user.getEncryptedPassword(), forgotPasswordRequest.newPassword);
-    verify(userRepository).findByEmailWithPasswordResetToken(forgotPasswordRequest.email);
+    assertNotEquals(user.getEncryptedPassword(), forgotPasswordRequest.getNewPassword());
+    verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
     verifyNoInteractions(securityTokenRepository);
     verifyNoInteractions(passwordEncoder);
     verifyNoInteractions(mailService);
@@ -360,8 +361,8 @@ class UserSDJpaServiceTest {
     SecurityToken testSecurityToken = getTestSecurityToken();
     testSecurityToken.setToken("wrong-token");
     User user = getDefaultUser();
-    user.setPasswordResetToken(testSecurityToken);
-    given(userRepository.findByEmailWithPasswordResetToken(forgotPasswordRequest.email))
+    user.getUserTokens().add(testSecurityToken);;
+    given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.of(user));
 
     // when
@@ -369,9 +370,9 @@ class UserSDJpaServiceTest {
 
     // then
     assertFalse(passwordChanged);
-    assertNotEquals(user.getEncryptedPassword(), forgotPasswordRequest.newPassword);
-    assertNotNull(user.getPasswordResetToken());
-    verify(userRepository).findByEmailWithPasswordResetToken(forgotPasswordRequest.email);
+    assertNotEquals(user.getEncryptedPassword(), forgotPasswordRequest.getNewPassword());
+    assertNotNull(getUserSecurityToken(user));
+    verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
     verifyNoInteractions(securityTokenRepository);
     verifyNoInteractions(passwordEncoder);
     verifyNoInteractions(mailService);
@@ -394,7 +395,7 @@ class UserSDJpaServiceTest {
         request.getEmail(),
         request.getEncryptedPassword(),
         new HashSet<>(),
-        null
+        new HashSet<>()
     );
   }
 
@@ -403,15 +404,15 @@ class UserSDJpaServiceTest {
   }
 
   private ForgotPasswordRequest getForgotPasswordRequest() {
-    return new ForgotPasswordRequest(USER_EMAIL, PASSWORD_RESET_TOKEN, NEW_USER_PASSWORD);
+    ForgotPasswordRequest request = new ForgotPasswordRequest();
+    request.setEmail(USER_EMAIL);
+    request.setNewPassword(NEW_USER_PASSWORD);
+    request.setToken(PASSWORD_RESET_TOKEN);
+    return request;
   }
 
-  private SecurityToken getTestSecurityToken(int lifetime) {
-    Date date = new Date();
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    cal.add(Calendar.SECOND, lifetime);
-    return new SecurityToken(SecurityTokenType.RESET, PASSWORD_RESET_TOKEN, new Date(), cal.getTime());
+  private SecurityToken getTestSecurityToken(Duration lifetime) {
+    return new SecurityToken(SecurityTokenType.RESET, PASSWORD_RESET_TOKEN, LocalDate.now(), LocalDate.now().plusDays(lifetime.toDays()), false, null);
   }
 
   private SecurityToken getTestSecurityToken() {
@@ -419,7 +420,7 @@ class UserSDJpaServiceTest {
   }
 
   private SecurityToken getExpiredTestToken() {
-    return getTestSecurityToken(EXPIRED_TOKEN_LIFETIME);
+    return new SecurityToken(SecurityTokenType.RESET, PASSWORD_RESET_TOKEN, LocalDate.now(), LocalDate.now().minusDays(TOKEN_LIFETIME.toDays()), false, null);
   }
 
 }
