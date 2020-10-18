@@ -148,10 +148,11 @@ class HouseControllerTest {
     // given
     Set<HouseMember> testHouseMembers = TestUtils.HouseMemberHelpers.getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
     Set<com.myhome.model.HouseMember> testHouseMemberDetails = testHouseMembers.stream()
-        .map(member -> new com.myhome.model.HouseMember().memberId(member.getMemberId()).name(member.getName())
-
-        )
+        .map(member -> new com.myhome.model.HouseMember()
+            .memberId(member.getMemberId())
+            .name(member.getName()))
         .collect(Collectors.toSet());
+
     ListHouseMembersResponse expectedResponseBody =
         new ListHouseMembersResponse().members(testHouseMemberDetails);
 
@@ -203,7 +204,9 @@ class HouseControllerTest {
     AddHouseMemberRequest request = new AddHouseMemberRequest().members(testMembersDto);
 
     Set<com.myhome.model.HouseMember> addedMembers = testMembers.stream()
-        .map(member -> new com.myhome.model.HouseMember().memberId(member.getMemberId()).name(member.getName()))
+        .map(member -> new com.myhome.model.HouseMember()
+            .memberId(member.getMemberId())
+            .name(member.getName()))
         .collect(Collectors.toSet());
 
     AddHouseMemberResponse expectedResponseBody = new AddHouseMemberResponse();
@@ -243,8 +246,8 @@ class HouseControllerTest {
 
     Set<com.myhome.model.HouseMember> addedMembers = testMembers.stream()
         .map(member -> new com.myhome.model.HouseMember()
-                .memberId(member.getMemberId())
-              .name(member.getName()))
+            .memberId(member.getMemberId())
+            .name(member.getName()))
         .collect(Collectors.toSet());
 
     AddHouseMemberResponse expectedResponseBody = new AddHouseMemberResponse();
