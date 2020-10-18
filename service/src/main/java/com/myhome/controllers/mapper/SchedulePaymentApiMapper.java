@@ -16,7 +16,6 @@
 
 package com.myhome.controllers.mapper;
 
-import com.myhome.controllers.dto.HouseMemberDto;
 import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
@@ -28,6 +27,7 @@ import com.myhome.domain.Community;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
+import com.myhome.model.HouseMemberDto;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.mapstruct.AfterMapping;
@@ -52,11 +52,10 @@ public interface SchedulePaymentApiMapper {
         .communityIds(enrichedSchedulePaymentRequest.getAdminCommunityIds())
         .build();
 
-    HouseMemberDto houseMemberDto = HouseMemberDto.builder()
+    HouseMemberDto houseMemberDto = new HouseMemberDto()
         .id(enrichedSchedulePaymentRequest.getMemberEntityId())
         .memberId(enrichedSchedulePaymentRequest.getMemberId())
-        .name(enrichedSchedulePaymentRequest.getHouseMemberName())
-        .build();
+        .name(enrichedSchedulePaymentRequest.getHouseMemberName());
 
     paymentDto.setAdmin(userDto);
     paymentDto.setMember(houseMemberDto);
@@ -71,9 +70,8 @@ public interface SchedulePaymentApiMapper {
 
   @Named("memberIdToMember")
   static HouseMemberDto memberIdToMemberDto(String memberId) {
-    return HouseMemberDto.builder()
-        .memberId(memberId)
-        .build();
+    return new HouseMemberDto()
+        .memberId(memberId);
   }
 
   @Named("adminToAdminId")

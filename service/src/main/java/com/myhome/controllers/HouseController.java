@@ -19,12 +19,12 @@ package com.myhome.controllers;
 import com.myhome.api.HousesApi;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;
-import com.myhome.controllers.request.AddHouseMemberRequest;
 import com.myhome.controllers.response.AddHouseMemberResponse;
-import com.myhome.controllers.response.ListHouseMembersResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import com.myhome.model.AddHouseMemberRequest;
 import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
+import com.myhome.model.NewHouseMember;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -84,51 +84,33 @@ public class HouseController implements HousesApi {
         .orElse(ResponseEntity.notFound().build());
   }
 
-  @Operation(description = "List all members of the house given a house id",
-      responses = {
-          @ApiResponse(responseCode = "200", description = "if house present"),
-          @ApiResponse(responseCode = "404", description = "if params are invalid")
-      })
-  @GetMapping(
-      path = "/houses/{houseId}/members",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<ListHouseMembersResponse> listAllMembersOfHouse(
-      @PathVariable String houseId,
+  @Override
+  public ResponseEntity<com.myhome.model.ListHouseMembersResponse> listAllMembersOfHouse(
+      String houseId,
       @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all members of the house with id[{}]", houseId);
 
     return houseService.getHouseMembersById(houseId, pageable)
         .map(HashSet::new)
         .map(houseMemberMapper::houseMemberSetToRestApiResponseHouseMemberSet)
-        .map(ListHouseMembersResponse::new)
+        .map(houseMembers -> new com.myhome.model.ListHouseMembersResponse().members(houseMembers))
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
 
-  @Operation(
-      description = "Add new members to the house given a house id. Responds with member id which were added",
-      responses = {
-          @ApiResponse(responseCode = "201", description = "If members were added to house"),
-          @ApiResponse(responseCode = "404", description = "If parameters are invalid")
-      })
-  @PostMapping(
-      path = "/houses/{houseId}/members",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<AddHouseMemberResponse> addHouseMembers(
-      @PathVariable String houseId, @Valid @RequestBody AddHouseMemberRequest request) {
+  @Override
+  public ResponseEntity<com.myhome.model.AddHouseMemberResponse> addHouseMembers(
+      @PathVariable String houseId, @Valid AddHouseMemberRequest request) {
 
     log.trace("Received request to add member to the house with id[{}]", houseId);
     Set<HouseMember> members =
-        houseMemberMapper.houseMemberDtoSetToHouseMemberSet(request.getMembers());
+        houseMemberMapper.newHouseMemberSetToHouseMemberSet(request.getMembers());
     Set<HouseMember> savedHouseMembers = houseService.addHouseMembers(houseId, members);
 
     if (savedHouseMembers.size() == 0 && request.getMembers().size() != 0) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     } else {
-      AddHouseMemberResponse response = new AddHouseMemberResponse();
+      com.myhome.model.AddHouseMemberResponse response = new com.myhome.model.AddHouseMemberResponse();
       response.setMembers(
           houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
       return ResponseEntity.status(HttpStatus.CREATED).body(response);

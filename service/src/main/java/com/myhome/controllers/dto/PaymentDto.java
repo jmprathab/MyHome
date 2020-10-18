@@ -16,6 +16,8 @@
 
 package com.myhome.controllers.dto;
 
+import com.myhome.model.HouseMemberDto;
+import com.myhome.model.NewHouseMember;
 import java.math.BigDecimal;
 import lombok.Builder;
 import lombok.Getter;

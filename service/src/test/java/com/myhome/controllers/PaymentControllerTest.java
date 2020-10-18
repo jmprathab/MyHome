@@ -17,7 +17,6 @@
 package com.myhome.controllers;
 
 import com.myhome.controllers.dto.CommunityDto;
-import com.myhome.controllers.dto.HouseMemberDto;
 import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
@@ -32,6 +31,7 @@ import com.myhome.domain.HouseMember;
 import com.myhome.domain.HouseMemberDocument;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
+import com.myhome.model.HouseMemberDto;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import java.math.BigDecimal;
@@ -105,11 +105,10 @@ class PaymentControllerTest {
         .name(TEST_ADMIN_NAME)
         .email(TEST_ADMIN_EMAIL)
         .build();
-    HouseMemberDto houseMemberDto = HouseMemberDto.builder()
+    HouseMemberDto houseMemberDto = new HouseMemberDto()
         .memberId(TEST_MEMBER_ID)
         .name(TEST_MEMBER_NAME)
-        .id(Long.valueOf(TEST_MEMBER_ID))
-        .build();
+        .id(Long.valueOf(TEST_MEMBER_ID));
 
     return PaymentDto.builder()
         .paymentId(TEST_ID)
