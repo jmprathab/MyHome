@@ -16,20 +16,41 @@
 
 package com.myhome.domain;
 
-import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.OneToOne;
+import lombok.*;
 
+import java.time.LocalDateTime;
+import javax.persistence.*;
+
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = false, of = {"amenityBookingItemId"})
+@Getter
+@Setter
+@With
+@NamedEntityGraphs({
+        @NamedEntityGraph(
+                name="AmenityBookingItem.amenity",
+                attributeNodes = {
+                        @NamedAttributeNode("amenity"),
+                }),
+        @NamedEntityGraph(
+                name="AmenityBookingItem.bookingUser",
+                attributeNodes = {
+                        @NamedAttributeNode("bookingUser"),
+                })
+
+})
 public class AmenityBookingItem extends BaseEntity {
 
   @Column(nullable = false, unique = true)
   private String amenityBookingItemId;
-  @OneToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   private Amenity amenity;
-  @Column
+  @Column(nullable = false)
   private LocalDateTime bookingStartDate;
   @Column
   private LocalDateTime bookingEndDate;
-  @Column
+  @ManyToOne(fetch = FetchType.LAZY)
   private User bookingUser;
 }

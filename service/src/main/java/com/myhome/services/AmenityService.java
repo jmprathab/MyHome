@@ -33,4 +33,6 @@ public interface AmenityService {
   Set<Amenity> listAllAmenities(String communityId);
 
   boolean updateAmenity(AmenityDto updatedAmenityDto);
+
+  boolean deleteBooking(String bookingId);
 }
