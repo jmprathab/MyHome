@@ -19,6 +19,7 @@ package com.myhome.controllers;
 
 import com.myhome.controllers.dto.HouseHistoryDto;
 
+import com.myhome.controllers.dto.HouseHistoryDto;
 import com.myhome.controllers.dto.mapper.HouseHistoryMapper;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;
@@ -174,9 +175,10 @@ public class HouseController {
     }
   }
   @Operation(
-      description = "Add the duration of stay to house history.",
+
+      description = "Add the duration of stay for each house member.",
       responses = {
-          @ApiResponse(responseCode = "201", description = "If duration of stay was added to house history"),//
+          @ApiResponse(responseCode = "201", description = "If members were added to house"),//TODO: Change descriptions
           @ApiResponse(responseCode = "404", description = "If parameters are invalid")
       })
   @PostMapping(
@@ -192,11 +194,13 @@ public class HouseController {
             ? ResponseEntity.status(HttpStatus.CREATED).body(houseHistory)
             : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(houseHistory));
   }
+
   @Operation(description = "List of House history",
       responses = {
           @ApiResponse(responseCode = "201", description = "If house history is present"),//
           @ApiResponse(responseCode = "404", description = "If parameters are invalid")
       })
+
   @GetMapping(
       path = "/house/history/{houseId}",
       produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
