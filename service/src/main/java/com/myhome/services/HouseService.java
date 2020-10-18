@@ -42,6 +42,8 @@ public interface HouseService {
 
   Optional<Set<HouseHistory>> getHouseHistory(String memberId,String houseId);
 
+  Optional<List<HouseHistory>> getHouseHistory(String memberId,String houseId);
+
   HouseHistory captureStay(HouseHistoryDto houseHistoryDto);
 
 }
