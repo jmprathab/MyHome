@@ -24,7 +24,6 @@ import com.myhome.domain.HouseMember;
 import com.myhome.model.AddHouseMemberRequest;
 import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
 import com.myhome.model.HouseMemberDto;
-import com.myhome.model.NewHouseMember;
 import com.myhome.services.HouseService;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -209,7 +208,7 @@ class HouseControllerTest {
     com.myhome.model.AddHouseMemberResponse expectedResponseBody = new com.myhome.model.AddHouseMemberResponse();
     expectedResponseBody.setMembers(addedMembers);
 
-    given(houseMemberMapper.newHouseMemberSetToHouseMemberSet(testMembersDto))
+    given(houseMemberMapper.houseMemberDtoSetToHouseMemberSet(testMembersDto))
         .willReturn(testMembers);
     given(houseService.addHouseMembers(TEST_HOUSE_ID, testMembers)).
         willReturn(testMembers);
@@ -223,7 +222,7 @@ class HouseControllerTest {
     // then
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     assertEquals(expectedResponseBody, response.getBody());
-    verify(houseMemberMapper).newHouseMemberSetToHouseMemberSet(testMembersDto);
+    verify(houseMemberMapper).houseMemberDtoSetToHouseMemberSet(testMembersDto);
     verify(houseService).addHouseMembers(TEST_HOUSE_ID, testMembers);
     verify(houseMemberMapper).houseMemberSetToRestApiResponseAddHouseMemberSet(testMembers);
   }
@@ -249,7 +248,7 @@ class HouseControllerTest {
     AddHouseMemberResponse expectedResponseBody = new AddHouseMemberResponse();
     expectedResponseBody.setMembers(addedMembers);
 
-    given(houseMemberMapper.newHouseMemberSetToHouseMemberSet(testMembersDto))
+    given(houseMemberMapper.houseMemberDtoSetToHouseMemberSet(testMembersDto))
         .willReturn(testMembers);
     given(houseService.addHouseMembers(TEST_HOUSE_ID, testMembers)).
         willReturn(new HashSet<>());
@@ -261,7 +260,7 @@ class HouseControllerTest {
     // then
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertNull(response.getBody());
-    verify(houseMemberMapper).newHouseMemberSetToHouseMemberSet(testMembersDto);
+    verify(houseMemberMapper).houseMemberDtoSetToHouseMemberSet(testMembersDto);
     verify(houseService).addHouseMembers(TEST_HOUSE_ID, testMembers);
     verify(houseMemberMapper, never()).houseMemberSetToRestApiResponseAddHouseMemberSet(
         testMembers);

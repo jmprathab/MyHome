@@ -19,12 +19,10 @@ package com.myhome.controllers;
 import com.myhome.api.HousesApi;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;
-import com.myhome.controllers.response.AddHouseMemberResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.model.AddHouseMemberRequest;
 import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
-import com.myhome.model.NewHouseMember;
 import com.myhome.services.HouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,13 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -53,6 +47,8 @@ public class HouseController implements HousesApi {
   private final HouseMemberMapper houseMemberMapper;
   private final HouseService houseService;
   private final HouseApiMapper houseApiMapper;
+
+  //TODO: Remove all import with .
 
   @Override
   public ResponseEntity<com.myhome.model.GetHouseDetailsResponse> listAllHouses(
@@ -104,7 +100,7 @@ public class HouseController implements HousesApi {
 
     log.trace("Received request to add member to the house with id[{}]", houseId);
     Set<HouseMember> members =
-        houseMemberMapper.newHouseMemberSetToHouseMemberSet(request.getMembers());
+        houseMemberMapper.houseMemberDtoSetToHouseMemberSet(request.getMembers());
     Set<HouseMember> savedHouseMembers = houseService.addHouseMembers(houseId, members);
 
     if (savedHouseMembers.size() == 0 && request.getMembers().size() != 0) {

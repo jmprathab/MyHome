@@ -27,7 +27,7 @@ public interface HouseMemberMapper {
   Set<com.myhome.model.HouseMember> houseMemberSetToRestApiResponseHouseMemberSet(
       Set<HouseMember> houseMemberSet);
 
-  Set<HouseMember> newHouseMemberSetToHouseMemberSet(Set<HouseMemberDto> houseMemberDtoSet);
+  Set<HouseMember> houseMemberDtoSetToHouseMemberSet(Set<HouseMemberDto> houseMemberDtoSet);
 
   Set<com.myhome.model.HouseMember> houseMemberSetToRestApiResponseAddHouseMemberSet(
       Set<HouseMember> houseMemberSet);
