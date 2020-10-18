@@ -764,7 +764,6 @@ components:
     HouseMemberDto:
       type: object
       required:
-        - id
         - memberId
         - name
       properties:
