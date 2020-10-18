@@ -18,7 +18,6 @@ package com.myhome.controllers.dto.mapper;
 
 import com.myhome.domain.HouseMember;
 import com.myhome.model.HouseMemberDto;
-import com.myhome.model.NewHouseMember;
 import java.util.Set;
 import org.mapstruct.Mapper;
 

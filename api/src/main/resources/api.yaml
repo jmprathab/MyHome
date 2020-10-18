@@ -547,6 +547,28 @@ paths:
                 $ref: '#/components/schemas/AddHouseMemberResponse'
         '404':
           description: If parameters are invalid
+  /houses/{houseId}/members/{memberId}:
+    delete:
+      tags:
+        - Houses
+      description: "Deletion of member associated with a house"
+      operationId: deleteHouseMember
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: If house member was removed from house
+        '400':
+          description: if params are invalid
 
 
 components:

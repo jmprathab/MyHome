@@ -22,10 +22,11 @@ import com.myhome.controllers.mapper.HouseApiMapper;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.model.AddHouseMemberRequest;
+import com.myhome.model.AddHouseMemberResponse;
+import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
+import com.myhome.model.ListHouseMembersResponse;
 import com.myhome.services.HouseService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,7 +37,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,10 +48,8 @@ public class HouseController implements HousesApi {
   private final HouseService houseService;
   private final HouseApiMapper houseApiMapper;
 
-  //TODO: Remove all import with .
-
   @Override
-  public ResponseEntity<com.myhome.model.GetHouseDetailsResponse> listAllHouses(
+  public ResponseEntity<GetHouseDetailsResponse> listAllHouses(
       @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all houses");
 
@@ -60,7 +58,7 @@ public class HouseController implements HousesApi {
     Set<GetHouseDetailsResponseCommunityHouse> getHouseDetailsResponseSet =
         houseApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
-    com.myhome.model.GetHouseDetailsResponse response = new com.myhome.model.GetHouseDetailsResponse();
+    GetHouseDetailsResponse response = new GetHouseDetailsResponse();
 
     response.setHouses(getHouseDetailsResponseSet);
 
@@ -68,20 +66,18 @@ public class HouseController implements HousesApi {
   }
 
   @Override
-  public ResponseEntity<com.myhome.model.GetHouseDetailsResponse> getHouseDetails(String houseId) {
+  public ResponseEntity<GetHouseDetailsResponse> getHouseDetails(String houseId) {
     log.trace("Received request to get details of a house with id[{}]", houseId);
     return houseService.getHouseDetailsById(houseId)
         .map(houseApiMapper::communityHouseToRestApiResponseCommunityHouse)
         .map(Collections::singleton)
-        .map(getHouseDetailsResponseCommunityHouses -> {
-          return new com.myhome.model.GetHouseDetailsResponse().houses(getHouseDetailsResponseCommunityHouses);
-        })
+        .map(getHouseDetailsResponseCommunityHouses -> new GetHouseDetailsResponse().houses(getHouseDetailsResponseCommunityHouses))
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
 
   @Override
-  public ResponseEntity<com.myhome.model.ListHouseMembersResponse> listAllMembersOfHouse(
+  public ResponseEntity<ListHouseMembersResponse> listAllMembersOfHouse(
       String houseId,
       @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all members of the house with id[{}]", houseId);
@@ -89,13 +85,13 @@ public class HouseController implements HousesApi {
     return houseService.getHouseMembersById(houseId, pageable)
         .map(HashSet::new)
         .map(houseMemberMapper::houseMemberSetToRestApiResponseHouseMemberSet)
-        .map(houseMembers -> new com.myhome.model.ListHouseMembersResponse().members(houseMembers))
+        .map(houseMembers -> new ListHouseMembersResponse().members(houseMembers))
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
 
   @Override
-  public ResponseEntity<com.myhome.model.AddHouseMemberResponse> addHouseMembers(
+  public ResponseEntity<AddHouseMemberResponse> addHouseMembers(
       @PathVariable String houseId, @Valid AddHouseMemberRequest request) {
 
     log.trace("Received request to add member to the house with id[{}]", houseId);
@@ -106,22 +102,15 @@ public class HouseController implements HousesApi {
     if (savedHouseMembers.size() == 0 && request.getMembers().size() != 0) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     } else {
-      com.myhome.model.AddHouseMemberResponse response = new com.myhome.model.AddHouseMemberResponse();
+      AddHouseMemberResponse response = new AddHouseMemberResponse();
       response.setMembers(
           houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
       return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
   }
 
-  @Operation(description = "Deletion of member associated with a house",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "If house member was removed from house"),
-          @ApiResponse(responseCode = "404", description = "If parameters are invalid")})
-  @DeleteMapping(
-      path = "/houses/{houseId}/members/{memberId}"
-  )
-  public ResponseEntity<Void> deleteHouseMember(@PathVariable String houseId,
-      @PathVariable String memberId) {
+  @Override
+  public ResponseEntity<Void> deleteHouseMember(String houseId, String memberId) {
     log.trace("Received request to delete a member from house with house id[{}] and member id[{}]",
         houseId, memberId);
     boolean isMemberDeleted = houseService.deleteMemberFromHouse(houseId, memberId);
