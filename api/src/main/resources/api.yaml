@@ -458,8 +458,6 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/GetHouseDetailsResponse'
-        '404':
-          description: if params are invalid
   /houses/{houseId}:
     get:
       tags:
