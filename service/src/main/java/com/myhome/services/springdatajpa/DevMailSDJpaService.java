@@ -12,10 +12,6 @@ import org.springframework.stereotype.Service;
 @ConditionalOnProperty(value = "spring.mail.debug", havingValue = "true", matchIfMissing = true)
 public class DevMailSDJpaService implements MailService {
 
-  public DevMailSDJpaService() {
-    System.out.println("lul");
-  }
-
   @Override
   public void sendPasswordRecoverCode(User user, String randomCode) throws MailSendException {
     log.trace(String.format("Password recover code sent to user with id= %s, code=%s", user.getUserId()), randomCode);
