@@ -176,9 +176,9 @@ public class HouseController {
   }
   @Operation(
 
-      description = "Add the duration of stay for each house member.",
+      description = "Add the duration of stay to house history.",
       responses = {
-          @ApiResponse(responseCode = "201", description = "If members were added to house"),//TODO: Change descriptions
+          @ApiResponse(responseCode = "201", description = "If duration of stay was added to house history"),//
           @ApiResponse(responseCode = "404", description = "If parameters are invalid")
       })
   @PostMapping(
