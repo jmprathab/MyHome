@@ -755,6 +755,34 @@ paths:
           description: If house member was removed from house
         '400':
           description: if params are invalid
+  /houses/member/captureStay:
+    post:
+      tags:
+        - Houses
+      description: "Add interval of stay to houseHistory"
+      operationId: captureStay
+      requestBody:
+        description: CreateUserRequest aggregate fields
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaptureStayRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CaptureStayRequest'
+      responses:
+        '201':
+          description: If interval was added to househistory
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaptureStayResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CaptureStayResponse'
+        '404':
+          description: If requestBody is invalid
 
 
   /payments:
@@ -1224,3 +1252,32 @@ components:
           items:
             $ref: '#/components/schemas/AdminPayment'
           uniqueItems: true
+    CaptureStayRequest:
+      type: object
+      required:
+        - memberId
+        - houseId
+        - stayFromDate
+        - stayToDate
+      properties:
+        memberId:
+          type: string
+        houseId:
+          type: string
+        stayFromDate:
+          type: string
+          format: date-time
+        stayToDate:
+          type: string
+          format: date-time
+    CaptureStayResponse:
+      type: object
+      properties:
+        houseId:
+          type: string
+        stayFromDate:
+          type: string
+          format: date-time
+        stayToDate:
+          type: string
+          format: date-time
