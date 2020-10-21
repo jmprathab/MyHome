@@ -8,4 +8,5 @@ import org.mapstruct.Mapper;
 public interface HouseHistoryMapper {
   HouseHistory HouseHistoryDtoToHouseHistory(HouseHistoryDto houseHistoryDto);
   HouseHistoryDto HouseHistoryToHouseHistoryDto(HouseHistory houseHistory);
+
 }
