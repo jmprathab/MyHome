@@ -205,6 +205,19 @@ class UserSDJpaServiceTest {
     assertEquals(0, result.size());
   }
 
+  @Test
+  void listAllWithPagination() {
+    PageRequest pageRequest = PageRequest.of(0, 200);
+    given(userRepository.findAll(pageRequest))
+        .willReturn(Page.empty());
+
+    // when
+    Set<User> result = userService.listAll(pageRequest);
+
+    //then
+    assertEquals(0, result.size());
+  }
+
   private UserDto getDefaultUserDtoRequest() {
     return UserDto.builder()
         .userId(USER_ID)
