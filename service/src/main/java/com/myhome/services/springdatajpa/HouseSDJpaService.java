@@ -16,11 +16,12 @@
 
 package com.myhome.services.springdatajpa;
 
-import com.myhome.controllers.dto.HouseHistoryDto;
 import com.myhome.controllers.dto.mapper.HouseHistoryMapper;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseHistory;
 import com.myhome.domain.HouseMember;
+import com.myhome.model.HouseHistoryDto;
+import com.myhome.model.HouseHistoryResponse;
 import com.myhome.repositories.CommunityHouseRepository;
 import com.myhome.repositories.HouseHistoryRepository;
 import com.myhome.repositories.HouseMemberDocumentRepository;

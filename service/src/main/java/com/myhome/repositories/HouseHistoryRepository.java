@@ -4,7 +4,6 @@ import com.myhome.domain.HouseHistory;
 
 import java.util.List;
 
-import java.util.Set;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +12,5 @@ public interface HouseHistoryRepository extends PagingAndSortingRepository<House
 
   List<HouseHistory> findByHouseId(String houseId);
   List<HouseHistory> findByMemberIdAndAndHouseId(String memberId,String houseId);
-  Set<HouseHistory> findByHouseId(String houseId);
-  Set<HouseHistory> findByMemberIdAndAndHouseId(String memberId,String houseId);
-
 
 }

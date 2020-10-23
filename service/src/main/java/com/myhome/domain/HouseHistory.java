@@ -1,14 +1,10 @@
 package com.myhome.domain;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-<<<<<<< HEAD
-<<<<<<< HEAD
-import javax.persistence.JoinColumn;
-=======
->>>>>>> Added Entity
-=======
+
 import javax.persistence.JoinColumn;
 
 import javax.persistence.ManyToOne;
@@ -33,18 +29,9 @@ public class HouseHistory extends BaseEntity{
   @Column
   private String houseId;
   @Column
-  private Date stayFromDate;
+  private OffsetDateTime stayFromDate;
   @Column
-  private Date stayToDate;
-
-  @With
-  @OneToOne
-  @JoinColumn(name = "Id")
-  private HouseMember houseMember;
-  @With
-  @OneToOne
-  @JoinColumn(name = "Id")
-  @ManyToOne
+  private OffsetDateTime stayToDate;
   @With
   @OneToOne
   @JoinColumn(name = "Id")

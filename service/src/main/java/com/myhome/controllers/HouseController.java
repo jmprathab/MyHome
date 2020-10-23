@@ -18,40 +18,29 @@ package com.myhome.controllers;
 import com.myhome.controllers.dto.HouseHistoryDto;
 import com.myhome.controllers.dto.mapper.HouseHistoryMapper;
 import com.myhome.api.HousesApi;
-import com.myhome.controllers.dto.HouseHistoryDto;
 import com.myhome.controllers.dto.mapper.HouseHistoryMapper;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;
 import com.myhome.domain.CommunityHouse;
-import com.myhome.domain.HouseHistory;
 import com.myhome.domain.HouseMember;
 import com.myhome.model.AddHouseMemberRequest;
 import com.myhome.model.AddHouseMemberResponse;
 import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
+import com.myhome.model.HouseHistoryResponse;
 import com.myhome.model.ListHouseMembersResponse;
 import com.myhome.services.HouseService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -125,6 +114,17 @@ public class HouseController implements HousesApi {
     }
   }
 
+  @Override public ResponseEntity<HouseHistoryResponse> captureStay(
+      com.myhome.model.@Valid HouseHistoryDto houseHistoryDto) {
+    log.trace("Received request to post date interval for house Id[{}] and memberId [{}] ",
+        houseHistoryDto.getHouseId(), houseHistoryDto.getMemberId(), houseHistoryDto.getStayFromDate(), houseHistoryDto.getStayToDate());
+    HouseHistoryResponse houseHistoryResponse =houseHistoryMapper.HouseHistoryDtoToHouseHistoryResponse(houseHistoryMapper.HouseHistoryToHouseHistoryDto(houseService.captureStay(houseHistoryDto)));
+    return (houseHistoryResponse != null
+        ? ResponseEntity.status(HttpStatus.CREATED).body(houseHistoryResponse)
+        : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(houseHistoryResponse));
+
+  }
+
   @Override
   public ResponseEntity<Void> deleteHouseMember(String houseId, String memberId) {
     log.trace("Received request to delete a member from house with house id[{}] and member id[{}]",
@@ -137,44 +137,4 @@ public class HouseController implements HousesApi {
     }
   }
 
-  @Operation(
-      description = "Add the duration of stay to house history.",
-      responses = {
-          @ApiResponse(responseCode = "201", description = "If duration of stay was added to house history"),//
-          @ApiResponse(responseCode = "404", description = "If parameters are invalid")
-      })
-  @PostMapping(
-      path = "/houses/member/captureStay",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<HouseHistory> captureStay(@Valid @RequestBody
-      HouseHistoryDto houseHistoryDto){
-    log.trace("Received request to post date interval for house Id[{}] and memberId [{}] ",
-        houseHistoryDto.getHouseId(), houseHistoryDto.getMemberId());
-    HouseHistory houseHistory = houseService.captureStay(houseHistoryDto);
-    return (ResponseEntity<HouseHistory>) (houseHistory != null
-        ? ResponseEntity.status(HttpStatus.CREATED).body(houseHistory)
-        : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(houseHistory));
-  }
-  @Operation(description = "List of House history",
-      responses = {
-          @ApiResponse(responseCode = "201", description = "If house history is present"),//
-          @ApiResponse(responseCode = "404", description = "If parameters are invalid")
-      })
-  @GetMapping(
-      path = "/house/history/{houseId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<List<HouseHistoryDto>> getHouseHistory(@PathVariable String houseId,@RequestParam(required = false)
-      String memberId){
-    if (!houseService.getHouseDetailsById(houseId).isPresent()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<HouseHistoryDto>());
-    }
-    List<HouseHistory> houseHistoryList = houseService.getHouseHistory(memberId,houseId).get();
-    List<HouseHistoryDto> houseHistoryDtoList = houseHistoryList.stream()
-        .map(houseHistoryMapper::HouseHistoryToHouseHistoryDto).collect(Collectors.toList());
-    return ResponseEntity.status(HttpStatus.OK).body(houseHistoryDtoList);
-  }
 }
-

@@ -1,12 +1,14 @@
 package com.myhome.controllers.dto.mapper;
 
-import com.myhome.controllers.dto.HouseHistoryDto;
 import com.myhome.domain.HouseHistory;
+import com.myhome.model.HouseHistoryDto;
+import com.myhome.model.HouseHistoryResponse;
 import org.mapstruct.Mapper;
 
 @Mapper
 public interface HouseHistoryMapper {
-  HouseHistory HouseHistoryDtoToHouseHistory(HouseHistoryDto houseHistoryDto);
+  HouseHistoryResponse HouseHistoryDtoToHouseHistoryResponse(HouseHistoryDto houseHistoryDto);
   HouseHistoryDto HouseHistoryToHouseHistoryDto(HouseHistory houseHistory);
+  HouseHistory HouseHistoryDtoToHouseHistory(HouseHistoryDto houseHistoryDto);
 
 }

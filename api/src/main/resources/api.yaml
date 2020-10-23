@@ -755,6 +755,33 @@ paths:
           description: If house member was removed from house
         '400':
           description: if params are invalid
+  /houses/member/captureStay:
+    post:
+      tags:
+        - house-controller
+      description: Add the duration of stay to house history.
+      operationId: captureStay
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HouseHistoryDto'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/HouseHistoryDto'
+        required: true
+      responses:
+        '201':
+          description: If duration of stay was added to house history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HouseHistoryResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/HouseHistoryResponse'
+        '404':
+          description: If parameters are invalid
 
 
 
@@ -1225,7 +1252,14 @@ components:
           items:
             $ref: '#/components/schemas/AdminPayment'
           uniqueItems: true
-    CaptureStayRequest:
+    ListHouseHistoryResponse:
+      type: object
+      properties:
+        histories:
+          type: array
+          items:
+            $ref: '#/components/schemas/HouseHistoryDto'
+    HouseHistoryResponse:
       type: object
       required:
         - memberId
@@ -1240,18 +1274,51 @@ components:
         stayFromDate:
           type: string
           format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
         stayToDate:
           type: string
           format: date-time
-    CaptureStayResponse:
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+    HouseHistoryDto:
       type: object
+      required:
+        - memberId
+        - houseId
+        - stayFromDate
+        - stayToDate
       properties:
+        memberId:
+          type: string
         houseId:
           type: string
         stayFromDate:
           type: string
           format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
         stayToDate:
           type: string
           format: date-time
-
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+    HouseHistoryRequest:
+      type: object
+      required:
+        - memberId
+        - stayFromDate
+        - stayToDate
+      properties:
+        memberId:
+          type: string
+        stayFromDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        stayToDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
