@@ -25,7 +25,10 @@ import com.myhome.domain.Community;
 import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.springdatajpa.UserSDJpaService;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,6 +39,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -186,6 +191,18 @@ class UserSDJpaServiceTest {
     Exception exception = Assertions.assertThrows(
         UserNotFoundException.class,
         () -> userService.getUserDetails(USER_ID));
+  }
+
+  @Test
+  void listAll() {
+    given(userRepository.findAll(PageRequest.of(0, 200)))
+        .willReturn(Page.empty());
+
+    // when
+    Set<User> result = userService.listAll();
+
+    //then
+    assertEquals(0, result.size());
   }
 
   private UserDto getDefaultUserDtoRequest() {
