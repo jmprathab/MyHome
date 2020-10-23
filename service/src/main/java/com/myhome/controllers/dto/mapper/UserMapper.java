@@ -17,8 +17,14 @@
 package com.myhome.controllers.dto.mapper;
 
 import com.myhome.controllers.dto.UserDto;
+import com.myhome.domain.BaseEntity;
+import com.myhome.domain.Community;
 import com.myhome.domain.User;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 /**
  * Provides conversion between DTO and entity object.
@@ -27,5 +33,14 @@ import org.mapstruct.Mapper;
 public interface UserMapper {
   User userDtoToUser(UserDto userDto);
 
+  @Mapping(source = "communities", target = "communityIds", qualifiedByName = "communitiesToIds")
   UserDto userToUserDto(User user);
+
+  @Named("communitiesToIds")
+  static Set<String> communitiesToIds(Set<Community> communities) {
+    return communities.stream()
+        .map(BaseEntity::getId)
+        .map(String::valueOf)
+        .collect(Collectors.toSet());
+  }
 }

@@ -26,7 +26,6 @@ import com.myhome.model.GetUserDetailsResponseUser;
 import com.myhome.services.UserService;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,10 +37,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 
 class UserControllerTest {
 
@@ -83,20 +80,16 @@ class UserControllerTest {
 
     given(userApiMapper.createUserRequestToUserDto(request))
         .willReturn(userDto);
-    given(userService.createUser(userDto))
-        .willReturn(Optional.of(userDto));
     given(userApiMapper.userDtoToCreateUserResponse(userDto))
         .willReturn(createUserResponse);
 
     // when
-    ResponseEntity<CreateUserResponse> responseEntity = userController.signUp(request);
+    ResponseEntity<Void> responseEntity = userController.signUp(request);
 
     // then
     assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-    assertEquals(createUserResponse, responseEntity.getBody());
     verify(userApiMapper).createUserRequestToUserDto(request);
     verify(userService).createUser(userDto);
-    verify(userApiMapper).userDtoToCreateUserResponse(userDto);
   }
 
   @Test
@@ -137,23 +130,6 @@ class UserControllerTest {
   }
 
   @Test
-  void shouldGetUserDetailsSuccessWithNoResults() {
-    // given
-    String userId = TEST_ID;
-    given(userService.getUserDetails(userId))
-        .willReturn(Optional.empty());
-
-    // when
-    ResponseEntity<GetUserDetailsResponseUser> response = userController.getUserDetails(userId);
-
-    // then
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    assertNull(response.getBody());
-    verify(userService).getUserDetails(userId);
-    verifyNoInteractions(userApiMapper);
-  }
-
-  @Test
   void shouldGetUserDetailsSuccessWithResults() {
     // given
     String userId = TEST_ID;
@@ -167,7 +143,7 @@ class UserControllerTest {
         .communityIds(Collections.emptySet());
 
     given(userService.getUserDetails(userId))
-        .willReturn(Optional.of(userDto));
+        .willReturn(userDto);
     given(userApiMapper.userDtoToGetUserDetailsResponse(userDto))
         .willReturn(expectedResponse);
 

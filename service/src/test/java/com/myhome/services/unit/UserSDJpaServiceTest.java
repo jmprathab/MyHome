@@ -16,6 +16,8 @@
 
 package com.myhome.services.unit;
 
+import com.myhome.services.springdatajpa.exceptions.EmailAlreadyExistsException;
+import com.myhome.services.springdatajpa.exceptions.UserNotFoundException;
 import helpers.TestUtils;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
@@ -28,6 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -36,8 +39,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -76,7 +78,7 @@ class UserSDJpaServiceTest {
         .build();
 
     given(userRepository.findByEmail(request.getEmail()))
-        .willReturn(null);
+        .willReturn(Optional.empty());
     given(passwordEncoder.encode(request.getPassword()))
         .willReturn(request.getPassword());
     given(userMapper.userDtoToUser(request))
@@ -87,14 +89,17 @@ class UserSDJpaServiceTest {
         .willReturn(response);
 
     // when
-    Optional<UserDto> createdUserDtoOptional = userService.createUser(request);
+    userService.createUser(request);
 
     // then
-    assertTrue(createdUserDtoOptional.isPresent());
-    UserDto createdUserDto = createdUserDtoOptional.get();
-    assertEquals(response, createdUserDto);
-    assertEquals(0, createdUserDto.getCommunityIds().size());
-    verify(userRepository).findByEmail(request.getEmail());
+    verify(userRepository).save(User.builder()
+    .name("test-user-id")
+    .userId("test-user-id")
+    .email("test-user-id")
+    .encryptedPassword("test-user-id")
+    .communities(new HashSet<>())
+    .build());
+    verify(userRepository).existsByEmail(request.getEmail());
     verify(passwordEncoder).encode(request.getPassword());
     verify(userRepository).save(resultUser);
   }
@@ -105,15 +110,16 @@ class UserSDJpaServiceTest {
     UserDto request = getDefaultUserDtoRequest();
     User user = getUserFromDto(request);
 
-    given(userRepository.findByEmail(request.getEmail()))
-        .willReturn(user);
+    given(userRepository.existsByEmail(request.getEmail()))
+        .willReturn(true);
 
     // when
-    Optional<UserDto> createdUserDto = userService.createUser(request);
+    Exception exception = Assertions.assertThrows(
+        EmailAlreadyExistsException.class,
+        () -> userService.createUser(request));
 
     // then
-    assertFalse(createdUserDto.isPresent());
-    verify(userRepository).findByEmail(request.getEmail());
+    assertEquals(exception.getMessage(), "Email already exists:419");
   }
 
   @Test
@@ -128,13 +134,12 @@ class UserSDJpaServiceTest {
         .willReturn(userDto);
 
     // when
-    Optional<UserDto> createdUserDtoOptional = userService.getUserDetails(USER_ID);
+    UserDto createdUserDto = userService.getUserDetails(USER_ID);
 
     // then
-    assertTrue(createdUserDtoOptional.isPresent());
-    UserDto createdUserDto = createdUserDtoOptional.get();
+    assertNotNull(createdUserDto);
     assertEquals(userDto, createdUserDto);
-    assertEquals(0, createdUserDto.getCommunityIds().size());
+    assertEquals(2, createdUserDto.getCommunityIds().size());
     verify(userRepository).findByUserIdWithCommunities(USER_ID);
   }
 
@@ -153,7 +158,7 @@ class UserSDJpaServiceTest {
 
     Set<String> communitiesIds = communities
         .stream()
-        .map(community -> community.getCommunityId())
+        .map(Community::getCommunityId)
         .collect(Collectors.toSet());
 
     given(userRepository.findByUserIdWithCommunities(USER_ID))
@@ -162,13 +167,12 @@ class UserSDJpaServiceTest {
         .willReturn(userDto);
 
     // when
-    Optional<UserDto> createdUserDtoOptional = userService.getUserDetails(USER_ID);
+    UserDto createdUserDto = userService.getUserDetails(USER_ID);
 
     // then
-    assertTrue(createdUserDtoOptional.isPresent());
-    UserDto createdUserDto = createdUserDtoOptional.get();
+    assertNotNull(createdUserDto);
     assertEquals(userDto, createdUserDto);
-    assertEquals(communitiesIds, createdUserDto.getCommunityIds());
+    assertEquals(communitiesIds.size(), createdUserDto.getCommunityIds().size());
     verify(userRepository).findByUserIdWithCommunities(USER_ID);
   }
 
@@ -179,11 +183,9 @@ class UserSDJpaServiceTest {
         .willReturn(Optional.empty());
 
     // when
-    Optional<UserDto> createdUserDto = userService.getUserDetails(USER_ID);
-
-    // then
-    assertFalse(createdUserDto.isPresent());
-    verify(userRepository).findByUserIdWithCommunities(USER_ID);
+    Exception exception = Assertions.assertThrows(
+        UserNotFoundException.class,
+        () -> userService.getUserDetails(USER_ID));
   }
 
   private UserDto getDefaultUserDtoRequest() {
@@ -192,7 +194,10 @@ class UserSDJpaServiceTest {
         .name(USERNAME)
         .email(USER_EMAIL)
         .encryptedPassword(USER_PASSWORD)
-        .communityIds(new HashSet<>())
+        .communityIds(new HashSet<String>() {{
+          add("5168673e-b47d-47ac-808f-2a473ca58f7e");
+          add("d87a43a5-610e-4d8d-81d1-cd82f7464de4");
+        }})
         .build();
   }
 

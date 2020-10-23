@@ -26,6 +26,7 @@ import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -42,6 +43,7 @@ import lombok.With;
 @EqualsAndHashCode(callSuper = false, of = {"userId", "email"})
 @Entity
 @With
+@Builder
 @NamedEntityGraphs({
     @NamedEntityGraph(
         name = "User.communities",

@@ -21,13 +21,11 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.request.LoginUserRequest;
 import com.myhome.security.jwt.AppJwt;
 import com.myhome.security.jwt.AppJwtEncoderDecoder;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.env.Environment;
@@ -69,14 +67,14 @@ public class MyHomeAuthenticationFilter extends UsernamePasswordAuthenticationFi
       return getAuthenticationManager().authenticate(
           new UsernamePasswordAuthenticationToken(loginUserRequest.getEmail(),
               loginUserRequest.getPassword(), Collections.emptyList()));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    } catch (Exception e) {
+      throw new com.myhome.security.AuthenticationException();
     }
   }
 
   @Override
   protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-      FilterChain chain, Authentication authResult) throws IOException, ServletException {
+      FilterChain chain, Authentication authResult) {
 
     String username = ((User) authResult.getPrincipal()).getUsername();
     UserDto userDto = userDetailFetcher.getUserDetailsByUsername(username);

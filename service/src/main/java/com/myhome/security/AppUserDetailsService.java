@@ -16,9 +16,8 @@
 
 package com.myhome.security;
 
-import com.myhome.controllers.dto.UserDto;
-import com.myhome.controllers.dto.mapper.UserMapper;
 import com.myhome.repositories.UserRepository;
+import com.myhome.services.springdatajpa.exceptions.UserNotFoundException;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -34,15 +33,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AppUserDetailsService implements UserDetailsService {
   private final UserRepository userRepository;
-  private final UserMapper userMapper;
 
   @Override public UserDetails loadUserByUsername(String username)
       throws UsernameNotFoundException {
 
-    com.myhome.domain.User user = userRepository.findByEmail(username);
-    if (user == null) {
-      throw new UsernameNotFoundException(username);
-    }
+    com.myhome.domain.User user = userRepository.findByEmail(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
 
     return new User(user.getEmail(),
         user.getEncryptedPassword(),
@@ -51,13 +47,5 @@ public class AppUserDetailsService implements UserDetailsService {
         true,
         true,
         Collections.emptyList());
-  }
-
-  public UserDto getUserDetailsByUsername(String username) {
-    com.myhome.domain.User user = userRepository.findByEmail(username);
-    if (user == null) {
-      throw new UsernameNotFoundException(username);
-    }
-    return userMapper.userToUserDto(user);
   }
 }

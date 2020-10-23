@@ -18,7 +18,6 @@ package com.myhome.services;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.domain.User;
-import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.domain.Pageable;
 
@@ -26,11 +25,11 @@ import org.springframework.data.domain.Pageable;
  * Interface for service layer.
  */
 public interface UserService {
-  Optional<UserDto> createUser(UserDto request);
+  void createUser(UserDto request);
 
   Set<User> listAll();
 
   Set<User> listAll(Pageable pageable);
 
-  Optional<UserDto> getUserDetails(String userId);
+  UserDto getUserDetails(String userId);
 }

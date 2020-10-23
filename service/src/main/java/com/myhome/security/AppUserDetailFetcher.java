@@ -31,10 +31,8 @@ public class AppUserDetailFetcher implements UserDetailFetcher {
   private final UserMapper userMapper;
 
   @Override public UserDto getUserDetailsByUsername(String username) {
-    User user = userRepository.findByEmail(username);
-    if (user == null) {
-      throw new UsernameNotFoundException(username);
-    }
+    User user = userRepository.findByEmail(username)
+        .orElseThrow(() -> new UsernameNotFoundException(username));
     return userMapper.userToUserDto(user);
   }
 }

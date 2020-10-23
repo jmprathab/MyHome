@@ -30,13 +30,6 @@ paths:
       responses:
         '201':
           description: "if user created"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateUserResponse'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/CreateUserResponse'
         '409':
           description: "if user already exists"
     get:

@@ -21,11 +21,9 @@ import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.UserApiMapper;
 import com.myhome.domain.User;
 import com.myhome.model.CreateUserRequest;
-import com.myhome.model.CreateUserResponse;
 import com.myhome.model.GetUserDetailsResponse;
 import com.myhome.model.GetUserDetailsResponseUser;
 import com.myhome.services.UserService;
-import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,16 +44,11 @@ public class UserController implements UsersApi {
   private final UserApiMapper userApiMapper;
 
   @Override
-  public ResponseEntity<CreateUserResponse> signUp(@Valid CreateUserRequest request) {
+  public ResponseEntity<Void> signUp(@Valid CreateUserRequest request) {
     log.trace("Received SignUp request");
     UserDto requestUserDto = userApiMapper.createUserRequestToUserDto(request);
-    Optional<UserDto> createdUserDto = userService.createUser(requestUserDto);
-    return createdUserDto
-        .map(userDto -> {
-          CreateUserResponse response = userApiMapper.userDtoToCreateUserResponse(userDto);
-          return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        })
-        .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).build());
+    userService.createUser(requestUserDto);
+    return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   @Override
@@ -75,10 +68,8 @@ public class UserController implements UsersApi {
   @Override
   public ResponseEntity<GetUserDetailsResponseUser> getUserDetails(String userId) {
     log.trace("Received request to get details of user with Id[{}]", userId);
-
-    return userService.getUserDetails(userId)
-        .map(userApiMapper::userDtoToGetUserDetailsResponse)
-        .map(response -> ResponseEntity.status(HttpStatus.OK).body(response))
-        .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    UserDto userDetails = userService.getUserDetails(userId);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(userApiMapper.userDtoToGetUserDetailsResponse(userDetails));
   }
 }

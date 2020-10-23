@@ -21,10 +21,10 @@ import com.myhome.controllers.dto.mapper.UserMapper;
 import com.myhome.domain.User;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.UserService;
-import java.util.Optional;
+import com.myhome.services.springdatajpa.exceptions.EmailAlreadyExistsException;
+import com.myhome.services.springdatajpa.exceptions.UserNotFoundException;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -44,15 +44,12 @@ public class UserSDJpaService implements UserService {
   private final UserMapper userMapper;
   private final PasswordEncoder passwordEncoder;
 
-  @Override public Optional<UserDto> createUser(UserDto request) {
-    if (userRepository.findByEmail(request.getEmail()) == null) {
-      generateUniqueUserId(request);
-      encryptUserPassword(request);
-      return Optional.of(createUserInRepository(request));
-    } else {
-      return Optional.empty();
+  @Override public void createUser(UserDto dto) {
+    verifyEmailUniqueness(dto);
+    generateUniqueUserId(dto);
+    encryptUserPassword(dto);
+    saveUser(dto);
     }
-  }
 
   @Override public Set<User> listAll() {
     return listAll(PageRequest.of(0, 200));
@@ -63,24 +60,15 @@ public class UserSDJpaService implements UserService {
   }
 
   @Override
-  public Optional<UserDto> getUserDetails(String userId) {
-    Optional<User> userOptional = userRepository.findByUserIdWithCommunities(userId);
-    return userOptional.map(admin -> {
-      Set<String> communityIds = admin.getCommunities().stream()
-          .map(community -> community.getCommunityId())
-          .collect(Collectors.toSet());
-
-      UserDto userDto = userMapper.userToUserDto(admin);
-      userDto.setCommunityIds(communityIds);
-      return Optional.of(userDto);
-    }).orElse(Optional.empty());
+  public UserDto getUserDetails(String userId) {
+    User user = userRepository.findByUserIdWithCommunities(userId)
+      .orElseThrow(() -> new UserNotFoundException(userId));
+    return userMapper.userToUserDto(user);
   }
 
-  private UserDto createUserInRepository(UserDto request) {
-    User user = userMapper.userDtoToUser(request);
-    User savedUser = userRepository.save(user);
+  private void saveUser(UserDto request) {
+    User savedUser = userRepository.save(userMapper.userDtoToUser(request));
     log.trace("saved user with id[{}] to repository", savedUser.getId());
-    return userMapper.userToUserDto(savedUser);
   }
 
   private void encryptUserPassword(UserDto request) {
@@ -89,5 +77,11 @@ public class UserSDJpaService implements UserService {
 
   private void generateUniqueUserId(UserDto request) {
     request.setUserId(UUID.randomUUID().toString());
+  }
+
+  private void verifyEmailUniqueness(UserDto request) {
+    if (userRepository.existsByEmail(request.getEmail())) {
+      throw new EmailAlreadyExistsException();
+    }
   }
 }
