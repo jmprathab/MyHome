@@ -782,9 +782,34 @@ paths:
                 $ref: '#/components/schemas/HouseHistoryResponse'
         '404':
           description: If parameters are invalid
-
-
-
+  /houses/{houseId}/houseHistory:
+    get:
+      tags:
+        - house-controller
+      operationId: getHouseHistory
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: memberId
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: "if history is present"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListHouseHistoryResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListHouseHistoryResponse'
+        '404':
+          description: "if params are invalid"
   /payments:
     post:
       tags:

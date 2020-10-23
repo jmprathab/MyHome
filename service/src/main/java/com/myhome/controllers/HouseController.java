@@ -15,24 +15,28 @@
  */
 
 package com.myhome.controllers;
-import com.myhome.controllers.dto.HouseHistoryDto;
 import com.myhome.controllers.dto.mapper.HouseHistoryMapper;
 import com.myhome.api.HousesApi;
 import com.myhome.controllers.dto.mapper.HouseHistoryMapper;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseHistory;
 import com.myhome.domain.HouseMember;
 import com.myhome.model.AddHouseMemberRequest;
 import com.myhome.model.AddHouseMemberResponse;
 import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
+import com.myhome.model.HouseHistoryDto;
 import com.myhome.model.HouseHistoryResponse;
+import com.myhome.model.ListHouseHistoryResponse;
 import com.myhome.model.ListHouseMembersResponse;
 import com.myhome.services.HouseService;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,6 +85,20 @@ public class HouseController implements HousesApi {
         .orElse(ResponseEntity.notFound().build());
   }
 
+  @Override public ResponseEntity<ListHouseHistoryResponse> getHouseHistory(String houseId,
+      @Valid String memberId) {
+    if (!houseService.getHouseDetailsById(houseId).isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ListHouseHistoryResponse());
+    }
+    List<HouseHistory> houseHistoryList = houseService.getHouseHistory(memberId,houseId).get();
+    List<HouseHistoryDto> houseHistoryDtoList = houseHistoryList.stream()
+        .map(houseHistoryMapper::HouseHistoryToHouseHistoryDto)
+        .collect(Collectors.toList());
+    ListHouseHistoryResponse listHouseHistoryResponse = new ListHouseHistoryResponse().histories(houseHistoryDtoList);
+    return ResponseEntity.status(HttpStatus.OK).body(listHouseHistoryResponse);
+
+  }
+
   @Override
   public ResponseEntity<ListHouseMembersResponse> listAllMembersOfHouse(
       String houseId,
@@ -114,7 +132,8 @@ public class HouseController implements HousesApi {
     }
   }
 
-  @Override public ResponseEntity<HouseHistoryResponse> captureStay(
+  @Override
+  public ResponseEntity<HouseHistoryResponse> captureStay(
       com.myhome.model.@Valid HouseHistoryDto houseHistoryDto) {
     log.trace("Received request to post date interval for house Id[{}] and memberId [{}] ",
         houseHistoryDto.getHouseId(), houseHistoryDto.getMemberId(), houseHistoryDto.getStayFromDate(), houseHistoryDto.getStayToDate());
