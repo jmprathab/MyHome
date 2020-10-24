@@ -17,12 +17,18 @@
 package com.myhome.controllers;
 
 import com.myhome.controllers.dto.CommunityDto;
+import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.CommunityApiMapper;
+import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
+import com.myhome.domain.HouseMember;
+import com.myhome.domain.HouseMemberDocument;
+import com.myhome.domain.Payment;
 import com.myhome.model.AddCommunityAdminRequest;
 import com.myhome.model.AddCommunityAdminResponse;
 import com.myhome.model.AddCommunityHouseRequest;
 import com.myhome.model.AddCommunityHouseResponse;
+import com.myhome.model.AdminPayment;
 import com.myhome.model.CommunityHouseName;
 import com.myhome.model.CreateCommunityRequest;
 import com.myhome.model.CreateCommunityResponse;
@@ -33,10 +39,16 @@ import com.myhome.model.GetCommunityDetailsResponse;
 import com.myhome.model.GetCommunityDetailsResponseCommunity;
 import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
+import com.myhome.model.HouseMemberDto;
+import com.myhome.model.ListAdminPaymentsResponse;
 import com.myhome.model.ListCommunityAdminsResponse;
 import com.myhome.model.ListCommunityAdminsResponseCommunityAdmin;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
+import com.myhome.services.PaymentService;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -70,6 +82,14 @@ class CommunityControllerTest {
   private static final String COMMUNITY_NAME = "Test Community";
   private static final String COMMUNITY_ID = "3";
   private static final String COMMUNITY_DISTRICT = "Wonderland";
+  private static final String TEST_TYPE = "WATER BILL";
+  private static final String TEST_DESCRIPTION = "This is your excess water bill";
+  private static final boolean TEST_RECURRING = false;
+  private static final BigDecimal TEST_CHARGE = BigDecimal.valueOf(50.00);
+  private static final String TEST_DUE_DATE = "2020-08-15";
+  private static final String TEST_MEMBER_ID = "2";
+  private static final String TEST_MEMBER_NAME = "Test Name";
+  private static final String TEST_ID = "3";
 
   @Mock
   private CommunityService communityService;
@@ -78,10 +98,16 @@ class CommunityControllerTest {
   private CommunityRepository communityRepository;
 
   @Mock
+  private SchedulePaymentApiMapper paymentApiMapper;
+
+  @Mock
   private CommunityApiMapper communityApiMapper;
 
   @InjectMocks
   private CommunityController communityController;
+
+  @Mock
+  private PaymentService paymentService;
 
   @BeforeEach
   private void init() {
@@ -572,5 +598,170 @@ class CommunityControllerTest {
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(communityService).deleteCommunity(COMMUNITY_ID);
+  }
+
+  private PaymentDto createTestPaymentDto() {
+    UserDto userDto = UserDto.builder()
+        .userId(COMMUNITY_ADMIN_ID)
+        .communityIds(new HashSet<>(Arrays.asList(COMMUNITY_ID)))
+        .id(Long.valueOf(COMMUNITY_ADMIN_ID))
+        .encryptedPassword(COMMUNITY_ADMIN_PASSWORD)
+        .name(COMMUNITY_ADMIN_NAME)
+        .email(COMMUNITY_ADMIN_EMAIL)
+        .build();
+    HouseMemberDto houseMemberDto = new HouseMemberDto()
+        .memberId(TEST_MEMBER_ID)
+        .name(TEST_MEMBER_NAME)
+        .id(Long.valueOf(TEST_MEMBER_ID));
+
+    return PaymentDto.builder()
+        .paymentId(TEST_ID)
+        .type(TEST_TYPE)
+        .description(TEST_DESCRIPTION)
+        .charge(TEST_CHARGE)
+        .dueDate(TEST_DUE_DATE)
+        .recurring(TEST_RECURRING)
+        .admin(userDto)
+        .member(houseMemberDto)
+        .build();
+  }
+
+  private CommunityHouse getMockCommunityHouse() {
+    CommunityHouse communityHouse = new CommunityHouse();
+    communityHouse.setName(COMMUNITY_HOUSE_NAME);
+    communityHouse.setHouseId(COMMUNITY_HOUSE_ID);
+    communityHouse.setHouseMembers(new HashSet<>());
+
+    return communityHouse;
+  }
+
+  private Community getMockCommunity(Set<User> admins) {
+    Community community =
+        new Community(admins, new HashSet<>(), COMMUNITY_NAME, COMMUNITY_ID,
+            COMMUNITY_DISTRICT, new HashSet<>());
+    User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL,
+        COMMUNITY_ADMIN_PASSWORD, new HashSet<>());
+    community.getAdmins().add(admin);
+    admin.getCommunities().add(community);
+
+    CommunityHouse communityHouse = getMockCommunityHouse();
+    communityHouse.setCommunity(community);
+    community.getHouses().add(communityHouse);
+
+    return community;
+  }
+
+  private Payment getMockPayment() {
+    User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, COMMUNITY_ADMIN_PASSWORD,
+        new HashSet<>());
+    Community community = getMockCommunity(new HashSet<>());
+    community.getAdmins().add(admin);
+    admin.getCommunities().add(community);
+    return new Payment(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING,
+        LocalDate.parse(TEST_DUE_DATE, DateTimeFormatter.ofPattern("yyyy-MM-dd")), admin,
+        new HouseMember(TEST_MEMBER_ID, new HouseMemberDocument(), TEST_MEMBER_NAME,
+            new CommunityHouse()));
+  }
+
+  @Test
+  void shouldGetAdminPaymentsSuccess() {
+    // given
+    com.myhome.model.SchedulePaymentRequest request =
+        new com.myhome.model.SchedulePaymentRequest()
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(COMMUNITY_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
+    PaymentDto paymentDto = createTestPaymentDto();
+
+    given(paymentService.schedulePayment(paymentDto))
+        .willReturn(paymentDto);
+
+    Set<Payment> payments = new HashSet<>();
+    Payment mockPayment = getMockPayment();
+    payments.add(mockPayment);
+
+
+    Set<String> adminIds = new HashSet<>();
+    adminIds.add(COMMUNITY_ADMIN_ID);
+
+    Set<User> admins = new HashSet<>();
+
+    Community community = getMockCommunity(admins);
+
+    CommunityDto communityDto = createTestCommunityDto();
+
+    given(communityService.createCommunity(communityDto))
+        .willReturn(community);
+    given(communityService.getCommunityDetailsByIdWithAdmins(COMMUNITY_ID))
+        .willReturn(Optional.of(community));
+    given(paymentService.getPaymentsByAdmin(COMMUNITY_ADMIN_ID))
+        .willReturn(payments);
+    given(communityService.addAdminsToCommunity(COMMUNITY_ID, adminIds))
+        .willReturn(Optional.of(community));
+
+    Set<AdminPayment> responsePayments = new HashSet<>();
+    responsePayments.add(
+        new AdminPayment().adminId(COMMUNITY_ADMIN_ID).paymentId(TEST_ID).charge(TEST_CHARGE).dueDate(TEST_DUE_DATE)
+    );
+
+    ListAdminPaymentsResponse expectedResponse = new ListAdminPaymentsResponse().payments(responsePayments);
+
+    given(paymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(payments))
+        .willReturn(responsePayments);
+
+    //when
+    ResponseEntity<ListAdminPaymentsResponse> responseEntity =
+        communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID);
+
+    //then
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    assertEquals(expectedResponse, responseEntity.getBody());
+    verify(communityService).getCommunityDetailsByIdWithAdmins(COMMUNITY_ID);
+    verify(paymentService).getPaymentsByAdmin(COMMUNITY_ADMIN_ID);
+    verify(paymentApiMapper).adminPaymentSetToRestApiResponseAdminPaymentSet(payments);
+  }
+
+  @Test
+  void shouldGetNoAdminPaymentDetailsCommunityNotFoundSuccess() {
+    //given
+    given(communityService.getCommunityDetailsByIdWithAdmins(COMMUNITY_ID))
+        .willReturn(Optional.empty());
+
+    //when
+    ResponseEntity<ListAdminPaymentsResponse> responseEntity =
+        communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID);
+
+    //then
+    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    assertNull(responseEntity.getBody());
+    verify(communityService).getCommunityDetailsByIdWithAdmins(COMMUNITY_ID);
+    verifyNoInteractions(paymentApiMapper);
+  }
+
+  @Test
+  void shouldGetNoPaymentsForFoundAdminSuccess() {
+    //given
+    Set<User> admins = new HashSet<>();
+
+    Community community = getMockCommunity(admins);
+
+    given(communityService.getCommunityDetailsById(COMMUNITY_ID))
+        .willReturn(Optional.of(community));
+    given(paymentService.getPaymentsByAdmin(COMMUNITY_ADMIN_ID))
+        .willReturn(new HashSet<>());
+
+    //when
+    ResponseEntity<ListAdminPaymentsResponse> response =
+        communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID);
+
+    //then
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    assertNull(response.getBody());
+    verify(paymentService).getPaymentsByAdmin(COMMUNITY_ADMIN_ID);
+    verifyNoInteractions(paymentApiMapper);
   }
 }

@@ -16,22 +16,16 @@
 
 package com.myhome.controllers;
 
-import com.myhome.api.CommunitiesApi;
-import com.myhome.api.MembersApi;
 import com.myhome.api.PaymentsApi;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
-import com.myhome.domain.Payment;
 import com.myhome.domain.User;
-import com.myhome.model.ListAdminPaymentsResponse;
-import com.myhome.model.ListMemberPaymentsResponse;
 import com.myhome.model.SchedulePaymentRequest;
 import com.myhome.model.SchedulePaymentResponse;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import java.util.Optional;
-import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class PaymentController implements PaymentsApi, MembersApi, CommunitiesApi {
+public class PaymentController implements PaymentsApi {
   private final PaymentService paymentService;
   private final CommunityService communityService;
   private final SchedulePaymentApiMapper schedulePaymentApiMapper;
@@ -85,52 +79,4 @@ public class PaymentController implements PaymentsApi, MembersApi, CommunitiesAp
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Override
-  public ResponseEntity<ListMemberPaymentsResponse> listAllMemberPayments(String memberId) {
-    log.trace("Received request to list all the payments for the house member with id[{}]",
-        memberId);
-
-    return paymentService.getHouseMember(memberId)
-        .map(payments -> paymentService.getPaymentsByMember(memberId))
-        .map(schedulePaymentApiMapper::memberPaymentSetToRestApiResponseMemberPaymentSet)
-        .map(memberPayments -> new ListMemberPaymentsResponse().payments(memberPayments))
-        .map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
-  }
-
-  @Override
-  public ResponseEntity<ListAdminPaymentsResponse> listAllAdminScheduledPayments(
-      String communityId, String adminId) {
-    log.trace("Received request to list all the payments scheduled by the admin with id[{}]",
-        adminId);
-
-    Set<Payment> payments = paymentService.getPaymentsByAdmin(adminId);
-
-    return communityService.getCommunityDetailsByIdWithAdmins(communityId)
-        .map(community -> isAdminMatchingId(community.getAdmins(), adminId))
-        .map(paymentsMatch -> isAdminMatchingPayment(payments, adminId))
-        .map(matched -> schedulePaymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(
-            payments))
-        .map(adminPayments -> new ListAdminPaymentsResponse().payments(adminPayments))
-        .map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
-  }
-
-  private Boolean isAdminMatchingId(Set<User> list, String adminId) {
-    if (list.stream()
-        .anyMatch(communityAdmin -> communityAdmin.getUserId().equals(adminId))) {
-      return true;
-    }
-
-    return null;
-  }
-
-  private Boolean isAdminMatchingPayment(Set<Payment> payments, String adminId) {
-    if (payments.stream()
-        .anyMatch(payment -> payment.getAdmin().getUserId().equals(adminId))) {
-      return true;
-    }
-
-    return null;
-  }
 }
