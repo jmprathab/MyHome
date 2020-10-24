@@ -1,6 +1,6 @@
 openapi: 3.0.2
 servers:
-  - url: http://localhost:8080/
+  - url: /v3
 info:
   description: This is a OpenApi specification for MyHome backend service.
   version: 2.0.0
@@ -10,6 +10,8 @@ tags:
   - name: Documents
   - name: Communities
   - name: Houses
+  - name: Payments
+  - name: Members
 paths:
   /users:
     post:
@@ -569,6 +571,113 @@ paths:
           description: if params are invalid
 
 
+  /payments:
+    post:
+      tags:
+        - Payments
+      description: "Schedule a new payment"
+      operationId: schedulePayment
+      requestBody:
+        description: CreateUserRequest aggregate fields
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchedulePaymentRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/SchedulePaymentRequest'
+      responses:
+        '201':
+          description: "If schedule payment is created"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
+  /payments/{paymentId}:
+    get:
+      tags:
+        - Payments
+      description: "Get details about a payment with the given payment id"
+      operationId: listPaymentDetails
+      parameters:
+        - in: path
+          name: paymentId
+          schema:
+            type: string
+          required: true
+          description: Payment ID
+      responses:
+        '200':
+          description: "If payment is valid. Response body has the details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
+        '404':
+          description: "If paymentId is invalid"
+  /members/{memberId}/payments:
+    get:
+      tags:
+        - Members
+      description: "Get all payments for the specified member"
+      operationId: listAllMemberPayments
+      parameters:
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+          description: "Member Id to use for getting all payments"
+      responses:
+        '200':
+          description: "If memberId is valid. Response body has the details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListMemberPaymentsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListMemberPaymentsResponse'
+        '404':
+          description: "If memberId is invalid"
+  /communities/{communityId}/admins/{adminId}/payments:
+    get:
+      tags:
+        - Communities
+      description: "Get all payments scheduled by the specified admin"
+      operationId: listAllAdminScheduledPayments
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+          description: "communityId for getting all admin scheduled"
+        - in: path
+          name: adminId
+          schema:
+            type: string
+          required: true
+          description: "adminId for getting all admin scheduled"
+      responses:
+        '200':
+          description: "If communityId and adminId are valid. Response body has the details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListAdminPaymentsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListAdminPaymentsResponse'
+        '404':
+          description: "If communityId and adminId are invalid"
 components:
   schemas:
     CreateUserRequest:
@@ -792,3 +901,81 @@ components:
           uniqueItems: true
           items:
             $ref: '#/components/schemas/HouseMember'
+    SchedulePaymentRequest:
+      type: object
+      required:
+        - description
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+          minLength: 5
+          maxLength: 300
+        recurring:
+          type: boolean
+        charge:
+          type: number
+        dueDate:
+          type: string
+        adminId:
+          type: string
+        memberId:
+          type: string
+    SchedulePaymentResponse:
+      type: object
+      properties:
+        paymentId:
+          type: string
+        charge:
+          type: number
+        type:
+          type: string
+        description:
+          type: string
+        recurring:
+          type: boolean
+        dueDate:
+          type: string
+        adminId:
+          type: string
+        memberId:
+          type: string
+    MemberPayment:
+      type: object
+      properties:
+        memberId:
+          type: string
+        paymentId:
+          type: string
+        charge:
+          type: number
+        dueDate:
+          type: string
+    ListMemberPaymentsResponse:
+      type: object
+      properties:
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberPayment'
+          uniqueItems: true
+    AdminPayment:
+      type: object
+      properties:
+        adminId:
+          type: string
+        paymentId:
+          type: string
+        charge:
+          type: number
+        dueDate:
+          type: string
+    ListAdminPaymentsResponse:
+      type: object
+      properties:
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminPayment'
+          uniqueItems: true

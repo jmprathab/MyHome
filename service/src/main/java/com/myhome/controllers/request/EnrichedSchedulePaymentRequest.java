@@ -16,6 +16,7 @@
 
 package com.myhome.controllers.request;
 
+import com.myhome.model.SchedulePaymentRequest;
 import java.math.BigDecimal;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -49,7 +50,9 @@ public class EnrichedSchedulePaymentRequest extends SchedulePaymentRequest {
       String adminEmail, String adminEncryptedPassword, Set<String> adminCommunityIds,
       String memberId, Long memberEntityId, String houseMemberDocumentName, String houseMemberName,
       String houseMemberHouseID) {
-    super(type, description, recurring, charge, dueDate, adminId, memberId);
+
+    super.type(type).description(description).recurring(recurring).charge(charge).dueDate(dueDate).adminId(adminId).memberId(memberId);
+
     this.adminName = adminName;
     this.adminEmail = adminEmail;
     this.adminEncryptedPassword = adminEncryptedPassword;

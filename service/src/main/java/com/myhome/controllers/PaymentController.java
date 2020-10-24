@@ -16,30 +16,21 @@
 
 package com.myhome.controllers;
 
+import com.myhome.api.PaymentsApi;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
-import com.myhome.controllers.request.SchedulePaymentRequest;
-import com.myhome.controllers.response.ListAdminPaymentsResponse;
-import com.myhome.controllers.response.ListMemberPaymentsResponse;
-import com.myhome.controllers.response.SchedulePaymentResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
-import com.myhome.domain.Payment;
 import com.myhome.domain.User;
+import com.myhome.model.SchedulePaymentRequest;
+import com.myhome.model.SchedulePaymentResponse;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
-import io.swagger.v3.oas.annotations.Operation;
 import java.util.Optional;
-import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -48,18 +39,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class PaymentController {
+public class PaymentController implements PaymentsApi {
   private final PaymentService paymentService;
   private final CommunityService communityService;
   private final SchedulePaymentApiMapper schedulePaymentApiMapper;
 
-  @Operation(description = "Schedule a new payment")
-  @PostMapping(
-      path = "/payments",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<SchedulePaymentResponse> schedulePayment(@Valid @RequestBody
+  @Override
+  public ResponseEntity<SchedulePaymentResponse> schedulePayment(@Valid
       SchedulePaymentRequest request) {
     log.trace("Received schedule payment request");
 
@@ -83,13 +69,8 @@ public class PaymentController {
         .contains(admin);
   }
 
-  @Operation(description = "Get details about a payment with the given payment id")
-  @GetMapping(
-      path = "/payments/{paymentId}",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<SchedulePaymentResponse> listPaymentDetails(
-      @PathVariable String paymentId) {
+  @Override
+  public ResponseEntity<SchedulePaymentResponse> listPaymentDetails(String paymentId) {
     log.trace("Received request to get details about a payment with id[{}]", paymentId);
 
     return paymentService.getPaymentDetails(paymentId)
@@ -98,61 +79,4 @@ public class PaymentController {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Operation(description = "Get all payments for the specified member")
-  @GetMapping(
-      path = "/members/{memberId}/payments",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<ListMemberPaymentsResponse> listAllMemberPayments(
-      @PathVariable String memberId) {
-    log.trace("Received request to list all the payments for the house member with id[{}]",
-        memberId);
-
-    return paymentService.getHouseMember(memberId)
-        .map(payments -> paymentService.getPaymentsByMember(memberId))
-        .map(schedulePaymentApiMapper::memberPaymentSetToRestApiResponseMemberPaymentSet)
-        .map(ListMemberPaymentsResponse::new)
-        .map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
-  }
-
-  @Operation(description = "Get all payments scheduled by the specified admin")
-  @GetMapping(
-      path = "/communities/{communityId}/admins/{adminId}/payments",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<ListAdminPaymentsResponse> listAllAdminScheduledPayments(
-      @PathVariable String communityId, @PathVariable String adminId) {
-    log.trace("Received request to list all the payments scheduled by the admin with id[{}]",
-        adminId);
-
-    Set<Payment> payments = paymentService.getPaymentsByAdmin(adminId);
-
-    return communityService.getCommunityDetailsByIdWithAdmins(communityId)
-        .map(community -> isAdminMatchingId(community.getAdmins(), adminId))
-        .map(paymentsMatch -> isAdminMatchingPayment(payments, adminId))
-        .map(matched -> schedulePaymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(
-            payments))
-        .map(ListAdminPaymentsResponse::new)
-        .map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
-  }
-
-  private Boolean isAdminMatchingId(Set<User> list, String adminId) {
-    if (list.stream()
-        .anyMatch(communityAdmin -> communityAdmin.getUserId().equals(adminId))) {
-      return true;
-    }
-
-    return null;
-  }
-
-  private Boolean isAdminMatchingPayment(Set<Payment> payments, String adminId) {
-    if (payments.stream()
-        .anyMatch(payment -> payment.getAdmin().getUserId().equals(adminId))) {
-      return true;
-    }
-
-    return null;
-  }
 }
