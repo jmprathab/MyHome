@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.unit;
+package com.myhome.controllers;
 
-import com.myhome.controllers.HouseController;
-import com.myhome.controllers.dto.HouseMemberDto;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;
-import com.myhome.controllers.request.AddHouseMemberRequest;
-import com.myhome.controllers.response.AddHouseMemberResponse;
-import com.myhome.controllers.response.GetHouseDetailsResponse;
-import com.myhome.controllers.response.ListHouseMembersResponse;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import com.myhome.model.AddHouseMemberRequest;
+import com.myhome.model.AddHouseMemberResponse;
+import com.myhome.model.GetHouseDetailsResponse;
+import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
+import com.myhome.model.HouseMemberDto;
+import com.myhome.model.ListHouseMembersResponse;
 import com.myhome.services.HouseService;
+import helpers.TestUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -77,10 +75,9 @@ class HouseControllerTest {
   @Test
   void listAllHouses() {
     // given
-    Set<CommunityHouse> testHouses = getTestHouses(TEST_HOUSES_COUNT);
-    Set<GetHouseDetailsResponse.CommunityHouse> testHousesResponse = testHouses.stream()
-        .map(house -> new GetHouseDetailsResponse.CommunityHouse(house.getHouseId(),
-            house.getName()))
+    Set<CommunityHouse> testHouses = TestUtils.CommunityHouseHelpers.getTestHouses(TEST_HOUSES_COUNT);
+    Set<GetHouseDetailsResponseCommunityHouse> testHousesResponse = testHouses.stream()
+        .map(house -> new GetHouseDetailsResponseCommunityHouse().houseId(house.getHouseId()).name(house.getName()))
         .collect(Collectors.toSet());
     GetHouseDetailsResponse expectedResponseBody = new GetHouseDetailsResponse();
     expectedResponseBody.setHouses(testHousesResponse);
@@ -101,10 +98,12 @@ class HouseControllerTest {
   @Test
   void getHouseDetails() {
     // given
-    CommunityHouse testCommunityHouse = getTestCommunityHouse();
-    GetHouseDetailsResponse.CommunityHouse houseDetailsResponse =
-        new GetHouseDetailsResponse.CommunityHouse(testCommunityHouse.getHouseId(),
-            testCommunityHouse.getName());
+    CommunityHouse testCommunityHouse = TestUtils.CommunityHouseHelpers.getTestCommunityHouse(TEST_HOUSE_ID);
+    GetHouseDetailsResponseCommunityHouse houseDetailsResponse =
+            new GetHouseDetailsResponseCommunityHouse()
+                .houseId(testCommunityHouse.getHouseId())
+                .name(testCommunityHouse.getName());
+
     GetHouseDetailsResponse expectedResponseBody = new GetHouseDetailsResponse();
     expectedResponseBody.getHouses().add(houseDetailsResponse);
 
@@ -127,7 +126,7 @@ class HouseControllerTest {
   @Test
   void getHouseDetailsNotExists() {
     // given
-    CommunityHouse testCommunityHouse = getTestCommunityHouse();
+    CommunityHouse testCommunityHouse = TestUtils.CommunityHouseHelpers.getTestCommunityHouse(TEST_HOUSE_ID);
 
     given(houseService.getHouseDetailsById(TEST_HOUSE_ID))
         .willReturn(Optional.empty());
@@ -147,17 +146,18 @@ class HouseControllerTest {
   @Test
   void listAllMembersOfHouse() {
     // given
-    List<HouseMember> testHouseMembers =
-        new ArrayList<>(getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT));
-    Set<ListHouseMembersResponse.HouseMember> testHouseMemberDetails = testHouseMembers.stream()
-        .map(member -> new ListHouseMembersResponse.HouseMember(member.getMemberId(),
-            member.getName()))
+    Set<HouseMember> testHouseMembers = TestUtils.HouseMemberHelpers.getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
+    Set<com.myhome.model.HouseMember> testHouseMemberDetails = testHouseMembers.stream()
+        .map(member -> new com.myhome.model.HouseMember()
+            .memberId(member.getMemberId())
+            .name(member.getName()))
         .collect(Collectors.toSet());
+
     ListHouseMembersResponse expectedResponseBody =
-        new ListHouseMembersResponse(testHouseMemberDetails);
+        new ListHouseMembersResponse().members(testHouseMemberDetails);
 
     given(houseService.getHouseMembersById(TEST_HOUSE_ID, null))
-        .willReturn(Optional.of(testHouseMembers));
+        .willReturn(Optional.of(new ArrayList<>(testHouseMembers)));
     given(houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(
         new HashSet<>(testHouseMembers)))
         .willReturn(testHouseMemberDetails);
@@ -194,19 +194,19 @@ class HouseControllerTest {
   @Test
   void addHouseMembers() {
     // given
-    Set<HouseMember> testMembers = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
+    Set<HouseMember> testMembers = TestUtils.HouseMemberHelpers.getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
     Set<HouseMemberDto> testMembersDto = testMembers.stream()
-        .map(member -> HouseMemberDto.builder()
+        .map(member -> new HouseMemberDto()
             .memberId(member.getMemberId())
-            .name(member.getName())
-            .build())
+            .name(member.getName()))
         .collect(Collectors.toSet());
 
-    AddHouseMemberRequest request = new AddHouseMemberRequest(testMembersDto);
+    AddHouseMemberRequest request = new AddHouseMemberRequest().members(testMembersDto);
 
-    Set<AddHouseMemberResponse.HouseMember> addedMembers = testMembers.stream()
-        .map(member -> new AddHouseMemberResponse.HouseMember(member.getMemberId(),
-            member.getName()))
+    Set<com.myhome.model.HouseMember> addedMembers = testMembers.stream()
+        .map(member -> new com.myhome.model.HouseMember()
+            .memberId(member.getMemberId())
+            .name(member.getName()))
         .collect(Collectors.toSet());
 
     AddHouseMemberResponse expectedResponseBody = new AddHouseMemberResponse();
@@ -234,19 +234,20 @@ class HouseControllerTest {
   @Test
   void addHouseMembersNoMembersAdded() {
     // given
-    Set<HouseMember> testMembers = getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
+    Set<HouseMember> testMembers = TestUtils.HouseMemberHelpers.getTestHouseMembers(TEST_HOUSE_MEMBERS_COUNT);
     Set<HouseMemberDto> testMembersDto = testMembers.stream()
-        .map(member -> HouseMemberDto.builder()
+        .map(member -> new HouseMemberDto()
             .memberId(member.getMemberId())
             .name(member.getName())
-            .build())
+        )
         .collect(Collectors.toSet());
 
-    AddHouseMemberRequest request = new AddHouseMemberRequest(testMembersDto);
+    AddHouseMemberRequest request = new AddHouseMemberRequest().members(testMembersDto);
 
-    Set<AddHouseMemberResponse.HouseMember> addedMembers = testMembers.stream()
-        .map(member -> new AddHouseMemberResponse.HouseMember(member.getMemberId(),
-            member.getName()))
+    Set<com.myhome.model.HouseMember> addedMembers = testMembers.stream()
+        .map(member -> new com.myhome.model.HouseMember()
+            .memberId(member.getMemberId())
+            .name(member.getName()))
         .collect(Collectors.toSet());
 
     AddHouseMemberResponse expectedResponseBody = new AddHouseMemberResponse();
@@ -299,31 +300,4 @@ class HouseControllerTest {
     assertNull(response.getBody());
   }
 
-  private String generateUniqueId() {
-    return UUID.randomUUID().toString();
-  }
-
-  private Set<CommunityHouse> getTestHouses(int count) {
-    return Stream.iterate(0, n -> n + 1)
-        .map(index -> new CommunityHouse(
-            null,
-            String.format("test-community-house-%s", index),
-            generateUniqueId(),
-            new HashSet<>(),
-            new HashSet<>()))
-        .limit(count)
-        .collect(Collectors.toSet());
-  }
-
-  private Set<HouseMember> getTestHouseMembers(int count) {
-    return Stream
-        .generate(() -> new HouseMember()
-            .withMemberId(generateUniqueId()))
-        .limit(count)
-        .collect(Collectors.toSet());
-  }
-
-  private CommunityHouse getTestCommunityHouse() {
-    return new CommunityHouse().withHouseId(TEST_HOUSE_ID);
-  }
 }

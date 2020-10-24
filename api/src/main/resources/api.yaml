@@ -7,9 +7,11 @@ info:
   title: Swagger MyHome - OpenAPI 3.0
 tags:
   - name: Users
+  - name: Documents
+  - name: Communities
+  - name: Houses
   - name: Payments
   - name: Members
-  - name: Communities
 paths:
   /users:
     post:
@@ -85,6 +87,490 @@ paths:
                 $ref: '#/components/schemas/GetUserDetailsResponseUser'
         '404':
           description: "If userId is invalid"
+  /members/{memberId}/documents:
+    get:
+      tags:
+        - Documents
+      description: Returns house member's documents
+      operationId: getHouseMemberDocument
+      parameters:
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: if document present
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: byte
+        '404':
+          description: if params are invalid
+    post:
+      tags:
+        - Documents
+      description: Add house member's documents
+      operationId: uploadHouseMemberDocument
+      parameters:
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                memberDocument:
+                  type: string
+                  format: binary
+      responses:
+        '204':
+          description: if document saved
+        '409':
+          description: if document save error
+        '413':
+          description: if document file too large
+        '404':
+          description: if params are invalid
+    put:
+      tags:
+        - Documents
+      description: Update house member's documents
+      operationId: updateHouseMemberDocument
+      parameters:
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                memberDocument:
+                  type: string
+                  format: binary
+      responses:
+        '204':
+          description: if document updated
+        '409':
+          description: if document update error
+        '413':
+          description: if document file too large
+        '404':
+          description: if params are invalid
+    delete:
+      tags:
+        - Documents
+      description: Delete house member's documents
+      operationId: deleteHouseMemberDocument
+      parameters:
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: if document deleted
+        '404':
+          description: if params are invalid
+  /communities:
+    post:
+      tags:
+        - Communities
+      description: Create a new community
+      operationId: createCommunity
+      requestBody:
+        description: CreateCommunityRequest aggregate fields
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCommunityRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CreateCommunityRequest'
+      responses:
+        '201':
+          description: if community was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCommunityResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CreateCommunityResponse'
+    get:
+      tags:
+        - Communities
+      description: List all communities which are registered
+      operationId: listAllCommunity
+      parameters:
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: Returns list of communities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCommunityDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetCommunityDetailsResponse'
+  /communities/{communityId}:
+    get:
+      tags:
+        - Communities
+      description: Get details about the community given a community id
+      operationId: listCommunityDetails
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: if community exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCommunityDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetCommunityDetailsResponse'
+        '404':
+          description: if params are invalid
+    delete:
+      tags:
+        - Communities
+      description: Deletion community with given community id
+      operationId: deleteCommunity
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: if community was removed
+        '404':
+          description: if params are invalid
+  /communities/{communityId}/admins:
+    get:
+      tags:
+        - Communities
+      description: List all admins of the community given a community id
+      operationId: listCommunityAdmins
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: if community exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCommunityAdminsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListCommunityAdminsResponse'
+        '404':
+          description: if params are invalid
+    post:
+      tags:
+        - Communities
+      description: Add a new admin to the community given a community id
+      operationId: addCommunityAdmins
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: AddCommunityAdminRequest aggregate fields
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCommunityAdminRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AddCommunityAdminRequest'
+      responses:
+        '204':
+          description: if admins were created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddCommunityAdminResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AddCommunityAdminResponse'
+        '404':
+          description: if params are invalid
+  /communities/{communityId}/admins/{adminId}:
+    delete:
+      tags:
+        - Communities
+      description: Remove of admin associated with a community
+      operationId: removeAdminFromCommunity
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: adminId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: if admin was removed
+        '404':
+          description: if params are invalid
+  /communities/{communityId}/houses:
+    get:
+      tags:
+        - Communities
+      description: List all houses of the community given a community id
+      operationId: listCommunityHouses
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: if community exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+        '404':
+          description: if params are invalid
+    post:
+      tags:
+        - Communities
+      description: Add a new house to the community given a community id
+      operationId: addCommunityHouses
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: AddCommunityHouseRequest aggregate fields
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCommunityHouseRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AddCommunityHouseRequest'
+      responses:
+        '204':
+          description: if houses were added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddCommunityHouseResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AddCommunityHouseResponse'
+        '400':
+          description: if params are invalid
+  /communities/{communityId}/houses/{houseId}:
+    delete:
+      tags:
+        - Communities
+      description: Remove of house from the community given a community id and a house id
+      operationId: removeCommunityHouse
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: if house was removed
+        '400':
+          description: if params are invalid
+  /houses:
+    get:
+      tags:
+        - Houses
+      description: List all houses of the community given a community id
+      operationId: listAllHouses
+      parameters:
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: if community exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+  /houses/{houseId}:
+    get:
+      tags:
+        - Houses
+      description: "Get house detail by a given ID"
+      operationId: getHouseDetails
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+          description: ID of the house to get
+      responses:
+        '200':
+          description: "if house present"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+        '404':
+          description: "if params are invalid"
+  /houses/{houseId}/members:
+    get:
+      tags:
+        - Houses
+      description: "List all members of the house given a house id"
+      operationId: listAllMembersOfHouse
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: "if house present"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListHouseMembersResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListHouseMembersResponse'
+        '404':
+          description: "if params are invalid"
+    post:
+      tags:
+        - Houses
+      description: "Add new members to the house given a house id. Responds with member id which were added"
+      operationId: addHouseMembers
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: AddHouseMemberRequest aggregate fields
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddHouseMemberRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AddHouseMemberRequest'
+      responses:
+        '201':
+          description: If members were added to house
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddHouseMemberResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AddHouseMemberResponse'
+        '404':
+          description: If parameters are invalid
+  /houses/{houseId}/members/{memberId}:
+    delete:
+      tags:
+        - Houses
+      description: "Deletion of member associated with a house"
+      operationId: deleteHouseMember
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: If house member was removed from house
+        '400':
+          description: if params are invalid
+
+
   /payments:
     post:
       tags:
@@ -249,6 +735,172 @@ components:
           type: integer
         size:
           type: integer
+    CreateCommunityRequest:
+      type: object
+      required:
+        - name
+        - district
+      properties:
+        name:
+          type: string
+        district:
+          type: string
+    CreateCommunityResponse:
+      type: object
+      required:
+        - communityId
+      properties:
+        communityId:
+          type: string
+    GetCommunityDetailsResponse:
+      type: object
+      required:
+        - communities
+      properties:
+        communities:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/GetCommunityDetailsResponseCommunity'
+    GetCommunityDetailsResponseCommunity:
+      type: object
+      properties:
+        communityId:
+          type: string
+        name:
+          type: string
+        district:
+          type: string
+    ListCommunityAdminsResponse:
+      type: object
+      required:
+        - admins
+      properties:
+        admins:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/ListCommunityAdminsResponseCommunityAdmin'
+    ListCommunityAdminsResponseCommunityAdmin:
+      type: object
+      properties:
+        adminId:
+          type: string
+    AddCommunityAdminRequest:
+      type: object
+      required:
+        - admins
+      properties:
+        admins:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+    AddCommunityAdminResponse:
+      type: object
+      required:
+        - admins
+      properties:
+        admins:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+    GetHouseDetailsResponse:
+      type: object
+      required:
+        - houses
+      properties:
+        houses:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/GetHouseDetailsResponseCommunityHouse'
+    GetHouseDetailsResponseCommunityHouse:
+      type: object
+      properties:
+        houseId:
+          type: string
+        name:
+          type: string
+    AddCommunityHouseRequest:
+      type: object
+      required:
+        - houses
+      properties:
+        houses:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/CommunityHouseName'
+    CommunityHouseName:
+      type: object
+      properties:
+        name:
+          type: string
+    AddCommunityHouseResponse:
+      type: object
+      required:
+        - houses
+      properties:
+        houses:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+    HouseMember:
+      type: object
+      required:
+        - memberId
+        - name
+      properties:
+        memberId:
+          type: string
+        name:
+          type: string
+    ListHouseMembersResponse:
+      type: object
+      required:
+        - members
+      properties:
+        members:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/HouseMember'
+    HouseMemberDto:
+      type: object
+      required:
+        - memberId
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        memberId:
+          type: string
+        name:
+          type: string
+    AddHouseMemberRequest:
+      type: object
+      required:
+        - members
+      properties:
+        members:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/HouseMemberDto'
+    AddHouseMemberResponse:
+      type: object
+      required:
+        - members
+      properties:
+        members:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/HouseMember'
     SchedulePaymentRequest:
       type: object
       required:

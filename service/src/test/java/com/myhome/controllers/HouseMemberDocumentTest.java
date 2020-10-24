@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.myhome.controllers.unit;
+package com.myhome.controllers;
 
-import com.myhome.controllers.HouseMemberDocumentController;
 import com.myhome.domain.HouseMemberDocument;
 import com.myhome.services.HouseMemberDocumentService;
 import java.io.IOException;
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-public class HouseMemberDocumentTest {
+class HouseMemberDocumentTest {
 
   private static final String MEMBER_ID = "test-member-id";
   private static final MockMultipartFile MULTIPART_FILE =
@@ -61,7 +60,7 @@ public class HouseMemberDocumentTest {
         .willReturn(Optional.of(MEMBER_DOCUMENT));
     // when
     ResponseEntity<byte[]> responseEntity =
-        houseMemberDocumentController.getHoseMemberDocument(MEMBER_ID);
+        houseMemberDocumentController.getHouseMemberDocument(MEMBER_ID);
     //then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     assertEquals(MEMBER_DOCUMENT.getDocumentContent(), responseEntity.getBody());
@@ -76,7 +75,7 @@ public class HouseMemberDocumentTest {
         .willReturn(Optional.empty());
     // when
     ResponseEntity<byte[]> responseEntity =
-        houseMemberDocumentController.getHoseMemberDocument(MEMBER_ID);
+        houseMemberDocumentController.getHouseMemberDocument(MEMBER_ID);
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(houseMemberDocumentService).findHouseMemberDocument(MEMBER_ID);
@@ -89,7 +88,7 @@ public class HouseMemberDocumentTest {
         .willReturn(Optional.of(MEMBER_DOCUMENT));
     // when
     ResponseEntity<byte[]> responseEntity =
-        houseMemberDocumentController.uploadHoseMemberDocument(MEMBER_ID, MULTIPART_FILE);
+        houseMemberDocumentController.uploadHouseMemberDocument(MEMBER_ID, MULTIPART_FILE);
     //then
     assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     verify(houseMemberDocumentService).createHouseMemberDocument(MULTIPART_FILE, MEMBER_ID);
@@ -102,7 +101,7 @@ public class HouseMemberDocumentTest {
         .willReturn(Optional.empty());
     // when
     ResponseEntity<byte[]> responseEntity =
-        houseMemberDocumentController.uploadHoseMemberDocument(MEMBER_ID, MULTIPART_FILE);
+        houseMemberDocumentController.uploadHouseMemberDocument(MEMBER_ID, MULTIPART_FILE);
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(houseMemberDocumentService).createHouseMemberDocument(MULTIPART_FILE, MEMBER_ID);
@@ -115,7 +114,7 @@ public class HouseMemberDocumentTest {
         .willReturn(Optional.of(MEMBER_DOCUMENT));
     // when
     ResponseEntity<byte[]> responseEntity =
-        houseMemberDocumentController.updateHoseMemberDocument(MEMBER_ID, MULTIPART_FILE);
+        houseMemberDocumentController.updateHouseMemberDocument(MEMBER_ID, MULTIPART_FILE);
     //then
     assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     verify(houseMemberDocumentService).updateHouseMemberDocument(MULTIPART_FILE, MEMBER_ID);
@@ -128,7 +127,7 @@ public class HouseMemberDocumentTest {
         .willReturn(Optional.empty());
     // when
     ResponseEntity<byte[]> responseEntity =
-        houseMemberDocumentController.updateHoseMemberDocument(MEMBER_ID, MULTIPART_FILE);
+        houseMemberDocumentController.updateHouseMemberDocument(MEMBER_ID, MULTIPART_FILE);
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(houseMemberDocumentService).updateHouseMemberDocument(MULTIPART_FILE, MEMBER_ID);
@@ -141,7 +140,7 @@ public class HouseMemberDocumentTest {
         .willReturn(true);
     // when
     ResponseEntity responseEntity =
-        houseMemberDocumentController.deleteHoseMemberDocument(MEMBER_ID);
+        houseMemberDocumentController.deleteHouseMemberDocument(MEMBER_ID);
     //then
     assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     verify(houseMemberDocumentService).deleteHouseMemberDocument(MEMBER_ID);
@@ -154,7 +153,7 @@ public class HouseMemberDocumentTest {
         .willReturn(false);
     // when
     ResponseEntity responseEntity =
-        houseMemberDocumentController.deleteHoseMemberDocument(MEMBER_ID);
+        houseMemberDocumentController.deleteHouseMemberDocument(MEMBER_ID);
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(houseMemberDocumentService).deleteHouseMemberDocument(MEMBER_ID);

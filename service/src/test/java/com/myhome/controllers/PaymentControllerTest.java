@@ -18,11 +18,11 @@ package com.myhome.controllers.unit;
 
 import com.myhome.controllers.PaymentController;
 import com.myhome.controllers.dto.CommunityDto;
-import com.myhome.controllers.dto.HouseMemberDto;
 import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
 import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
+import com.myhome.controllers.response.SchedulePaymentResponse;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
@@ -30,11 +30,10 @@ import com.myhome.domain.HouseMemberDocument;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
 import com.myhome.model.AdminPayment;
+import com.myhome.model.HouseMemberDto;
 import com.myhome.model.ListAdminPaymentsResponse;
 import com.myhome.model.ListMemberPaymentsResponse;
 import com.myhome.model.MemberPayment;
-import com.myhome.model.SchedulePaymentRequest;
-import com.myhome.model.SchedulePaymentResponse;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import java.math.BigDecimal;
@@ -108,11 +107,10 @@ class PaymentControllerTest {
         .name(TEST_ADMIN_NAME)
         .email(TEST_ADMIN_EMAIL)
         .build();
-    HouseMemberDto houseMemberDto = HouseMemberDto.builder()
+    HouseMemberDto houseMemberDto = new HouseMemberDto()
         .memberId(TEST_MEMBER_ID)
         .name(TEST_MEMBER_NAME)
-        .id(Long.valueOf(TEST_MEMBER_ID))
-        .build();
+        .id(Long.valueOf(TEST_MEMBER_ID));
 
     return PaymentDto.builder()
         .paymentId(TEST_ID)
@@ -174,8 +172,8 @@ class PaymentControllerTest {
   @Test
   void shouldSchedulePaymentSuccessful() {
     // given
-    SchedulePaymentRequest request =
-        new SchedulePaymentRequest()
+    com.myhome.model.SchedulePaymentRequest request =
+        new com.myhome.model.SchedulePaymentRequest()
             .type(TEST_TYPE)
             .description(TEST_DESCRIPTION)
             .recurring(TEST_RECURRING)
@@ -190,8 +188,8 @@ class PaymentControllerTest {
             TEST_ADMIN_PASSWORD, new HashSet<>(Arrays.asList(TEST_COMMUNITY_ID)), TEST_MEMBER_ID,
             Long.valueOf(2), "", TEST_MEMBER_NAME, COMMUNITY_HOUSE_ID);
     PaymentDto paymentDto = createTestPaymentDto();
-    SchedulePaymentResponse response =
-        new SchedulePaymentResponse()
+    com.myhome.model.SchedulePaymentResponse response =
+        new com.myhome.model.SchedulePaymentResponse()
           .paymentId(TEST_ID)
           .charge(TEST_CHARGE)
           .type(TEST_TYPE)
@@ -224,7 +222,7 @@ class PaymentControllerTest {
         .willReturn(Optional.of(community.getAdmins().iterator().next()));
 
     //when
-    ResponseEntity<SchedulePaymentResponse> responseEntity =
+    ResponseEntity<com.myhome.model.SchedulePaymentResponse> responseEntity =
         paymentController.schedulePayment(request);
 
     //then
@@ -240,8 +238,8 @@ class PaymentControllerTest {
   @Test
   void shouldNotScheduleIfMemberDoesNotExist() {
     // given
-    SchedulePaymentRequest request =
-        new SchedulePaymentRequest()
+    com.myhome.model.SchedulePaymentRequest request =
+        new com.myhome.model.SchedulePaymentRequest()
             .type(TEST_TYPE)
             .description(TEST_DESCRIPTION)
             .recurring(TEST_RECURRING)
@@ -259,7 +257,7 @@ class PaymentControllerTest {
         .willReturn(Optional.empty());
 
     //when
-    ResponseEntity<SchedulePaymentResponse> responseEntity =
+    ResponseEntity<com.myhome.model.SchedulePaymentResponse> responseEntity =
         paymentController.schedulePayment(request);
 
     //then
@@ -271,8 +269,8 @@ class PaymentControllerTest {
   @Test
   void shouldNotScheduleIfAdminDoesntExist() {
     // given
-    SchedulePaymentRequest request =
-        new SchedulePaymentRequest()
+    com.myhome.model.SchedulePaymentRequest request =
+        new com.myhome.model.SchedulePaymentRequest()
             .type(TEST_TYPE)
             .description(TEST_DESCRIPTION)
             .recurring(TEST_RECURRING)
@@ -281,8 +279,8 @@ class PaymentControllerTest {
             .adminId(TEST_ADMIN_ID)
             .memberId(TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
-    SchedulePaymentResponse response =
-        new SchedulePaymentResponse()
+    com.myhome.model.SchedulePaymentResponse response =
+        new com.myhome.model.SchedulePaymentResponse()
             .paymentId(TEST_ID)
             .charge(TEST_CHARGE)
             .type(TEST_TYPE)
@@ -306,7 +304,7 @@ class PaymentControllerTest {
         .willReturn(Optional.empty());
 
     //when
-    ResponseEntity<SchedulePaymentResponse> responseEntity =
+    ResponseEntity<com.myhome.model.SchedulePaymentResponse> responseEntity =
         paymentController.schedulePayment(request);
 
     //then
@@ -320,8 +318,8 @@ class PaymentControllerTest {
   @Test
   void shouldNotScheduleIfAdminIsNotInCommunity() {
     // given
-    SchedulePaymentRequest request =
-        new SchedulePaymentRequest()
+    com.myhome.model.SchedulePaymentRequest request =
+        new com.myhome.model.SchedulePaymentRequest()
             .type(TEST_TYPE)
             .description(TEST_DESCRIPTION)
             .recurring(TEST_RECURRING)
@@ -330,8 +328,8 @@ class PaymentControllerTest {
             .adminId(TEST_ADMIN_ID)
             .memberId(TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
-    SchedulePaymentResponse response =
-        new SchedulePaymentResponse()
+    com.myhome.model.SchedulePaymentResponse response =
+        new com.myhome.model.SchedulePaymentResponse()
             .paymentId(TEST_ID)
             .charge(TEST_CHARGE)
             .type(TEST_TYPE)
@@ -362,7 +360,7 @@ class PaymentControllerTest {
         .willReturn(Optional.of(admin));
 
     //when
-    ResponseEntity<SchedulePaymentResponse> responseEntity =
+    ResponseEntity<com.myhome.model.SchedulePaymentResponse> responseEntity =
         paymentController.schedulePayment(request);
 
     //then
@@ -378,7 +376,7 @@ class PaymentControllerTest {
     // given
     PaymentDto paymentDto = createTestPaymentDto();
 
-    SchedulePaymentResponse expectedResponse =         new SchedulePaymentResponse()
+    com.myhome.model.SchedulePaymentResponse expectedResponse =         new com.myhome.model.SchedulePaymentResponse()
         .paymentId(TEST_ID)
         .charge(TEST_CHARGE)
         .type(TEST_TYPE)
@@ -393,7 +391,7 @@ class PaymentControllerTest {
         .willReturn(expectedResponse);
 
     // when
-    ResponseEntity<SchedulePaymentResponse> responseEntity =
+    ResponseEntity<com.myhome.model.SchedulePaymentResponse> responseEntity =
         paymentController.listPaymentDetails(TEST_ID);
 
     // then
@@ -410,7 +408,7 @@ class PaymentControllerTest {
         .willReturn(Optional.empty());
 
     //when
-    ResponseEntity<SchedulePaymentResponse> responseEntity =
+    ResponseEntity<com.myhome.model.SchedulePaymentResponse> responseEntity =
         paymentController.listPaymentDetails(TEST_ID);
 
     //then
@@ -423,8 +421,8 @@ class PaymentControllerTest {
   @Test
   void shouldGetMemberPaymentsSuccess() {
     // given
-    SchedulePaymentRequest request =
-        new SchedulePaymentRequest()
+    com.myhome.model.SchedulePaymentRequest request =
+        new com.myhome.model.SchedulePaymentRequest()
             .type(TEST_TYPE)
             .description(TEST_DESCRIPTION)
             .recurring(TEST_RECURRING)
@@ -492,8 +490,8 @@ class PaymentControllerTest {
   @Test
   void shouldGetAdminPaymentsSuccess() {
     // given
-    SchedulePaymentRequest request =
-        new SchedulePaymentRequest()
+    com.myhome.model.SchedulePaymentRequest request =
+        new com.myhome.model.SchedulePaymentRequest()
             .type(TEST_TYPE)
             .description(TEST_DESCRIPTION)
             .recurring(TEST_RECURRING)
@@ -535,7 +533,7 @@ class PaymentControllerTest {
         new AdminPayment().adminId(TEST_ADMIN_ID).paymentId(TEST_ID).charge(TEST_CHARGE).dueDate(TEST_DUE_DATE)
     );
 
-    ListAdminPaymentsResponse expectedResponse = new ListAdminPaymentsResponse().payments(responsePayments);
+    ListAdminPaymentsResponse expectedResponse = new ListAdminPaymentsResponse(responsePayments);
 
     given(paymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(payments))
         .willReturn(responsePayments);
