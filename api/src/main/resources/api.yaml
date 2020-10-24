@@ -87,6 +87,34 @@ paths:
                 $ref: '#/components/schemas/GetUserDetailsResponseUser'
         '404':
           description: "If userId is invalid"
+  /users/{userId}/housemates:
+    get:
+      tags:
+        - Users
+      description: "Lists all members from all houses of a user"
+      operationId: listAllHousemates
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID of the user for which to find housemates
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: "Returns list of all members from all houses of the specified user"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListHouseMembersResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListHouseMembersResponse'
   /members/{memberId}/documents:
     get:
       tags:

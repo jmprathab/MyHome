@@ -18,13 +18,17 @@ package com.myhome.controllers;
 
 import com.myhome.api.UsersApi;
 import com.myhome.controllers.dto.UserDto;
+import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.UserApiMapper;
 import com.myhome.domain.User;
 import com.myhome.model.CreateUserRequest;
 import com.myhome.model.CreateUserResponse;
 import com.myhome.model.GetUserDetailsResponse;
 import com.myhome.model.GetUserDetailsResponseUser;
+import com.myhome.model.ListHouseMembersResponse;
+import com.myhome.services.HouseService;
 import com.myhome.services.UserService;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
@@ -44,6 +48,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController implements UsersApi {
   private final UserService userService;
   private final UserApiMapper userApiMapper;
+  private final HouseService houseService;
+  private final HouseMemberMapper houseMemberMapper;
 
   @Override
   public ResponseEntity<CreateUserResponse> signUp(@Valid CreateUserRequest request) {
@@ -80,5 +86,17 @@ public class UserController implements UsersApi {
         .map(userApiMapper::userDtoToGetUserDetailsResponse)
         .map(response -> ResponseEntity.status(HttpStatus.OK).body(response))
         .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+  }
+
+  @Override
+  public ResponseEntity<ListHouseMembersResponse> listAllHousemates(String userId, Pageable pageable) {
+    log.trace("Received request to list all members of all houses of user with Id[{}]", userId);
+
+    return houseService.listHouseMembersForHousesOfUserId(userId, pageable)
+            .map(HashSet::new)
+            .map(houseMemberMapper::houseMemberSetToRestApiResponseHouseMemberSet)
+            .map(houseMembers -> new ListHouseMembersResponse().members(houseMembers))
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
   }
 }

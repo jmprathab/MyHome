@@ -107,4 +107,12 @@ public class HouseSDJpaService implements HouseService {
         houseMemberRepository.findAllByCommunityHouse_HouseId(houseId, pageable)
     );
   }
+
+  @Override
+  public Optional<List<HouseMember>> listHouseMembersForHousesOfUserId(String userId,
+      Pageable pageable) {
+    return Optional.ofNullable(
+        houseMemberRepository.findAllByCommunityHouse_Community_Admins_UserId(userId, pageable)
+    );
+  }
 }
