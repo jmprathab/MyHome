@@ -67,7 +67,17 @@ dependencies {
   implementation "org.springdoc:springdoc-openapi-ui:${springDocOpenApiVersion}"
 }
 
+// Regular JAR needs to be created so that dependent projects such as
+// integration-test can properly use classes from this project
+jar {
+  archiveBaseName = 'myhome-service'
+  enabled = true
+}
+
 bootJar {
+  archiveBaseName = 'myhome-service-boot'
+  enabled = true
+
   mainClassName = 'com.myhome.MyHomeServiceApplication'
   manifest {
     attributes(
