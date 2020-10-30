@@ -15,5 +15,20 @@
  */
 
 dependencies {
-  implementation project(':service')
+  implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+
+  testImplementation project(':api')
+  testImplementation project(':service')
+
+  testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+  testImplementation('org.springframework.boot:spring-boot-starter-test') {
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+
+  testImplementation('org.springframework.security:spring-security-test')
+}
+
+test {
+  useJUnitPlatform()
 }

@@ -17,17 +17,22 @@
 package com.myhome.controllers;
 
 import com.myhome.controllers.dto.UserDto;
+import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.UserApiMapper;
 import com.myhome.domain.PasswordActionType;
+import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
 import com.myhome.model.CreateUserRequest;
 import com.myhome.model.CreateUserResponse;
 import com.myhome.model.ForgotPasswordRequest;
 import com.myhome.model.GetUserDetailsResponse;
 import com.myhome.model.GetUserDetailsResponseUser;
+import com.myhome.model.ListHouseMembersResponse;
+import com.myhome.services.HouseService;
 import com.myhome.services.UserService;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -61,6 +67,12 @@ class UserControllerTest {
 
   @Mock
   private UserApiMapper userApiMapper;
+
+  @Mock
+  private HouseService houseService;
+
+  @Mock
+  private HouseMemberMapper houseMemberMapper;
 
   @InjectMocks
   private UserController userController;
@@ -251,5 +263,68 @@ class UserControllerTest {
     request.setNewPassword(TEST_NEW_PASSWORD);
     request.setToken(TEST_TOKEN);
     return request;
+
+    void shouldListAllHousematesSuccessWithNoResults() {
+    // given
+    String userId = TEST_ID;
+    int start = 50;
+    int limit = 150;
+    PageRequest pageRequest = PageRequest.of(start, limit);
+
+    given(houseService.listHouseMembersForHousesOfUserId(userId, pageRequest))
+        .willReturn(Optional.empty());
+
+    // when
+    ResponseEntity<ListHouseMembersResponse> response =
+        userController.listAllHousemates(userId, pageRequest);
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    assertNull(response.getBody());
+    then(houseService).should().listHouseMembersForHousesOfUserId(userId, pageRequest);
+    then(houseMemberMapper).shouldHaveNoInteractions();
+    then(userService).shouldHaveNoInteractions();
+    then(userApiMapper).shouldHaveNoInteractions();
+  }
+
+  @Test
+  void shouldListAllHousematesSuccessWithResults() {
+    // given
+    String userId = TEST_ID;
+    int start = 50;
+    int limit = 150;
+    PageRequest pageRequest = PageRequest.of(start, limit);
+
+    List<HouseMember> houseMemberList = Collections.singletonList(
+        new HouseMember(TEST_ID, null, TEST_NAME, null)
+    );
+
+    Set<com.myhome.model.HouseMember> responseSet = Collections.singleton(
+        new com.myhome.model.HouseMember()
+            .memberId(TEST_ID)
+            .name(TEST_NAME)
+    );
+
+    ListHouseMembersResponse expectedResponse = new ListHouseMembersResponse();
+    expectedResponse.setMembers(responseSet);
+
+    given(houseService.listHouseMembersForHousesOfUserId(userId, pageRequest))
+        .willReturn(Optional.of(houseMemberList));
+    given(houseMemberMapper.houseMemberSetToRestApiResponseHouseMemberSet(
+        new HashSet<>(houseMemberList)))
+        .willReturn(responseSet);
+
+    // when
+    ResponseEntity<ListHouseMembersResponse> response =
+        userController.listAllHousemates(userId, pageRequest);
+
+    // then
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(expectedResponse, response.getBody());
+    then(houseService).should().listHouseMembersForHousesOfUserId(userId, pageRequest);
+    then(houseMemberMapper).should()
+        .houseMemberSetToRestApiResponseHouseMemberSet(new HashSet<>(houseMemberList));
+    then(userService).shouldHaveNoInteractions();
+    then(userApiMapper).shouldHaveNoInteractions();
   }
 }

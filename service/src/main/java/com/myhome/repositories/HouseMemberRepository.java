@@ -26,4 +26,7 @@ public interface HouseMemberRepository extends CrudRepository<HouseMember, Long>
   Optional<HouseMember> findByMemberId(String memberId);
 
   List<HouseMember> findAllByCommunityHouse_HouseId(String houseId, Pageable pageable);
+
+  List<HouseMember> findAllByCommunityHouse_Community_Admins_UserId(String userId,
+      Pageable pageable);
 }

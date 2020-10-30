@@ -19,8 +19,10 @@ package com.myhome.controllers;
 import com.myhome.api.CommunitiesApi;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.mapper.CommunityApiMapper;
+import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.Payment;
 import com.myhome.domain.User;
 import com.myhome.model.AddCommunityAdminRequest;
 import com.myhome.model.AddCommunityAdminResponse;
@@ -32,8 +34,10 @@ import com.myhome.model.CreateCommunityResponse;
 import com.myhome.model.GetCommunityDetailsResponse;
 import com.myhome.model.GetCommunityDetailsResponseCommunity;
 import com.myhome.model.GetHouseDetailsResponse;
+import com.myhome.model.ListAdminPaymentsResponse;
 import com.myhome.model.ListCommunityAdminsResponse;
 import com.myhome.services.CommunityService;
+import com.myhome.services.PaymentService;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -59,6 +63,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommunityController implements CommunitiesApi {
   private final CommunityService communityService;
   private final CommunityApiMapper communityApiMapper;
+  private final SchedulePaymentApiMapper schedulePaymentApiMapper;
+  private final PaymentService paymentService;
 
   @Override
   public ResponseEntity<CreateCommunityResponse> createCommunity(@Valid @RequestBody
@@ -203,5 +209,42 @@ public class CommunityController implements CommunitiesApi {
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+  }
+
+
+  @Override
+  public ResponseEntity<ListAdminPaymentsResponse> listAllAdminScheduledPayments(
+      String communityId, String adminId) {
+    log.trace("Received request to list all the payments scheduled by the admin with id[{}]",
+        adminId);
+
+    Set<Payment> payments = paymentService.getPaymentsByAdmin(adminId);
+
+    return communityService.getCommunityDetailsByIdWithAdmins(communityId)
+        .map(community -> isAdminMatchingId(community.getAdmins(), adminId))
+        .map(paymentsMatch -> isAdminMatchingPayment(payments, adminId))
+        .map(matched -> schedulePaymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(
+            payments))
+        .map(adminPayments -> new ListAdminPaymentsResponse().payments(adminPayments))
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  private Boolean isAdminMatchingId(Set<User> list, String adminId) {
+    if (list.stream()
+        .anyMatch(communityAdmin -> communityAdmin.getUserId().equals(adminId))) {
+      return true;
+    }
+
+    return null;
+  }
+
+  private Boolean isAdminMatchingPayment(Set<Payment> payments, String adminId) {
+    if (payments.stream()
+        .anyMatch(payment -> payment.getAdmin().getUserId().equals(adminId))) {
+      return true;
+    }
+
+    return null;
   }
 }

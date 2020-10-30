@@ -18,6 +18,7 @@ package com.myhome.controllers;
 
 import com.myhome.api.UsersApi;
 import com.myhome.controllers.dto.UserDto;
+import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.UserApiMapper;
 import com.myhome.domain.PasswordActionType;
 import com.myhome.domain.User;
@@ -26,7 +27,13 @@ import com.myhome.model.CreateUserResponse;
 import com.myhome.model.ForgotPasswordRequest;
 import com.myhome.model.GetUserDetailsResponse;
 import com.myhome.model.GetUserDetailsResponseUser;
+import com.myhome.model.ListHouseMembersResponse;
+import com.myhome.services.HouseService;
 import com.myhome.services.UserService;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +56,8 @@ import java.util.Set;
 public class UserController implements UsersApi {
   private final UserService userService;
   private final UserApiMapper userApiMapper;
+  private final HouseService houseService;
+  private final HouseMemberMapper houseMemberMapper;
 
   @Override
   public ResponseEntity<CreateUserResponse> signUp(@Valid CreateUserRequest request) {
@@ -103,4 +112,14 @@ public class UserController implements UsersApi {
       return ResponseEntity.badRequest().build();
     }  }
 
+  public ResponseEntity<ListHouseMembersResponse> listAllHousemates(String userId, Pageable pageable) {
+    log.trace("Received request to list all members of all houses of user with Id[{}]", userId);
+
+    return houseService.listHouseMembersForHousesOfUserId(userId, pageable)
+            .map(HashSet::new)
+            .map(houseMemberMapper::houseMemberSetToRestApiResponseHouseMemberSet)
+            .map(houseMembers -> new ListHouseMembersResponse().members(houseMembers))
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+  }
 }

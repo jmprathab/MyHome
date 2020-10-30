@@ -35,4 +35,6 @@ public interface HouseService {
   Optional<CommunityHouse> getHouseDetailsById(String houseId);
 
   Optional<List<HouseMember>> getHouseMembersById(String houseId, Pageable pageable);
+
+  Optional<List<HouseMember>> listHouseMembersForHousesOfUserId(String userId, Pageable pageable);
 }

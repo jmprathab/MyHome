@@ -1,6 +1,6 @@
 openapi: 3.0.2
 servers:
-  - url: http://localhost:8080/
+  - url: /v3
 info:
   description: This is a OpenApi specification for MyHome backend service.
   version: 2.0.0
@@ -9,6 +9,9 @@ tags:
   - name: Users
   - name: Documents
   - name: Communities
+  - name: Houses
+  - name: Payments
+  - name: Members
 paths:
   /users/password:
     post:
@@ -112,6 +115,34 @@ paths:
                 $ref: '#/components/schemas/GetUserDetailsResponseUser'
         '404':
           description: "If userId is invalid"
+  /users/{userId}/housemates:
+    get:
+      tags:
+        - Users
+      description: "Lists all members from all houses of a user"
+      operationId: listAllHousemates
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID of the user for which to find housemates
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: "Returns list of all members from all houses of the specified user"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListHouseMembersResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListHouseMembersResponse'
   /members/{memberId}/documents:
     get:
       tags:
@@ -463,6 +494,246 @@ paths:
           description: if house was removed
         '400':
           description: if params are invalid
+  /houses:
+    get:
+      tags:
+        - Houses
+      description: List all houses of the community given a community id
+      operationId: listAllHouses
+      parameters:
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: if community exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+  /houses/{houseId}:
+    get:
+      tags:
+        - Houses
+      description: "Get house detail by a given ID"
+      operationId: getHouseDetails
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+          description: ID of the house to get
+      responses:
+        '200':
+          description: "if house present"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetHouseDetailsResponse'
+        '404':
+          description: "if params are invalid"
+  /houses/{houseId}/members:
+    get:
+      tags:
+        - Houses
+      description: "List all members of the house given a house id"
+      operationId: listAllMembersOfHouse
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: "if house present"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListHouseMembersResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListHouseMembersResponse'
+        '404':
+          description: "if params are invalid"
+    post:
+      tags:
+        - Houses
+      description: "Add new members to the house given a house id. Responds with member id which were added"
+      operationId: addHouseMembers
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: AddHouseMemberRequest aggregate fields
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddHouseMemberRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AddHouseMemberRequest'
+      responses:
+        '201':
+          description: If members were added to house
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddHouseMemberResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AddHouseMemberResponse'
+        '404':
+          description: If parameters are invalid
+  /houses/{houseId}/members/{memberId}:
+    delete:
+      tags:
+        - Houses
+      description: "Deletion of member associated with a house"
+      operationId: deleteHouseMember
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: If house member was removed from house
+        '400':
+          description: if params are invalid
+
+
+  /payments:
+    post:
+      tags:
+        - Payments
+      description: "Schedule a new payment"
+      operationId: schedulePayment
+      requestBody:
+        description: CreateUserRequest aggregate fields
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchedulePaymentRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/SchedulePaymentRequest'
+      responses:
+        '201':
+          description: "If schedule payment is created"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
+  /payments/{paymentId}:
+    get:
+      tags:
+        - Payments
+      description: "Get details about a payment with the given payment id"
+      operationId: listPaymentDetails
+      parameters:
+        - in: path
+          name: paymentId
+          schema:
+            type: string
+          required: true
+          description: Payment ID
+      responses:
+        '200':
+          description: "If payment is valid. Response body has the details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SchedulePaymentResponse'
+        '404':
+          description: "If paymentId is invalid"
+  /members/{memberId}/payments:
+    get:
+      tags:
+        - Members
+      description: "Get all payments for the specified member"
+      operationId: listAllMemberPayments
+      parameters:
+        - in: path
+          name: memberId
+          schema:
+            type: string
+          required: true
+          description: "Member Id to use for getting all payments"
+      responses:
+        '200':
+          description: "If memberId is valid. Response body has the details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListMemberPaymentsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListMemberPaymentsResponse'
+        '404':
+          description: "If memberId is invalid"
+  /communities/{communityId}/admins/{adminId}/payments:
+    get:
+      tags:
+        - Communities
+      description: "Get all payments scheduled by the specified admin"
+      operationId: listAllAdminScheduledPayments
+      parameters:
+        - in: path
+          name: communityId
+          schema:
+            type: string
+          required: true
+          description: "communityId for getting all admin scheduled"
+        - in: path
+          name: adminId
+          schema:
+            type: string
+          required: true
+          description: "adminId for getting all admin scheduled"
+      responses:
+        '200':
+          description: "If communityId and adminId are valid. Response body has the details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListAdminPaymentsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListAdminPaymentsResponse'
+        '404':
+          description: "If communityId and adminId are invalid"
 components:
   schemas:
     ForgotPasswordRequest:
@@ -642,3 +913,134 @@ components:
           uniqueItems: true
           items:
             type: string
+    HouseMember:
+      type: object
+      required:
+        - memberId
+        - name
+      properties:
+        memberId:
+          type: string
+        name:
+          type: string
+    ListHouseMembersResponse:
+      type: object
+      required:
+        - members
+      properties:
+        members:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/HouseMember'
+    HouseMemberDto:
+      type: object
+      required:
+        - memberId
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        memberId:
+          type: string
+        name:
+          type: string
+    AddHouseMemberRequest:
+      type: object
+      required:
+        - members
+      properties:
+        members:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/HouseMemberDto'
+    AddHouseMemberResponse:
+      type: object
+      required:
+        - members
+      properties:
+        members:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/HouseMember'
+    SchedulePaymentRequest:
+      type: object
+      required:
+        - description
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+          minLength: 5
+          maxLength: 300
+        recurring:
+          type: boolean
+        charge:
+          type: number
+        dueDate:
+          type: string
+        adminId:
+          type: string
+        memberId:
+          type: string
+    SchedulePaymentResponse:
+      type: object
+      properties:
+        paymentId:
+          type: string
+        charge:
+          type: number
+        type:
+          type: string
+        description:
+          type: string
+        recurring:
+          type: boolean
+        dueDate:
+          type: string
+        adminId:
+          type: string
+        memberId:
+          type: string
+    MemberPayment:
+      type: object
+      properties:
+        memberId:
+          type: string
+        paymentId:
+          type: string
+        charge:
+          type: number
+        dueDate:
+          type: string
+    ListMemberPaymentsResponse:
+      type: object
+      properties:
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberPayment'
+          uniqueItems: true
+    AdminPayment:
+      type: object
+      properties:
+        adminId:
+          type: string
+        paymentId:
+          type: string
+        charge:
+          type: number
+        dueDate:
+          type: string
+    ListAdminPaymentsResponse:
+      type: object
+      properties:
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminPayment'
+          uniqueItems: true
