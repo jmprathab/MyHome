@@ -27,8 +27,6 @@ dependencies {
   }
 
   testImplementation('org.springframework.security:spring-security-test')
-
-  testImplementation('io.rest-assured:spring-mock-mvc')
 }
 
 test {
