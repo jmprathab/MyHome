@@ -24,11 +24,15 @@ import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import com.myhome.domain.HouseMemberDocument;
+import com.myhome.domain.Payment;
 import com.myhome.domain.User;
 import com.myhome.model.HouseMemberDto;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -120,15 +124,6 @@ class PaymentControllerTest {
     communityDto.setDistrict(TEST_COMMUNITY_DISTRICT);
     communityDto.setCommunityId(TEST_COMMUNITY_ID);
     return communityDto;
-  }
-
-  private CommunityHouse getMockCommunityHouse() {
-    CommunityHouse communityHouse = new CommunityHouse();
-    communityHouse.setName(COMMUNITY_HOUSE_NAME);
-    communityHouse.setHouseId(COMMUNITY_HOUSE_ID);
-    communityHouse.setHouseMembers(new HashSet<>());
-
-    return communityHouse;
   }
 
   private Community getMockCommunity(Set<User> admins) {

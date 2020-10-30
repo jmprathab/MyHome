@@ -18,6 +18,7 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
+import com.myhome.domain.Community;
 import com.myhome.domain.SecurityToken;
 import com.myhome.domain.SecurityTokenType;
 import com.myhome.domain.User;
@@ -79,7 +80,7 @@ public class UserSDJpaService implements UserService {
     Optional<User> userOptional = userRepository.findByUserIdWithCommunities(userId);
     return userOptional.map(admin -> {
       Set<String> communityIds = admin.getCommunities().stream()
-          .map(community -> community.getCommunityId())
+          .map(Community::getCommunityId)
           .collect(Collectors.toSet());
 
       UserDto userDto = userMapper.userToUserDto(admin);
@@ -114,9 +115,12 @@ public class UserSDJpaService implements UserService {
                 && token.getToken().equals(passwordResetRequest.getToken())
                 && token.getExpiryDate().isAfter(LocalDate.now()))
             .findFirst()
+            .map(token -> {
+              securityTokenService.useToken(token);
+              return token;
+            })
             .orElse(null);
         if (userPasswordResetToken != null) {
-          securityTokenService.useToken(userPasswordResetToken);
           user.setEncryptedPassword(passwordEncoder.encode(passwordResetRequest.getNewPassword()));
           user = userRepository.save(user);
           mailService.sendPasswordSuccessfullyChanged(user);

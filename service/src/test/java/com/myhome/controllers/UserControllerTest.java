@@ -263,8 +263,9 @@ class UserControllerTest {
     request.setNewPassword(TEST_NEW_PASSWORD);
     request.setToken(TEST_TOKEN);
     return request;
+  }
 
-    void shouldListAllHousematesSuccessWithNoResults() {
+  void shouldListAllHousematesSuccessWithNoResults() {
     // given
     String userId = TEST_ID;
     int start = 50;
