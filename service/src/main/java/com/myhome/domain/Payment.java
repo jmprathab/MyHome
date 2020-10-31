@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,6 +49,8 @@ public class Payment extends BaseEntity {
   private boolean recurring;
   @JsonFormat(pattern = "yyyy-MM-dd")
   private LocalDate dueDate;
+  @ManyToOne(fetch = FetchType.LAZY)
   private User admin;
+  @ManyToOne(fetch = FetchType.LAZY)
   private HouseMember member;
 }
