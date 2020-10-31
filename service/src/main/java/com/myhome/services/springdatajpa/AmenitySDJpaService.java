@@ -19,19 +19,28 @@ package com.myhome.services.springdatajpa;
 import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
+import com.myhome.domain.AmenityBookingItem;
 import com.myhome.domain.Community;
 import com.myhome.repositories.AmenityBookingItemRepository;
 import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import static com.myhome.repositories.specifications.AmenityBookingItemSpecifications.amenityIdEquals;
+import static com.myhome.repositories.specifications.AmenityBookingItemSpecifications.endDateNullOrBefore;
+import static com.myhome.repositories.specifications.AmenityBookingItemSpecifications.startDateAfter;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 @RequiredArgsConstructor
@@ -103,6 +112,28 @@ public class AmenitySDJpaService implements AmenityService {
             })
             .orElse(null))
         .map(amenityRepository::save).isPresent();
+  }
+
+  @Override
+  public Optional<Set<AmenityBookingItem>> listAmenityBookings(String amenityId, LocalDateTime startDate,
+      LocalDateTime endDate, Pageable pageable) {
+    if (!amenityRepository.findByAmenityId(amenityId).isPresent()) {
+      return Optional.empty();
+    }
+
+    Specification<AmenityBookingItem> whereCriteriaMatch = where(amenityIdEquals(amenityId));
+
+    if (startDate != null) {
+      whereCriteriaMatch = whereCriteriaMatch.and(startDateAfter(startDate));
+    }
+
+    if (endDate != null) {
+      whereCriteriaMatch = whereCriteriaMatch.and(endDateNullOrBefore(endDate));
+    }
+
+    Set<AmenityBookingItem> amenityBookingSet = new HashSet<>();
+    bookingRepository.findAll(whereCriteriaMatch, pageable).forEach(amenityBookingSet::add);
+    return Optional.of(amenityBookingSet);
   }
 
     @Override

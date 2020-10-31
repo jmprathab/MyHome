@@ -21,15 +21,22 @@ import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.controllers.request.AddAmenityRequest;
 import com.myhome.controllers.request.UpdateAmenityRequest;
 import com.myhome.controllers.response.amenity.AddAmenityResponse;
+import com.myhome.controllers.response.amenity.GetAmenityBookingDetailsResponse;
 import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
+import com.myhome.domain.AmenityBookingItem;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.time.LocalDate;
+import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +46,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -72,7 +80,7 @@ public class AmenityController {
       }
   )
   @DeleteMapping(path = "/amenities/{amenityId}")
-  public ResponseEntity deleteAmenity(@PathVariable String amenityId) {
+  public ResponseEntity<Void> deleteAmenity(@PathVariable String amenityId) {
     boolean isAmenityDeleted = amenitySDJpaService.deleteAmenity(amenityId);
     if (isAmenityDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -129,6 +137,43 @@ public class AmenityController {
   }
 
   @Operation(
+      description = "Get all bookings for an amentiy",
+      responses = {
+          @ApiResponse(responseCode = "200", description = "If amenity bookings list is available"),
+          @ApiResponse(responseCode = "404", description = "If amenity doesn't exist")
+      }
+  )
+  @GetMapping(
+      path = "amenities/{amenityId}/bookings",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+  )
+  public ResponseEntity<Set<GetAmenityBookingDetailsResponse>> listAmenityBookings(
+      @PathVariable String amenityId,
+      @RequestParam(name = "start", required = false)
+      @DateTimeFormat(pattern = "''MM-dd-yyyy''") LocalDate startDate,
+      @RequestParam(name = "end", required = false)
+      @DateTimeFormat(pattern = "''MM-dd-yyyy''") LocalDate endDate,
+      @PageableDefault(size = 200) Pageable pageable) {
+    Optional<Set<AmenityBookingItem>> amenityBookings =
+        amenitySDJpaService.listAmenityBookings(
+            amenityId,
+            Optional.ofNullable(startDate)
+                .map(LocalDate::atStartOfDay)
+                .orElse(null),
+            Optional.ofNullable(endDate)
+                .map(date -> date.plusDays(1).atStartOfDay().minusSeconds(1))
+                .orElse(null),
+            pageable);
+
+    if (!amenityBookings.isPresent()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    Set<GetAmenityBookingDetailsResponse> response = amenityApiMapper.amenityBookingsSetToAmenityBookingDetailsResponseSet(amenityBookings.get());
+    return ResponseEntity.ok(response);
+  }
+
+  @Operation(
           description = "Remove amenity booking",
           responses = {
                   @ApiResponse(responseCode = "204", description = "If booking deleted"),
@@ -136,7 +181,7 @@ public class AmenityController {
           }
   )
   @DeleteMapping(path = "/bookings/{bookingId}")
-  public ResponseEntity deleteBooking(@PathVariable String bookingId) {
+  public ResponseEntity<Void> deleteBooking(@PathVariable String bookingId) {
     boolean isBookingDeleted = amenitySDJpaService.deleteBooking(bookingId);
     if (isBookingDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

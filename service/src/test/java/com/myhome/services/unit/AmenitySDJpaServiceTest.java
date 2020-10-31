@@ -16,7 +16,6 @@
 
 package com.myhome.services.unit;
 
-import helpers.TestUtils;
 import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
@@ -27,7 +26,10 @@ import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import com.myhome.services.springdatajpa.AmenitySDJpaService;
+import helpers.TestUtils;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -35,16 +37,22 @@ import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -293,6 +301,77 @@ class AmenitySDJpaServiceTest {
     verify(amenityRepository).findByAmenityId(TEST_AMENITY_ID);
     verify(communityRepository).findByCommunityId(TEST_COMMUNITY_ID);
     verifyNoMoreInteractions(amenityRepository);
+  }
+
+  @Test
+  void listBookingsNoSuchAmentiy() {
+    // given
+    given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
+        .willReturn(Optional.empty());
+
+    // when
+    Optional<Set<AmenityBookingItem>>
+        result = amenitySDJpaService.listAmenityBookings(TEST_AMENITY_ID, null, null,
+        Pageable.unpaged());
+
+    // then
+    assertFalse(result.isPresent());
+    then(bookingItemRepository).shouldHaveNoInteractions();
+  }
+
+  @Test
+  void listBookingsNotEmptyWithNoDateSpecified() {
+    // given
+    given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
+        .willReturn(Optional.of(new Amenity()));
+
+    Set<AmenityBookingItem> testAmenityBookingItems =
+        TestUtils.AmenityHelpers.getTestAmenityBookingItems(2);
+
+    given(
+        bookingItemRepository.findAll(
+            BDDMockito.<Specification<AmenityBookingItem>>any(),
+            eq(Pageable.unpaged())))
+        .willReturn(new PageImpl<>(new ArrayList<>(testAmenityBookingItems)));
+
+    // when
+    Optional<Set<AmenityBookingItem>> resultAmenityBookings =
+        amenitySDJpaService.listAmenityBookings(TEST_AMENITY_ID, null, null, Pageable.unpaged());
+
+    // then
+    assertTrue(resultAmenityBookings.isPresent());
+    assertEquals(testAmenityBookingItems, resultAmenityBookings.get());
+
+    then(amenityRepository).should().findByAmenityId(TEST_AMENITY_ID);
+    then(bookingItemRepository).should().findAll(BDDMockito.<Specification<AmenityBookingItem>>any(), eq(Pageable.unpaged()));
+  }
+
+  @Test
+  void listBookingsEmptyWithDateSpecified() {
+    // given
+    given(amenityRepository.findByAmenityId(TEST_AMENITY_ID))
+        .willReturn(Optional.of(new Amenity()));
+
+    Set<AmenityBookingItem> testAmenityBookingItems = Collections.emptySet();
+    LocalDateTime startDate = LocalDateTime.of(2020, 1, 2, 12, 0);
+    LocalDateTime endDate = LocalDateTime.of(2020, 1, 2, 12, 1);
+
+    given(
+        bookingItemRepository.findAll(
+            BDDMockito.<Specification<AmenityBookingItem>>any(),
+            eq(Pageable.unpaged())))
+        .willReturn(new PageImpl<>(new ArrayList<>(testAmenityBookingItems)));
+
+    // when
+    Optional<Set<AmenityBookingItem>> resultAmenityBookings =
+        amenitySDJpaService.listAmenityBookings(TEST_AMENITY_ID, startDate, endDate, Pageable.unpaged());
+
+    // then
+    assertTrue(resultAmenityBookings.isPresent());
+    assertEquals(testAmenityBookingItems, resultAmenityBookings.get());
+
+    then(amenityRepository).should().findByAmenityId(TEST_AMENITY_ID);
+    then(bookingItemRepository).should().findAll(BDDMockito.<Specification<AmenityBookingItem>>any(), eq(Pageable.unpaged()));
   }
 
   @Test

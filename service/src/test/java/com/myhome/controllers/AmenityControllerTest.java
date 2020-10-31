@@ -21,19 +21,24 @@ import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.controllers.request.AddAmenityRequest;
 import com.myhome.controllers.request.UpdateAmenityRequest;
 import com.myhome.controllers.response.amenity.AddAmenityResponse;
+import com.myhome.controllers.response.amenity.GetAmenityBookingDetailsResponse;
 import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
 import com.myhome.services.AmenityService;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 
-import helpers.TestUtils;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -41,7 +46,10 @@ import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -114,7 +122,7 @@ class AmenityControllerTest {
         .willReturn(true);
 
     // when
-    ResponseEntity response = amenityController.deleteAmenity(TEST_AMENITY_ID);
+    ResponseEntity<Void> response = amenityController.deleteAmenity(TEST_AMENITY_ID);
 
     // then
     assertNull(response.getBody());
@@ -129,7 +137,7 @@ class AmenityControllerTest {
         .willReturn(false);
 
     // when
-    ResponseEntity response = amenityController.deleteAmenity(TEST_AMENITY_ID);
+    ResponseEntity<Void> response = amenityController.deleteAmenity(TEST_AMENITY_ID);
 
     // then
     assertNull(response.getBody());
@@ -217,13 +225,51 @@ class AmenityControllerTest {
   }
 
   @Test
+  void listAmenityBookingsOnNoSuchAmenity() {
+    // given ... nothing
+
+    // when
+    ResponseEntity<Set<GetAmenityBookingDetailsResponse>> responseEntity =
+        amenityController.listAmenityBookings(TEST_AMENITY_ID, null, null, Pageable
+        .unpaged());
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    then(amenitySDJpaService).should().listAmenityBookings(eq(TEST_AMENITY_ID), isNull(), isNull(), eq(Pageable.unpaged()));
+  }
+
+  @Test
+  void listAmenityBookingsForEmpty() {
+    // given
+    LocalDate startDate = LocalDate.now();
+    LocalDateTime startDateTime = startDate.atStartOfDay();
+    LocalDate endDate = startDate.plusWeeks(1);
+    LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay().minusSeconds(1);
+
+    given(amenitySDJpaService.listAmenityBookings(TEST_AMENITY_ID, startDateTime, endDateTime, Pageable.unpaged()))
+        .willReturn(Optional.of(Collections.emptySet()));
+
+    given(amenityApiMapper.amenityBookingsSetToAmenityBookingDetailsResponseSet(Collections.emptySet()))
+        .willReturn(Collections.emptySet());
+
+    // when
+    ResponseEntity<Set<GetAmenityBookingDetailsResponse>> responseEntity =
+        amenityController.listAmenityBookings(TEST_AMENITY_ID, startDate, endDate, Pageable
+            .unpaged());
+
+    // then
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    then(amenitySDJpaService).should().listAmenityBookings(TEST_AMENITY_ID, startDateTime, endDateTime, Pageable.unpaged());
+  }
+
+  @Test
   void deleteBooking() {
     // given
     given(amenitySDJpaService.deleteBooking(TEST_BOOKING_ID))
             .willReturn(true);
 
     // when
-    ResponseEntity response = amenityController.deleteBooking(TEST_BOOKING_ID);
+    ResponseEntity<Void> response = amenityController.deleteBooking(TEST_BOOKING_ID);
 
     // then
     assertNull(response.getBody());
@@ -237,7 +283,7 @@ class AmenityControllerTest {
             .willReturn(false);
 
     // when
-    ResponseEntity response = amenityController.deleteBooking(TEST_BOOKING_ID);
+    ResponseEntity<Void> response = amenityController.deleteBooking(TEST_BOOKING_ID);
 
     // then
     assertNull(response.getBody());

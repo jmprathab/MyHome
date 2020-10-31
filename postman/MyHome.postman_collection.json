@@ -754,6 +754,45 @@
 			"response": []
 		},
 		{
+			"name": "List amenity bookings",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{ENV_URL}}/amenities/{{AMENITY_ID}}/bookings?start='10-10-2020'",
+					"protocol": "http",
+					"host": [
+						"{{ENV_URL}}"
+					],
+					"path": [
+						"amenities",
+						"{{AMENITY_ID}}",
+						"bookings"
+					],
+					"query": [
+						{
+							"key": "end",
+							"value": "'10-25-2020'",
+							"description": "last day to be included in range in format of 'MM-dd-yyyy'",
+							"disabled": true
+						},
+						{
+							"key": "start",
+							"value": "'10-10-2020'",
+							"description": "first day to be included in range in format of 'MM-dd-yyyy'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Delete amenity booking",
 			"request": {
 				"method": "DELETE",

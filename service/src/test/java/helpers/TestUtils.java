@@ -1,24 +1,25 @@
 package helpers;
 
 import com.myhome.domain.Amenity;
+import com.myhome.domain.AmenityBookingItem;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.imageio.ImageIO;
 
-import static helpers.TestUtils.General.generateUniqueId;
 import static helpers.TestUtils.CommunityHouseHelpers.getTestHouses;
+import static helpers.TestUtils.General.generateUniqueId;
 import static helpers.TestUtils.UserHelpers.getTestUsers;
 
 public class TestUtils {
@@ -141,6 +142,20 @@ public class TestUtils {
               .withName("default-amenity-name")
               .withDescription("default-amenity-description")
           )
+          .limit(count)
+          .collect(Collectors.toSet());
+    }
+
+    public static Set<AmenityBookingItem> getTestAmenityBookingItems(int count) {
+      Amenity amenity = getTestAmenity(generateUniqueId(), "default-amenity-description");
+
+      return Stream
+          .generate(() -> new AmenityBookingItem()
+              .withAmenity(amenity)
+              .withAmenityBookingItemId(generateUniqueId())
+              .withBookingStartDate(LocalDateTime.MIN)
+              .withBookingEndDate(LocalDateTime.MAX)
+              .withBookingUser(UserHelpers.getTestUsers(1).iterator().next()))
           .limit(count)
           .collect(Collectors.toSet());
     }
