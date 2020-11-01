@@ -18,9 +18,13 @@ package com.myhome.services;
 
 import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.domain.Amenity;
+import com.myhome.domain.AmenityBookingItem;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.data.domain.Pageable;
 
 public interface AmenityService {
 
@@ -35,4 +39,9 @@ public interface AmenityService {
   boolean updateAmenity(AmenityDto updatedAmenityDto);
 
   boolean deleteBooking(String bookingId);
+
+  Optional<List<AmenityBookingItem>> listAllAmenityBookings(String amenityId,
+      LocalDate start,
+      LocalDate end,
+      Pageable pageable);
 }

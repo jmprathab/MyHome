@@ -18,8 +18,10 @@ package com.myhome.controllers;
 
 import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
+import com.myhome.controllers.mapper.AmenityBookingItemApiMapper;
 import com.myhome.controllers.request.AddAmenityRequest;
 import com.myhome.controllers.request.UpdateAmenityRequest;
+import com.myhome.controllers.response.GetAmenityBookingsResponse;
 import com.myhome.controllers.response.amenity.AddAmenityResponse;
 import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
@@ -27,9 +29,16 @@ import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +48,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -48,6 +58,7 @@ public class AmenityController {
   private final AmenityService amenitySDJpaService;
   private final AmenityApiMapper amenityApiMapper;
   private final CommunityService communityService;
+  private final AmenityBookingItemApiMapper amenityBookingItemApiMapper;
 
   @Operation(
       description = "Get details about the amenity",
@@ -144,4 +155,25 @@ public class AmenityController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
   }
+
+  @Operation(description = "Get all bookings for an amenity",
+  responses = {
+      @ApiResponse(responseCode = "200",
+          description = "If Amenity exists, with or without bookings"),
+      @ApiResponse(responseCode = "404", description = "If AmenityId is not found"),
+  })
+@GetMapping(path = "/amenities/{amenityId}/bookings")
+public ResponseEntity<List<GetAmenityBookingsResponse>> getAmenitiesBookings(
+  @PathVariable String amenityId,
+  @RequestParam(required = false)
+  @DateTimeFormat(pattern = "''dd-MM-yyyy''") LocalDate start,
+  @RequestParam(required = false)
+  @DateTimeFormat(pattern = "''dd-MM-yyyy''") LocalDate end,
+  @PageableDefault(size = 200) Pageable pageable) {
+
+return amenitySDJpaService.listAllAmenityBookings(amenityId, start, end, pageable)
+    .map(amenityBookingItemApiMapper::amenityBookingToAmenityBookingsResponse)
+    .map(ResponseEntity::ok)
+    .orElse(ResponseEntity.notFound().build());
+}
 }

@@ -19,18 +19,24 @@ package com.myhome.services.springdatajpa;
 import com.myhome.controllers.dto.AmenityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
+import com.myhome.domain.AmenityBookingItem;
 import com.myhome.domain.Community;
 import com.myhome.repositories.AmenityBookingItemRepository;
 import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -113,5 +119,21 @@ public class AmenitySDJpaService implements AmenityService {
                     return true;
                 })
                 .orElse(false);
+    }
+
+    @Override
+    public Optional<List<AmenityBookingItem>> listAllAmenityBookings(String amenityId,
+        LocalDate startDate,
+        LocalDate endDate,
+        Pageable pageable) {
+          LocalDateTime start = startDate != null ? startDate.atStartOfDay() : null;
+          LocalDateTime end = endDate != null ? endDate.atStartOfDay() : null;
+          
+      List<AmenityBookingItem> bookingItems =
+          bookingRepository.findAllByAmenity(amenityId, start, end, pageable);
+      if (bookingItems.isEmpty() && !amenityRepository.findByAmenityId(amenityId).isPresent()) {
+        return Optional.empty();
+      }
+      return Optional.of(bookingItems);
     }
 }

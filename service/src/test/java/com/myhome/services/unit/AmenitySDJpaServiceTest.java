@@ -28,6 +28,8 @@ import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.CommunityService;
 import com.myhome.services.springdatajpa.AmenitySDJpaService;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -326,6 +328,74 @@ class AmenitySDJpaServiceTest {
     verify(bookingItemRepository, never()).delete(any());
   }
 
+  @Test
+  void ListAllBookingsShouldReturnEmptyOptionalWhenAmenityIdNotFound() {
+    // given
+    String nonExistingId = "NonExistingId";
+    given(bookingItemRepository.findAllByAmenity(nonExistingId, null, null, null))
+        .willReturn(Collections.emptyList());
+    given(amenityRepository.findByAmenityId(nonExistingId)).willReturn(Optional.empty());
+
+    // when
+    Optional<List<AmenityBookingItem>> result =
+        amenitySDJpaService.listAllAmenityBookings(nonExistingId, null, null, null);
+
+    // then
+    assertFalse(result.isPresent());
+  }
+
+  @Test
+  void ListAllBookingsShouldReturnListOfAmenityBookingsWithTimeRange() {
+    // given
+    AmenityBookingItem amenityBookingItem = getTestBookingItem();
+    LocalDate currentDate = LocalDate.now();
+    LocalDateTime currentDateTime = currentDate.atStartOfDay();
+    String amenityId = amenityBookingItem.getAmenity().getAmenityId();
+
+    List<AmenityBookingItem> amenityBookingItems = Collections.singletonList(amenityBookingItem);
+    given(bookingItemRepository.findAllByAmenity(amenityId,
+        currentDateTime,
+        currentDateTime.plusDays(5),
+        null))
+        .willReturn(amenityBookingItems);
+
+    // when
+    Optional<List<AmenityBookingItem>> result =
+        amenitySDJpaService.listAllAmenityBookings(amenityId,
+            currentDate,
+            currentDate.plusDays(5),
+            null);
+
+    // then
+    assertTrue(result.isPresent());
+    assertEquals(1, result.get().size());
+  }
+
+  @Test
+  void ListAllBookingsShouldReturnListOfAmenityBookingsWithoutTimeRange() {
+    // given
+    AmenityBookingItem amenityBookingItem = getTestBookingItem();
+    String amenityId = amenityBookingItem.getAmenity().getAmenityId();
+
+    List<AmenityBookingItem> amenityBookingItems = Collections.singletonList(amenityBookingItem);
+    given(bookingItemRepository.findAllByAmenity(amenityId,
+        null,
+        null,
+        null))
+        .willReturn(amenityBookingItems);
+
+    // when
+    Optional<List<AmenityBookingItem>> result =
+        amenitySDJpaService.listAllAmenityBookings(amenityId,
+            null,
+            null,
+            null);
+
+    // then
+    assertTrue(result.isPresent());
+    assertEquals(1, result.get().size());
+  }
+
   private AmenityDto getTestAmenityDto() {
     Long TEST_AMENITY_ENTITY_ID = 1L;
 
@@ -351,6 +421,7 @@ class AmenitySDJpaServiceTest {
 
   private AmenityBookingItem getTestBookingItem() {
     return new AmenityBookingItem()
-            .withAmenityBookingItemId(TEST_BOOKING_ID);
+            .withAmenityBookingItemId(TEST_BOOKING_ID)
+            .withAmenity(new Amenity().withAmenityId(TEST_AMENITY_ID));
   }
 }
