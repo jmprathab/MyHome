@@ -20,8 +20,8 @@ import com.myhome.api.CommunitiesApi;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.controllers.mapper.CommunityApiMapper;
-import com.myhome.domain.Amenity;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
+import com.myhome.domain.Amenity;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.Payment;
@@ -237,7 +237,6 @@ public class CommunityController implements CommunitiesApi {
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
-
 
   @Override
   public ResponseEntity<ListAdminPaymentsResponse> listAllAdminScheduledPayments(
