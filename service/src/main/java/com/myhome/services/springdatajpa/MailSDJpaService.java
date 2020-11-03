@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.mail.MailSendException;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -36,8 +36,8 @@ public class MailSDJpaService implements MailService {
       mailMessage.setSubject(subject);
       mailMessage.setText(message);
       mailSender.send(mailMessage);
-    } catch (MailSendException mailSendException) {
-      log.error("Mail send error!", mailSendException);
+    } catch (MailException mailException) {
+      log.error("Mail send error!", mailException);
       return false;
     }
     return true;
