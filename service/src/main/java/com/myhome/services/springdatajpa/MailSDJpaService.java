@@ -18,6 +18,12 @@ public class MailSDJpaService implements MailService {
 
   private final JavaMailSender mailSender;
 
+  private final String PASSWORD_RECOVER_EMAIL_SUBJECT = "'My home' Password recover code";
+  private final String PASSWORD_RECOVER_MAIL_TEXT = "Hello, %s! \\n\" + \"this is your password recover code %s";
+  private final String PASSWORD_CHANGED_MAIL_SUBJECT = "'My home' Password reset successfully";
+  private final String PASSWORD_CHANGED_MAIL_TEXT = "Hello, %s! \\n\" + \"your password was successfully changed!";
+
+
   @Value("${spring.mail.username}")
   private String username;
 
@@ -32,18 +38,14 @@ public class MailSDJpaService implements MailService {
 
   @Override
   public void sendPasswordRecoverCode(User user, String randomCode) throws MailSendException {
-    String message = String.format(
-        "Hello, %s! \n" + "this is your password recover code %s",
-        user.getName(), randomCode);
-    send(user.getEmail(), "'My home' Password recover code", message);
+    String message = String.format(PASSWORD_RECOVER_MAIL_TEXT, user.getName(), randomCode);
+    send(user.getEmail(), PASSWORD_RECOVER_EMAIL_SUBJECT, message);
   }
 
   @Override
   public void sendPasswordSuccessfullyChanged(User user) {
-    String message = String.format(
-        "Hello, %s! \n" + "your password was successfully changed!",
-        user.getName());
-    send(user.getEmail(), "'My home' Password reset successfully", message);
+    String message = String.format(PASSWORD_CHANGED_MAIL_TEXT, user.getName());
+    send(user.getEmail(), PASSWORD_CHANGED_MAIL_SUBJECT, message);
   }
 
 }
