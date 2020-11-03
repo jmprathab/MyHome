@@ -329,7 +329,7 @@ class AmenitySDJpaServiceTest {
   }
 
   @Test
-  void ListAllBookingsShouldReturnEmptyOptionalWhenAmenityIdNotFound() {
+  void listAllBookingsShouldReturnEmptyOptionalWhenAmenityIdNotFound() {
     // given
     String nonExistingId = "NonExistingId";
     given(bookingItemRepository.findAllByAmenity(nonExistingId, null, null, null))
@@ -345,7 +345,7 @@ class AmenitySDJpaServiceTest {
   }
 
   @Test
-  void ListAllBookingsShouldReturnListOfAmenityBookingsWithTimeRange() {
+  void listAllBookingsShouldReturnListOfAmenityBookingsWithTimeRange() {
     // given
     AmenityBookingItem amenityBookingItem = getTestBookingItem();
     LocalDate currentDate = LocalDate.now();
@@ -358,6 +358,8 @@ class AmenitySDJpaServiceTest {
         currentDateTime.plusDays(5),
         null))
         .willReturn(amenityBookingItems);
+    given(amenityRepository.findByAmenityId(amenityId))
+        .willReturn(Optional.of(amenityBookingItem.getAmenity()));
 
     // when
     Optional<List<AmenityBookingItem>> result =
@@ -372,7 +374,7 @@ class AmenitySDJpaServiceTest {
   }
 
   @Test
-  void ListAllBookingsShouldReturnListOfAmenityBookingsWithoutTimeRange() {
+  void listAllBookingsShouldReturnListOfAmenityBookingsWithoutTimeRange() {
     // given
     AmenityBookingItem amenityBookingItem = getTestBookingItem();
     String amenityId = amenityBookingItem.getAmenity().getAmenityId();
@@ -383,6 +385,8 @@ class AmenitySDJpaServiceTest {
         null,
         null))
         .willReturn(amenityBookingItems);
+    given(amenityRepository.findByAmenityId(amenityId))
+        .willReturn(Optional.of(amenityBookingItem.getAmenity()));
 
     // when
     Optional<List<AmenityBookingItem>> result =

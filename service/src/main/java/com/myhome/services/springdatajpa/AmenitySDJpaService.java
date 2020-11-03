@@ -126,12 +126,15 @@ public class AmenitySDJpaService implements AmenityService {
         LocalDate startDate,
         LocalDate endDate,
         Pageable pageable) {
-          LocalDateTime start = startDate != null ? startDate.atStartOfDay() : null;
-          LocalDateTime end = endDate != null ? endDate.atStartOfDay() : null;
+      if (!amenityRepository.findByAmenityId(amenityId).isPresent()) {
+        return Optional.empty();
+      }
+      LocalDateTime start = startDate != null ? startDate.atStartOfDay() : null;
+      LocalDateTime end = endDate != null ? endDate.atStartOfDay() : null;
           
       List<AmenityBookingItem> bookingItems =
-          bookingRepository.findAllByAmenity(amenityId, start, end, pageable);
-      if (bookingItems.isEmpty() && !amenityRepository.findByAmenityId(amenityId).isPresent()) {
+        bookingRepository.findAllByAmenity(amenityId, start, end, pageable);
+      if (bookingItems.isEmpty()) {
         return Optional.empty();
       }
       return Optional.of(bookingItems);
