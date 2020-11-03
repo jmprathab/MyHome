@@ -3,9 +3,9 @@ package com.myhome.services.springdatajpa;
 import com.myhome.domain.User;
 import com.myhome.services.MailService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @ConditionalOnProperty(value = "spring.mail.debug", havingValue = "false", matchIfMissing = false)
 @RequiredArgsConstructor
+@Slf4j
 public class MailSDJpaService implements MailService {
 
   private final JavaMailSender mailSender;
@@ -27,25 +28,33 @@ public class MailSDJpaService implements MailService {
   @Value("${spring.mail.username}")
   private String username;
 
-  private void send(String emailTo, String subject, String message) throws MailSendException {
-    SimpleMailMessage mailMessage = new SimpleMailMessage();
-    mailMessage.setFrom(username);
-    mailMessage.setTo(emailTo);
-    mailMessage.setSubject(subject);
-    mailMessage.setText(message);
-    mailSender.send(mailMessage);
+  private boolean send(String emailTo, String subject, String message) {
+    try {
+      SimpleMailMessage mailMessage = new SimpleMailMessage();
+      mailMessage.setFrom(username);
+      mailMessage.setTo(emailTo);
+      mailMessage.setSubject(subject);
+      mailMessage.setText(message);
+      mailSender.send(mailMessage);
+    } catch (MailSendException mailSendException) {
+      log.error("Mail send error!", mailSendException);
+      return false;
+    }
+    return true;
   }
 
   @Override
-  public void sendPasswordRecoverCode(User user, String randomCode) throws MailSendException {
+  public boolean sendPasswordRecoverCode(User user, String randomCode) {
     String message = String.format(PASSWORD_RECOVER_MAIL_TEXT, user.getName(), randomCode);
-    send(user.getEmail(), PASSWORD_RECOVER_EMAIL_SUBJECT, message);
+    boolean mailSent = send(user.getEmail(), PASSWORD_RECOVER_EMAIL_SUBJECT, message);
+    return mailSent;
   }
 
   @Override
-  public void sendPasswordSuccessfullyChanged(User user) {
+  public boolean sendPasswordSuccessfullyChanged(User user) {
     String message = String.format(PASSWORD_CHANGED_MAIL_TEXT, user.getName());
-    send(user.getEmail(), PASSWORD_CHANGED_MAIL_SUBJECT, message);
+    boolean mailSent = send(user.getEmail(), PASSWORD_CHANGED_MAIL_SUBJECT, message);
+    return mailSent;
   }
 
 }

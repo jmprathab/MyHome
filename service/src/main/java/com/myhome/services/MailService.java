@@ -5,7 +5,7 @@ import org.springframework.mail.MailSendException;
 
 public interface MailService {
 
-  void sendPasswordRecoverCode(User user, String randomCode) throws MailSendException;
+  boolean sendPasswordRecoverCode(User user, String randomCode) throws MailSendException;
 
-  void sendPasswordSuccessfullyChanged(User user);
+  boolean sendPasswordSuccessfullyChanged(User user);
 }

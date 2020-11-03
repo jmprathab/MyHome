@@ -37,9 +37,10 @@ public class SecurityTokenSDJpaService implements SecurityTokenService {
   }
 
   @Override
-  public void useToken(SecurityToken token) {
+  public SecurityToken useToken(SecurityToken token) {
     token.setUsed(true);
-    securityTokenRepository.save(token);
+    token = securityTokenRepository.save(token);
+    return token;
   }
 
   private LocalDate getDateAfterDays(LocalDate date, Duration liveTime) {

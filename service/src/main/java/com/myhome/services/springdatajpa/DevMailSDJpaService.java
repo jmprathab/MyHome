@@ -13,12 +13,14 @@ import org.springframework.stereotype.Service;
 public class DevMailSDJpaService implements MailService {
 
   @Override
-  public void sendPasswordRecoverCode(User user, String randomCode) throws MailSendException {
+  public boolean sendPasswordRecoverCode(User user, String randomCode) throws MailSendException {
     log.trace(String.format("Password recover code sent to user with id= %s, code=%s", user.getUserId()), randomCode);
+    return true;
   }
 
   @Override
-  public void sendPasswordSuccessfullyChanged(User user) {
+  public boolean sendPasswordSuccessfullyChanged(User user) {
     log.trace(String.format("Password successfully changed message sent to user with id=%s", user.getUserId()));
+    return true;
   }
 }

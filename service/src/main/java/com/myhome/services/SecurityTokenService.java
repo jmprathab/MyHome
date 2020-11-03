@@ -11,5 +11,5 @@ public interface SecurityTokenService {
 
   SecurityToken createPasswordResetToken();
 
-  void useToken(SecurityToken token);
+  SecurityToken useToken(SecurityToken token);
 }

@@ -90,48 +90,48 @@ public class UserSDJpaService implements UserService {
   }
 
   @Override
-  public void requestResetPassword(ForgotPasswordRequest forgotPasswordRequest) {
-    if (forgotPasswordRequest.getEmail() != null) {
-      SecurityToken newSecurityToken = securityTokenService.createPasswordResetToken();
-      Optional<User> userOptional = userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail());
-      userOptional.map(user -> {
-        user.getUserTokens().add(newSecurityToken);
-        userRepository.save(user);
-        mailService.sendPasswordRecoverCode(user, newSecurityToken.getToken());
-        return user;
-      });
-    }
+  public boolean requestResetPassword(ForgotPasswordRequest forgotPasswordRequest) {
+    return Optional.ofNullable(forgotPasswordRequest)
+        .map(ForgotPasswordRequest::getEmail)
+        .flatMap(email -> {
+          SecurityToken newSecurityToken = securityTokenService.createPasswordResetToken();
+          return userRepository.findByEmailWithTokens(email)
+              .map(user -> {
+                user.getUserTokens().add(newSecurityToken);
+                userRepository.save(user);
+                return mailService.sendPasswordRecoverCode(user, newSecurityToken.getToken());
+              });
+        })
+        .orElse(false);
   }
 
   @Override
   public boolean resetPassword(ForgotPasswordRequest passwordResetRequest) {
-    if (passwordResetRequest != null) {
-      Optional<User> userOptional = userRepository.findByEmailWithTokens(passwordResetRequest.getEmail());
-      return userOptional.map(user -> {
-        SecurityToken userPasswordResetToken = user.getUserTokens()
-            .stream()
-            .filter(token -> !token.isUsed()
-                && token.getTokenType() == SecurityTokenType.RESET
-                && token.getToken().equals(passwordResetRequest.getToken())
-                && token.getExpiryDate().isAfter(LocalDate.now()))
-            .findFirst()
-            .map(token -> {
-              securityTokenService.useToken(token);
-              return token;
-            })
-            .orElse(null);
-        if (userPasswordResetToken != null) {
-          user.setEncryptedPassword(passwordEncoder.encode(passwordResetRequest.getNewPassword()));
-          user = userRepository.save(user);
-          mailService.sendPasswordSuccessfullyChanged(user);
-          return true;
-        } else {
-          return false;
-        }
-      }).orElse(false);
-    } else {
-      return false;
-    }
+    final Optional<User> userWithToken = Optional.ofNullable(passwordResetRequest)
+        .map(ForgotPasswordRequest::getEmail)
+        .flatMap(userRepository::findByEmailWithTokens);
+    return userWithToken
+        .map(user -> findTokenForUser(passwordResetRequest.getToken(), user))
+        .map(securityTokenService::useToken)
+        .map(token -> saveTokenForUser(userWithToken.get(), passwordResetRequest.getNewPassword()))
+        .map(mailService::sendPasswordSuccessfullyChanged)
+        .orElse(false);
+  }
+
+  private User saveTokenForUser(User user, String newPassword) {
+    user.setEncryptedPassword(passwordEncoder.encode(newPassword));
+    return userRepository.save(user);
+  }
+
+  private SecurityToken findTokenForUser(String tokenFromRequest, User user) {
+    Optional<SecurityToken> userPasswordResetToken = user.getUserTokens()
+        .stream()
+        .filter(token -> !token.isUsed()
+            && token.getTokenType() == SecurityTokenType.RESET
+            && token.getToken().equals(tokenFromRequest)
+            && token.getExpiryDate().isAfter(LocalDate.now()))
+        .findFirst();
+    return userPasswordResetToken.orElse(null);
   }
 
   private UserDto createUserInRepository(UserDto request) {

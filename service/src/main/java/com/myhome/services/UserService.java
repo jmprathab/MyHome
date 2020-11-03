@@ -36,7 +36,7 @@ public interface UserService {
 
   Optional<UserDto> getUserDetails(String userId);
 
-  void requestResetPassword(ForgotPasswordRequest forgotPasswordRequest);
+  boolean requestResetPassword(ForgotPasswordRequest forgotPasswordRequest);
 
   boolean resetPassword(ForgotPasswordRequest passwordResetRequest);
 }
