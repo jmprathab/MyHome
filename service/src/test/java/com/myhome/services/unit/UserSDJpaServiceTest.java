@@ -276,6 +276,10 @@ class UserSDJpaServiceTest {
         .willReturn(forgotPasswordRequest.getNewPassword());
     when(userRepository.save(user))
         .then(returnsFirstArg());
+    given(mailService.sendPasswordSuccessfullyChanged(user))
+        .willReturn(true);
+    given(securityTokenService.useToken(testSecurityToken))
+        .willReturn(testSecurityToken);
 
     // when
     boolean passwordChanged = userService.resetPassword(forgotPasswordRequest);
