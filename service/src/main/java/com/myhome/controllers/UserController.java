@@ -110,7 +110,8 @@ public class UserController implements UsersApi {
       return ResponseEntity.ok().build();
     } else {
       return ResponseEntity.badRequest().build();
-    }  }
+    }
+  }
 
   public ResponseEntity<ListHouseMembersResponse> listAllHousemates(String userId, Pageable pageable) {
     log.trace("Received request to list all members of all houses of user with Id[{}]", userId);

@@ -26,6 +26,6 @@ public class SecurityToken extends BaseEntity {
   @Column(nullable = false)
   private LocalDate expiryDate;
   private boolean isUsed;
-  @ManyToOne()
+  @ManyToOne
   private User tokenOwner;
 }
