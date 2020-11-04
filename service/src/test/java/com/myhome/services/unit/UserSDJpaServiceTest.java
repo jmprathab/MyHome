@@ -48,7 +48,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.BDDMockito.given;
@@ -229,11 +228,14 @@ class UserSDJpaServiceTest {
         .willReturn(testSecurityToken);
     given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.of(user));
+    given(mailService.sendPasswordRecoverCode(user, testSecurityToken.getToken()))
+        .willReturn(true);
 
     // when
-    userService.requestResetPassword(forgotPasswordRequest);
+    boolean resetRequested = userService.requestResetPassword(forgotPasswordRequest);
 
     // then
+    assertTrue(resetRequested);
     assertEquals(getUserSecurityToken(user), testSecurityToken);
     verify(securityTokenService).createPasswordResetToken();
     verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
@@ -253,11 +255,12 @@ class UserSDJpaServiceTest {
         .willReturn(Optional.empty());
 
     // when
-    userService.requestResetPassword(forgotPasswordRequest);
+    boolean resetRequested = userService.requestResetPassword(forgotPasswordRequest);
 
     // then
+    assertFalse(resetRequested);
     assertNotEquals(getUserSecurityToken(user), testSecurityToken);
-    verify(securityTokenService).createPasswordResetToken();
+    verifyNoInteractions(securityTokenService);
     verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
     verify(userRepository, never()).save(user);
     verifyNoInteractions(mailService);

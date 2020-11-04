@@ -93,15 +93,13 @@ public class UserSDJpaService implements UserService {
   public boolean requestResetPassword(ForgotPasswordRequest forgotPasswordRequest) {
     return Optional.ofNullable(forgotPasswordRequest)
         .map(ForgotPasswordRequest::getEmail)
-        .flatMap(email -> {
-          SecurityToken newSecurityToken = securityTokenService.createPasswordResetToken();
-          return userRepository.findByEmailWithTokens(email)
-              .map(user -> {
-                user.getUserTokens().add(newSecurityToken);
-                userRepository.save(user);
-                return mailService.sendPasswordRecoverCode(user, newSecurityToken.getToken());
-              });
-        })
+        .flatMap(email -> userRepository.findByEmailWithTokens(email)
+            .map(user -> {
+              SecurityToken newSecurityToken = securityTokenService.createPasswordResetToken();
+              user.getUserTokens().add(newSecurityToken);
+              userRepository.save(user);
+              return mailService.sendPasswordRecoverCode(user, newSecurityToken.getToken());
+            }))
         .orElse(false);
   }
 
