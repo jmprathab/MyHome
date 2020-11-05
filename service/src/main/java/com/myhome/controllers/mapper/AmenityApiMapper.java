@@ -16,10 +16,10 @@
 
 package com.myhome.controllers.mapper;
 
-import com.myhome.controllers.dto.AmenityDto;
-import com.myhome.controllers.request.UpdateAmenityRequest;
-import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
+import com.myhome.model.AmenityDto;
+import com.myhome.model.GetAmenityDetailsResponse;
+import com.myhome.model.UpdateAmenityRequest;
 import java.util.Set;
 import org.mapstruct.Mapper;
 

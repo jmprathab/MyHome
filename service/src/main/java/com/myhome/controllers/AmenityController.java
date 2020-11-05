@@ -16,13 +16,14 @@
 
 package com.myhome.controllers;
 
-import com.myhome.controllers.dto.AmenityDto;
+import com.myhome.api.AmenitiesApi;
 import com.myhome.controllers.mapper.AmenityApiMapper;
-import com.myhome.controllers.request.AddAmenityRequest;
-import com.myhome.controllers.request.UpdateAmenityRequest;
-import com.myhome.controllers.response.amenity.AddAmenityResponse;
-import com.myhome.controllers.response.amenity.GetAmenityDetailsResponse;
 import com.myhome.domain.Amenity;
+import com.myhome.model.AddAmenityRequest;
+import com.myhome.model.AddAmenityResponse;
+import com.myhome.model.AmenityDto;
+import com.myhome.model.GetAmenityDetailsResponse;
+import com.myhome.model.UpdateAmenityRequest;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,32 +31,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
-public class AmenityController {
+public class AmenityController implements AmenitiesApi {
 
   private final AmenityService amenitySDJpaService;
   private final AmenityApiMapper amenityApiMapper;
   private final CommunityService communityService;
 
-  @Operation(
-      description = "Get details about the amenity",
-      responses = {
-          @ApiResponse(responseCode = "404", description = "If params are invalid"),
-      }
-  )
-  @GetMapping("/amenities/{amenityId}")
+  @Override
   public ResponseEntity<GetAmenityDetailsResponse> getAmenityDetails(
       @PathVariable String amenityId) {
     return amenitySDJpaService.getAmenityDetails(amenityId)
@@ -64,14 +57,7 @@ public class AmenityController {
         .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
-  @Operation(
-      description = "Remove amenity",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "If amenity deleted"),
-          @ApiResponse(responseCode = "404", description = "If params are invalid"),
-      }
-  )
-  @DeleteMapping(path = "/amenities/{amenityId}")
+  @Override
   public ResponseEntity deleteAmenity(@PathVariable String amenityId) {
     boolean isAmenityDeleted = amenitySDJpaService.deleteAmenity(amenityId);
     if (isAmenityDeleted) {
@@ -81,41 +67,7 @@ public class AmenityController {
     }
   }
 
-  @Operation(description = "Get all amenities of community")
-  @GetMapping(
-      path = "/communities/{communityId}/amenities",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<Set<GetAmenityDetailsResponse>> listAllAmenities(
-      @PathVariable String communityId) {
-    Set<Amenity> amenities = amenitySDJpaService.listAllAmenities(communityId);
-    Set<GetAmenityDetailsResponse> response =
-        amenityApiMapper.amenitiesSetToAmenityDetailsResponseSet(amenities);
-    return ResponseEntity.ok(response);
-  }
-
-  @Operation(description = "Adds amenity to community")
-  @PostMapping(
-      path = "/communities/{communityId}/amenities",
-      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-  )
-  public ResponseEntity<AddAmenityResponse> addAmenityToCommunity(
-      @RequestBody AddAmenityRequest request,
-      @PathVariable String communityId) {
-    return amenitySDJpaService.createAmenities(request.getAmenities(), communityId)
-        .map(AddAmenityResponse::new)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
-  }
-
-  @Operation(
-      description = "Update an amenity",
-      responses = {
-          @ApiResponse(responseCode = "204", description = "If updated successfully"),
-          @ApiResponse(responseCode = "400", description = "If amenity is not found"),
-      }
-  )
-  @PutMapping(path = "amenities/{amenityId}")
+  @Override
   public ResponseEntity<Void> updateAmenity(@PathVariable String amenityId,
       @Valid @RequestBody UpdateAmenityRequest request) {
     AmenityDto amenityDto = amenityApiMapper.updateAmenityRequestToAmenityDto(request);
