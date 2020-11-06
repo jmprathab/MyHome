@@ -29,6 +29,19 @@ paths:
           description: 'acton with user password (forgot or reset)'
       requestBody:
         description: ""
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: 'if password reset'
+        '400':
+          description: 'if wrong password reset token'
   /amenities/{amenityId}:
     get:
       tags:
@@ -87,15 +100,6 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ForgotPasswordRequest'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/ForgotPasswordRequest'
-      responses:
-        '200':
-          description: 'if password reset'
-        '400':
-          description: 'if wrong password reset token'
               $ref: '#/components/schemas/UpdateAmenityRequest'
           application/xml:
             schema:
