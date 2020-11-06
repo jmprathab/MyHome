@@ -18,12 +18,16 @@ package com.myhome.controllers;
 
 import com.myhome.api.CommunitiesApi;
 import com.myhome.controllers.dto.CommunityDto;
+import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.controllers.mapper.CommunityApiMapper;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
+import com.myhome.domain.Amenity;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
+import com.myhome.model.AddAmenityRequest;
+import com.myhome.model.AddAmenityResponse;
 import com.myhome.model.AddCommunityAdminRequest;
 import com.myhome.model.AddCommunityAdminResponse;
 import com.myhome.model.AddCommunityHouseRequest;
@@ -31,11 +35,13 @@ import com.myhome.model.AddCommunityHouseResponse;
 import com.myhome.model.CommunityHouseName;
 import com.myhome.model.CreateCommunityRequest;
 import com.myhome.model.CreateCommunityResponse;
+import com.myhome.model.GetAmenityDetailsResponse;
 import com.myhome.model.GetCommunityDetailsResponse;
 import com.myhome.model.GetCommunityDetailsResponseCommunity;
 import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.ListAdminPaymentsResponse;
 import com.myhome.model.ListCommunityAdminsResponse;
+import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import java.util.Arrays;
@@ -63,6 +69,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommunityController implements CommunitiesApi {
   private final CommunityService communityService;
   private final CommunityApiMapper communityApiMapper;
+  private final AmenityService amenitySDJpaService;
+  private final AmenityApiMapper amenityApiMapper;
   private final SchedulePaymentApiMapper schedulePaymentApiMapper;
   private final PaymentService paymentService;
 
@@ -211,6 +219,24 @@ public class CommunityController implements CommunitiesApi {
     }
   }
 
+  @Override
+  public ResponseEntity<Set<GetAmenityDetailsResponse>> listAllAmenities(
+      @PathVariable String communityId) {
+    Set<Amenity> amenities = amenitySDJpaService.listAllAmenities(communityId);
+    Set<GetAmenityDetailsResponse> response =
+        amenityApiMapper.amenitiesSetToAmenityDetailsResponseSet(amenities);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<AddAmenityResponse> addAmenityToCommunity(
+      @PathVariable String communityId,
+      @RequestBody AddAmenityRequest request) {
+    return amenitySDJpaService.createAmenities(request.getAmenities(), communityId)
+        .map(amenityList -> new AddAmenityResponse().amenities(amenityList))
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
+  }
 
   @Override
   public ResponseEntity<ListAdminPaymentsResponse> listAllAdminScheduledPayments(

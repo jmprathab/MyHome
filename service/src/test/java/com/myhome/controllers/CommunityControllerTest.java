@@ -20,6 +20,8 @@ import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.CommunityApiMapper;
+import com.myhome.model.AddAmenityRequest;
+import com.myhome.model.AddAmenityResponse;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.HouseMemberDocument;
@@ -28,6 +30,7 @@ import com.myhome.model.AddCommunityAdminRequest;
 import com.myhome.model.AddCommunityAdminResponse;
 import com.myhome.model.AddCommunityHouseRequest;
 import com.myhome.model.AddCommunityHouseResponse;
+import com.myhome.model.AmenityDto;
 import com.myhome.model.AdminPayment;
 import com.myhome.model.CommunityHouseName;
 import com.myhome.model.CreateCommunityRequest;
@@ -44,11 +47,13 @@ import com.myhome.model.ListAdminPaymentsResponse;
 import com.myhome.model.ListCommunityAdminsResponse;
 import com.myhome.model.ListCommunityAdminsResponseCommunityAdmin;
 import com.myhome.repositories.CommunityRepository;
+import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -65,6 +70,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
@@ -102,6 +108,9 @@ class CommunityControllerTest {
 
   @Mock
   private CommunityApiMapper communityApiMapper;
+
+  @Mock
+  private AmenityService amenitySDJpaService;
 
   @InjectMocks
   private CommunityController communityController;
@@ -599,6 +608,49 @@ class CommunityControllerTest {
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(communityService).deleteCommunity(COMMUNITY_ID);
   }
+
+  @Test
+  void shouldAddAmenityToCommunity() {
+    // given
+    final String communityId = "communityId";
+    final AmenityDto amenityDto =
+        new AmenityDto().id(1L)
+            .amenityId("amenityId")
+            .name("name")
+            .description("description")
+            .price(BigDecimal.ONE)
+            .communityId("");
+    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
+    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
+    given(amenitySDJpaService.createAmenities(amenities, communityId))
+        .willReturn(Optional.of(singletonList(amenityDto)));
+
+    // when
+    final ResponseEntity<AddAmenityResponse> response =
+        communityController.addAmenityToCommunity(communityId, request);
+
+    // then
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  @Test
+  void shouldNotAddAmenityWhenCommunityNotExists() {
+    // given
+    final String communityId = "communityId";
+    final AmenityDto amenityDto = new AmenityDto();
+    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
+    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
+    given(amenitySDJpaService.createAmenities(amenities, communityId))
+        .willReturn(Optional.empty());
+
+    // when
+    final ResponseEntity<AddAmenityResponse> response =
+        communityController.addAmenityToCommunity(communityId, request);
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
 
   private PaymentDto createTestPaymentDto() {
     UserDto userDto = UserDto.builder()

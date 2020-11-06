@@ -42,10 +42,13 @@ task generateOpenApiSpec(type: org.openapitools.generator.gradle.plugin.tasks.Ge
   apiPackage = "com.myhome.api"
   invokerPackage = "com.myhome.utils"
   modelPackage = "com.myhome.model"
+  typeMappings = [
+          'bigdecimal': 'java.math.BigDecimal'
+  ]
 
   additionalProperties = [
-          "skipDefaultInterface" : "true",
-          "interfaceOnly": "true",
+          "skipDefaultInterface": "true",
+          "interfaceOnly"       : "true",
           "booleanGetterPrefix" : "is"
   ]
   importMappings = [

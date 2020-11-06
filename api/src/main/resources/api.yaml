@@ -9,6 +9,7 @@ tags:
   - name: Users
   - name: Documents
   - name: Communities
+  - name: Amentities
   - name: Houses
   - name: Payments
   - name: Members
@@ -28,6 +29,60 @@ paths:
           description: 'acton with user password (forgot or reset)'
       requestBody:
         description: ""
+  /amenities/{amenityId}:
+    get:
+      tags:
+        - Amentities
+      description: "Get details about the amenity"
+      operationId: getAmenityDetails
+      parameters:
+        - in: path
+          name: amenityId
+          required: true
+          schema:
+            type: string
+          description: "ID of the amenity to get details"
+      responses:
+        '200':
+          description: "if details found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAmenityDetailsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetAmenityDetailsResponse'
+        '404':
+          description: "If params are invalid"
+    delete:
+      tags:
+        - Amentities
+      description: "Remove amenity"
+      operationId: deleteAmenity
+      parameters:
+        - in: path
+          name: amenityId
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: "If amenity deleted"
+        '404':
+          description: "If params are invalid"
+    put:
+      tags:
+        - Amentities
+      description: "Update an amenity"
+      operationId: updateAmenity
+      parameters:
+        - in: path
+          name: amenityId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: UpdateAmenityRequest update amenity
         required: true
         content:
           application/json:
@@ -41,6 +96,77 @@ paths:
           description: 'if password reset'
         '400':
           description: 'if wrong password reset token'
+              $ref: '#/components/schemas/UpdateAmenityRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UpdateAmenityRequest'
+      responses:
+        '204':
+          description: "If updated successfully"
+        '400':
+          description: "If amenity is not found"
+  /communities/{communityId}/amenities:
+    get:
+      tags:
+        - Community
+      description: "Get all amenities of community"
+      operationId: listAllAmenities
+      parameters:
+        - in: path
+          name: communityId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Returns list of amenities"
+          content:
+            application/json:
+              schema:
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/GetAmenityDetailsResponse'
+            application/xml:
+              schema:
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/GetAmenityDetailsResponse'
+        '404':
+          description: "If params are invalid"
+    post:
+      tags:
+        - Community
+      description: "Adds amenity to community"
+      operationId: addAmenityToCommunity
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddAmenityRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AddAmenityRequest'
+      parameters:
+        - in: path
+          name: communityId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "if amenity add successful"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddAmenityResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AddAmenityResponse'
+        '404':
+          description: "if community not found"
   /users:
     post:
       tags:
@@ -745,6 +871,56 @@ components:
           type: string
         newPassword:
           type: string
+    GetAmenityDetailsResponse:
+      type: object
+      properties:
+        amenityId:
+          type: string
+        description:
+          type: string
+    UpdateAmenityRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: integer
+          format: int64
+        communityId:
+          type: string
+    AmenityDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        amenityId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: bigdecimal
+        communityId:
+          type: string
+    AddAmenityRequest:
+      type: object
+      properties:
+        amenities:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/AmenityDto'
+    AddAmenityResponse:
+      type: object
+      properties:
+        amenities:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmenityDto'
     CreateUserRequest:
       type: object
       required:
