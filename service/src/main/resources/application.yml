@@ -26,6 +26,13 @@ server:
 # Spring
 ###############################################################################
 spring:
+  mail:
+    host: ${springMailHost:"none"}
+    username: ${springMailUsername:"none"}
+    password: ${springMailPassword:"none"}
+    port: 465
+    protocol: 'smtps'
+    debug: false
   jpa:
     show-sql: true
     properties:
@@ -83,6 +90,10 @@ authorization:
     header:
       name: "Authorization"
       prefix: "Bearer"
+
+tokens:
+  reset:
+    expiration: 1d
 
 files:
   maxSizeKBytes: 480

@@ -156,7 +156,6 @@ INSERT INTO "PUBLIC"."AMENITY"("ID", "AMENITY_ID", "DESCRIPTION", "NAME", "PRICE
 (100, '99bd016e-a128-4dd6-a5b2-0c518285a664', 'Test-community-amenity-description-100', 'name', 12, 50);
 
 
-
 INSERT INTO "PUBLIC"."USER"("ID", "EMAIL", "ENCRYPTED_PASSWORD", "NAME", "USER_ID") VALUES
 -- test user password - testtest
 (0, 'test@test.com', '$2a$10$9LPq9HKQRPe/HP1zeOoxyuqj.SSMXWmvJNBBtjnX1Ftm1Y9f70ofm', 'Test', 'default-user-id-for-testing'),
@@ -211,6 +210,60 @@ INSERT INTO "PUBLIC"."USER"("ID", "EMAIL", "ENCRYPTED_PASSWORD", "NAME", "USER_I
 (48, 'testuser48@myhome.com', '$2a$10$RKwASOpWTH9miQUsY.qXNu2Xe.wWyaOvgvGQhz6W2Juo1/7Q6TSRK', 'Test User 48', '7b7e0985-78c0-44d5-8666-df8e95746fe0'),
 (49, 'testuser49@myhome.com', '$2a$10$1LpgVqs39CHuDocW7Vg5Ku5SDTYREE8GbUHDG7US7a3KFPhNcCLNC', 'Test User 49', '01c37e94-3950-4e08-92be-e61b4f9e1ede'),
 (50, 'testuser50@myhome.com', '$2a$10$h5NU47S7UstO/Belh6gySe/jsQZj/9pi1dJuhWxh9YvefzFvmioPC', 'Test User 50', '5fd328d9-8bd0-4ef0-b17d-a53208a9e45a');
+
+
+INSERT INTO "PUBLIC"."SECURITY_TOKEN"("ID", "TOKEN_TYPE", "TOKEN", "CREATION_DATE", "EXPIRY_DATE", "IS_USED", "TOKEN_OWNER_ID") VALUES
+(0, 'reset', 'default-test-token', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 0),
+(1, 'reset', 'test-token-1', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 1),
+(2, 'reset', 'test-token-2', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 2),
+(3, 'reset', 'test-token-3', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 3),
+(4, 'reset', 'test-token-4', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 4),
+(5, 'reset', 'test-token-5', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 5),
+(6, 'reset', 'test-token-6', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 6),
+(7, 'reset', 'test-token-7', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 7),
+(8, 'reset', 'test-token-8', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 8),
+(9, 'reset', 'test-token-9', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 9),
+(10, 'reset', 'test-token-10', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 10),
+(11, 'reset', 'test-token-11', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 11),
+(12, 'reset', 'test-token-12', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 12),
+(13, 'reset', 'test-token-13', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 13),
+(14, 'reset', 'test-token-14', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 14),
+(15, 'reset', 'test-token-15', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 15),
+(16, 'reset', 'test-token-16', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 16),
+(17, 'reset', 'test-token-17', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 17),
+(18, 'reset', 'test-token-18', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 18),
+(19, 'reset', 'test-token-19', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 19),
+(20, 'reset', 'test-token-20', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 20),
+(21, 'reset', 'test-token-21', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 21),
+(22, 'reset', 'test-token-22', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 22),
+(23, 'reset', 'test-token-23', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 23),
+(24, 'reset', 'test-token-24', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 24),
+(25, 'reset', 'test-token-25', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 25),
+(26, 'reset', 'test-token-26', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 26),
+(27, 'reset', 'test-token-27', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 27),
+(28, 'reset', 'test-token-28', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 28),
+(29, 'reset', 'test-token-29', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 29),
+(30, 'reset', 'test-token-30', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 30),
+(31, 'reset', 'test-token-31', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 31),
+(32, 'reset', 'test-token-32', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 32),
+(33, 'reset', 'test-token-33', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 33),
+(34, 'reset', 'test-token-34', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 34),
+(35, 'reset', 'test-token-35', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 35),
+(36, 'reset', 'test-token-36', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 36),
+(37, 'reset', 'test-token-37', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 37),
+(38, 'reset', 'test-token-38', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 38),
+(39, 'reset', 'test-token-39', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 39),
+(40, 'reset', 'test-token-40', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 40),
+(41, 'reset', 'test-token-41', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 41),
+(42, 'reset', 'test-token-42', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 42),
+(43, 'reset', 'test-token-43', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 43),
+(44, 'reset', 'test-token-44', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 44),
+(45, 'reset', 'test-token-45', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 45),
+(46, 'reset', 'test-token-46', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 46),
+(47, 'reset', 'test-token-47', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 47),
+(48, 'reset', 'test-token-48', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 48),
+(49, 'reset', 'test-token-49', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 49),
+(50, 'reset', 'test-token-50', CURRENT_TIMESTAMP, DATEADD (Day, -1, CURRENT_TIMESTAMP), false, 50);
 
 INSERT INTO "PUBLIC"."COMMUNITY_ADMINS"("COMMUNITIES_ID", "ADMINS_ID") VALUES
 (0, 0),

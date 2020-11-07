@@ -24,11 +24,15 @@ import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import com.myhome.domain.HouseMemberDocument;
+import com.myhome.domain.Payment;
 import com.myhome.domain.User;
 import com.myhome.model.HouseMemberDto;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -122,6 +126,22 @@ class PaymentControllerTest {
     return communityDto;
   }
 
+  private Community getMockCommunity(Set<User> admins) {
+    Community community =
+        new Community(admins, new HashSet<>(), TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID,
+            TEST_COMMUNITY_DISTRICT, new HashSet<>());
+    User admin = new User(COMMUNITY_ADMIN_NAME, TEST_ADMIN_ID, COMMUNITY_ADMIN_EMAIL,
+        COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), null);
+    community.getAdmins().add(admin);
+    admin.getCommunities().add(community);
+
+    CommunityHouse communityHouse = getMockCommunityHouse();
+    communityHouse.setCommunity(community);
+    community.getHouses().add(communityHouse);
+
+    return community;
+  }
+
   private CommunityHouse getMockCommunityHouse() {
     CommunityHouse communityHouse = new CommunityHouse();
     communityHouse.setName(COMMUNITY_HOUSE_NAME);
@@ -131,20 +151,16 @@ class PaymentControllerTest {
     return communityHouse;
   }
 
-  private Community getMockCommunity(Set<User> admins) {
-    Community community =
-        new Community(admins, new HashSet<>(), TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID,
-            TEST_COMMUNITY_DISTRICT, new HashSet<>());
-    User admin = new User(COMMUNITY_ADMIN_NAME, TEST_ADMIN_ID, COMMUNITY_ADMIN_EMAIL,
-        COMMUNITY_ADMIN_PASSWORD, new HashSet<>());
+  private Payment getMockPayment() {
+    User admin = new User(TEST_ADMIN_NAME, TEST_ADMIN_ID, TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD,
+        new HashSet<>(), null);
+    Community community = getMockCommunity(new HashSet<>());
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
-
-    CommunityHouse communityHouse = getMockCommunityHouse();
-    communityHouse.setCommunity(community);
-    community.getHouses().add(communityHouse);
-
-    return community;
+    return new Payment(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING,
+        LocalDate.parse(TEST_DUE_DATE, DateTimeFormatter.ofPattern("yyyy-MM-dd")), admin,
+        new HouseMember(TEST_MEMBER_ID, new HouseMemberDocument(), TEST_MEMBER_NAME,
+            new CommunityHouse()));
   }
 
   @Test

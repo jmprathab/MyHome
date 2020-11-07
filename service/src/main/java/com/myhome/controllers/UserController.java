@@ -20,9 +20,11 @@ import com.myhome.api.UsersApi;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.UserApiMapper;
+import com.myhome.domain.PasswordActionType;
 import com.myhome.domain.User;
 import com.myhome.model.CreateUserRequest;
 import com.myhome.model.CreateUserResponse;
+import com.myhome.model.ForgotPasswordRequest;
 import com.myhome.model.GetUserDetailsResponse;
 import com.myhome.model.GetUserDetailsResponseUser;
 import com.myhome.model.ListHouseMembersResponse;
@@ -37,7 +39,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Controller for facilitating user actions.
@@ -89,6 +97,22 @@ public class UserController implements UsersApi {
   }
 
   @Override
+  public ResponseEntity<Void> usersPasswordPost(@NotNull @Valid String action, @Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+    boolean result = false;
+    PasswordActionType parsedAction = PasswordActionType.valueOf(action);
+    if (parsedAction == PasswordActionType.FORGOT) {
+      result = true;
+      userService.requestResetPassword(forgotPasswordRequest);
+    } else if (parsedAction == PasswordActionType.RESET) {
+      result = userService.resetPassword(forgotPasswordRequest);
+    }
+    if (result) {
+      return ResponseEntity.ok().build();
+    } else {
+      return ResponseEntity.badRequest().build();
+    }
+  }
+
   public ResponseEntity<ListHouseMembersResponse> listAllHousemates(String userId, Pageable pageable) {
     log.trace("Received request to list all members of all houses of user with Id[{}]", userId);
 

@@ -14,6 +14,34 @@ tags:
   - name: Payments
   - name: Members
 paths:
+  /users/password:
+    post:
+      tags:
+        - Users
+      description: 'Request reset password or reset password'
+      parameters:
+        - in: query
+          name: action
+          required: true
+          schema:
+            type: string
+            enum: [ FORGOT, RESET ]
+          description: 'acton with user password (forgot or reset)'
+      requestBody:
+        description: ""
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: 'if password reset'
+        '400':
+          description: 'if wrong password reset token'
   /amenities/{amenityId}:
     get:
       tags:
@@ -838,6 +866,15 @@ paths:
           description: "If communityId and adminId are invalid"
 components:
   schemas:
+    ForgotPasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        token:
+          type: string
+        newPassword:
+          type: string
     GetAmenityDetailsResponse:
       type: object
       properties:

@@ -16,21 +16,26 @@
 
 package com.myhome.domain;
 
-import java.util.HashSet;
-import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedEntityGraphs;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.With;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entity identifying a valid user in the service.
@@ -48,6 +53,12 @@ import lombok.With;
         attributeNodes = {
             @NamedAttributeNode("communities"),
         }
+    ),
+    @NamedEntityGraph(
+        name = "User.userTokens",
+        attributeNodes = {
+            @NamedAttributeNode("userTokens"),
+        }
     )
 })
 public class User extends BaseEntity {
@@ -61,4 +72,6 @@ public class User extends BaseEntity {
   private String encryptedPassword;
   @ManyToMany(mappedBy = "admins", fetch = FetchType.LAZY)
   private Set<Community> communities = new HashSet<>();
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "tokenOwner")
+  private Set<SecurityToken> userTokens = new HashSet<>();
 }
