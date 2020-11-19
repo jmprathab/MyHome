@@ -754,18 +754,18 @@
 			"response": []
 		},
 		{
-			"name": "Delete amenity booking",
+			"name": "List community amenities",
 			"request": {
-				"method": "DELETE",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {{AUTH_TOKEN}}",
-						"type": "text"
+						"type": "text",
+						"value": "Bearer {{AUTH_TOKEN}}"
 					}
 				],
 				"url": {
-					"raw": "http://{{ENV_URL}}/bookings/{{BOOKING_ID}}",
+					"raw": "http://{{ENV_URL}}/amenities/{{AMENITY_ID}}",
 					"protocol": "http",
 					"host": [
 						"{{ENV_URL}}"
@@ -802,13 +802,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{ENV_URL}}/user/password?action=FORGOT",
+					"raw": "http://{{ENV_URL}}/users/password?action=FORGOT",
 					"protocol": "http",
 					"host": [
 						"{{ENV_URL}}"
 					],
 					"path": [
-						"user",
+						"users",
 						"password"
 					],
 					"query": [
@@ -845,13 +845,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{ENV_URL}}/user/password?action=RESET",
+					"raw": "http://{{ENV_URL}}/users/password?action=RESET",
 					"protocol": "http",
 					"host": [
 						"{{ENV_URL}}"
 					],
 					"path": [
-						"user",
+						"users",
 						"password"
 					],
 					"query": [
@@ -889,49 +889,44 @@
 	],
 	"variable": [
 		{
-			"id": "c5a4051e-613d-446c-b2d7-6d4143985b82",
+			"id": "eedd8c36-3073-48cc-82a3-43a483f33837",
 			"key": "AUTH_TOKEN",
-			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyZjAwMzAwYi1hNzA0LTQ1ZDMtYmE4Zi00NThmMWUxMzY0OTIiLCJleHAiOjE2MDMzODQ0NjR9.vQY706irohxDeAW6eeOW-9qHVIgrsLqII_VPtOIUNbyb4-spdxL7RSVuxZbDl5HP3RdAPxArBIEje0BIR0vNBQ"
+			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI2NzgwNTQ0Yi03MDlmLTRmZmQtOTJhYS1jZmUwMWNmODY3NjUiLCJleHAiOjE2MDU5NDE4NDN9.gpVFkjFqq5QLj7jEpJT2YftPPwHlPb3XSsTwuQhH_sApgA7qLGNI6hU8SOYEgibs2iEdBUaEhPIgiO064zs53A"
 		},
 		{
-			"id": "3cfb2b80-6638-4a4c-998e-4bc125bdcf4f",
+			"id": "0c58c57a-2c7a-49f7-b144-a06604f65e15",
 			"key": "ENV_URL",
 			"value": "127.0.0.1:8080"
 		},
 		{
-			"id": "7f8bef2d-efa8-4617-8ea1-cbbe0ecd545c",
+			"id": "8a62ca9d-a5ed-4eb5-8ae7-bdadf38b2ead",
 			"key": "COMMUNITY_ID",
 			"value": "default-community-id-for-testing"
 		},
 		{
-			"id": "abc87c56-d4dd-4438-96c7-24e780c394df",
+			"id": "6d2be72c-e047-4aa6-a537-8269802cb00a",
 			"key": "HOUSE_ID",
 			"value": "default-house-id-for-testing"
 		},
 		{
-			"id": "838bbb45-6ab2-43d6-893d-8af74dacb856",
+			"id": "54516d64-6b81-4751-a173-46a1b4cfd8d1",
 			"key": "USER_ID",
-			"value": "2f00300b-a704-45d3-ba8f-458f1e136492"
+			"value": "6780544b-709f-4ffd-92aa-cfe01cf86765"
 		},
 		{
-			"id": "449a32ed-6b8b-448e-8b0d-7c9e4a0ce34e",
+			"id": "e0efdece-ba1c-41e6-8808-fde150ea9624",
 			"key": "ADMIN_ID",
 			"value": "default-admin-id-for-testing"
 		},
 		{
-			"id": "0a2972c9-31b0-457a-bf74-c6555e33486a",
+			"id": "2fd1494a-c0c4-4b7d-92a7-eaddbf3adeb8",
 			"key": "MEMBER_ID",
 			"value": "default-member-id-for-testing"
 		},
 		{
-			"id": "c951ffa6-ad53-47a1-a2c4-b823a648a0ac",
+			"id": "15b0caeb-21db-437e-8dce-e5049405fa96",
 			"key": "AMENITY_ID",
 			"value": "244282d9-d71b-4824-ae72-1f5d4f9b067c"
-		},
-		{
-			"id": "3a7f153b-f5a5-4e94-812b-d4012ab1d9bb",
-			"key": "BOOKING_ID",
-			"value": "7f8c2547-fcd5-42fe-8fcb-32c4d5a55c5d"
 		}
 	],
 	"protocolProfileBehavior": {}
