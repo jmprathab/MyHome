@@ -21,7 +21,6 @@ import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseHistory;
 import com.myhome.domain.HouseMember;
 import com.myhome.model.HouseHistoryDto;
-import com.myhome.model.HouseHistoryResponse;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

@@ -3,9 +3,12 @@ package helpers;
 import com.myhome.domain.Amenity;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseHistory;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
 
+import java.sql.Time;
+import java.time.OffsetDateTime;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -16,6 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.rmi.CORBA.Util;
 
 import static helpers.TestUtils.General.generateUniqueId;
 import static helpers.TestUtils.CommunityHouseHelpers.getTestHouses;
@@ -163,6 +167,21 @@ public class TestUtils {
           .collect(Collectors.toSet());
     }
 
+  }
+  public static class HouseHistoryHelpers{
+
+    public static Set<HouseHistory> getTestHouseHistories(int count){
+      return Stream.iterate(0,n -> n + 1)
+          .map(index -> new HouseHistory(
+              "default-house-Id",
+              "default-user-Id" + index,
+              OffsetDateTime.now(),
+              OffsetDateTime.now(),
+              new HouseMember(),
+              new CommunityHouse()
+          ))
+          .collect(Collectors.toSet());
+    }
   }
 
 

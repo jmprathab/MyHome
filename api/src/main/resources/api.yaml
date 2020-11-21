@@ -755,20 +755,26 @@ paths:
           description: If house member was removed from house
         '400':
           description: if params are invalid
-  /houses/member/captureStay:
+  /houses/{houseId}/rentals:
     post:
       tags:
         - house-controller
       description: Add the duration of stay to house history.
       operationId: captureStay
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/HouseHistoryDto'
+              $ref: '#/components/schemas/HouseHistoryRequest'
           application/xml:
             schema:
-              $ref: '#/components/schemas/HouseHistoryDto'
+              $ref: '#/components/schemas/HouseHistoryRequest'
         required: true
       responses:
         '201':
@@ -782,7 +788,6 @@ paths:
                 $ref: '#/components/schemas/HouseHistoryResponse'
         '404':
           description: If parameters are invalid
-  /houses/{houseId}/houseHistory:
     get:
       tags:
         - house-controller
@@ -1347,3 +1352,4 @@ components:
           format: date-time
           description: Creation date and time
           example: "2021-01-30T08:30:00Z"
+

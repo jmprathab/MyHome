@@ -28,6 +28,7 @@ import com.myhome.model.AddHouseMemberResponse;
 import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
 import com.myhome.model.HouseHistoryDto;
+import com.myhome.model.HouseHistoryRequest;
 import com.myhome.model.HouseHistoryResponse;
 import com.myhome.model.ListHouseHistoryResponse;
 import com.myhome.model.ListHouseMembersResponse;
@@ -132,18 +133,24 @@ public class HouseController implements HousesApi {
     }
   }
 
-  @Override
-  public ResponseEntity<HouseHistoryResponse> captureStay(
-      com.myhome.model.@Valid HouseHistoryDto houseHistoryDto) {
-    log.trace("Received request to post date interval for house Id[{}] and memberId [{}] ",
-        houseHistoryDto.getHouseId(), houseHistoryDto.getMemberId(), houseHistoryDto.getStayFromDate(), houseHistoryDto.getStayToDate());
-    HouseHistoryResponse houseHistoryResponse =houseHistoryMapper.HouseHistoryDtoToHouseHistoryResponse(houseHistoryMapper.HouseHistoryToHouseHistoryDto(houseService.captureStay(houseHistoryDto)));
+
+  @Override public ResponseEntity<HouseHistoryResponse> captureStay(String houseId,
+      @Valid HouseHistoryRequest houseHistoryRequest) {
+    HouseHistoryDto houseHistoryDto = houseHistoryMapper
+        .HouseHistoryRequestToHouseHistoryDto(houseId,houseHistoryRequest);
+
+    HouseHistoryResponse houseHistoryResponse = houseHistoryMapper
+        .HouseHistoryDtoToHouseHistoryResponse(houseHistoryMapper
+            .HouseHistoryToHouseHistoryDto(houseService
+                .captureStay(houseHistoryDto)));
+
     return (houseHistoryResponse != null
         ? ResponseEntity.status(HttpStatus.CREATED).body(houseHistoryResponse)
         : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(houseHistoryResponse));
 
   }
 
+  
   @Override
   public ResponseEntity<Void> deleteHouseMember(String houseId, String memberId) {
     log.trace("Received request to delete a member from house with house id[{}] and member id[{}]",

@@ -16,20 +16,27 @@
 
 package com.myhome.controllers;
 
+import com.myhome.controllers.dto.mapper.HouseHistoryMapper;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;
 import com.myhome.domain.CommunityHouse;
+import com.myhome.domain.HouseHistory;
 import com.myhome.domain.HouseMember;
 import com.myhome.model.AddHouseMemberRequest;
 import com.myhome.model.AddHouseMemberResponse;
 import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
+import com.myhome.model.HouseHistoryDto;
+import com.myhome.model.HouseHistoryResponse;
 import com.myhome.model.HouseMemberDto;
+import com.myhome.model.ListHouseHistoryResponse;
 import com.myhome.model.ListHouseMembersResponse;
 import com.myhome.services.HouseService;
 import helpers.TestUtils;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,9 +52,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class HouseControllerTest {
 
@@ -56,6 +65,7 @@ class HouseControllerTest {
 
   private final int TEST_HOUSES_COUNT = 2;
   private final int TEST_HOUSE_MEMBERS_COUNT = 2;
+  private final int TEST_HOUSE_HISTORY_COUNT =2;
 
   @Mock
   private HouseMemberMapper houseMemberMapper;
@@ -63,6 +73,8 @@ class HouseControllerTest {
   private HouseService houseService;
   @Mock
   private HouseApiMapper houseApiMapper;
+  @Mock
+  private HouseHistoryMapper houseHistoryMapper;
 
   @InjectMocks
   private HouseController houseController;
@@ -299,5 +311,80 @@ class HouseControllerTest {
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertNull(response.getBody());
   }
+/*
+  void testCaptureHouseHistorySuccess() {
+    OffsetDateTime time = OffsetDateTime.now();
+    HouseHistory houseHistory = new HouseHistory(
+        "default-member-id-for-testing",
+        "default-house-id-for-testing",
+        time,
+        time,
+        new HouseMember(),
+        new CommunityHouse());
 
+    HouseHistoryResponse expectedResponse = new HouseHistoryResponse()
+        .houseId("default-house-id-for-testing")
+        .memberId("default-member-id-for-testing")
+        .stayFromDate(time)
+        .stayToDate(time);
+
+    HouseHistoryDto houseHistoryDto = new HouseHistoryDto()
+        .houseId("default-house-id-for-testing")
+        .memberId("default-member-id-for-testing")
+        .stayFromDate(time)
+        .stayToDate(time);
+
+    //given
+    given(houseService.captureStay(houseHistoryDto)).willReturn(houseHistory);
+    given(houseHistoryMapper.HouseHistoryDtoToHouseHistory(houseHistoryDto))
+        .willReturn(houseHistory);
+    given(houseHistoryMapper.HouseHistoryDtoToHouseHistoryResponse(houseHistoryDto))
+        .willReturn(expectedResponse);
+    given(houseHistoryMapper.HouseHistoryToHouseHistoryDto(houseHistory))
+        .willReturn(houseHistoryDto);
+    //when
+    ResponseEntity<HouseHistoryResponse> responseEntity =
+        houseController.captureStay(houseHistoryDto);
+    //then
+    assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+    assertEquals(expectedResponse, responseEntity.getBody());
+
+  }
+
+  void testCaptureHouseHistoryFailed(){
+    OffsetDateTime time = OffsetDateTime.now();
+
+    HouseHistoryDto houseHistoryDto = new HouseHistoryDto()
+        .memberId("default-member-id-for-testing")
+        .stayFromDate(time)
+        .stayToDate(time);
+
+    //given
+    given(houseService.captureStay(houseHistoryDto)).willReturn(null);
+    //when
+    ResponseEntity<HouseHistoryResponse> responseEntity =
+        houseController.captureStay(houseHistoryDto);
+    //then
+    assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    assertNull(responseEntity.getBody());
+
+  }
+
+  void testGetHouseHistoryByHouseId(){
+      Set<HouseHistory> houseHistorySet = TestUtils.HouseHistoryHelpers.getTestHouseHistories(5);
+      String houseId = "default-house-Id";
+
+      //when
+
+      //then
+      
+
+
+  }
+
+  void testGetHouseHistoryByHouseIdAndMemberId(){
+
+  }
+
+ */
 }
