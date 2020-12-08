@@ -30,6 +30,7 @@ import com.myhome.model.SchedulePaymentRequest;
 import com.myhome.model.SchedulePaymentResponse;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -39,27 +40,6 @@ import org.mapstruct.Named;
 
 @Mapper
 public interface SchedulePaymentApiMapper {
-
-  @AfterMapping
-  static void setUpUserAndAdmin(@MappingTarget PaymentDto paymentDto,
-      EnrichedSchedulePaymentRequest enrichedSchedulePaymentRequest) {
-    UserDto userDto = UserDto.builder()
-        .id(enrichedSchedulePaymentRequest.getAdminEntityId())
-        .userId(enrichedSchedulePaymentRequest.getAdminId())
-        .encryptedPassword(enrichedSchedulePaymentRequest.getAdminEncryptedPassword())
-        .name(enrichedSchedulePaymentRequest.getAdminName())
-        .email(enrichedSchedulePaymentRequest.getAdminEmail())
-        .communityIds(enrichedSchedulePaymentRequest.getAdminCommunityIds())
-        .build();
-
-    HouseMemberDto houseMemberDto = new HouseMemberDto()
-        .id(enrichedSchedulePaymentRequest.getMemberEntityId())
-        .memberId(enrichedSchedulePaymentRequest.getMemberId())
-        .name(enrichedSchedulePaymentRequest.getHouseMemberName());
-
-    paymentDto.setAdmin(userDto);
-    paymentDto.setMember(houseMemberDto);
-  }
 
   @Named("adminIdToAdmin")
   static UserDto adminIdToAdminDto(String adminId) {
@@ -90,12 +70,16 @@ public interface SchedulePaymentApiMapper {
   })
   PaymentDto schedulePaymentRequestToPaymentDto(SchedulePaymentRequest schedulePaymentRequest);
 
-  @Mappings({
-      @Mapping(target = "admin", ignore = true),
-      @Mapping(target = "member", ignore = true)
-  })
   PaymentDto enrichedSchedulePaymentRequestToPaymentDto(
       EnrichedSchedulePaymentRequest enrichedSchedulePaymentRequest);
+
+  @AfterMapping
+  default void setUserFields(@MappingTarget PaymentDto.PaymentDtoBuilder paymentDto, EnrichedSchedulePaymentRequest enrichedSchedulePaymentRequest) {
+    // MapStruct and Lombok requires you to pass in the Builder instance of the class if that class is annotated with @Builder, or else the AfterMapping method is not used.
+    // required to use AfterMapping to convert the user details of the payment request to admin, and same with house member
+    paymentDto.member(getEnrichedRequestMember(enrichedSchedulePaymentRequest));
+    paymentDto.admin(getEnrichedRequestAdmin(enrichedSchedulePaymentRequest));
+  }
 
   Set<MemberPayment> memberPaymentSetToRestApiResponseMemberPaymentSet(
       Set<Payment> memberPaymentSet);
@@ -138,5 +122,20 @@ public interface SchedulePaymentApiMapper {
             .getDocumentFilename() : "",
         member.getName(),
         member.getCommunityHouse() != null ? member.getCommunityHouse().getHouseId() : "");
+  }
+
+  default UserDto getEnrichedRequestAdmin(EnrichedSchedulePaymentRequest enrichedSchedulePaymentRequest) {
+    return UserDto.builder().userId(enrichedSchedulePaymentRequest.getAdminId())
+        .id(enrichedSchedulePaymentRequest.getAdminEntityId())
+        .name(enrichedSchedulePaymentRequest.getAdminName())
+        .email(enrichedSchedulePaymentRequest.getAdminEmail())
+        .encryptedPassword(enrichedSchedulePaymentRequest.getAdminEncryptedPassword())
+        .build();
+  }
+
+  default HouseMemberDto getEnrichedRequestMember(EnrichedSchedulePaymentRequest enrichedSchedulePaymentRequest) {
+    return new HouseMemberDto().id(enrichedSchedulePaymentRequest.getMemberEntityId())
+        .memberId(enrichedSchedulePaymentRequest.getMemberId())
+        .name(enrichedSchedulePaymentRequest.getHouseMemberName());
   }
 }
