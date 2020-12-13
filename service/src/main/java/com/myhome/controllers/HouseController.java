@@ -17,7 +17,6 @@
 package com.myhome.controllers;
 import com.myhome.controllers.dto.mapper.HouseHistoryMapper;
 import com.myhome.api.HousesApi;
-import com.myhome.controllers.dto.mapper.HouseHistoryMapper;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;
 import com.myhome.domain.CommunityHouse;
@@ -88,7 +87,7 @@ public class HouseController implements HousesApi {
 
   @Override public ResponseEntity<ListHouseHistoryResponse> getHouseHistory(String houseId,
       @Valid String memberId) {
-    if (!houseService.getHouseDetailsById(houseId).isPresent()) {
+    if (!houseService.getHouseHistory(memberId,houseId).isPresent()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ListHouseHistoryResponse());
     }
     List<HouseHistory> houseHistoryList = houseService.getHouseHistory(memberId,houseId).get();

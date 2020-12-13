@@ -174,12 +174,13 @@ public class TestUtils {
       return Stream.iterate(0,n -> n + 1)
           .map(index -> new HouseHistory(
               "default-house-Id",
-              "default-user-Id" + index,
+              "default-user-Id-" + index,
               OffsetDateTime.now(),
               OffsetDateTime.now(),
               new HouseMember(),
               new CommunityHouse()
           ))
+          .limit(count)
           .collect(Collectors.toSet());
     }
   }

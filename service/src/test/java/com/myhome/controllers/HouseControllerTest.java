@@ -27,6 +27,7 @@ import com.myhome.model.AddHouseMemberResponse;
 import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
 import com.myhome.model.HouseHistoryDto;
+import com.myhome.model.HouseHistoryRequest;
 import com.myhome.model.HouseHistoryResponse;
 import com.myhome.model.HouseMemberDto;
 import com.myhome.model.ListHouseHistoryResponse;
@@ -52,11 +53,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class HouseControllerTest {
 
@@ -311,7 +310,8 @@ class HouseControllerTest {
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertNull(response.getBody());
   }
-/*
+
+  @Test
   void testCaptureHouseHistorySuccess() {
     OffsetDateTime time = OffsetDateTime.now();
     HouseHistory houseHistory = new HouseHistory(
@@ -334,6 +334,11 @@ class HouseControllerTest {
         .stayFromDate(time)
         .stayToDate(time);
 
+    HouseHistoryRequest houseHistoryRequest = new HouseHistoryRequest()
+        .memberId("default-member-id-for-testing")
+        .stayFromDate(time)
+        .stayToDate(time);
+    String houseId = "default-house-id-for-testing";
     //given
     given(houseService.captureStay(houseHistoryDto)).willReturn(houseHistory);
     given(houseHistoryMapper.HouseHistoryDtoToHouseHistory(houseHistoryDto))
@@ -342,15 +347,18 @@ class HouseControllerTest {
         .willReturn(expectedResponse);
     given(houseHistoryMapper.HouseHistoryToHouseHistoryDto(houseHistory))
         .willReturn(houseHistoryDto);
+    given(houseHistoryMapper.HouseHistoryRequestToHouseHistoryDto(houseId,houseHistoryRequest))
+        .willReturn(houseHistoryDto);
     //when
     ResponseEntity<HouseHistoryResponse> responseEntity =
-        houseController.captureStay(houseHistoryDto);
+        houseController.captureStay(houseId,houseHistoryRequest);
     //then
     assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
     assertEquals(expectedResponse, responseEntity.getBody());
 
   }
 
+  @Test
   void testCaptureHouseHistoryFailed(){
     OffsetDateTime time = OffsetDateTime.now();
 
@@ -358,33 +366,86 @@ class HouseControllerTest {
         .memberId("default-member-id-for-testing")
         .stayFromDate(time)
         .stayToDate(time);
+    HouseHistoryRequest houseHistoryRequest = new HouseHistoryRequest()
+        .memberId("default-member-id-for-testing")
+        .stayFromDate(time)
+        .stayToDate(time);
+    //String houseId = "default-house-id-for-testing";
 
     //given
-    given(houseService.captureStay(houseHistoryDto)).willReturn(null);
+    given(houseService.captureStay(houseHistoryDto))
+        .willReturn(null);
+    given(houseHistoryMapper.HouseHistoryRequestToHouseHistoryDto(null,houseHistoryRequest))
+        .willReturn(null);
+
     //when
     ResponseEntity<HouseHistoryResponse> responseEntity =
-        houseController.captureStay(houseHistoryDto);
+        houseController.captureStay(null,houseHistoryRequest);
     //then
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     assertNull(responseEntity.getBody());
 
   }
 
-  void testGetHouseHistoryByHouseId(){
-      Set<HouseHistory> houseHistorySet = TestUtils.HouseHistoryHelpers.getTestHouseHistories(5);
-      String houseId = "default-house-Id";
-
+  @Test
+  void testGetHouseHistoryNotFound(){
+      String memberId;
+      String houseId;
+      ListHouseHistoryResponse expectedResponse = new ListHouseHistoryResponse();
+      //given
+      given(houseService.getHouseHistory(TEST_MEMBER_ID,TEST_HOUSE_ID))
+          .willReturn(Optional.empty());
       //when
+      ResponseEntity<ListHouseHistoryResponse> responseEntity =
+        houseController.getHouseHistory(TEST_HOUSE_ID,TEST_MEMBER_ID);
 
       //then
-      
-
-
-  }
-
-  void testGetHouseHistoryByHouseIdAndMemberId(){
+      assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+      assertEquals(expectedResponse,responseEntity.getBody());
+      verify(houseService).getHouseHistory(TEST_MEMBER_ID,TEST_HOUSE_ID);
 
   }
+  @Test
+  void testGetHouseHistoryByHouseId(){
+    Set<HouseHistory> houseHistories = TestUtils.HouseHistoryHelpers.getTestHouseHistories(TEST_HOUSE_HISTORY_COUNT);
+    List<HouseHistoryDto> houseHistoryDtoList = houseHistories.stream()
+        .map(houseHistoryMapper::HouseHistoryToHouseHistoryDto)
+        .collect(Collectors.toList());
+    ListHouseHistoryResponse expectedResponse = new ListHouseHistoryResponse().histories(houseHistoryDtoList);
 
- */
+    //given
+    given(houseService.getHouseHistory(null,"default-house-Id"))
+        .willReturn(Optional.of(new ArrayList<>(houseHistories)));
+
+
+    //when
+    ResponseEntity<ListHouseHistoryResponse> response =
+        houseController.getHouseHistory("default-house-Id",null);
+    // then
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(expectedResponse, response.getBody());
+
+  }
+@Test
+ void testGetHouseHistoryByHouseIdAndMemberId(){
+   Set<HouseHistory> houseHistories = TestUtils.HouseHistoryHelpers.getTestHouseHistories(TEST_HOUSE_HISTORY_COUNT);
+   List<HouseHistoryDto> houseHistoryDtoList = houseHistories.stream()
+       .map(houseHistoryMapper::HouseHistoryToHouseHistoryDto)
+       .collect(Collectors.toList());
+   ListHouseHistoryResponse expectedResponse = new ListHouseHistoryResponse()
+       .histories(houseHistoryDtoList);
+
+   //given
+   given(houseService.getHouseHistory("default-user-Id-0","default-house-Id"))
+       .willReturn(Optional.of(new ArrayList<>(houseHistories)));
+
+
+   //when
+   ResponseEntity<ListHouseHistoryResponse> response =
+       houseController.getHouseHistory("default-house-Id","default-user-Id-0");
+   // then
+   assertEquals(HttpStatus.OK, response.getStatusCode());
+   assertEquals(expectedResponse, response.getBody());
+ }
+
 }
