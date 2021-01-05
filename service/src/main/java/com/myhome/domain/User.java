@@ -69,6 +69,8 @@ public class User extends BaseEntity {
   @Column(unique = true, nullable = false)
   private String email;
   @Column(nullable = false)
+  private boolean emailConfirmed = false;
+  @Column(nullable = false)
   private String encryptedPassword;
   @ManyToMany(mappedBy = "admins", fetch = FetchType.LAZY)
   private Set<Community> communities = new HashSet<>();
