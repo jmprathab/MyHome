@@ -42,10 +42,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * Controller for facilitating user actions.
@@ -54,6 +51,7 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 public class UserController implements UsersApi {
+
   private final UserService userService;
   private final UserApiMapper userApiMapper;
   private final HouseService houseService;
@@ -113,6 +111,7 @@ public class UserController implements UsersApi {
     }
   }
 
+  @Override
   public ResponseEntity<ListHouseMembersResponse> listAllHousemates(String userId, Pageable pageable) {
     log.trace("Received request to list all members of all houses of user with Id[{}]", userId);
 
@@ -122,5 +121,25 @@ public class UserController implements UsersApi {
             .map(houseMembers -> new ListHouseMembersResponse().members(houseMembers))
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
+  }
+
+  @Override
+  public ResponseEntity<Void> confirmEmail(String userId, String emailConfirmToken) {
+    boolean emailConfirmed = userService.confirmEmail(userId, emailConfirmToken);
+    if(emailConfirmed) {
+      return ResponseEntity.ok().build();
+    } else {
+      return ResponseEntity.badRequest().build();
+    }
+  }
+
+  @Override
+  public ResponseEntity<Void> resendConfirmEmailMail(String userId) {
+    boolean emailConfirmResend = userService.resendEmailConfirm(userId);
+    if(emailConfirmResend) {
+      return ResponseEntity.ok().build();
+    } else {
+      return ResponseEntity.badRequest().build();
+    }
   }
 }

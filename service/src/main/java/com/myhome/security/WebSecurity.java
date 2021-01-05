@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myhome.security.filters.CommunityAuthorizationFilter;
 import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import com.myhome.services.CommunityService;
-import javax.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -32,6 +31,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.servlet.Filter;
 
 @Configuration
 @EnableWebSecurity
@@ -64,6 +65,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.POST, environment.getProperty("api.login.url.path"))
         .permitAll()
         .antMatchers(HttpMethod.OPTIONS, "/**")
+        .permitAll()
+        .antMatchers(HttpMethod.GET, environment.getProperty("api.email.email-confirm.url.path"))
+        .permitAll()
+        .antMatchers(HttpMethod.GET, environment.getProperty("api.email.email-confirm-resend.url.path"))
+        .permitAll()
+        .antMatchers(HttpMethod.POST, environment.getProperty("api.email.password-forgot-reset.url.path"))
         .permitAll()
         .anyRequest()
         .authenticated()
