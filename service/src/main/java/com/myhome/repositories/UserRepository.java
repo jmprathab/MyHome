@@ -37,6 +37,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @EntityGraph(value = "User.communities")
   Optional<User> findByUserIdWithCommunities(@Param("userId") String userId);
 
+  @Query("from User user where user.userId = :userId")
+  @EntityGraph(value = "User.userTokens")
+  Optional<User> findByUserIdWithTokens(@Param("userId") String userId);
+
   @Query("from User user where user.email = :email")
   @EntityGraph(value = "User.userTokens")
   Optional<User> findByEmailWithTokens(@Param("email") String email);

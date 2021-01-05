@@ -59,7 +59,11 @@ public class UserSDJpaService implements UserService {
     if (userRepository.findByEmail(request.getEmail()) == null) {
       generateUniqueUserId(request);
       encryptUserPassword(request);
-      return Optional.of(createUserInRepository(request));
+      User newUser = createUserInRepository(request);
+      SecurityToken emailConfirmToken = securityTokenService.createEmailConfirmToken(newUser);
+      //mailService.sendAccountCreated(newUser, emailConfirmToken);
+      UserDto newUserDto = userMapper.userToUserDto(newUser);
+      return Optional.of(newUserDto);
     } else {
       return Optional.empty();
     }
@@ -95,7 +99,7 @@ public class UserSDJpaService implements UserService {
         .map(ForgotPasswordRequest::getEmail)
         .flatMap(email -> userRepository.findByEmailWithTokens(email)
             .map(user -> {
-              SecurityToken newSecurityToken = securityTokenService.createPasswordResetToken();
+              SecurityToken newSecurityToken = securityTokenService.createPasswordResetToken(user);
               user.getUserTokens().add(newSecurityToken);
               userRepository.save(user);
               return mailService.sendPasswordRecoverCode(user, newSecurityToken.getToken());
@@ -109,11 +113,41 @@ public class UserSDJpaService implements UserService {
         .map(ForgotPasswordRequest::getEmail)
         .flatMap(userRepository::findByEmailWithTokens);
     return userWithToken
-        .map(user -> findTokenForUser(passwordResetRequest.getToken(), user))
+        .flatMap(user -> findValidUserToken(passwordResetRequest.getToken(), user, SecurityTokenType.RESET))
         .map(securityTokenService::useToken)
         .map(token -> saveTokenForUser(userWithToken.get(), passwordResetRequest.getNewPassword()))
         .map(mailService::sendPasswordSuccessfullyChanged)
         .orElse(false);
+  }
+
+  @Override
+  public Boolean confirmEmail(String userId, String emailConfirmToken) {
+    final Optional<User> userWithToken = userRepository.findByUserIdWithTokens(userId);
+    Optional<SecurityToken> emailToken = userWithToken
+        .filter(user -> !user.isEmailConfirmed())
+        .map(user -> findValidUserToken(emailConfirmToken, user, SecurityTokenType.EMAIL_CONFIRM)
+        .map(token -> {
+          confirmEmail(user);
+          return token;
+        })
+        .map(securityTokenService::useToken)
+        .orElse(null));
+    return emailToken.map(token -> true).orElse(false);
+  }
+
+  @Override
+  public boolean resendEmailConfirm(String userId) {
+    return userRepository.findByUserId(userId).map(user -> {
+      if(!user.isEmailConfirmed()) {
+        SecurityToken emailConfirmToken = securityTokenService.createEmailConfirmToken(user);
+        user.getUserTokens().removeIf(token -> token.getTokenType() == SecurityTokenType.EMAIL_CONFIRM && !token.isUsed());
+        userRepository.save(user);
+        //boolean mailSend = mailService.sendAccountCreated(user, emailConfirmToken);
+        return true;
+      } else {
+        return false;
+      }
+    }).orElse(false);
   }
 
   private User saveTokenForUser(User user, String newPassword) {
@@ -121,22 +155,27 @@ public class UserSDJpaService implements UserService {
     return userRepository.save(user);
   }
 
-  private SecurityToken findTokenForUser(String tokenFromRequest, User user) {
+  private Optional<SecurityToken> findValidUserToken(String token, User user, SecurityTokenType securityTokenType) {
     Optional<SecurityToken> userPasswordResetToken = user.getUserTokens()
         .stream()
-        .filter(token -> !token.isUsed()
-            && token.getTokenType() == SecurityTokenType.RESET
-            && token.getToken().equals(tokenFromRequest)
-            && token.getExpiryDate().isAfter(LocalDate.now()))
+        .filter(tok -> !tok.isUsed()
+            && tok.getTokenType() == securityTokenType
+            && tok.getToken().equals(token)
+            && tok.getExpiryDate().isAfter(LocalDate.now()))
         .findFirst();
-    return userPasswordResetToken.orElse(null);
+    return userPasswordResetToken;
   }
 
-  private UserDto createUserInRepository(UserDto request) {
+  private User createUserInRepository(UserDto request) {
     User user = userMapper.userDtoToUser(request);
-    User savedUser = userRepository.save(user);
-    log.trace("saved user with id[{}] to repository", savedUser.getId());
-    return userMapper.userToUserDto(savedUser);
+    log.trace("saving user with id[{}] to repository", request.getId());
+    return userRepository.save(user);
+  }
+
+  private void confirmEmail(User user) {
+    user.setEmailConfirmed(true);
+    mailService.sendAccountConfirmed(user);
+    userRepository.save(user);
   }
 
   private void encryptUserPassword(UserDto request) {
