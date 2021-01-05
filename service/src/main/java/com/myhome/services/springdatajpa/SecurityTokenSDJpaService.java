@@ -2,6 +2,7 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.domain.SecurityTokenType;
 import com.myhome.domain.SecurityToken;
+import com.myhome.domain.User;
 import com.myhome.repositories.SecurityTokenRepository;
 import com.myhome.services.SecurityTokenService;
 import lombok.RequiredArgsConstructor;
@@ -20,20 +21,27 @@ public class SecurityTokenSDJpaService implements SecurityTokenService {
 
   @Value("${tokens.reset.expiration}")
   private Duration passResetTokenTime;
+  @Value("${tokens.email.expiration}")
+  private Duration emailConfirmTokenTime;
 
-  @Override
-  public SecurityToken createSecurityToken(SecurityTokenType tokenType, Duration liveTimeSeconds) {
+  private SecurityToken createSecurityToken(SecurityTokenType tokenType, Duration liveTimeSeconds, User tokenOwner) {
     String token = UUID.randomUUID().toString();
     LocalDate creationDate = LocalDate.now();
     LocalDate expiryDate = getDateAfterDays(LocalDate.now(), liveTimeSeconds);
     SecurityToken newSecurityToken = new SecurityToken(tokenType, token, creationDate, expiryDate, false, null);
+    newSecurityToken.setTokenOwner(tokenOwner);
     newSecurityToken = securityTokenRepository.save(newSecurityToken);
     return newSecurityToken;
   }
 
   @Override
-  public SecurityToken createPasswordResetToken() {
-    return createSecurityToken(SecurityTokenType.RESET, passResetTokenTime);
+  public SecurityToken createEmailConfirmToken(User tokenOwner) {
+    return createSecurityToken(SecurityTokenType.EMAIL_CONFIRM, emailConfirmTokenTime, tokenOwner);
+  }
+
+  @Override
+  public SecurityToken createPasswordResetToken(User tokenOwner) {
+    return createSecurityToken(SecurityTokenType.RESET, passResetTokenTime, tokenOwner);
   }
 
   @Override
