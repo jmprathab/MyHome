@@ -174,7 +174,7 @@ public class UserSDJpaService implements UserService {
 
   private void confirmEmail(User user) {
     user.setEmailConfirmed(true);
-    mailService.sendAccountConfirmed(user);
+    //mailService.sendAccountConfirmed(user);
     userRepository.save(user);
   }
 
