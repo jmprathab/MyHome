@@ -253,7 +253,7 @@ class UserSDJpaServiceTest {
     // then
     assertFalse(emailConfirmed);
     assertFalse(user.isEmailConfirmed());
-    verify(userRepository.save(user), never());
+    verify(userRepository, never()).save(user);
     verifyNoInteractions(securityTokenService);
     verifyNoInteractions(mailService);
   }
@@ -312,7 +312,7 @@ class UserSDJpaServiceTest {
 
     // then
     assertFalse(emailConfirmed);
-    verify(userRepository.save(user), never());
+    verify(userRepository, never()).save(user);
     verifyNoInteractions(securityTokenService);
     verifyNoInteractions(mailService);
   }

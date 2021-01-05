@@ -125,7 +125,7 @@ class UserControllerTest {
     PageRequest pageRequest = PageRequest.of(start, limit);
 
     Set<User> users = new HashSet<>();
-    users.add(new User(TEST_NAME, TEST_ID, TEST_EMAIL, TEST_PASSWORD, new HashSet<>(), null));
+    users.add(new User(TEST_NAME, TEST_ID, TEST_EMAIL, false, TEST_PASSWORD, new HashSet<>(), new HashSet<>()));
 
     Set<GetUserDetailsResponseUser> responseUsers = new HashSet<>();
     responseUsers.add(

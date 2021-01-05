@@ -50,16 +50,17 @@ import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -152,7 +153,7 @@ class CommunityControllerTest {
     Community community =
         new Community(new HashSet<>(), new HashSet<>(), COMMUNITY_NAME, COMMUNITY_ID,
             COMMUNITY_DISTRICT, new HashSet<>());
-    User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL,
+    User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, true,
         COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), null);
     community.getAdmins().add(admin);
     community.getHouses().add(createTestCommunityHouse(community));
@@ -691,7 +692,7 @@ class CommunityControllerTest {
     Community community =
         new Community(admins, new HashSet<>(), COMMUNITY_NAME, COMMUNITY_ID,
             COMMUNITY_DISTRICT, new HashSet<>());
-    User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL,
+    User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, true,
         COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), new HashSet<>());
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
@@ -704,8 +705,8 @@ class CommunityControllerTest {
   }
 
   private Payment getMockPayment() {
-    User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, COMMUNITY_ADMIN_PASSWORD,
-        new HashSet<>(), new HashSet<>());
+    User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, true,
+        COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), new HashSet<>());
     Community community = getMockCommunity(new HashSet<>());
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
