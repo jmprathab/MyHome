@@ -130,8 +130,8 @@ class PaymentControllerTest {
     Community community =
         new Community(admins, new HashSet<>(), TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID,
             TEST_COMMUNITY_DISTRICT, new HashSet<>());
-    User admin = new User(COMMUNITY_ADMIN_NAME, TEST_ADMIN_ID, COMMUNITY_ADMIN_EMAIL,
-        COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), null);
+    User admin = new User(COMMUNITY_ADMIN_NAME, TEST_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, false,
+        COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), new HashSet<>());
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
 
@@ -152,8 +152,8 @@ class PaymentControllerTest {
   }
 
   private Payment getMockPayment() {
-    User admin = new User(TEST_ADMIN_NAME, TEST_ADMIN_ID, TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD,
-        new HashSet<>(), null);
+    User admin = new User(TEST_ADMIN_NAME, TEST_ADMIN_ID, TEST_ADMIN_EMAIL, false, TEST_ADMIN_PASSWORD,
+        new HashSet<>(), new HashSet<>());
     Community community = getMockCommunity(new HashSet<>());
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);

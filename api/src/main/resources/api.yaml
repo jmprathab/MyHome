@@ -245,6 +245,48 @@ paths:
                 $ref: '#/components/schemas/GetUserDetailsResponseUser'
         '404':
           description: "If userId is invalid"
+  /users/{userId}/email-confirm/{emailConfirmToken}:
+    get:
+      tags:
+        - Users
+      description: "Confirm user email"
+      operationId: confirmEmail
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID of the user for confirm email
+        - in: path
+          name: emailConfirmToken
+          schema:
+            type: string
+          required: true
+          description: Tocken from user email
+      responses:
+        '200':
+          description: "Email was successfully confirmed"
+        '400':
+          description: "Email confirmation error"
+  /users/{userId}/email-confirm-resend:
+    get:
+      tags:
+        - Users
+      description: "resend email confirm mail"
+      operationId: resendConfirmEmailMail
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID of the user for resend confirm email
+      responses:
+        '200':
+          description: "Email was successfully send"
+        '400':
+          description: "Email send error"
   /users/{userId}/housemates:
     get:
       tags:

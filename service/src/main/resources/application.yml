@@ -32,6 +32,7 @@ spring:
     password: ${springMailPassword:"none"}
     port: 465
     protocol: 'smtps'
+    dev-mode: true
     debug: false
   jpa:
     show-sql: true
@@ -84,6 +85,16 @@ api:
   actuator:
     url:
       path: "/actuator/**"
+  email:
+    password-forgot-reset:
+      url:
+        path: "/users/password"
+    email-confirm:
+      url:
+        path: "/users/*/email-confirm/**"
+    email-confirm-resend:
+      url:
+        path: "/users/*/email-confirm-resend"
 
 authorization:
   token:
@@ -92,6 +103,8 @@ authorization:
       prefix: "Bearer"
 
 tokens:
+  email:
+    expiration: 1d
   reset:
     expiration: 1d
 

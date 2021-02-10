@@ -3,6 +3,7 @@ package com.myhome.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"tokenOwner"})
 public class SecurityToken extends BaseEntity {
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)

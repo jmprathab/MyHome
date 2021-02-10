@@ -155,9 +155,10 @@ public class TestUtils {
               "default-user-name" + index,
               generateUniqueId(),
               "default-user-email" + index,
+              false,
               "default-user-password" + index,
               new HashSet<>(),
-              null)
+              new HashSet<>())
           )
           .limit(count)
           .collect(Collectors.toSet());

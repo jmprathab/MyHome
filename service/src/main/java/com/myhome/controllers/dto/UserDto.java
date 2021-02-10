@@ -32,4 +32,5 @@ public class UserDto {
   private String password;
   private String encryptedPassword;
   private Set<String> communityIds;
+  private boolean emailConfirmed;
 }

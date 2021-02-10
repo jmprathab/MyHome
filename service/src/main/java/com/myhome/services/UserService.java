@@ -30,6 +30,8 @@ import org.springframework.data.domain.Pageable;
 public interface UserService {
   Optional<UserDto> createUser(UserDto request);
 
+  boolean resendEmailConfirm(String userId);
+
   Set<User> listAll();
 
   Set<User> listAll(Pageable pageable);
@@ -39,4 +41,6 @@ public interface UserService {
   boolean requestResetPassword(ForgotPasswordRequest forgotPasswordRequest);
 
   boolean resetPassword(ForgotPasswordRequest passwordResetRequest);
+
+  Boolean confirmEmail(String userId, String emailConfirmToken);
 }

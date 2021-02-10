@@ -98,6 +98,7 @@ class UserSDJpaServiceTest {
         .encryptedPassword(resultUser.getEncryptedPassword())
         .communityIds(new HashSet<>())
         .build();
+    SecurityToken emailConfirmToken = getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, "token", resultUser);
 
     given(userRepository.findByEmail(request.getEmail()))
         .willReturn(null);
@@ -109,6 +110,8 @@ class UserSDJpaServiceTest {
         .willReturn(resultUser);
     given(userMapper.userToUserDto(resultUser))
         .willReturn(response);
+    given(securityTokenService.createEmailConfirmToken(resultUser))
+        .willReturn(emailConfirmToken);
 
     // when
     Optional<UserDto> createdUserDtoOptional = userService.createUser(request);
@@ -121,6 +124,7 @@ class UserSDJpaServiceTest {
     verify(userRepository).findByEmail(request.getEmail());
     verify(passwordEncoder).encode(request.getPassword());
     verify(userRepository).save(resultUser);
+    verify(securityTokenService).createEmailConfirmToken(resultUser);
   }
 
   @Test
@@ -166,7 +170,7 @@ class UserSDJpaServiceTest {
   void getUserDetailsSuccessWithCommunityIds() {
     // given
     UserDto userDto = getDefaultUserDtoRequest();
-    User user = new User(userDto.getName(), userDto.getUserId(), userDto.getEmail(),
+    User user = new User(userDto.getName(), userDto.getUserId(), userDto.getEmail(), false,
         userDto.getEncryptedPassword(), new HashSet<>(), null);
 
     Community firstCommunity = TestUtils.CommunityHelpers.getTestCommunity(user);
@@ -209,22 +213,117 @@ class UserSDJpaServiceTest {
     assertFalse(createdUserDto.isPresent());
     verify(userRepository).findByUserIdWithCommunities(USER_ID);
   }
-  
-  private SecurityToken getUserSecurityToken(User user) {
-    return user.getUserTokens()
-        .stream()
-        .filter(token -> token.getTokenType() == SecurityTokenType.RESET)
-        .findFirst()
-        .orElse(null);
+
+  @Test
+  void confirmEmail() {
+    // given
+    User user = getDefaultUser();
+    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    user.getUserTokens().add(testSecurityToken);
+    given(securityTokenService.useToken(testSecurityToken))
+        .willReturn(testSecurityToken);
+    given(userRepository.findByUserIdWithTokens(user.getUserId()))
+        .willReturn(Optional.of(user));
+//    given(mailService.sendAccountConfirmed(user))
+//        .willReturn(true);
+
+    // when
+    boolean emailConfirmed = userService.confirmEmail(user.getUserId(), testSecurityToken.getToken());
+
+    // then
+    assertTrue(emailConfirmed);
+    assertTrue(user.isEmailConfirmed());
+    verify(securityTokenService).useToken(testSecurityToken);
+    verify(userRepository).save(user);
+//    verify(mailService).sendAccountConfirmed(user);
   }
 
+  @Test
+  void confirmEmailWrongToken() {
+    // given
+    User user = getDefaultUser();
+    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    user.getUserTokens().add(testSecurityToken);
+    given(userRepository.findByUserIdWithTokens(user.getUserId()))
+        .willReturn(Optional.of(user));
+
+    // when
+    boolean emailConfirmed = userService.confirmEmail(user.getUserId(), "wrong-token");
+
+    // then
+    assertFalse(emailConfirmed);
+    assertFalse(user.isEmailConfirmed());
+    verify(userRepository, never()).save(user);
+    verifyNoInteractions(securityTokenService);
+    verifyNoInteractions(mailService);
+  }
+
+  @Test
+  void confirmEmailUsedToken() {
+    // given
+    User user = getDefaultUser();
+    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    testSecurityToken.setUsed(true);
+    user.getUserTokens().add(testSecurityToken);
+    given(userRepository.findByUserIdWithTokens(user.getUserId()))
+        .willReturn(Optional.of(user));
+
+    // when
+    boolean emailConfirmed = userService.confirmEmail(user.getUserId(), testSecurityToken.getToken());
+
+    // then
+    assertFalse(emailConfirmed);
+    assertFalse(user.isEmailConfirmed());
+    verify(userRepository, never()).save(user);
+    verifyNoInteractions(securityTokenService);
+    verifyNoInteractions(mailService);
+  }
+
+  @Test
+  void confirmEmailNoToken() {
+    // given
+    User user = getDefaultUser();
+    given(userRepository.findByUserIdWithTokens(user.getUserId()))
+        .willReturn(Optional.of(user));
+
+    // when
+    boolean emailConfirmed = userService.confirmEmail(user.getUserId(), "any-token");
+
+    // then
+    assertFalse(emailConfirmed);
+    assertFalse(user.isEmailConfirmed());
+    verify(userRepository, never()).save(user);
+    verifyNoInteractions(securityTokenService);
+    verifyNoInteractions(mailService);
+  }
+
+  @Test
+  void confirmEmailAlreadyConfirmed() {
+    // given
+    User user = getDefaultUser();
+    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    user.getUserTokens().add(testSecurityToken);
+    user.setEmailConfirmed(true);
+    given(userRepository.findByUserIdWithTokens(user.getUserId()))
+        .willReturn(Optional.of(user));
+
+    // when
+    boolean emailConfirmed = userService.confirmEmail(user.getUserId(), testSecurityToken.getToken());
+
+    // then
+    assertFalse(emailConfirmed);
+    verify(userRepository, never()).save(user);
+    verifyNoInteractions(securityTokenService);
+    verifyNoInteractions(mailService);
+  }
+  
   @Test
   void requestResetPassword() {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
     User user = getDefaultUser();
-    SecurityToken testSecurityToken = getTestSecurityToken();
-    given(securityTokenService.createPasswordResetToken())
+    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, null);
+    given(securityTokenService.createPasswordResetToken(user))
         .willReturn(testSecurityToken);
     given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.of(user));
@@ -236,8 +335,8 @@ class UserSDJpaServiceTest {
 
     // then
     assertTrue(resetRequested);
-    assertEquals(getUserSecurityToken(user), testSecurityToken);
-    verify(securityTokenService).createPasswordResetToken();
+    assertEquals(getUserSecurityToken(user, SecurityTokenType.RESET), testSecurityToken);
+    verify(securityTokenService).createPasswordResetToken(user);
     verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
     verify(userRepository).save(user);
     verify(mailService).sendPasswordRecoverCode(user, testSecurityToken.getToken());
@@ -248,8 +347,8 @@ class UserSDJpaServiceTest {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
     User user = getDefaultUser();
-    SecurityToken testSecurityToken = getTestSecurityToken();
-    given(securityTokenService.createPasswordResetToken())
+    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    given(securityTokenService.createPasswordResetToken(user))
         .willReturn(testSecurityToken);
     given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.empty());
@@ -259,7 +358,7 @@ class UserSDJpaServiceTest {
 
     // then
     assertFalse(resetRequested);
-    assertNotEquals(getUserSecurityToken(user), testSecurityToken);
+    assertNotEquals(getUserSecurityToken(user, SecurityTokenType.RESET), testSecurityToken);
     verifyNoInteractions(securityTokenService);
     verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
     verify(userRepository, never()).save(user);
@@ -270,8 +369,8 @@ class UserSDJpaServiceTest {
   void resetPassword() {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
-    SecurityToken testSecurityToken = getTestSecurityToken();
     User user = getDefaultUser();
+    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
     user.getUserTokens().add(testSecurityToken);
     given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.of(user));
@@ -300,8 +399,8 @@ class UserSDJpaServiceTest {
   void resetPasswordUserNotExists() {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
-    SecurityToken testSecurityToken = getTestSecurityToken();
     User user = getDefaultUser();
+    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
     user.getUserTokens().add(testSecurityToken);;
     given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.empty());
@@ -334,7 +433,7 @@ class UserSDJpaServiceTest {
     // then
     assertFalse(passwordChanged);
     assertNotEquals(user.getEncryptedPassword(), forgotPasswordRequest.getNewPassword());
-    assertFalse(getUserSecurityToken(user).isUsed());
+    assertFalse(getUserSecurityToken(user, SecurityTokenType.RESET).isUsed());
     verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
     verifyNoInteractions(securityTokenRepository);
     verifyNoInteractions(passwordEncoder);
@@ -365,7 +464,7 @@ class UserSDJpaServiceTest {
   void resetPasswordTokenNotMatches() {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
-    SecurityToken testSecurityToken = getTestSecurityToken();
+    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, null);
     testSecurityToken.setToken("wrong-token");
     User user = getDefaultUser();
     user.getUserTokens().add(testSecurityToken);;
@@ -378,7 +477,7 @@ class UserSDJpaServiceTest {
     // then
     assertFalse(passwordChanged);
     assertNotEquals(user.getEncryptedPassword(), forgotPasswordRequest.getNewPassword());
-    assertNotNull(getUserSecurityToken(user));
+    assertNotNull(getUserSecurityToken(user, SecurityTokenType.RESET));
     verify(userRepository).findByEmailWithTokens(forgotPasswordRequest.getEmail());
     verifyNoInteractions(securityTokenRepository);
     verifyNoInteractions(passwordEncoder);
@@ -400,10 +499,19 @@ class UserSDJpaServiceTest {
         request.getName(),
         request.getUserId(),
         request.getEmail(),
+        false,
         request.getEncryptedPassword(),
         new HashSet<>(),
         new HashSet<>()
     );
+  }
+
+  private SecurityToken getUserSecurityToken(User user, SecurityTokenType tokenType) {
+    return user.getUserTokens()
+        .stream()
+        .filter(token -> token.getTokenType() == tokenType)
+        .findFirst()
+        .orElse(null);
   }
 
   private User getDefaultUser() {
@@ -418,16 +526,19 @@ class UserSDJpaServiceTest {
     return request;
   }
 
-  private SecurityToken getTestSecurityToken(Duration lifetime) {
-    return new SecurityToken(SecurityTokenType.RESET, PASSWORD_RESET_TOKEN, LocalDate.now(), LocalDate.now().plusDays(lifetime.toDays()), false, null);
-  }
-
-  private SecurityToken getTestSecurityToken() {
-    return getTestSecurityToken(TOKEN_LIFETIME);
-  }
-
   private SecurityToken getExpiredTestToken() {
     return new SecurityToken(SecurityTokenType.RESET, PASSWORD_RESET_TOKEN, LocalDate.now(), LocalDate.now().minusDays(TOKEN_LIFETIME.toDays()), false, null);
+  }
+
+  private SecurityToken getSecurityToken(SecurityTokenType tokenType, Duration lifetime, String token, User user) {
+    LocalDate expireDate = LocalDate.now().plusDays(lifetime.toDays());
+    return new SecurityToken(tokenType, token, LocalDate.now() , expireDate, false, user);
+  }
+
+  private SecurityToken getSecurityToken(SecurityTokenType tokenType, String token, User user) {
+    LocalDate expireDate = LocalDate.now().plusDays(Duration.ofDays(1).toDays());
+    return new SecurityToken(tokenType, token, LocalDate.now() , expireDate, false, user);
+
   }
 
 }

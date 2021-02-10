@@ -1,15 +1,13 @@
 package com.myhome.services;
 
-import com.myhome.domain.SecurityTokenType;
 import com.myhome.domain.SecurityToken;
-
-import java.time.Duration;
+import com.myhome.domain.User;
 
 public interface SecurityTokenService {
 
-  SecurityToken createSecurityToken(SecurityTokenType tokenType, Duration liveTimeSeconds);
+  SecurityToken createEmailConfirmToken(User owner);
 
-  SecurityToken createPasswordResetToken();
+  SecurityToken createPasswordResetToken(User owner);
 
   SecurityToken useToken(SecurityToken token);
 }
