@@ -33,7 +33,8 @@ spring:
     port: 465
     protocol: 'smtps'
     dev-mode: true
-    debug: false
+    debug: true
+    test-connection: false
   jpa:
     show-sql: true
     properties:
@@ -57,6 +58,9 @@ management:
       enabled: true
     health:
       enabled: true
+  health:
+    mail:
+      enabled: false
 ###############################################################################
 # Spring doc
 ###############################################################################
