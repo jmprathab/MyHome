@@ -18,17 +18,11 @@ package com.myhome.controllers;
 
 import com.myhome.api.AmenitiesApi;
 import com.myhome.controllers.mapper.AmenityApiMapper;
-import com.myhome.domain.Amenity;
-import com.myhome.model.AddAmenityRequest;
-import com.myhome.model.AddAmenityResponse;
 import com.myhome.model.AmenityDto;
 import com.myhome.model.GetAmenityDetailsResponse;
 import com.myhome.model.UpdateAmenityRequest;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,13 +74,7 @@ public class AmenityController implements AmenitiesApi {
     }
   }
 
-  @Operation(
-          description = "Remove amenity booking",
-          responses = {
-                  @ApiResponse(responseCode = "204", description = "If booking deleted"),
-                  @ApiResponse(responseCode = "404", description = "If params are invalid"),
-          }
-  )
+  // TODO: Move to api.yaml
   @DeleteMapping(path = "/bookings/{bookingId}")
   public ResponseEntity deleteBooking(@PathVariable String bookingId) {
     boolean isBookingDeleted = amenitySDJpaService.deleteBooking(bookingId);

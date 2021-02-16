@@ -63,9 +63,6 @@ dependencies {
   compileOnly 'org.projectlombok:lombok'
   annotationProcessor 'org.projectlombok:lombok'
 
-  // Documentation
-  implementation "org.springdoc:springdoc-openapi-ui:${springDocOpenApiVersion}"
-
   // mail
   implementation 'org.springframework.boot:spring-boot-starter-mail'
 
