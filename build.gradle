@@ -53,6 +53,7 @@ ext {
   set('fasterXmlJacksonAnnotationsVersion', "2.11.2")
   set('jacksonDatabindNullableVersion', "0.2.1")
   set('springFoxVersion', "2.8.0")
+  set('lombokVersion', "1.18.18")
 }
 
 jar {
