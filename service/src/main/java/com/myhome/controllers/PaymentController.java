@@ -17,7 +17,9 @@
 package com.myhome.controllers;
 
 import com.myhome.api.PaymentsApi;
+import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
+import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
@@ -27,6 +29,7 @@ import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import java.util.Optional;
 import javax.validation.Valid;
+import javax.xml.ws.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,18 +52,25 @@ public class PaymentController implements PaymentsApi {
       SchedulePaymentRequest request) {
     log.trace("Received schedule payment request");
 
-    Optional<HouseMember> houseMember = paymentService.getHouseMember(request.getMemberId());
-    Optional<User> adminOptional = communityService.findCommunityAdminById(request.getAdminId());
+    HouseMember houseMember = paymentService.getHouseMember(request.getMemberId())
+        .orElseThrow(() -> new RuntimeException(
+            "House member with given id not exists: " + request.getMemberId()));
+    User admin = communityService.findCommunityAdminById(request.getAdminId())
+        .orElseThrow(
+            () -> new RuntimeException("Admin with given id not exists: " + request.getAdminId()));
 
-    return houseMember.flatMap(member -> adminOptional.filter(
-        admin -> isUserAdminOfCommunityHouse(member.getCommunityHouse(), admin)))
-        .map(admin -> schedulePaymentApiMapper.enrichedSchedulePaymentRequestToPaymentDto(
-            schedulePaymentApiMapper.enrichSchedulePaymentRequest(request, admin,
-                houseMember.get())))
-        .map(paymentService::schedulePayment)
-        .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
-        .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
-        .orElseGet(() -> ResponseEntity.notFound().build());
+    if (isUserAdminOfCommunityHouse(houseMember.getCommunityHouse(), admin)) {
+      final EnrichedSchedulePaymentRequest paymentRequest =
+          schedulePaymentApiMapper.enrichSchedulePaymentRequest(request, admin, houseMember);
+      final PaymentDto paymentDto =
+          schedulePaymentApiMapper.enrichedSchedulePaymentRequestToPaymentDto(paymentRequest);
+      final PaymentDto processedPayment = paymentService.schedulePayment(paymentDto);
+      final SchedulePaymentResponse paymentResponse =
+          schedulePaymentApiMapper.paymentToSchedulePaymentResponse(processedPayment);
+      return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse);
+    }
+
+    return ResponseEntity.notFound().build();
   }
 
   private Boolean isUserAdminOfCommunityHouse(CommunityHouse communityHouse, User admin) {
@@ -78,5 +88,4 @@ public class PaymentController implements PaymentsApi {
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
-
 }
