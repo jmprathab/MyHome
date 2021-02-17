@@ -48,7 +48,6 @@ ext {
   set('mapstructVersion', "1.3.1.Final")
   set('jwtVersion', "0.11.1")
   set('bouncycastleVersion', "1.65")
-  set('springDocOpenApiVersion', "1.4.1")
   set('swaggerAnnotationsVersion', "1.6.2")
   set('javaxValidationApiVersion', "2.0.1.Final")
   set('fasterXmlJacksonAnnotationsVersion', "2.11.2")

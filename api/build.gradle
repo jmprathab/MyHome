@@ -37,7 +37,7 @@ dependencies {
 
 task generateOpenApiSpec(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
   generatorName = "spring"
-  inputSpec = "$projectDir/src/main/resources/api.yaml".toString()
+  inputSpec = "$projectDir/src/main/resources/public/swagger/api.yaml".toString()
   outputDir = "$buildDir/generated".toString()
   apiPackage = "com.myhome.api"
   invokerPackage = "com.myhome.utils"

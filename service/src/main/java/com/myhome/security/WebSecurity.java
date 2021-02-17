@@ -72,6 +72,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .permitAll()
         .antMatchers(HttpMethod.POST, environment.getProperty("api.email.password-forgot-reset.url.path"))
         .permitAll()
+        .antMatchers("/swagger/**")
+        .permitAll()
         .anyRequest()
         .authenticated()
         .and()
