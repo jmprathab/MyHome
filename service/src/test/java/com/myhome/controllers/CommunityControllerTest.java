@@ -51,6 +51,7 @@ import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 
+import com.myhome.utils.PageInfo;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -61,19 +62,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -97,6 +102,8 @@ class CommunityControllerTest {
   private static final String TEST_MEMBER_ID = "2";
   private static final String TEST_MEMBER_NAME = "Test Name";
   private static final String TEST_ID = "3";
+
+  private static final Pageable TEST_PAGEABLE = PageRequest.of(1, 10);
 
   @Mock
   private CommunityService communityService;
@@ -652,7 +659,6 @@ class CommunityControllerTest {
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
   }
 
-
   private PaymentDto createTestPaymentDto() {
     UserDto userDto = UserDto.builder()
         .userId(COMMUNITY_ADMIN_ID)
@@ -733,10 +739,9 @@ class CommunityControllerTest {
     given(paymentService.schedulePayment(paymentDto))
         .willReturn(paymentDto);
 
-    Set<Payment> payments = new HashSet<>();
+    List<Payment> payments = new ArrayList<>();
     Payment mockPayment = getMockPayment();
     payments.add(mockPayment);
-
 
     Set<String> adminIds = new HashSet<>();
     adminIds.add(COMMUNITY_ADMIN_ID);
@@ -751,70 +756,80 @@ class CommunityControllerTest {
         .willReturn(community);
     given(communityService.getCommunityDetailsByIdWithAdmins(COMMUNITY_ID))
         .willReturn(Optional.of(community));
-    given(paymentService.getPaymentsByAdmin(COMMUNITY_ADMIN_ID))
-        .willReturn(payments);
+    given(paymentService.getPaymentsByAdmin(COMMUNITY_ADMIN_ID, TEST_PAGEABLE))
+        .willReturn(new PageImpl<>(payments));
     given(communityService.addAdminsToCommunity(COMMUNITY_ID, adminIds))
         .willReturn(Optional.of(community));
 
     Set<AdminPayment> responsePayments = new HashSet<>();
     responsePayments.add(
-        new AdminPayment().adminId(COMMUNITY_ADMIN_ID).paymentId(TEST_ID).charge(TEST_CHARGE).dueDate(TEST_DUE_DATE)
+        new AdminPayment().adminId(COMMUNITY_ADMIN_ID)
+            .paymentId(TEST_ID)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE)
     );
 
-    ListAdminPaymentsResponse expectedResponse = new ListAdminPaymentsResponse().payments(responsePayments);
+    ListAdminPaymentsResponse expectedResponse =
+        new ListAdminPaymentsResponse()
+            .payments(responsePayments)
+            .pageInfo(PageInfo.of(TEST_PAGEABLE, new PageImpl<>(payments)));
 
-    given(paymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(payments))
+    given(paymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(new HashSet<>(payments)))
         .willReturn(responsePayments);
 
     //when
     ResponseEntity<ListAdminPaymentsResponse> responseEntity =
-        communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID);
+        communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID,
+            TEST_PAGEABLE);
 
     //then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     assertEquals(expectedResponse, responseEntity.getBody());
     verify(communityService).getCommunityDetailsByIdWithAdmins(COMMUNITY_ID);
-    verify(paymentService).getPaymentsByAdmin(COMMUNITY_ADMIN_ID);
-    verify(paymentApiMapper).adminPaymentSetToRestApiResponseAdminPaymentSet(payments);
+    verify(paymentService).getPaymentsByAdmin(COMMUNITY_ADMIN_ID, TEST_PAGEABLE);
+    verify(paymentApiMapper).adminPaymentSetToRestApiResponseAdminPaymentSet(
+        new HashSet<>(payments));
   }
 
   @Test
-  void shouldGetNoAdminPaymentDetailsCommunityNotFoundSuccess() {
+  void shouldReturnNotFoundWhenAdminIsNotInCommunity() {
     //given
+    final String notAdminFromCommunity = "2";
+    Community community = getMockCommunity(new HashSet<>());
     given(communityService.getCommunityDetailsByIdWithAdmins(COMMUNITY_ID))
-        .willReturn(Optional.empty());
+        .willReturn(Optional.of(community));
 
     //when
     ResponseEntity<ListAdminPaymentsResponse> responseEntity =
-        communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID);
+        communityController.listAllAdminScheduledPayments(COMMUNITY_ID, notAdminFromCommunity,
+            TEST_PAGEABLE);
 
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     assertNull(responseEntity.getBody());
     verify(communityService).getCommunityDetailsByIdWithAdmins(COMMUNITY_ID);
-    verifyNoInteractions(paymentApiMapper);
+    verifyNoInteractions(paymentService);
   }
 
   @Test
-  void shouldGetNoPaymentsForFoundAdminSuccess() {
+  void shouldThrowExceptionWhenCommunityNotExists() {
     //given
-    Set<User> admins = new HashSet<>();
+    String expectedExceptionMessage = "Community with given id not exists: " + COMMUNITY_ID;
 
-    Community community = getMockCommunity(admins);
-
-    given(communityService.getCommunityDetailsById(COMMUNITY_ID))
-        .willReturn(Optional.of(community));
-    given(paymentService.getPaymentsByAdmin(COMMUNITY_ADMIN_ID))
-        .willReturn(new HashSet<>());
+    given(communityService.getCommunityDetailsByIdWithAdmins(COMMUNITY_ID))
+        .willReturn(Optional.empty());
 
     //when
-    ResponseEntity<ListAdminPaymentsResponse> response =
-        communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID);
+    final RuntimeException runtimeException = assertThrows(
+        RuntimeException.class,
+        () -> communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID,
+            TEST_PAGEABLE)
+    );
 
     //then
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    assertNull(response.getBody());
-    verify(paymentService).getPaymentsByAdmin(COMMUNITY_ADMIN_ID);
+    assertEquals(expectedExceptionMessage, runtimeException.getMessage());
+    verify(communityService).getCommunityDetailsByIdWithAdmins(COMMUNITY_ID);
+    verifyNoInteractions(paymentService);
     verifyNoInteractions(paymentApiMapper);
   }
 }

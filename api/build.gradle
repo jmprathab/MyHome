@@ -33,6 +33,9 @@ dependencies {
   implementation "io.springfox:springfox-swagger-ui:${springFoxVersion}"
   implementation "io.springfox:springfox-spring-web:${springFoxVersion}"
   implementation "org.springframework.data:spring-data-commons:${springBootVersion}"
+
+  compileOnly "org.projectlombok:lombok:${lombokVersion}"
+  annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
 task generateOpenApiSpec(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
@@ -52,7 +55,8 @@ task generateOpenApiSpec(type: org.openapitools.generator.gradle.plugin.tasks.Ge
           "booleanGetterPrefix" : "is"
   ]
   importMappings = [
-          'Pageable': 'org.springframework.data.domain.Pageable'
+          'Pageable': 'org.springframework.data.domain.Pageable',
+          'PageInfo': 'com.myhome.utils.PageInfo'
   ]
 }
 compileJava.dependsOn(generateOpenApiSpec)

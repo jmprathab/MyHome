@@ -894,6 +894,11 @@ paths:
             type: string
           required: true
           description: "adminId for getting all admin scheduled"
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
       responses:
         '200':
           description: "If communityId and adminId are valid. Response body has the details"
@@ -1022,6 +1027,20 @@ components:
           type: integer
         size:
           type: integer
+    PageInfo:
+      description: Page info
+      type: object
+      properties:
+        currentPage:
+          type: integer
+        pageLimit:
+          type: integer
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+          format: int64
+
     CreateCommunityRequest:
       type: object
       required:
@@ -1266,3 +1285,5 @@ components:
           items:
             $ref: '#/components/schemas/AdminPayment'
           uniqueItems: true
+        pageInfo:
+          $ref: '#/components/schemas/PageInfo'

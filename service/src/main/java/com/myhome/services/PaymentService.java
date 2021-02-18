@@ -21,6 +21,8 @@ import com.myhome.domain.HouseMember;
 import com.myhome.domain.Payment;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Interface for service layer
@@ -32,7 +34,7 @@ public interface PaymentService {
 
   Set<Payment> getPaymentsByMember(String memberId);
 
-  Set<Payment> getPaymentsByAdmin(String adminId);
+  Page<Payment> getPaymentsByAdmin(String adminId, Pageable pageable);
 
   Optional<HouseMember> getHouseMember(String memberId);
 }

@@ -47,6 +47,7 @@ import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -152,8 +153,9 @@ class PaymentControllerTest {
   }
 
   private Payment getMockPayment() {
-    User admin = new User(TEST_ADMIN_NAME, TEST_ADMIN_ID, TEST_ADMIN_EMAIL, false, TEST_ADMIN_PASSWORD,
-        new HashSet<>(), new HashSet<>());
+    User admin =
+        new User(TEST_ADMIN_NAME, TEST_ADMIN_ID, TEST_ADMIN_EMAIL, false, TEST_ADMIN_PASSWORD,
+            new HashSet<>(), new HashSet<>());
     Community community = getMockCommunity(new HashSet<>());
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
@@ -184,14 +186,14 @@ class PaymentControllerTest {
     PaymentDto paymentDto = createTestPaymentDto();
     com.myhome.model.SchedulePaymentResponse response =
         new com.myhome.model.SchedulePaymentResponse()
-          .paymentId(TEST_ID)
-          .charge(TEST_CHARGE)
-          .type(TEST_TYPE)
-          .description(TEST_DESCRIPTION)
-          .recurring(TEST_RECURRING)
-          .dueDate(TEST_DUE_DATE)
-          .adminId(TEST_ADMIN_ID)
-          .memberId(TEST_MEMBER_ID);
+            .paymentId(TEST_ID)
+            .charge(TEST_CHARGE)
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(TEST_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
 
     Community community = getMockCommunity(new HashSet<>());
 
@@ -242,6 +244,7 @@ class PaymentControllerTest {
             .adminId(TEST_ADMIN_ID)
             .memberId(TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
+    String expectedExceptionMessage = "House member with given id not exists: " + TEST_MEMBER_ID;
 
     given(paymentApiMapper.schedulePaymentRequestToPaymentDto(request))
         .willReturn(paymentDto);
@@ -250,13 +253,12 @@ class PaymentControllerTest {
     given(paymentService.getHouseMember(TEST_MEMBER_ID))
         .willReturn(Optional.empty());
 
-    //when
-    ResponseEntity<com.myhome.model.SchedulePaymentResponse> responseEntity =
-        paymentController.schedulePayment(request);
-
-    //then
-    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    assertNull(responseEntity.getBody());
+    // when
+    final RuntimeException runtimeException =
+        assertThrows(RuntimeException.class, () -> paymentController.schedulePayment(request));
+    // then
+    final String exceptionMessage = runtimeException.getMessage();
+    assertEquals(expectedExceptionMessage, exceptionMessage);
     verifyNoInteractions(paymentApiMapper);
   }
 
@@ -273,6 +275,7 @@ class PaymentControllerTest {
             .adminId(TEST_ADMIN_ID)
             .memberId(TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
+    String expectedExceptionMessage = "Admin with given id not exists: " + TEST_ADMIN_ID;
     com.myhome.model.SchedulePaymentResponse response =
         new com.myhome.model.SchedulePaymentResponse()
             .paymentId(TEST_ID)
@@ -297,16 +300,13 @@ class PaymentControllerTest {
     given(communityService.findCommunityAdminById(TEST_ADMIN_ID))
         .willReturn(Optional.empty());
 
-    //when
-    ResponseEntity<com.myhome.model.SchedulePaymentResponse> responseEntity =
-        paymentController.schedulePayment(request);
-
-    //then
-    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    assertNull(responseEntity.getBody());
-    verify(paymentService).getHouseMember(TEST_MEMBER_ID);
+    // when
+    final RuntimeException runtimeException =
+        assertThrows(RuntimeException.class, () -> paymentController.schedulePayment(request));
+    // then
+    final String exceptionMessage = runtimeException.getMessage();
+    assertEquals(expectedExceptionMessage, exceptionMessage);
     verifyNoInteractions(paymentApiMapper);
-    verify(communityService).findCommunityAdminById(TEST_ADMIN_ID);
   }
 
   @Test
@@ -370,15 +370,16 @@ class PaymentControllerTest {
     // given
     PaymentDto paymentDto = createTestPaymentDto();
 
-    com.myhome.model.SchedulePaymentResponse expectedResponse =         new com.myhome.model.SchedulePaymentResponse()
-        .paymentId(TEST_ID)
-        .charge(TEST_CHARGE)
-        .type(TEST_TYPE)
-        .description(TEST_DESCRIPTION)
-        .recurring(TEST_RECURRING)
-        .dueDate(TEST_DUE_DATE)
-        .adminId(TEST_ADMIN_ID)
-        .memberId(TEST_MEMBER_ID);
+    com.myhome.model.SchedulePaymentResponse expectedResponse =
+        new com.myhome.model.SchedulePaymentResponse()
+            .paymentId(TEST_ID)
+            .charge(TEST_CHARGE)
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(TEST_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
     given(paymentService.getPaymentDetails(TEST_ID))
         .willReturn(Optional.of(paymentDto));
     given(paymentApiMapper.paymentToSchedulePaymentResponse(paymentDto))
@@ -411,5 +412,4 @@ class PaymentControllerTest {
     verify(paymentService).getPaymentDetails(TEST_ID);
     verifyNoInteractions(paymentApiMapper);
   }
-
 }
