@@ -9,7 +9,7 @@ tags:
   - name: Users
   - name: Documents
   - name: Communities
-  - name: Amentities
+  - name: Amenities
   - name: Houses
   - name: Payments
   - name: Members
@@ -18,7 +18,7 @@ paths:
     post:
       tags:
         - Users
-      description: 'Request reset password or reset password'
+      description: Request reset password or reset password
       parameters:
         - in: query
           name: action
@@ -26,9 +26,8 @@ paths:
           schema:
             type: string
             enum: [ FORGOT, RESET ]
-          description: 'acton with user password (forgot or reset)'
+          description: Acton with user password (forgot or reset)
       requestBody:
-        description: ""
         required: true
         content:
           application/json:
@@ -39,14 +38,14 @@ paths:
               $ref: '#/components/schemas/ForgotPasswordRequest'
       responses:
         '200':
-          description: 'if password reset'
+          description: If password reset
         '400':
-          description: 'if wrong password reset token'
+          description: If wrong password reset token
   /amenities/{amenityId}:
     get:
       tags:
-        - Amentities
-      description: "Get details about the amenity"
+        - Amenities
+      description: Get details about the amenity
       operationId: getAmenityDetails
       parameters:
         - in: path
@@ -54,10 +53,10 @@ paths:
           required: true
           schema:
             type: string
-          description: "ID of the amenity to get details"
+          description: Id of the amenity to get details
       responses:
         '200':
-          description: "if details found"
+          description: If details found
           content:
             application/json:
               schema:
@@ -66,11 +65,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetAmenityDetailsResponse'
         '404':
-          description: "If params are invalid"
+          description: If params are invalid
     delete:
       tags:
-        - Amentities
-      description: "Remove amenity"
+        - Amenities
+      description: Remove amenity
       operationId: deleteAmenity
       parameters:
         - in: path
@@ -80,13 +79,13 @@ paths:
             type: string
       responses:
         '204':
-          description: "If amenity deleted"
+          description: If amenity deleted
         '404':
-          description: "If params are invalid"
+          description: If params are invalid
     put:
       tags:
-        - Amentities
-      description: "Update an amenity"
+        - Amenities
+      description: Update an amenity
       operationId: updateAmenity
       parameters:
         - in: path
@@ -106,14 +105,14 @@ paths:
               $ref: '#/components/schemas/UpdateAmenityRequest'
       responses:
         '204':
-          description: "If updated successfully"
+          description: If updated successfully
         '400':
-          description: "If amenity is not found"
+          description: If amenity is not found
   /communities/{communityId}/amenities:
     get:
       tags:
         - Community
-      description: "Get all amenities of community"
+      description: Get all amenities of community
       operationId: listAllAmenities
       parameters:
         - in: path
@@ -123,7 +122,7 @@ paths:
             type: string
       responses:
         '200':
-          description: "Returns list of amenities"
+          description: Returns list of amenities
           content:
             application/json:
               schema:
@@ -138,11 +137,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/GetAmenityDetailsResponse'
         '404':
-          description: "If params are invalid"
+          description: If params are invalid
     post:
       tags:
         - Community
-      description: "Adds amenity to community"
+      description: Adds amenity to community
       operationId: addAmenityToCommunity
       requestBody:
         required: false
@@ -161,7 +160,7 @@ paths:
             type: string
       responses:
         '200':
-          description: "if amenity add successful"
+          description: If amenity add successful
           content:
             application/json:
               schema:
@@ -170,12 +169,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/AddAmenityResponse'
         '404':
-          description: "if community not found"
+          description: If community not found
   /users:
     post:
       tags:
         - Users
-      description: "Create a new user"
+      description: Create a new user
       operationId: signUp
       requestBody:
         description: CreateUserRequest aggregate fields
@@ -189,7 +188,7 @@ paths:
               $ref: '#/components/schemas/CreateUserRequest'
       responses:
         '201':
-          description: "if user created"
+          description: If user created
           content:
             application/json:
               schema:
@@ -198,11 +197,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateUserResponse'
         '409':
-          description: "if user already exists"
+          description: If user already exists
     get:
       tags:
         - Users
-      description: "Lists all users"
+      description: Lists all users
       operationId: listAllUsers
       parameters:
         - in: query
@@ -212,7 +211,7 @@ paths:
             $ref: '#/components/schemas/Pageable'
       responses:
         '200':
-          description: "Returns list of users"
+          description: Returns list of users
           content:
             application/json:
               schema:
@@ -224,7 +223,7 @@ paths:
     get:
       tags:
         - Users
-      description: "Get details of a user given userId"
+      description: Get details of a user given userId
       operationId: getUserDetails
       parameters:
         - in: path
@@ -235,7 +234,7 @@ paths:
           description: ID of the user to get
       responses:
         '200':
-          description: "If userId is valid. Response body has the details"
+          description: If userId is valid. Response body has the details
           content:
             application/json:
               schema:
@@ -244,12 +243,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetUserDetailsResponseUser'
         '404':
-          description: "If userId is invalid"
+          description: If userId is invalid
   /users/{userId}/email-confirm/{emailConfirmToken}:
     get:
       tags:
         - Users
-      description: "Confirm user email"
+      description: Confirm user email
       operationId: confirmEmail
       parameters:
         - in: path
@@ -257,7 +256,7 @@ paths:
           schema:
             type: string
           required: true
-          description: ID of the user for confirm email
+          description: Id of the user for confirm email
         - in: path
           name: emailConfirmToken
           schema:
@@ -266,14 +265,14 @@ paths:
           description: Tocken from user email
       responses:
         '200':
-          description: "Email was successfully confirmed"
+          description: Email was successfully confirmed
         '400':
-          description: "Email confirmation error"
+          description: Email confirmation error
   /users/{userId}/email-confirm-resend:
     get:
       tags:
         - Users
-      description: "resend email confirm mail"
+      description: "Resend email confirm mail"
       operationId: resendConfirmEmailMail
       parameters:
         - in: path
@@ -284,14 +283,14 @@ paths:
           description: ID of the user for resend confirm email
       responses:
         '200':
-          description: "Email was successfully send"
+          description: Email was successfully send
         '400':
-          description: "Email send error"
+          description: Email send error
   /users/{userId}/housemates:
     get:
       tags:
         - Users
-      description: "Lists all members from all houses of a user"
+      description: Lists all members from all houses of a user
       operationId: listAllHousemates
       parameters:
         - in: path
@@ -307,7 +306,7 @@ paths:
             $ref: '#/components/schemas/Pageable'
       responses:
         '200':
-          description: "Returns list of all members from all houses of the specified user"
+          description: Returns list of all members from all houses of the specified user
           content:
             application/json:
               schema:
@@ -329,14 +328,14 @@ paths:
           required: true
       responses:
         '200':
-          description: if document present
+          description: If document present
           content:
             image/jpeg:
               schema:
                 type: string
                 format: byte
         '404':
-          description: if params are invalid
+          description: If params are invalid
     post:
       tags:
         - Documents
@@ -359,13 +358,13 @@ paths:
                   format: binary
       responses:
         '204':
-          description: if document saved
+          description: If document saved
         '409':
-          description: if document save error
+          description: If document save error
         '413':
-          description: if document file too large
+          description: If document file too large
         '404':
-          description: if params are invalid
+          description: If params are invalid
     put:
       tags:
         - Documents
@@ -388,13 +387,13 @@ paths:
                   format: binary
       responses:
         '204':
-          description: if document updated
+          description: If document updated
         '409':
-          description: if document update error
+          description: If document update error
         '413':
-          description: if document file too large
+          description: If document file too large
         '404':
-          description: if params are invalid
+          description: If params are invalid
     delete:
       tags:
         - Documents
@@ -408,9 +407,9 @@ paths:
           required: true
       responses:
         '204':
-          description: if document deleted
+          description: If document deleted
         '404':
-          description: if params are invalid
+          description: If params are invalid
   /communities:
     post:
       tags:
@@ -429,7 +428,7 @@ paths:
               $ref: '#/components/schemas/CreateCommunityRequest'
       responses:
         '201':
-          description: if community was created
+          description: If community was created
           content:
             application/json:
               schema:
@@ -472,7 +471,7 @@ paths:
           required: true
       responses:
         '200':
-          description: if community exists
+          description: If community exists
           content:
             application/json:
               schema:
@@ -481,7 +480,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetCommunityDetailsResponse'
         '404':
-          description: if params are invalid
+          description: If params are invalid
     delete:
       tags:
         - Communities
@@ -495,9 +494,9 @@ paths:
           required: true
       responses:
         '204':
-          description: if community was removed
+          description: If community was removed
         '404':
-          description: if params are invalid
+          description: If params are invalid
   /communities/{communityId}/admins:
     get:
       tags:
@@ -517,7 +516,7 @@ paths:
             $ref: '#/components/schemas/Pageable'
       responses:
         '200':
-          description: if community exists
+          description: If community exists
           content:
             application/json:
               schema:
@@ -526,7 +525,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListCommunityAdminsResponse'
         '404':
-          description: if params are invalid
+          description: If params are invalid
     post:
       tags:
         - Communities
@@ -550,7 +549,7 @@ paths:
               $ref: '#/components/schemas/AddCommunityAdminRequest'
       responses:
         '204':
-          description: if admins were created
+          description: If admins were created
           content:
             application/json:
               schema:
@@ -559,7 +558,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AddCommunityAdminResponse'
         '404':
-          description: if params are invalid
+          description: If params are invalid
   /communities/{communityId}/admins/{adminId}:
     delete:
       tags:
@@ -579,9 +578,9 @@ paths:
           required: true
       responses:
         '204':
-          description: if admin was removed
+          description: If admin was removed
         '404':
-          description: if params are invalid
+          description: If params are invalid
   /communities/{communityId}/houses:
     get:
       tags:
@@ -601,7 +600,7 @@ paths:
             $ref: '#/components/schemas/Pageable'
       responses:
         '200':
-          description: if community exists
+          description: If community exists
           content:
             application/json:
               schema:
@@ -610,7 +609,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetHouseDetailsResponse'
         '404':
-          description: if params are invalid
+          description: If params are invalid
     post:
       tags:
         - Communities
@@ -634,7 +633,7 @@ paths:
               $ref: '#/components/schemas/AddCommunityHouseRequest'
       responses:
         '204':
-          description: if houses were added
+          description: If houses were added
           content:
             application/json:
               schema:
@@ -643,7 +642,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AddCommunityHouseResponse'
         '400':
-          description: if params are invalid
+          description: If params are invalid
   /communities/{communityId}/houses/{houseId}:
     delete:
       tags:
@@ -663,9 +662,9 @@ paths:
           required: true
       responses:
         '204':
-          description: if house was removed
+          description: If house was removed
         '400':
-          description: if params are invalid
+          description: If params are invalid
   /houses:
     get:
       tags:
@@ -680,7 +679,7 @@ paths:
             $ref: '#/components/schemas/Pageable'
       responses:
         '200':
-          description: if community exists
+          description: If community exists
           content:
             application/json:
               schema:
@@ -692,7 +691,7 @@ paths:
     get:
       tags:
         - Houses
-      description: "Get house detail by a given ID"
+      description: Get house detail by a given ID
       operationId: getHouseDetails
       parameters:
         - in: path
@@ -703,7 +702,7 @@ paths:
           description: ID of the house to get
       responses:
         '200':
-          description: "if house present"
+          description: If house present
           content:
             application/json:
               schema:
@@ -712,12 +711,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetHouseDetailsResponse'
         '404':
-          description: "if params are invalid"
+          description: If params are invalid
   /houses/{houseId}/members:
     get:
       tags:
         - Houses
-      description: "List all members of the house given a house id"
+      description: List all members of the house given a house id
       operationId: listAllMembersOfHouse
       parameters:
         - in: path
@@ -732,7 +731,7 @@ paths:
             $ref: '#/components/schemas/Pageable'
       responses:
         '200':
-          description: "if house present"
+          description: If house present
           content:
             application/json:
               schema:
@@ -741,11 +740,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListHouseMembersResponse'
         '404':
-          description: "if params are invalid"
+          description: If params are invalid
     post:
       tags:
         - Houses
-      description: "Add new members to the house given a house id. Responds with member id which were added"
+      description: Add new members to the house given a house id. Responds with member id which were added
       operationId: addHouseMembers
       parameters:
         - in: path
@@ -779,7 +778,7 @@ paths:
     delete:
       tags:
         - Houses
-      description: "Deletion of member associated with a house"
+      description: Deletion of member associated with a house
       operationId: deleteHouseMember
       parameters:
         - in: path
@@ -796,14 +795,13 @@ paths:
         '204':
           description: If house member was removed from house
         '400':
-          description: if params are invalid
-
+          description: If params are invalid
 
   /payments:
     post:
       tags:
         - Payments
-      description: "Schedule a new payment"
+      description: Schedule a new payment
       operationId: schedulePayment
       requestBody:
         description: CreateUserRequest aggregate fields
@@ -817,7 +815,7 @@ paths:
               $ref: '#/components/schemas/SchedulePaymentRequest'
       responses:
         '201':
-          description: "If schedule payment is created"
+          description: If schedule payment is created
           content:
             application/json:
               schema:
@@ -829,7 +827,7 @@ paths:
     get:
       tags:
         - Payments
-      description: "Get details about a payment with the given payment id"
+      description: Get details about a payment with the given payment id
       operationId: listPaymentDetails
       parameters:
         - in: path
@@ -840,7 +838,7 @@ paths:
           description: Payment ID
       responses:
         '200':
-          description: "If payment is valid. Response body has the details"
+          description: If payment is valid. Response body has the details
           content:
             application/json:
               schema:
@@ -849,12 +847,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/SchedulePaymentResponse'
         '404':
-          description: "If paymentId is invalid"
+          description: If paymentId is invalid
   /members/{memberId}/payments:
     get:
       tags:
         - Members
-      description: "Get all payments for the specified member"
+      description: Get all payments for the specified member
       operationId: listAllMemberPayments
       parameters:
         - in: path
@@ -862,10 +860,10 @@ paths:
           schema:
             type: string
           required: true
-          description: "Member Id to use for getting all payments"
+          description: Member Id to use for getting all payments
       responses:
         '200':
-          description: "If memberId is valid. Response body has the details"
+          description: If memberId is valid. Response body has the details
           content:
             application/json:
               schema:
@@ -874,12 +872,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListMemberPaymentsResponse'
         '404':
-          description: "If memberId is invalid"
+          description: If memberId is invalid
   /communities/{communityId}/admins/{adminId}/payments:
     get:
       tags:
         - Communities
-      description: "Get all payments scheduled by the specified admin"
+      description: Get all payments scheduled by the specified admin
       operationId: listAllAdminScheduledPayments
       parameters:
         - in: path
@@ -887,13 +885,13 @@ paths:
           schema:
             type: string
           required: true
-          description: "communityId for getting all admin scheduled"
+          description: The id of community
         - in: path
           name: adminId
           schema:
             type: string
           required: true
-          description: "adminId for getting all admin scheduled"
+          description: The id of admin
         - in: query
           name: pageable
           required: false
@@ -901,7 +899,7 @@ paths:
             $ref: '#/components/schemas/Pageable'
       responses:
         '200':
-          description: "If communityId and adminId are valid. Response body has the details"
+          description: If communityId and adminId are valid. Response body has the details
           content:
             application/json:
               schema:
@@ -910,7 +908,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListAdminPaymentsResponse'
         '404':
-          description: "If communityId and adminId are invalid"
+          description: If communityId or adminId are invalid
 components:
   schemas:
     ForgotPasswordRequest:
@@ -954,7 +952,7 @@ components:
         description:
           type: string
         price:
-          type: bigdecimal
+          type: number
         communityId:
           type: string
     AddAmenityRequest:
