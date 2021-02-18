@@ -28,6 +28,8 @@ import com.myhome.domain.HouseMemberDocument;
 import com.myhome.domain.Payment;
 import com.myhome.domain.User;
 import com.myhome.model.HouseMemberDto;
+import com.myhome.model.ListMemberPaymentsResponse;
+import com.myhome.model.MemberPayment;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
 import java.math.BigDecimal;
@@ -71,7 +73,6 @@ class PaymentControllerTest {
   private static final String COMMUNITY_ADMIN_PASSWORD = "testpassword@myhome.com";
   private static final String COMMUNITY_HOUSE_NAME = "Test House";
   private static final String COMMUNITY_HOUSE_ID = "5";
-  private static final String TEST_MEMBER_DOCUMENT_NAME = "document-name";
   private static final String TEST_MEMBER_ID = "2";
   private static final String TEST_ID = "3";
   private static final String TEST_COMMUNITY_ID = "4";
@@ -412,4 +413,63 @@ class PaymentControllerTest {
     verify(paymentService).getPaymentDetails(TEST_ID);
     verifyNoInteractions(paymentApiMapper);
   }
+
+  @Test
+  void shouldGetNoMemberPaymentsSuccess() {
+    //given
+    given(paymentService.getHouseMember(TEST_MEMBER_ID))
+        .willReturn(Optional.empty());
+
+    //when
+    ResponseEntity<ListMemberPaymentsResponse> responseEntity = paymentController.listAllMemberPayments(TEST_MEMBER_ID);
+
+    //then
+    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    assertNull(responseEntity.getBody());
+    verifyNoInteractions(paymentApiMapper);
+  }
+
+  @Test
+  void shouldGetMemberPaymentsSuccess() {
+    // given
+    PaymentDto paymentDto = createTestPaymentDto();
+
+    given(paymentService.schedulePayment(paymentDto))
+        .willReturn(paymentDto);
+
+    HouseMember member = new HouseMember(TEST_MEMBER_ID, null, TEST_MEMBER_NAME, null);
+    given(paymentService.getHouseMember(TEST_MEMBER_ID))
+        .willReturn(Optional.of(member));
+
+    Set<Payment> payments = new HashSet<>();
+    Payment mockPayment = getMockPayment();
+    payments.add(mockPayment);
+
+    given(paymentService.getPaymentsByMember(TEST_MEMBER_ID))
+        .willReturn(payments);
+
+    Set<MemberPayment> paymentResponses = new HashSet<>();
+    paymentResponses.add(
+        new MemberPayment()
+            .memberId(TEST_MEMBER_ID)
+            .paymentId(TEST_ID)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE));
+
+
+    ListMemberPaymentsResponse expectedResponse = new ListMemberPaymentsResponse().payments(paymentResponses);
+
+    given(paymentApiMapper.memberPaymentSetToRestApiResponseMemberPaymentSet(payments))
+        .willReturn(paymentResponses);
+
+    // when
+    ResponseEntity<ListMemberPaymentsResponse> responseEntity = paymentController.listAllMemberPayments(TEST_MEMBER_ID);
+
+    // then
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    assertEquals(responseEntity.getBody(), expectedResponse);
+    verify(paymentService).getPaymentsByMember(TEST_MEMBER_ID);
+    verify(paymentApiMapper).memberPaymentSetToRestApiResponseMemberPaymentSet(payments);
+  }
+
 }

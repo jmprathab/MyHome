@@ -16,13 +16,11 @@
 
 package com.myhome.controllers;
 
-import com.myhome.api.MembersApi;
-import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
+import com.myhome.api.DocumentsApi;
 import com.myhome.domain.HouseMemberDocument;
-import com.myhome.model.ListMemberPaymentsResponse;
 import com.myhome.services.HouseMemberDocumentService;
-import com.myhome.services.PaymentService;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ContentDisposition;
@@ -40,19 +38,10 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @Slf4j
-public class HouseMemberDocumentController implements MembersApi {
+@RequiredArgsConstructor
+public class HouseMemberDocumentController implements DocumentsApi {
 
   private final HouseMemberDocumentService houseMemberDocumentService;
-  private final PaymentService paymentService;
-  private final SchedulePaymentApiMapper schedulePaymentApiMapper;
-
-  public HouseMemberDocumentController(HouseMemberDocumentService houseMemberDocumentService,
-      PaymentService paymentService,
-      SchedulePaymentApiMapper schedulePaymentApiMapper) {
-    this.houseMemberDocumentService = houseMemberDocumentService;
-    this.paymentService = paymentService;
-    this.schedulePaymentApiMapper = schedulePaymentApiMapper;
-  }
 
   @Override
   public ResponseEntity<byte[]> getHouseMemberDocument(@PathVariable String memberId) {
@@ -111,19 +100,5 @@ public class HouseMemberDocumentController implements MembersApi {
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
-  }
-
-
-  @Override
-  public ResponseEntity<ListMemberPaymentsResponse> listAllMemberPayments(String memberId) {
-    log.trace("Received request to list all the payments for the house member with id[{}]",
-        memberId);
-
-    return paymentService.getHouseMember(memberId)
-        .map(payments -> paymentService.getPaymentsByMember(memberId))
-        .map(schedulePaymentApiMapper::memberPaymentSetToRestApiResponseMemberPaymentSet)
-        .map(memberPayments -> new ListMemberPaymentsResponse().payments(memberPayments))
-        .map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 }
