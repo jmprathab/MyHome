@@ -111,7 +111,7 @@ paths:
   /communities/{communityId}/amenities:
     get:
       tags:
-        - Community
+        - Communities
       description: Get all amenities of community
       operationId: listAllAmenities
       parameters:
@@ -140,7 +140,7 @@ paths:
           description: If params are invalid
     post:
       tags:
-        - Community
+        - Communities
       description: Adds amenity to community
       operationId: addAmenityToCommunity
       requestBody:
@@ -851,7 +851,7 @@ paths:
   /members/{memberId}/payments:
     get:
       tags:
-        - Members
+        - Payments
       description: Get all payments for the specified member
       operationId: listAllMemberPayments
       parameters:

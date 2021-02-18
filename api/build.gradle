@@ -52,7 +52,8 @@ task generateOpenApiSpec(type: org.openapitools.generator.gradle.plugin.tasks.Ge
   additionalProperties = [
           "skipDefaultInterface": "true",
           "interfaceOnly"       : "true",
-          "booleanGetterPrefix" : "is"
+          "booleanGetterPrefix" : "is",
+          "useTags"             : "true"
   ]
   importMappings = [
           'Pageable': 'org.springframework.data.domain.Pageable',

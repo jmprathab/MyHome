@@ -23,13 +23,12 @@ import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.User;
+import com.myhome.model.ListMemberPaymentsResponse;
 import com.myhome.model.SchedulePaymentRequest;
 import com.myhome.model.SchedulePaymentResponse;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
-import java.util.Optional;
 import javax.validation.Valid;
-import javax.xml.ws.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -73,7 +72,7 @@ public class PaymentController implements PaymentsApi {
     return ResponseEntity.notFound().build();
   }
 
-  private Boolean isUserAdminOfCommunityHouse(CommunityHouse communityHouse, User admin) {
+  private boolean isUserAdminOfCommunityHouse(CommunityHouse communityHouse, User admin) {
     return communityHouse.getCommunity()
         .getAdmins()
         .contains(admin);
@@ -85,6 +84,19 @@ public class PaymentController implements PaymentsApi {
 
     return paymentService.getPaymentDetails(paymentId)
         .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  @Override
+  public ResponseEntity<ListMemberPaymentsResponse> listAllMemberPayments(String memberId) {
+    log.trace("Received request to list all the payments for the house member with id[{}]",
+        memberId);
+
+    return paymentService.getHouseMember(memberId)
+        .map(payments -> paymentService.getPaymentsByMember(memberId))
+        .map(schedulePaymentApiMapper::memberPaymentSetToRestApiResponseMemberPaymentSet)
+        .map(memberPayments -> new ListMemberPaymentsResponse().payments(memberPayments))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
