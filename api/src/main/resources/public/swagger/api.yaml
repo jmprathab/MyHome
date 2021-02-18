@@ -952,7 +952,7 @@ components:
         description:
           type: string
         price:
-          type: bigdecimal
+          type: number
         communityId:
           type: string
     AddAmenityRequest:
