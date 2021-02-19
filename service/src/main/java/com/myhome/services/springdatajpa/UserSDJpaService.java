@@ -93,6 +93,19 @@ public class UserSDJpaService implements UserService {
     }).orElse(Optional.empty());
   }
 
+  public Optional<UserDto> findUserByEmail(String userEmail) {
+    return Optional.ofNullable(userRepository.findByEmail(userEmail))
+        .map(user -> {
+          Set<String> communityIds = user.getCommunities().stream()
+              .map(Community::getCommunityId)
+              .collect(Collectors.toSet());
+
+          UserDto userDto = userMapper.userToUserDto(user);
+          userDto.setCommunityIds(communityIds);
+          return userDto;
+        });
+  }
+
   @Override
   public boolean requestResetPassword(ForgotPasswordRequest forgotPasswordRequest) {
     return Optional.ofNullable(forgotPasswordRequest)

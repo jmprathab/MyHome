@@ -6,6 +6,7 @@ info:
   version: 2.0.0
   title: Swagger MyHome - OpenAPI 3.0
 tags:
+  - name: Authentication
   - name: Users
   - name: Documents
   - name: Communities
@@ -14,6 +15,25 @@ tags:
   - name: Payments
   - name: Members
 paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      description: Login user to system
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+
   /users/password:
     post:
       tags:
@@ -1285,3 +1305,10 @@ components:
           uniqueItems: true
         pageInfo:
           $ref: '#/components/schemas/PageInfo'
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
