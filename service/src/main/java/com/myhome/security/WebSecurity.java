@@ -16,7 +16,6 @@
 
 package com.myhome.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myhome.security.filters.CommunityAuthorizationFilter;
 import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import com.myhome.services.CommunityService;
@@ -39,11 +38,9 @@ import javax.servlet.Filter;
 @RequiredArgsConstructor
 public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final Environment environment;
-  private final ObjectMapper objectMapper;
   private final UserDetailsService userDetailsService;
   private final CommunityService communityService;
   private final PasswordEncoder passwordEncoder;
-  private final UserDetailFetcher userDetailFetcher;
   private final AppJwtEncoderDecoder appJwtEncoderDecoder;
 
   @Override
@@ -77,7 +74,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .anyRequest()
         .authenticated()
         .and()
-        .addFilter(getAuthenticationFilter())
         .addFilter(new MyHomeAuthorizationFilter(authenticationManager(), environment,
             appJwtEncoderDecoder))
         .addFilterAfter(getCommunityFilter(), MyHomeAuthorizationFilter.class);
@@ -85,14 +81,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
   private Filter getCommunityFilter() throws Exception {
     return new CommunityAuthorizationFilter(authenticationManager(), communityService);
-  }
-
-  private Filter getAuthenticationFilter() throws Exception {
-    MyHomeAuthenticationFilter authFilter =
-        new MyHomeAuthenticationFilter(objectMapper, environment,
-            authenticationManager(), userDetailFetcher, appJwtEncoderDecoder);
-    authFilter.setFilterProcessesUrl(environment.getProperty("api.login.url.path"));
-    return authFilter;
   }
 
   @Override
