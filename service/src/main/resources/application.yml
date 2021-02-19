@@ -119,5 +119,5 @@ files:
   compressedImageQuality: 0.5
 
 token:
-  expiration_time: 864000000
+  expiration_time: 10d
   secret: "sgahjsdhfjahsdfhjkahjsdfyquiwuhekrjkhsjkdfakjhskdfhiauwehriqwekrhkhknfdkkanskdfkakshdfhuqiwheuriqjwkefkahksdhfkaskdhfkhuiquhweurihqjwkerjqhkwhekfhkanksdnkfakhsdkfhiiqiwherqjowjeorjoqweoriewoq"
