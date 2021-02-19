@@ -62,7 +62,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .permitAll()
         .antMatchers(HttpMethod.POST, environment.getProperty("api.registration.url.path"))
         .permitAll()
-        .antMatchers(HttpMethod.POST, environment.getProperty("api.login.url.path"))
+        .antMatchers(HttpMethod.POST, "/auth/login")
         .permitAll()
         .antMatchers(HttpMethod.OPTIONS, "/**")
         .permitAll()
