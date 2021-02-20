@@ -125,7 +125,8 @@ public interface SchedulePaymentApiMapper {
   }
 
   default UserDto getEnrichedRequestAdmin(EnrichedSchedulePaymentRequest enrichedSchedulePaymentRequest) {
-    return UserDto.builder().userId(enrichedSchedulePaymentRequest.getAdminId())
+    return UserDto.builder()
+        .userId(enrichedSchedulePaymentRequest.getAdminId())
         .id(enrichedSchedulePaymentRequest.getAdminEntityId())
         .name(enrichedSchedulePaymentRequest.getAdminName())
         .email(enrichedSchedulePaymentRequest.getAdminEmail())
@@ -134,7 +135,8 @@ public interface SchedulePaymentApiMapper {
   }
 
   default HouseMemberDto getEnrichedRequestMember(EnrichedSchedulePaymentRequest enrichedSchedulePaymentRequest) {
-    return new HouseMemberDto().id(enrichedSchedulePaymentRequest.getMemberEntityId())
+    return new HouseMemberDto()
+        .id(enrichedSchedulePaymentRequest.getMemberEntityId())
         .memberId(enrichedSchedulePaymentRequest.getMemberId())
         .name(enrichedSchedulePaymentRequest.getHouseMemberName());
   }
