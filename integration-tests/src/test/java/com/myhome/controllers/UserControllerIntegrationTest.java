@@ -25,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-public class UserControllerIntegrationTest {
+class UserControllerIntegrationTest {
 
   private static final String TEST_NAME = "name";
   private static final String TEST_EMAIL = "email@mail.com";
   private static final String TEST_PASSWORD = "password";
 
-  @Value("${api.registration.url.path}")
+  @Value("${api.public.registration.url.path}")
   private String registrationPath;
 
   @Autowired
@@ -41,7 +41,7 @@ public class UserControllerIntegrationTest {
   private UserRepository userRepository;
 
   @Test
-  public void shouldSignUpSuccessful() {
+  void shouldSignUpSuccessful() {
     // Given a request
     CreateUserRequest requestBody = new CreateUserRequest()
         .name(TEST_NAME)
