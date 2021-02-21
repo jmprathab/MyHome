@@ -63,6 +63,8 @@ paths:
           description: If wrong password reset token
   /amenities/{amenityId}:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Amenities
       description: Get details about the amenity
@@ -87,6 +89,8 @@ paths:
         '404':
           description: If params are invalid
     delete:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Amenities
       description: Remove amenity
@@ -103,6 +107,8 @@ paths:
         '404':
           description: If params are invalid
     put:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Amenities
       description: Update an amenity
@@ -130,6 +136,8 @@ paths:
           description: If amenity is not found
   /communities/{communityId}/amenities:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: Get all amenities of community
@@ -159,6 +167,8 @@ paths:
         '404':
           description: If params are invalid
     post:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: Adds amenity to community
@@ -219,6 +229,8 @@ paths:
         '409':
           description: If user already exists
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Users
       description: Lists all users
@@ -241,6 +253,8 @@ paths:
                 $ref: '#/components/schemas/GetUserDetailsResponse'
   /users/{userId}:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Users
       description: Get details of a user given userId
@@ -308,6 +322,8 @@ paths:
           description: Email send error
   /users/{userId}/housemates:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Users
       description: Lists all members from all houses of a user
@@ -336,6 +352,8 @@ paths:
                 $ref: '#/components/schemas/ListHouseMembersResponse'
   /members/{memberId}/documents:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Documents
       description: Returns house member's documents
@@ -357,6 +375,8 @@ paths:
         '404':
           description: If params are invalid
     post:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Documents
       description: Add house member's documents
@@ -386,6 +406,8 @@ paths:
         '404':
           description: If params are invalid
     put:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Documents
       description: Update house member's documents
@@ -415,6 +437,8 @@ paths:
         '404':
           description: If params are invalid
     delete:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Documents
       description: Delete house member's documents
@@ -432,6 +456,8 @@ paths:
           description: If params are invalid
   /communities:
     post:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: Create a new community
@@ -457,6 +483,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateCommunityResponse'
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: List all communities which are registered
@@ -479,6 +507,8 @@ paths:
                 $ref: '#/components/schemas/GetCommunityDetailsResponse'
   /communities/{communityId}:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: Get details about the community given a community id
@@ -502,6 +532,8 @@ paths:
         '404':
           description: If params are invalid
     delete:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: Deletion community with given community id
@@ -519,6 +551,8 @@ paths:
           description: If params are invalid
   /communities/{communityId}/admins:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: List all admins of the community given a community id
@@ -547,6 +581,8 @@ paths:
         '404':
           description: If params are invalid
     post:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: Add a new admin to the community given a community id
@@ -581,6 +617,8 @@ paths:
           description: If params are invalid
   /communities/{communityId}/admins/{adminId}:
     delete:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: Remove of admin associated with a community
@@ -603,6 +641,8 @@ paths:
           description: If params are invalid
   /communities/{communityId}/houses:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: List all houses of the community given a community id
@@ -665,6 +705,8 @@ paths:
           description: If params are invalid
   /communities/{communityId}/houses/{houseId}:
     delete:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: Remove of house from the community given a community id and a house id
@@ -687,6 +729,8 @@ paths:
           description: If params are invalid
   /houses:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Houses
       description: List all houses of the community given a community id
@@ -709,6 +753,8 @@ paths:
                 $ref: '#/components/schemas/GetHouseDetailsResponse'
   /houses/{houseId}:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Houses
       description: Get house detail by a given ID
@@ -734,6 +780,8 @@ paths:
           description: If params are invalid
   /houses/{houseId}/members:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Houses
       description: List all members of the house given a house id
@@ -762,6 +810,8 @@ paths:
         '404':
           description: If params are invalid
     post:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Houses
       description: Add new members to the house given a house id. Responds with member id which were added
@@ -796,6 +846,8 @@ paths:
           description: If parameters are invalid
   /houses/{houseId}/members/{memberId}:
     delete:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Houses
       description: Deletion of member associated with a house
@@ -819,6 +871,8 @@ paths:
 
   /payments:
     post:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Payments
       description: Schedule a new payment
@@ -845,6 +899,8 @@ paths:
                 $ref: '#/components/schemas/SchedulePaymentResponse'
   /payments/{paymentId}:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Payments
       description: Get details about a payment with the given payment id
@@ -870,6 +926,8 @@ paths:
           description: If paymentId is invalid
   /members/{memberId}/payments:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Payments
       description: Get all payments for the specified member
@@ -895,6 +953,8 @@ paths:
           description: If memberId is invalid
   /communities/{communityId}/admins/{adminId}/payments:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
         - Communities
       description: Get all payments scheduled by the specified admin
@@ -930,6 +990,11 @@ paths:
         '404':
           description: If communityId or adminId are invalid
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     ForgotPasswordRequest:
       type: object
