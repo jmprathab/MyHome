@@ -61,44 +61,20 @@ management:
   health:
     mail:
       enabled: false
-###############################################################################
-# Spring doc
-###############################################################################
-springdoc:
-  api-docs:
-    path: "/docs/api-docs"
-  swagger-ui:
-    path: "/docs/swagger-ui.html"
 
 ###############################################################################
 # Custom properties
 ###############################################################################
 api:
-  login:
-    url:
-      path: "/users/login"
-  registration:
-    url:
-      path: "/users"
-  h2console:
-    url:
-      path: "/h2-console/**"
-  docs:
-    url:
-      path: "/docs/**"
-  actuator:
-    url:
-      path: "/actuator/**"
-  email:
-    password-forgot-reset:
-      url:
-        path: "/users/password"
-    email-confirm:
-      url:
-        path: "/users/*/email-confirm/**"
-    email-confirm-resend:
-      url:
-        path: "/users/*/email-confirm-resend"
+  public:
+    login.url.path: "/auth/login"
+    registration.url.path: "/users"
+    h2console.url.path: "/h2-console/**"
+    actuator.url.path: "/actuator/**"
+    forgot-password.url.path: "/users/password"
+    resend-confirmation-email.url.path: "/users/*/email-confirm-resend"
+    confirm-email.url.path: "/users/*/email-confirm/**"
+    cors.url.path: "/**"
 
 authorization:
   token:
