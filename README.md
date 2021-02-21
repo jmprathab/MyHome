@@ -52,6 +52,12 @@ Feel free to contribute to the project. Please make sure to follow the below lis
 * Read `CONTRIBUTING.md`
 * This project uses coding style from https://github.com/square/java-code-styles
 
+## API exploration
+
+Our API can be accessed in two ways:
+- Postman - There is a [Postman collection](postman/MyHome.postman_collection.json) that can be imported and used
+- Swagger UI - Run our app and go to [Swagger documentation page](http://localhost:8080/swagger/index.html)
+
 ## License
 
 This project is licensed under the Apache License - see the [LICENSE.md](LICENSE.md) file for details
