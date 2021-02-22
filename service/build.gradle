@@ -65,6 +65,10 @@ dependencies {
 
   // mail
   implementation 'org.springframework.boot:spring-boot-starter-mail'
+  implementation 'org.thymeleaf:thymeleaf'
+  implementation 'org.thymeleaf:thymeleaf-spring5'
+
+  annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
 }
 

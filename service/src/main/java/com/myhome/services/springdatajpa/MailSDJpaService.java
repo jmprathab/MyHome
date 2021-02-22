@@ -1,5 +1,6 @@
 package com.myhome.services.springdatajpa;
 
+import com.myhome.configuration.properties.mail.MailProperties;
 import com.myhome.domain.SecurityToken;
 import com.myhome.domain.User;
 import com.myhome.services.MailService;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@ConditionalOnProperty(value = "spring.mail.dev-mode", havingValue = "false", matchIfMissing = false)
+@ConditionalOnProperty(value = "spring.mail.devMode", havingValue = "false", matchIfMissing = false)
 @RequiredArgsConstructor
 @Slf4j
 public class MailSDJpaService implements MailService {
@@ -30,17 +31,7 @@ public class MailSDJpaService implements MailService {
   private final ITemplateEngine emailTemplateEngine;
   private final JavaMailSender mailSender;
   private final ResourceBundleMessageSource messageSource;
-
-  @Value("${spring.mail.username}")
-  private String username;
-  @Value("${spring.mail.templates.names.password-changed}")
-  private String passwordChangedMailTemplateName;
-  @Value("${spring.mail.templates.names.password-reset}")
-  private String passwordRecoverMailTemplateName;
-  @Value("${spring.mail.templates.names.account-created}")
-  private String accountCreatedMailTemplateName;
-  @Value("${spring.mail.templates.names.account-confirmed}")
-  private String accountConfirmedMailTemplateName;
+  private final MailProperties mailProperties;
 
   @Value("${server.host}")
   private String host;
@@ -51,7 +42,7 @@ public class MailSDJpaService implements MailService {
   private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
       MimeMessage message = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-      helper.setFrom(username);
+      helper.setFrom(mailProperties.getUsername());
       helper.setTo(to);
       helper.setSubject(subject);
       helper.setText(htmlBody, true);
@@ -77,7 +68,8 @@ public class MailSDJpaService implements MailService {
     templateModel.put("username", user.getName());
     templateModel.put("recoverCode", randomCode);
     String passwordRecoverSubject = getLocalizedMessage("locale.EmailSubject.passwordRecover");
-    boolean mailSent = send(user.getEmail(), passwordRecoverSubject, passwordRecoverMailTemplateName,  templateModel);
+    boolean mailSent = send(user.getEmail(), passwordRecoverSubject,
+        mailProperties.getTemplateNames().getPasswordReset(),  templateModel);
     return mailSent;
   }
 
@@ -86,7 +78,8 @@ public class MailSDJpaService implements MailService {
     Map<String, Object> templateModel = new HashMap<>();
     templateModel.put("username", user.getName());
     String passwordChangedSubject = getLocalizedMessage("locale.EmailSubject.passwordChanged");
-    boolean mailSent = send(user.getEmail(), passwordChangedSubject, passwordChangedMailTemplateName, templateModel);
+    boolean mailSent = send(user.getEmail(), passwordChangedSubject,
+        mailProperties.getTemplateNames().getPasswordChanged(), templateModel);
     return mailSent;
   }
 
@@ -97,7 +90,8 @@ public class MailSDJpaService implements MailService {
     templateModel.put("username", user.getName());
     templateModel.put("emailConfirmLink", emailConfirmLink);
     String accountCreatedSubject = getLocalizedMessage("locale.EmailSubject.accountCreated");
-    boolean mailSent = send(user.getEmail(), accountCreatedSubject, accountCreatedMailTemplateName, templateModel);
+    boolean mailSent = send(user.getEmail(), accountCreatedSubject,
+        mailProperties.getTemplateNames().getAccountCreated(), templateModel);
     return mailSent;
   }
 
@@ -106,7 +100,8 @@ public class MailSDJpaService implements MailService {
     Map<String, Object> templateModel = new HashMap<>();
     templateModel.put("username", user.getName());
     String accountConfirmedSubject = getLocalizedMessage("locale.EmailSubject.accountConfirmed");
-    boolean mailSent = send(user.getEmail(), accountConfirmedSubject, accountConfirmedMailTemplateName, templateModel);
+    boolean mailSent = send(user.getEmail(), accountConfirmedSubject,
+        mailProperties.getTemplateNames().getAccountConfirmed(), templateModel);
     return mailSent;
   }
 
