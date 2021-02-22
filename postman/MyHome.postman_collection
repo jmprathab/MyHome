@@ -1,0 +1,966 @@
+{
+	"info": {
+		"_postman_id": "f6220240-de74-4e4f-9916-6aa1cf6ad5d8",
+		"name": "MyHome",
+		"description": "# MyHome API Guide\r\n\r\n## Usage\r\n\r\nTo use any API except **Create User and Login User**, you'll need to obtain Authentication Token.\r\n\r\nTo get Authentication Token.\r\n\r\n1. First Create New User with **Create User API**.\r\n2. Login with New user with **New User API**. Login will obtain New Token for user.\r\n\r\nNow you can use other APIs.\r\n\r\n\r\n## Variables\r\n\r\nAll APIs are configured with Postman variables to keep consistensy for static and dynamic values.\r\n\r\n1. **ENV_URL**: This variable hold value for Enviroment URL. e.g. 127.0.0.1:8080 (Default to local environment, with 8080 port), or example.com.\r\n2. **AUTH_TOKEN**: This variable hold authentication token obtained by Login User API, which is used in request header. This is stored each time you use Login User API.\r\n3. **COMMUNITY_ID**: This variable hold default community id created for testing Community related APIs.\r\n4. **HOUSE_ID**: This variable hold default house id created for testing House related APIs.\r\n5. **USER_ID**: This variable hold userId obtained by Login User API. This is stored each tiem you use Login User API.\r\n6. **ADMIN_ID**: This variable hold default admin id created for testing related APIs.\r\n7. **MEMBER_ID**: This variable hold default member id created for testing related APIs.\r\n\r\n\r\nYou can configure your own values for these either by editing in *MyHome > ... (View more actions) > Edit > Variables Tab* or you can create your environment and add variable there. [How to create Environment in Postman] (https://learning.postman.com/docs/postman/variables-and-environments/managing-environments/#creating-environments)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "authentication",
+			"item": [
+				{
+					"name": "requestResetPassword",
+					"item": [
+						{
+							"name": "Request reset password - Forgot",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\":\"test@test.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{ENV_URL}}/users/password?action=FORGOT",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"users",
+										"password"
+									],
+									"query": [
+										{
+											"key": "action",
+											"value": "FORGOT"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Request reset password - Reset",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"test@test.com\",\r\n    \"newPassword\": \"reset-test-password\",\r\n    \"token\": \"default-test-token\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{ENV_URL}}/users/password?action=RESET",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"users",
+										"password"
+									],
+									"query": [
+										{
+											"key": "action",
+											"value": "RESET"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.headers.has(\"token\")) {\r",
+									"    pm.collectionVariables.set(\"AUTH_TOKEN\", pm.response.headers.get(\"token\"))\r",
+									"}\r",
+									"if (pm.response.headers.has(\"userId\")) {\r",
+									"    pm.collectionVariables.set(\"USER_ID\", pm.response.headers.get(\"userId\"))\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\" : \"testuser@myhome.com\",\n\t\"password\" : \"testpassword\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{ENV_URL}}/auth/login",
+							"protocol": "http",
+							"host": [
+								"{{ENV_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Test User\",\n\t\"email\" : \"testuser@myhome.com\",\n\t\"password\" : \"testpassword\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{ENV_URL}}/users",
+							"protocol": "http",
+							"host": [
+								"{{ENV_URL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Status check with Auth",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{ENV_URL}}/status",
+							"protocol": "http",
+							"host": [
+								"{{ENV_URL}}"
+							],
+							"path": [
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "community",
+			"item": [
+				{
+					"name": "admins",
+					"item": [
+						{
+							"name": "Add admins to community",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{AUTH_TOKEN}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"admins\": [\n        \"2a26eb99-f7bd-4291-af7d-53cb344e488f\",\n        \"4c62eb04-850b-448c-ae98-b87a02a9b8c2\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/admins",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"communities",
+										"{{COMMUNITY_ID}}",
+										"admins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List admins of a community",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{AUTH_TOKEN}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/admins",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"communities",
+										"{{COMMUNITY_ID}}",
+										"admins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete admins from a community",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/admins/{{ADMIN_ID}}",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"communities",
+										"{{COMMUNITY_ID}}",
+										"admins",
+										"{{ADMIN_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "houses",
+					"item": [
+						{
+							"name": "List all houses",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"url": {
+									"raw": "http://{{ENV_URL}}/houses",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"houses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List details of a house",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"url": {
+									"raw": "http://{{ENV_URL}}/houses/{{HOUSE_ID}}",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"houses",
+										"{{HOUSE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List houses of a community",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"url": {
+									"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/houses",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"communities",
+										"{{COMMUNITY_ID}}",
+										"houses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add house to community",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"houses\": [\n        {\n            \"name\": \"Default House Name\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/houses",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"communities",
+										"{{COMMUNITY_ID}}",
+										"houses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove house from community",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"url": {
+									"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/houses/{{HOUSE_ID}}",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"communities",
+										"{{COMMUNITY_ID}}",
+										"houses",
+										"{{HOUSE_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "amenity",
+					"item": [
+						{
+							"name": "Get community amenity details",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"url": {
+									"raw": "http://{{ENV_URL}}/amenities/{{AMENITY_ID}}",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"amenities",
+										"{{AMENITY_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete community amenity",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"url": {
+									"raw": "http://{{ENV_URL}}/amenities/{{AMENITY_ID}}",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"amenities",
+										"{{AMENITY_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List community amenities",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"url": {
+									"raw": "http://{{ENV_URL}}/amenities/{{AMENITY_ID}}",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"amenities",
+										"{{AMENITY_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create community",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test community\",\n    \"district\": \"Test district\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{ENV_URL}}/communities",
+							"protocol": "http",
+							"host": [
+								"{{ENV_URL}}"
+							],
+							"path": [
+								"communities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List all community",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{ENV_URL}}/communities",
+							"protocol": "http",
+							"host": [
+								"{{ENV_URL}}"
+							],
+							"path": [
+								"communities"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List detail of a community",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}",
+							"protocol": "http",
+							"host": [
+								"{{ENV_URL}}"
+							],
+							"path": [
+								"communities",
+								"{{COMMUNITY_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "List all users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{AUTH_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{ENV_URL}}/users",
+							"protocol": "http",
+							"host": [
+								"{{ENV_URL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List details of a user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{AUTH_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{ENV_URL}}/users/{{USER_ID}}",
+							"protocol": "http",
+							"host": [
+								"{{ENV_URL}}"
+							],
+							"path": [
+								"users",
+								"{{USER_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "members",
+			"item": [
+				{
+					"name": "document",
+					"item": [
+						{
+							"name": "Get house member document",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"url": {
+									"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"members",
+										"{{MEMBER_ID}}",
+										"documents"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add house member document",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "memberDocument",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"members",
+										"{{MEMBER_ID}}",
+										"documents"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete house member document",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"url": {
+									"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"members",
+										"{{MEMBER_ID}}",
+										"documents"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Updata house member document",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{AUTH_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "memberDocument",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "http://{{ENV_URL}}/members/{{MEMBER_ID}}/documents",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"members",
+										"{{MEMBER_ID}}",
+										"documents"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "List members of a house",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{AUTH_TOKEN}}"
+							}
+						],
+						"url": {
+							"raw": "http://{{ENV_URL}}/houses/{{HOUSE_ID}}/members",
+							"protocol": "http",
+							"host": [
+								"{{ENV_URL}}"
+							],
+							"path": [
+								"houses",
+								"{{HOUSE_ID}}",
+								"members"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add members to house",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{AUTH_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"members\": [\n    {\n      \"memberId\": \"test-member-id-for-testing\",\n      \"name\": \"Test member name\"\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{ENV_URL}}/houses/{{HOUSE_ID}}/members",
+							"protocol": "http",
+							"host": [
+								"{{ENV_URL}}"
+							],
+							"path": [
+								"houses",
+								"{{HOUSE_ID}}",
+								"members"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove member from house",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{AUTH_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"members\": [\n    {\n      \"memberId\": \"test-member-id-for-testing\",\n      \"name\": \"Test member name\"\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{ENV_URL}}/houses/{{HOUSE_ID}}/members/{{MEMBER_ID}}",
+							"protocol": "http",
+							"host": [
+								"{{ENV_URL}}"
+							],
+							"path": [
+								"houses",
+								"{{HOUSE_ID}}",
+								"members",
+								"{{MEMBER_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "AUTH_TOKEN",
+			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI2NzgwNTQ0Yi03MDlmLTRmZmQtOTJhYS1jZmUwMWNmODY3NjUiLCJleHAiOjE2MDU5NDE4NDN9.gpVFkjFqq5QLj7jEpJT2YftPPwHlPb3XSsTwuQhH_sApgA7qLGNI6hU8SOYEgibs2iEdBUaEhPIgiO064zs53A"
+		},
+		{
+			"key": "ENV_URL",
+			"value": "127.0.0.1:8080"
+		},
+		{
+			"key": "COMMUNITY_ID",
+			"value": "default-community-id-for-testing"
+		},
+		{
+			"key": "HOUSE_ID",
+			"value": "default-house-id-for-testing"
+		},
+		{
+			"key": "USER_ID",
+			"value": "6780544b-709f-4ffd-92aa-cfe01cf86765"
+		},
+		{
+			"key": "ADMIN_ID",
+			"value": "default-admin-id-for-testing"
+		},
+		{
+			"key": "MEMBER_ID",
+			"value": "default-member-id-for-testing"
+		},
+		{
+			"key": "AMENITY_ID",
+			"value": "244282d9-d71b-4824-ae72-1f5d4f9b067c"
+		}
+	]
+}
