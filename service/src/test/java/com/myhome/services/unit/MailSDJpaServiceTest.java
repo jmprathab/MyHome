@@ -1,8 +1,10 @@
 package com.myhome.services.unit;
 
+import com.myhome.configuration.properties.mail.MailProperties;
 import com.myhome.domain.SecurityToken;
 import com.myhome.domain.User;
 import com.myhome.services.springdatajpa.MailSDJpaService;
+import helpers.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -33,20 +34,15 @@ class MailSDJpaServiceTest {
   @Mock
   private ResourceBundleMessageSource messageSource;
 
-  @InjectMocks
   private MailSDJpaService mailSDJpaService;
+
+  private MailProperties mailProperties;
 
   @BeforeEach
   private void init() {
     MockitoAnnotations.initMocks(this);
-    ReflectionTestUtils.setField(mailSDJpaService, "username", "username");
-    ReflectionTestUtils.setField(mailSDJpaService, "passwordChangedMailTemplateName", "");
-    ReflectionTestUtils.setField(mailSDJpaService, "passwordRecoverMailTemplateName", "");
-    ReflectionTestUtils.setField(mailSDJpaService, "accountCreatedMailTemplateName", "");
-    ReflectionTestUtils.setField(mailSDJpaService, "accountConfirmedMailTemplateName", "");
-    ReflectionTestUtils.setField(mailSDJpaService, "port", "");
-    ReflectionTestUtils.setField(mailSDJpaService, "host", "");
-
+    mailProperties = TestUtils.General.getTestMailProperties();
+    mailSDJpaService = new MailSDJpaService(emailTemplateEngine, mailSender, messageSource, mailProperties);
   }
 
   @Test
