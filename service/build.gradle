@@ -68,6 +68,7 @@ dependencies {
   implementation 'org.thymeleaf:thymeleaf'
   implementation 'org.thymeleaf:thymeleaf-spring5'
 
+  // @ConfigurationProperties annotation processor
   annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
 }
