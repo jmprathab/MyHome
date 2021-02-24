@@ -1,6 +1,7 @@
 package com.myhome.services.springdatajpa;
 
 import com.myhome.configuration.properties.mail.MailProperties;
+import com.myhome.configuration.properties.mail.MailTemplatesNames;
 import com.myhome.domain.SecurityToken;
 import com.myhome.domain.User;
 import com.myhome.services.MailService;
@@ -69,7 +70,7 @@ public class MailSDJpaService implements MailService {
     templateModel.put("recoverCode", randomCode);
     String passwordRecoverSubject = getLocalizedMessage("locale.EmailSubject.passwordRecover");
     boolean mailSent = send(user.getEmail(), passwordRecoverSubject,
-        mailProperties.getTemplateNames().getPasswordReset(),  templateModel);
+        MailTemplatesNames.PASSWORD_RESET.name(),  templateModel);
     return mailSent;
   }
 
@@ -79,7 +80,7 @@ public class MailSDJpaService implements MailService {
     templateModel.put("username", user.getName());
     String passwordChangedSubject = getLocalizedMessage("locale.EmailSubject.passwordChanged");
     boolean mailSent = send(user.getEmail(), passwordChangedSubject,
-        mailProperties.getTemplateNames().getPasswordChanged(), templateModel);
+        MailTemplatesNames.PASSWORD_CHANGED.name(), templateModel);
     return mailSent;
   }
 
@@ -91,7 +92,7 @@ public class MailSDJpaService implements MailService {
     templateModel.put("emailConfirmLink", emailConfirmLink);
     String accountCreatedSubject = getLocalizedMessage("locale.EmailSubject.accountCreated");
     boolean mailSent = send(user.getEmail(), accountCreatedSubject,
-        mailProperties.getTemplateNames().getAccountCreated(), templateModel);
+        MailTemplatesNames.ACCOUNT_CREATED.name(), templateModel);
     return mailSent;
   }
 
@@ -101,7 +102,7 @@ public class MailSDJpaService implements MailService {
     templateModel.put("username", user.getName());
     String accountConfirmedSubject = getLocalizedMessage("locale.EmailSubject.accountConfirmed");
     boolean mailSent = send(user.getEmail(), accountConfirmedSubject,
-        mailProperties.getTemplateNames().getAccountConfirmed(), templateModel);
+        MailTemplatesNames.ACCOUNT_CONFIRMED.name(), templateModel);
     return mailSent;
   }
 

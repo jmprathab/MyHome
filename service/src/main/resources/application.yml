@@ -76,7 +76,7 @@ api:
     confirm-email.url.path: "/users/*/email-confirm/**"
     cors.url.path: "/**"
 
-mail:
+email:
   template:
     path: "templates/mail"
     format: ".html"
@@ -88,6 +88,7 @@ mail:
     path: "locales/mails"
     encoding: "UTF-8"
     cacheSeconds: 0
+
 authorization:
   token:
     header:
