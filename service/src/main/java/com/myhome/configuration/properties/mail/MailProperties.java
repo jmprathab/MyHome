@@ -14,6 +14,5 @@ public class MailProperties {
   private String protocol;
   private boolean debug;
   private boolean devMode;
-  private boolean testConnection;
 }
 

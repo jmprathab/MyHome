@@ -179,7 +179,6 @@ public class TestUtils {
       testMailProperties.setProtocol("test protocol");
       testMailProperties.setDebug(false);
       testMailProperties.setDevMode(false);
-      testMailProperties.setTestConnection(false);
       return testMailProperties;
     }
 

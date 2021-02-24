@@ -14,5 +14,4 @@ public class EmailTemplateProperties {
   private String encoding;
   private String mode;
   private boolean cache;
-
 }

@@ -7,7 +7,6 @@ import com.myhome.domain.User;
 import com.myhome.services.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -34,30 +33,6 @@ public class MailSDJpaService implements MailService {
   private final JavaMailSender mailSender;
   private final ResourceBundleMessageSource messageSource;
   private final MailProperties mailProperties;
-
-
-  private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
-      MimeMessage message = mailSender.createMimeMessage();
-      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-      helper.setFrom(mailProperties.getUsername());
-      helper.setTo(to);
-      helper.setSubject(subject);
-      helper.setText(htmlBody, true);
-      mailSender.send(message);
-  }
-
-  private boolean send(String emailTo, String subject, String templateName, Map<String, Object> templateModel) {
-    try {
-      Context thymeleafContext = new Context(LocaleContextHolder.getLocale());
-      thymeleafContext.setVariables(templateModel);
-      String htmlBody = emailTemplateEngine.process(templateName, thymeleafContext);
-      sendHtmlMessage(emailTo, subject, htmlBody);
-    } catch (MailException | MessagingException mailException) {
-      log.error("Mail send error!", mailException);
-      return false;
-    }
-    return true;
-  }
 
   @Override
   public boolean sendPasswordRecoverCode(User user, String randomCode) {
@@ -100,6 +75,29 @@ public class MailSDJpaService implements MailService {
     boolean mailSent = send(user.getEmail(), accountConfirmedSubject,
         MailTemplatesNames.ACCOUNT_CONFIRMED.filename, templateModel);
     return mailSent;
+  }
+
+  private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
+    MimeMessage message = mailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+    helper.setFrom(mailProperties.getUsername());
+    helper.setTo(to);
+    helper.setSubject(subject);
+    helper.setText(htmlBody, true);
+    mailSender.send(message);
+  }
+
+  private boolean send(String emailTo, String subject, String templateName, Map<String, Object> templateModel) {
+    try {
+      Context thymeleafContext = new Context(LocaleContextHolder.getLocale());
+      thymeleafContext.setVariables(templateModel);
+      String htmlBody = emailTemplateEngine.process(templateName, thymeleafContext);
+      sendHtmlMessage(emailTo, subject, htmlBody);
+    } catch (MailException | MessagingException mailException) {
+      log.error("Mail send error!", mailException);
+      return false;
+    }
+    return true;
   }
 
   private String getAccountConfirmLink(User user, SecurityToken token) {

@@ -34,7 +34,7 @@ spring:
     protocol: 'smtps'
     devMode: true
     debug: true
-    testConnection: false
+    test-connection: false
   jpa:
     show-sql: true
     properties:
