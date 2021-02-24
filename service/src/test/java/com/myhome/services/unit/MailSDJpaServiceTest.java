@@ -36,12 +36,11 @@ class MailSDJpaServiceTest {
 
   private MailSDJpaService mailSDJpaService;
 
-  private MailProperties mailProperties;
+  private MailProperties mailProperties = TestUtils.MailPropertiesHelper.getTestMailProperties();
 
   @BeforeEach
   private void init() {
     MockitoAnnotations.initMocks(this);
-    mailProperties = TestUtils.General.getTestMailProperties();
     mailSDJpaService = new MailSDJpaService(emailTemplateEngine, mailSender, messageSource, mailProperties);
   }
 
