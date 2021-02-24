@@ -15,6 +15,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -33,11 +34,6 @@ public class MailSDJpaService implements MailService {
   private final JavaMailSender mailSender;
   private final ResourceBundleMessageSource messageSource;
   private final MailProperties mailProperties;
-
-  @Value("${server.host}")
-  private String host;
-  @Value("${server.port}")
-  private String port;
 
 
   private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
@@ -70,7 +66,7 @@ public class MailSDJpaService implements MailService {
     templateModel.put("recoverCode", randomCode);
     String passwordRecoverSubject = getLocalizedMessage("locale.EmailSubject.passwordRecover");
     boolean mailSent = send(user.getEmail(), passwordRecoverSubject,
-        MailTemplatesNames.PASSWORD_RESET.name(),  templateModel);
+        MailTemplatesNames.PASSWORD_RESET.filename, templateModel);
     return mailSent;
   }
 
@@ -80,7 +76,7 @@ public class MailSDJpaService implements MailService {
     templateModel.put("username", user.getName());
     String passwordChangedSubject = getLocalizedMessage("locale.EmailSubject.passwordChanged");
     boolean mailSent = send(user.getEmail(), passwordChangedSubject,
-        MailTemplatesNames.PASSWORD_CHANGED.name(), templateModel);
+        MailTemplatesNames.PASSWORD_CHANGED.filename, templateModel);
     return mailSent;
   }
 
@@ -92,7 +88,7 @@ public class MailSDJpaService implements MailService {
     templateModel.put("emailConfirmLink", emailConfirmLink);
     String accountCreatedSubject = getLocalizedMessage("locale.EmailSubject.accountCreated");
     boolean mailSent = send(user.getEmail(), accountCreatedSubject,
-        MailTemplatesNames.ACCOUNT_CREATED.name(), templateModel);
+        MailTemplatesNames.ACCOUNT_CREATED.filename, templateModel);
     return mailSent;
   }
 
@@ -102,7 +98,7 @@ public class MailSDJpaService implements MailService {
     templateModel.put("username", user.getName());
     String accountConfirmedSubject = getLocalizedMessage("locale.EmailSubject.accountConfirmed");
     boolean mailSent = send(user.getEmail(), accountConfirmedSubject,
-        MailTemplatesNames.ACCOUNT_CONFIRMED.name(), templateModel);
+        MailTemplatesNames.ACCOUNT_CONFIRMED.filename, templateModel);
     return mailSent;
   }
 

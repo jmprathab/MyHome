@@ -6,5 +6,8 @@ public enum MailTemplatesNames {
   ACCOUNT_CREATED("accountCreated"),
   ACCOUNT_CONFIRMED("accountConfirmed");
 
-  MailTemplatesNames(String templateFileName) {}
+  public final String filename;
+  MailTemplatesNames(String fileName) {
+    this.filename = fileName;
+  }
 }
