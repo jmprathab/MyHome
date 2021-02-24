@@ -13,6 +13,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -33,6 +36,7 @@ class MailSDJpaServiceTest {
   private ITemplateEngine emailTemplateEngine;
   @Mock
   private ResourceBundleMessageSource messageSource;
+  private MockHttpServletRequest mockRequest;
 
   private MailSDJpaService mailSDJpaService;
 
@@ -41,6 +45,12 @@ class MailSDJpaServiceTest {
   @BeforeEach
   private void init() {
     MockitoAnnotations.initMocks(this);
+
+    mockRequest = new MockHttpServletRequest();
+    mockRequest.setContextPath("http://localhost:8080");
+    ServletRequestAttributes attrs = new ServletRequestAttributes(mockRequest);
+    RequestContextHolder.setRequestAttributes(attrs);
+
     mailSDJpaService = new MailSDJpaService(emailTemplateEngine, mailSender, messageSource, mailProperties);
   }
 
