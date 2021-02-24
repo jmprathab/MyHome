@@ -32,24 +32,9 @@ spring:
     password: ${springMailPassword:"none"}
     port: 465
     protocol: 'smtps'
-    debug: false
-    devMode: false
-    template:
-      path: "templates/mail"
-      format: ".html"
-      encoding: "UTF-8"
-      mode: "HTML"
-      cache: false
-    templateNames:
-      passwordReset: "passwordRecoverCode"
-      passwordChanged: "passwordChanged"
-      accountCreated: "accountCreated"
-      accountConfirmed: "accountConfirmed"
-    localization:
-#      matches with 'locales/mails', 'locales/mails_en' 'locales/mails_en_US' e.t.c
-      path: "locales/mails"
-      encoding: "UTF-8"
-      cacheSeconds: 0
+    devMode: true
+    debug: true
+    testConnection: false
   jpa:
     show-sql: true
     properties:
@@ -91,6 +76,18 @@ api:
     confirm-email.url.path: "/users/*/email-confirm/**"
     cors.url.path: "/**"
 
+mail:
+  template:
+    path: "templates/mail"
+    format: ".html"
+    encoding: "UTF-8"
+    mode: "HTML"
+    cache: false
+  location:
+    #      matches with 'locales/mails', 'locales/mails_en' 'locales/mails_en_US' e.t.c
+    path: "locales/mails"
+    encoding: "UTF-8"
+    cacheSeconds: 0
 authorization:
   token:
     header:

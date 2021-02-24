@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "mail.template")
+@ConfigurationProperties(prefix = "email.template")
 public class EmailTemplateProperties {
   private String path;
   private String format;

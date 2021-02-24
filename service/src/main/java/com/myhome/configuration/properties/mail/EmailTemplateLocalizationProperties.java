@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "mail.location")
+@ConfigurationProperties(prefix = "email.location")
 public class EmailTemplateLocalizationProperties {
   private String path;
   private String encoding;
