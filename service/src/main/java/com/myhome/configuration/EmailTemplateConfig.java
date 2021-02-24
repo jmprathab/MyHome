@@ -20,8 +20,24 @@ public class EmailTemplateConfig {
   private final EmailTemplateLocalizationProperties localizationProperties;
 
   @Bean
-  public ITemplateResolver thymeleafTemplateResolver() {
+  public ResourceBundleMessageSource emailMessageSource() {
+    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    messageSource.setBasename(localizationProperties.getPath());
+    messageSource.setDefaultLocale(Locale.ENGLISH);
+    messageSource.setDefaultEncoding(localizationProperties.getEncoding());
+    messageSource.setCacheSeconds(localizationProperties.getCacheSeconds());
+    return messageSource;
+  }
 
+  @Bean
+  public SpringTemplateEngine thymeleafTemplateEngine(ResourceBundleMessageSource emailMessageSource) {
+    SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+    templateEngine.setTemplateResolver(thymeleafTemplateResolver());
+    templateEngine.setTemplateEngineMessageSource(emailMessageSource);
+    return templateEngine;
+  }
+
+  private ITemplateResolver thymeleafTemplateResolver() {
     ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
 
     String templatePath = templateProperties.getPath();
@@ -33,24 +49,6 @@ public class EmailTemplateConfig {
     templateResolver.setCharacterEncoding(templateProperties.getEncoding());
     templateResolver.setCacheable(templateProperties.isCache());
     return templateResolver;
-  }
-
-  @Bean
-  public ResourceBundleMessageSource emailMessageSource() {
-    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-    messageSource.setBasename(localizationProperties.getPath());
-    messageSource.setDefaultLocale(Locale.ENGLISH);
-    messageSource.setDefaultEncoding(localizationProperties.getEncoding());
-    messageSource.setCacheSeconds(localizationProperties.getCacheSeconds());
-    return messageSource;
-  }
-
-  @Bean
-  public SpringTemplateEngine thymeleafTemplateEngine(ResourceBundleMessageSource emailMessageSource, ITemplateResolver thymeleafTemplateResolver) {
-    SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-    templateEngine.setTemplateResolver(thymeleafTemplateResolver);
-    templateEngine.setTemplateEngineMessageSource(emailMessageSource);
-    return templateEngine;
   }
 
 }

@@ -103,7 +103,11 @@ public class MailSDJpaService implements MailService {
   }
 
   private String getAccountConfirmLink(User user, SecurityToken token) {
-    return String.format("%s:%s/users/%s/email-confirm/%s", host, port, user.getUserId(), token.getToken());
+    String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+        .replacePath(null)
+        .build()
+        .toUriString();
+    return String.format("%s/users/%s/email-confirm/%s", baseUrl, user.getUserId(), token.getToken());
   }
 
   private String getLocalizedMessage(String prop) {

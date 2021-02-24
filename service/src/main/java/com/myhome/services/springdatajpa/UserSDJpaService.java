@@ -61,7 +61,7 @@ public class UserSDJpaService implements UserService {
       encryptUserPassword(request);
       User newUser = createUserInRepository(request);
       SecurityToken emailConfirmToken = securityTokenService.createEmailConfirmToken(newUser);
-      //mailService.sendAccountCreated(newUser, emailConfirmToken);
+      mailService.sendAccountCreated(newUser, emailConfirmToken);
       UserDto newUserDto = userMapper.userToUserDto(newUser);
       return Optional.of(newUserDto);
     } else {
@@ -155,8 +155,8 @@ public class UserSDJpaService implements UserService {
         SecurityToken emailConfirmToken = securityTokenService.createEmailConfirmToken(user);
         user.getUserTokens().removeIf(token -> token.getTokenType() == SecurityTokenType.EMAIL_CONFIRM && !token.isUsed());
         userRepository.save(user);
-        //boolean mailSend = mailService.sendAccountCreated(user, emailConfirmToken);
-        return true;
+        boolean mailSend = mailService.sendAccountCreated(user, emailConfirmToken);
+        return mailSend;
       } else {
         return false;
       }
@@ -187,7 +187,7 @@ public class UserSDJpaService implements UserService {
 
   private void confirmEmail(User user) {
     user.setEmailConfirmed(true);
-    //mailService.sendAccountConfirmed(user);
+    mailService.sendAccountConfirmed(user);
     userRepository.save(user);
   }
 
