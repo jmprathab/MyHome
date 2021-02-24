@@ -1,6 +1,7 @@
 package com.myhome.configuration;
 
-import com.myhome.configuration.properties.mail.MailProperties;
+import com.myhome.configuration.properties.mail.EmailTemplateLocalizationProperties;
+import com.myhome.configuration.properties.mail.EmailTemplateProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,34 +16,32 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class EmailTemplateConfig {
 
-  private final MailProperties mailProperties;
+  private final EmailTemplateProperties templateProperties;
+  private final EmailTemplateLocalizationProperties localizationProperties;
 
   @Bean
   public ITemplateResolver thymeleafTemplateResolver() {
-    MailProperties.MailTemplate templatesProperties = mailProperties.getTemplate();
 
     ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
 
-    String templatePath = templatesProperties.getPath();
+    String templatePath = templateProperties.getPath();
     String fileSeparator = System.getProperty("file.separator");
     templateResolver.setPrefix(templatePath.endsWith(fileSeparator) ? templatePath : templatePath + fileSeparator);
 
-    templateResolver.setSuffix(templatesProperties.getFormat());
-    templateResolver.setTemplateMode(templatesProperties.getMode());
-    templateResolver.setCharacterEncoding(templatesProperties.getEncoding());
-    templateResolver.setCacheable(templatesProperties.isCache());
+    templateResolver.setSuffix(templateProperties.getFormat());
+    templateResolver.setTemplateMode(templateProperties.getMode());
+    templateResolver.setCharacterEncoding(templateProperties.getEncoding());
+    templateResolver.setCacheable(templateProperties.isCache());
     return templateResolver;
   }
 
   @Bean
   public ResourceBundleMessageSource emailMessageSource() {
-    MailProperties.MailTemplatesLocalization mailLocalization = mailProperties.getLocalization();
-
     ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-    messageSource.setBasename(mailLocalization.getPath());
+    messageSource.setBasename(localizationProperties.getPath());
     messageSource.setDefaultLocale(Locale.ENGLISH);
-    messageSource.setDefaultEncoding(mailLocalization.getEncoding());
-    messageSource.setCacheSeconds(mailLocalization.getCacheSeconds());
+    messageSource.setDefaultEncoding(localizationProperties.getEncoding());
+    messageSource.setCacheSeconds(localizationProperties.getCacheSeconds());
     return messageSource;
   }
 
