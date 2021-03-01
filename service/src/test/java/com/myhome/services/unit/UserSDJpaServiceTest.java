@@ -18,11 +18,11 @@ package com.myhome.services.unit;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
+import com.myhome.model.ForgotPasswordRequest;
 import com.myhome.domain.Community;
 import com.myhome.domain.SecurityToken;
 import com.myhome.domain.SecurityTokenType;
 import com.myhome.domain.User;
-import com.myhome.model.ForgotPasswordRequest;
 import com.myhome.repositories.SecurityTokenRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.springdatajpa.MailSDJpaService;
@@ -44,17 +44,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserSDJpaServiceTest {
 
@@ -224,8 +217,8 @@ class UserSDJpaServiceTest {
         .willReturn(testSecurityToken);
     given(userRepository.findByUserIdWithTokens(user.getUserId()))
         .willReturn(Optional.of(user));
-//    given(mailService.sendAccountConfirmed(user))
-//        .willReturn(true);
+    //    given(mailService.sendAccountConfirmed(user))
+    //        .willReturn(true);
 
     // when
     boolean emailConfirmed = userService.confirmEmail(user.getUserId(), testSecurityToken.getToken());
@@ -235,7 +228,7 @@ class UserSDJpaServiceTest {
     assertTrue(user.isEmailConfirmed());
     verify(securityTokenService).useToken(testSecurityToken);
     verify(userRepository).save(user);
-//    verify(mailService).sendAccountConfirmed(user);
+    //    verify(mailService).sendAccountConfirmed(user);
   }
 
   @Test
@@ -316,7 +309,76 @@ class UserSDJpaServiceTest {
     verifyNoInteractions(securityTokenService);
     verifyNoInteractions(mailService);
   }
-  
+
+  @Test
+  void findUserByEmailSuccess() {
+    // given
+    UserDto userDto = getDefaultUserDtoRequest();
+    User user = getUserFromDto(userDto);
+
+    given(userRepository.findByEmail(USER_EMAIL))
+        .willReturn(user);
+    given(userMapper.userToUserDto(user))
+        .willReturn(userDto);
+
+    // when
+    Optional<UserDto> resultUserDtoOptional = userService.findUserByEmail(USER_EMAIL);
+
+    // then
+    assertTrue(resultUserDtoOptional.isPresent());
+    UserDto createdUserDto = resultUserDtoOptional.get();
+    assertEquals(userDto, createdUserDto);
+    assertEquals(0, createdUserDto.getCommunityIds().size());
+    verify(userRepository).findByEmail(USER_EMAIL);
+  }
+
+  @Test
+  void findUserByEmailSuccessWithCommunityIds() {
+    // given
+    UserDto userDto = getDefaultUserDtoRequest();
+    User user = getUserFromDto(userDto);
+
+    Community firstCommunity = TestUtils.CommunityHelpers.getTestCommunity(user);
+    Community secCommunity = TestUtils.CommunityHelpers.getTestCommunity(user);
+
+    Set<Community> communities =
+        Stream.of(firstCommunity, secCommunity).collect(Collectors.toSet());
+
+    Set<String> communitiesIds = communities
+        .stream()
+        .map(Community::getCommunityId)
+        .collect(Collectors.toSet());
+
+    given(userRepository.findByEmail(USER_EMAIL))
+        .willReturn(user);
+    given(userMapper.userToUserDto(user))
+        .willReturn(userDto);
+
+    // when
+    Optional<UserDto> resultUserDtoOptional = userService.findUserByEmail(USER_EMAIL);
+
+    // then
+    assertTrue(resultUserDtoOptional.isPresent());
+    UserDto createdUserDto = resultUserDtoOptional.get();
+    assertEquals(userDto, createdUserDto);
+    assertEquals(communitiesIds, createdUserDto.getCommunityIds());
+    verify(userRepository).findByEmail(USER_EMAIL);
+  }
+
+  @Test
+  void findUserByEmailNotFound() {
+    // given
+    given(userRepository.findByEmail(USER_EMAIL))
+        .willReturn(null);
+
+    // when
+    Optional<UserDto> resultUserDtoOptional = userService.findUserByEmail(USER_EMAIL);
+
+    // then
+    assertFalse(resultUserDtoOptional.isPresent());
+    verify(userRepository).findByEmail(USER_EMAIL);
+  }
+
   @Test
   void requestResetPassword() {
     // given
