@@ -10,6 +10,17 @@ Join us at Discord [here](https://discord.gg/CngACKh).
 [![Discord](https://img.shields.io/discord/731769161361129523?label=discord)](https://discord.gg/CngACKh)
 [![Good First Issue](https://img.shields.io/github/issues-raw/jmprathab/MyHome/good%20first%20issue?label=beginner%20friendly%20issues)](https://github.com/jmprathab/MyHome/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22+label%3Aup-for-grabs)
 
+Table of Contents
+-----------------
+
+* [Installing](#installing)
+* [Running using Docker](#running-using-docker)
+* [Contributors](#contributors)
+* [How do I contribute?](#how-do-i-contribute)
+* [API exploration](#api-exploration)
+* [License](#license)
+* [Acknowledgements](#acknowledgments)
+
 ## Installing
 
 ### Prerequisites
@@ -49,7 +60,7 @@ Made with [contributors-img](https://contributors-img.firebaseapp.com)
 
 Feel free to contribute to the project. Please make sure to follow the below list before contributing.
 
-* Read `CONTRIBUTING.md`
+* Read [CONTRIBUTING.md](CONTRIBUTING.md)
 * This project uses coding style from https://github.com/square/java-code-styles
 
 ## API exploration
