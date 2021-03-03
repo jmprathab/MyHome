@@ -27,8 +27,6 @@ import com.myhome.services.AmenityService;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Optional;
-
-import helpers.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -61,6 +59,48 @@ class AmenityControllerTest {
 
   @InjectMocks
   private AmenityController amenityController;
+
+  @Test
+  void shouldAddAmenityToCommunity() {
+    // given
+    final String communityId = "communityId";
+    final AmenityDto amenityDto =
+        new AmenityDto().id(1L)
+            .amenityId("amenityId")
+            .name("name")
+            .description("description")
+            .price(BigDecimal.ONE)
+            .communityId("");
+    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
+    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
+    given(amenitySDJpaService.createAmenities(amenities, communityId))
+        .willReturn(Optional.of(singletonList(amenityDto)));
+
+    // when
+    final ResponseEntity<AddAmenityResponse> response =
+        amenityController.addAmenityToCommunity(communityId, request);
+
+    // then
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  @Test
+  void shouldNotAddAmenityWhenCommunityNotExists() {
+    // given
+    final String communityId = "communityId";
+    final AmenityDto amenityDto = new AmenityDto();
+    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
+    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
+    given(amenitySDJpaService.createAmenities(amenities, communityId))
+        .willReturn(Optional.empty());
+
+    // when
+    final ResponseEntity<AddAmenityResponse> response =
+        amenityController.addAmenityToCommunity(communityId, request);
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
 
   @BeforeEach
   private void init() {
@@ -184,7 +224,7 @@ class AmenityControllerTest {
   void deleteBooking() {
     // given
     given(amenitySDJpaService.deleteBooking(TEST_BOOKING_ID))
-            .willReturn(true);
+        .willReturn(true);
 
     // when
     ResponseEntity response = amenityController.deleteBooking(TEST_BOOKING_ID);
@@ -194,11 +234,12 @@ class AmenityControllerTest {
     assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     verify(amenitySDJpaService).deleteBooking(TEST_BOOKING_ID);
   }
+
   @Test
   void deleteBookingNotExists() {
     // given
     given(amenitySDJpaService.deleteBooking(TEST_BOOKING_ID))
-            .willReturn(false);
+        .willReturn(false);
 
     // when
     ResponseEntity response = amenityController.deleteBooking(TEST_BOOKING_ID);
