@@ -9,23 +9,19 @@ import com.myhome.security.jwt.AppJwt;
 import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import com.myhome.services.springdatajpa.AuthenticationSDJpaService;
 import com.myhome.services.springdatajpa.UserSDJpaService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.util.ReflectionTestUtils;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class AuthenticationSDJpaServiceTest {
@@ -39,27 +35,22 @@ public class AuthenticationSDJpaServiceTest {
   private final String SECRET = "secret";
 
   @Mock
-  private UserSDJpaService userSDJpaService;
+  private final UserSDJpaService userSDJpaService = mock(UserSDJpaService.class);
   @Mock
-  private AppJwtEncoderDecoder appJwtEncoderDecoder;
+  private final AppJwtEncoderDecoder appJwtEncoderDecoder = mock(AppJwtEncoderDecoder.class);
   @Mock
-  private PasswordEncoder passwordEncoder;
-  @InjectMocks
-  private AuthenticationSDJpaService authenticationSDJpaService;
-
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.initMocks(this);
-  }
+  private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+  private final AuthenticationSDJpaService authenticationSDJpaService =
+      new AuthenticationSDJpaService(TOKEN_LIFETIME, SECRET, userSDJpaService, appJwtEncoderDecoder,
+          passwordEncoder);
 
   @Test
-  void loginSuccess(){
+  void loginSuccess() {
     // given
     LoginRequest request = getDefaultLoginRequest();
     UserDto userDto = getDefaultUserDtoRequest();
     AppJwt appJwt = getDefaultJwtToken(userDto);
     String encodedJwt = appJwtEncoderDecoder.encode(appJwt, SECRET);
-    ReflectionTestUtils.setField(authenticationSDJpaService, "tokenExpirationTime", Duration.ofDays(1));
     given(userSDJpaService.findUserByEmail(request.getEmail()))
         .willReturn(Optional.of(userDto));
     given(passwordEncoder.matches(request.getPassword(), userDto.getEncryptedPassword()))
@@ -80,18 +71,19 @@ public class AuthenticationSDJpaServiceTest {
   }
 
   @Test
-  void loginUserNotFound(){
+  void loginUserNotFound() {
     // given
     LoginRequest request = getDefaultLoginRequest();
     given(userSDJpaService.findUserByEmail(request.getEmail()))
         .willReturn(Optional.empty());
 
     // when and then
-    Assertions.assertThrows(UserNotFoundException.class, () -> authenticationSDJpaService.login(request));
+    assertThrows(UserNotFoundException.class,
+        () -> authenticationSDJpaService.login(request));
   }
 
   @Test
-  void loginCredentialsAreIncorrect(){
+  void loginCredentialsAreIncorrect() {
     // given
     LoginRequest request = getDefaultLoginRequest();
     UserDto userDto = getDefaultUserDtoRequest();
@@ -101,14 +93,12 @@ public class AuthenticationSDJpaServiceTest {
         .willReturn(false);
 
     // when and then
-    Assertions.assertThrows(CredentialsIncorrectException.class, () -> authenticationSDJpaService.login(request));
-
+    assertThrows(CredentialsIncorrectException.class,
+        () -> authenticationSDJpaService.login(request));
   }
+
   private LoginRequest getDefaultLoginRequest() {
-    LoginRequest request = new LoginRequest();
-    request.setEmail(USER_EMAIL);
-    request.setPassword(REQUEST_PASSWORD);
-    return request;
+    return new LoginRequest().email(USER_EMAIL).password(REQUEST_PASSWORD);
   }
 
   private UserDto getDefaultUserDtoRequest() {
