@@ -10,14 +10,12 @@ import com.myhome.security.jwt.AppJwtEncoderDecoder;
 import com.myhome.services.AuthenticationService;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@AllArgsConstructor
 @Service
 public class AuthenticationSDJpaService implements AuthenticationService {
 
@@ -29,6 +27,18 @@ public class AuthenticationSDJpaService implements AuthenticationService {
   private final UserSDJpaService userSDJpaService;
   private final AppJwtEncoderDecoder appJwtEncoderDecoder;
   private final PasswordEncoder passwordEncoder;
+
+  public AuthenticationSDJpaService(@Value("${token.expiration_time}") Duration tokenExpirationTime,
+      @Value("${token.secret}") String tokenSecret,
+      UserSDJpaService userSDJpaService,
+      AppJwtEncoderDecoder appJwtEncoderDecoder,
+      PasswordEncoder passwordEncoder) {
+    this.tokenExpirationTime = tokenExpirationTime;
+    this.tokenSecret = tokenSecret;
+    this.userSDJpaService = userSDJpaService;
+    this.appJwtEncoderDecoder = appJwtEncoderDecoder;
+    this.passwordEncoder = passwordEncoder;
+  }
 
   @Override
   public AuthenticationData login(LoginRequest loginRequest) {
