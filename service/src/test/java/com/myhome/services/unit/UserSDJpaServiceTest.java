@@ -1,28 +1,12 @@
-/*
- * Copyright 2020 Prathab Murugan
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.myhome.services.unit;
 
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.dto.mapper.UserMapper;
+import com.myhome.model.ForgotPasswordRequest;
 import com.myhome.domain.Community;
 import com.myhome.domain.SecurityToken;
 import com.myhome.domain.SecurityTokenType;
 import com.myhome.domain.User;
-import com.myhome.model.ForgotPasswordRequest;
 import com.myhome.repositories.SecurityTokenRepository;
 import com.myhome.repositories.UserRepository;
 import com.myhome.services.springdatajpa.MailSDJpaService;
@@ -98,7 +82,8 @@ class UserSDJpaServiceTest {
         .encryptedPassword(resultUser.getEncryptedPassword())
         .communityIds(new HashSet<>())
         .build();
-    SecurityToken emailConfirmToken = getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, "token", resultUser);
+    SecurityToken emailConfirmToken =
+        getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, "token", resultUser);
 
     given(userRepository.findByEmail(request.getEmail()))
         .willReturn(null);
@@ -218,31 +203,36 @@ class UserSDJpaServiceTest {
   void confirmEmail() {
     // given
     User user = getDefaultUser();
-    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    SecurityToken testSecurityToken =
+        getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN,
+            user);
     user.getUserTokens().add(testSecurityToken);
     given(securityTokenService.useToken(testSecurityToken))
         .willReturn(testSecurityToken);
     given(userRepository.findByUserIdWithTokens(user.getUserId()))
         .willReturn(Optional.of(user));
-//    given(mailService.sendAccountConfirmed(user))
-//        .willReturn(true);
+    //    given(mailService.sendAccountConfirmed(user))
+    //        .willReturn(true);
 
     // when
-    boolean emailConfirmed = userService.confirmEmail(user.getUserId(), testSecurityToken.getToken());
+    boolean emailConfirmed =
+        userService.confirmEmail(user.getUserId(), testSecurityToken.getToken());
 
     // then
     assertTrue(emailConfirmed);
     assertTrue(user.isEmailConfirmed());
     verify(securityTokenService).useToken(testSecurityToken);
     verify(userRepository).save(user);
-//    verify(mailService).sendAccountConfirmed(user);
+    //    verify(mailService).sendAccountConfirmed(user);
   }
 
   @Test
   void confirmEmailWrongToken() {
     // given
     User user = getDefaultUser();
-    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    SecurityToken testSecurityToken =
+        getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN,
+            user);
     user.getUserTokens().add(testSecurityToken);
     given(userRepository.findByUserIdWithTokens(user.getUserId()))
         .willReturn(Optional.of(user));
@@ -262,14 +252,17 @@ class UserSDJpaServiceTest {
   void confirmEmailUsedToken() {
     // given
     User user = getDefaultUser();
-    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    SecurityToken testSecurityToken =
+        getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN,
+            user);
     testSecurityToken.setUsed(true);
     user.getUserTokens().add(testSecurityToken);
     given(userRepository.findByUserIdWithTokens(user.getUserId()))
         .willReturn(Optional.of(user));
 
     // when
-    boolean emailConfirmed = userService.confirmEmail(user.getUserId(), testSecurityToken.getToken());
+    boolean emailConfirmed =
+        userService.confirmEmail(user.getUserId(), testSecurityToken.getToken());
 
     // then
     assertFalse(emailConfirmed);
@@ -301,14 +294,17 @@ class UserSDJpaServiceTest {
   void confirmEmailAlreadyConfirmed() {
     // given
     User user = getDefaultUser();
-    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    SecurityToken testSecurityToken =
+        getSecurityToken(SecurityTokenType.EMAIL_CONFIRM, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN,
+            user);
     user.getUserTokens().add(testSecurityToken);
     user.setEmailConfirmed(true);
     given(userRepository.findByUserIdWithTokens(user.getUserId()))
         .willReturn(Optional.of(user));
 
     // when
-    boolean emailConfirmed = userService.confirmEmail(user.getUserId(), testSecurityToken.getToken());
+    boolean emailConfirmed =
+        userService.confirmEmail(user.getUserId(), testSecurityToken.getToken());
 
     // then
     assertFalse(emailConfirmed);
@@ -316,13 +312,83 @@ class UserSDJpaServiceTest {
     verifyNoInteractions(securityTokenService);
     verifyNoInteractions(mailService);
   }
-  
+
+  @Test
+  void findUserByEmailSuccess() {
+    // given
+    UserDto userDto = getDefaultUserDtoRequest();
+    User user = getUserFromDto(userDto);
+
+    given(userRepository.findByEmail(USER_EMAIL))
+        .willReturn(user);
+    given(userMapper.userToUserDto(user))
+        .willReturn(userDto);
+
+    // when
+    Optional<UserDto> resultUserDtoOptional = userService.findUserByEmail(USER_EMAIL);
+
+    // then
+    assertTrue(resultUserDtoOptional.isPresent());
+    UserDto createdUserDto = resultUserDtoOptional.get();
+    assertEquals(userDto, createdUserDto);
+    assertEquals(0, createdUserDto.getCommunityIds().size());
+    verify(userRepository).findByEmail(USER_EMAIL);
+  }
+
+  @Test
+  void findUserByEmailSuccessWithCommunityIds() {
+    // given
+    UserDto userDto = getDefaultUserDtoRequest();
+    User user = getUserFromDto(userDto);
+
+    Community firstCommunity = TestUtils.CommunityHelpers.getTestCommunity(user);
+    Community secCommunity = TestUtils.CommunityHelpers.getTestCommunity(user);
+
+    Set<Community> communities =
+        Stream.of(firstCommunity, secCommunity).collect(Collectors.toSet());
+
+    Set<String> communitiesIds = communities
+        .stream()
+        .map(Community::getCommunityId)
+        .collect(Collectors.toSet());
+
+    given(userRepository.findByEmail(USER_EMAIL))
+        .willReturn(user);
+    given(userMapper.userToUserDto(user))
+        .willReturn(userDto);
+
+    // when
+    Optional<UserDto> resultUserDtoOptional = userService.findUserByEmail(USER_EMAIL);
+
+    // then
+    assertTrue(resultUserDtoOptional.isPresent());
+    UserDto createdUserDto = resultUserDtoOptional.get();
+    assertEquals(userDto, createdUserDto);
+    assertEquals(communitiesIds, createdUserDto.getCommunityIds());
+    verify(userRepository).findByEmail(USER_EMAIL);
+  }
+
+  @Test
+  void findUserByEmailNotFound() {
+    // given
+    given(userRepository.findByEmail(USER_EMAIL))
+        .willReturn(null);
+
+    // when
+    Optional<UserDto> resultUserDtoOptional = userService.findUserByEmail(USER_EMAIL);
+
+    // then
+    assertFalse(resultUserDtoOptional.isPresent());
+    verify(userRepository).findByEmail(USER_EMAIL);
+  }
+
   @Test
   void requestResetPassword() {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
     User user = getDefaultUser();
-    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, null);
+    SecurityToken testSecurityToken =
+        getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, null);
     given(securityTokenService.createPasswordResetToken(user))
         .willReturn(testSecurityToken);
     given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
@@ -347,7 +413,8 @@ class UserSDJpaServiceTest {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
     User user = getDefaultUser();
-    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    SecurityToken testSecurityToken =
+        getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
     given(securityTokenService.createPasswordResetToken(user))
         .willReturn(testSecurityToken);
     given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
@@ -370,7 +437,8 @@ class UserSDJpaServiceTest {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
     User user = getDefaultUser();
-    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    SecurityToken testSecurityToken =
+        getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
     user.getUserTokens().add(testSecurityToken);
     given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.of(user));
@@ -400,8 +468,10 @@ class UserSDJpaServiceTest {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
     User user = getDefaultUser();
-    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
-    user.getUserTokens().add(testSecurityToken);;
+    SecurityToken testSecurityToken =
+        getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, user);
+    user.getUserTokens().add(testSecurityToken);
+    ;
     given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.empty());
 
@@ -423,7 +493,8 @@ class UserSDJpaServiceTest {
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
     SecurityToken testSecurityToken = getExpiredTestToken();
     User user = getDefaultUser();
-    user.getUserTokens().add(testSecurityToken);;
+    user.getUserTokens().add(testSecurityToken);
+    ;
     given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.of(user));
 
@@ -464,10 +535,12 @@ class UserSDJpaServiceTest {
   void resetPasswordTokenNotMatches() {
     // given
     ForgotPasswordRequest forgotPasswordRequest = getForgotPasswordRequest();
-    SecurityToken testSecurityToken = getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, null);
+    SecurityToken testSecurityToken =
+        getSecurityToken(SecurityTokenType.RESET, TOKEN_LIFETIME, PASSWORD_RESET_TOKEN, null);
     testSecurityToken.setToken("wrong-token");
     User user = getDefaultUser();
-    user.getUserTokens().add(testSecurityToken);;
+    user.getUserTokens().add(testSecurityToken);
+    ;
     given(userRepository.findByEmailWithTokens(forgotPasswordRequest.getEmail()))
         .willReturn(Optional.of(user));
 
@@ -527,18 +600,18 @@ class UserSDJpaServiceTest {
   }
 
   private SecurityToken getExpiredTestToken() {
-    return new SecurityToken(SecurityTokenType.RESET, PASSWORD_RESET_TOKEN, LocalDate.now(), LocalDate.now().minusDays(TOKEN_LIFETIME.toDays()), false, null);
+    return new SecurityToken(SecurityTokenType.RESET, PASSWORD_RESET_TOKEN, LocalDate.now(),
+        LocalDate.now().minusDays(TOKEN_LIFETIME.toDays()), false, null);
   }
 
-  private SecurityToken getSecurityToken(SecurityTokenType tokenType, Duration lifetime, String token, User user) {
+  private SecurityToken getSecurityToken(SecurityTokenType tokenType, Duration lifetime,
+      String token, User user) {
     LocalDate expireDate = LocalDate.now().plusDays(lifetime.toDays());
-    return new SecurityToken(tokenType, token, LocalDate.now() , expireDate, false, user);
+    return new SecurityToken(tokenType, token, LocalDate.now(), expireDate, false, user);
   }
 
   private SecurityToken getSecurityToken(SecurityTokenType tokenType, String token, User user) {
     LocalDate expireDate = LocalDate.now().plusDays(Duration.ofDays(1).toDays());
-    return new SecurityToken(tokenType, token, LocalDate.now() , expireDate, false, user);
-
+    return new SecurityToken(tokenType, token, LocalDate.now(), expireDate, false, user);
   }
-
 }
