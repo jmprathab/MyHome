@@ -19,9 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationSDJpaService implements AuthenticationService {
 
-  @Value("${token.expiration_time}")
   private final Duration tokenExpirationTime;
-  @Value("${token.secret}")
   private final String tokenSecret;
 
   private final UserSDJpaService userSDJpaService;
