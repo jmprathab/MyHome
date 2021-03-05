@@ -1,5 +1,8 @@
 package helpers;
 
+import com.myhome.configuration.properties.mail.EmailTemplateLocalizationProperties;
+import com.myhome.configuration.properties.mail.EmailTemplateProperties;
+import com.myhome.configuration.properties.mail.MailProperties;
 import com.myhome.domain.Amenity;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
@@ -163,7 +166,38 @@ public class TestUtils {
           .limit(count)
           .collect(Collectors.toSet());
     }
+  }
 
+  public static class MailPropertiesHelper {
+
+    public static MailProperties getTestMailProperties() {
+      MailProperties testMailProperties = new MailProperties();
+      testMailProperties.setHost("test host");
+      testMailProperties.setUsername("test username");
+      testMailProperties.setPassword("test password");
+      testMailProperties.setPort(0);
+      testMailProperties.setProtocol("test protocol");
+      testMailProperties.setDebug(false);
+      testMailProperties.setDevMode(false);
+      return testMailProperties;
+    }
+
+    public static EmailTemplateProperties getTestMailTemplateProperties() {
+      EmailTemplateProperties testMailTemplate = new EmailTemplateProperties();
+      testMailTemplate.setPath("test path");
+      testMailTemplate.setEncoding("test encoding");
+      testMailTemplate.setMode("test mode");
+      testMailTemplate.setCache(false);
+      return testMailTemplate;
+    }
+
+    public static EmailTemplateLocalizationProperties getTestLocalizationMailProperties() {
+      EmailTemplateLocalizationProperties testTemplatesLocalization = new EmailTemplateLocalizationProperties();
+      testTemplatesLocalization.setPath("test path");
+      testTemplatesLocalization.setEncoding("test encodig");
+      testTemplatesLocalization.setCacheSeconds(0);
+      return testTemplatesLocalization;
+    }
   }
 
 

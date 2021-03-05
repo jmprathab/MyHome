@@ -32,7 +32,7 @@ spring:
     password: ${springMailPassword:"none"}
     port: 465
     protocol: 'smtps'
-    dev-mode: true
+    devMode: true
     debug: true
     test-connection: false
   jpa:
@@ -75,6 +75,19 @@ api:
     resend-confirmation-email.url.path: "/users/*/email-confirm-resend"
     confirm-email.url.path: "/users/*/email-confirm/**"
     cors.url.path: "/**"
+
+email:
+  template:
+    path: "templates/mail"
+    format: ".html"
+    encoding: "UTF-8"
+    mode: "HTML"
+    cache: false
+  location:
+    #      matches with 'locales/mails', 'locales/mails_en' 'locales/mails_en_US' e.t.c
+    path: "locales/mails"
+    encoding: "UTF-8"
+    cacheSeconds: 0
 
 authorization:
   token:

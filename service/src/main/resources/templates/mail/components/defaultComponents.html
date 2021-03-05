@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="defaultMailTemplate::default-container(~{::content})">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<div th:fragment="mail-header"
+     style="
+        background-color: cornflowerblue;
+        height: 100px;
+        position: relative;">
+    <h2 class="mt-auto ml-auto"
+        style="color: white;
+            margin-top: 10px;
+            margin-left: 10px">
+        My home service
+    </h2>
+</div>
+<div th:fragment="mail-footer"
+     style="
+        background-color: cornflowerblue;
+        height: 100px;
+        position: relative;">
+</div>
+<h3 th:fragment="greeting" align="center" style="margin-bottom: 40px;">
+    <p th:text="#{locale.greeting} + ', ' + ${username}?:#{locale.emptyUsername}">
+</h3>
+
+
+</body>
+</html>
