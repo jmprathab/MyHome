@@ -83,7 +83,7 @@ class PaymentControllerTest {
   private static final String COMMUNITY_HOUSE_ID = "5";
   private static final String TEST_MEMBER_ID = "2";
   private static final String TEST_ID = "3";
-  private static final String TEST_TEST_ID = "4";
+  private static final String TEST_COMMUNITY_ID = "4";
 
   private static final Pageable TEST_PAGEABLE = PageRequest.of(1, 10);
 
@@ -107,7 +107,7 @@ class PaymentControllerTest {
   private PaymentDto createTestPaymentDto() {
     UserDto userDto = UserDto.builder()
         .userId(TEST_ADMIN_ID)
-        .communityIds(new HashSet<>(Collections.singletonList(TEST_TEST_ID)))
+        .communityIds(new HashSet<>(Collections.singletonList(TEST_COMMUNITY_ID)))
         .id(Long.valueOf(TEST_ADMIN_ID))
         .encryptedPassword(TEST_ADMIN_PASSWORD)
         .name(TEST_ADMIN_NAME)
@@ -134,13 +134,13 @@ class PaymentControllerTest {
     CommunityDto communityDto = new CommunityDto();
     communityDto.setName(TEST_COMMUNITY_NAME);
     communityDto.setDistrict(TEST_COMMUNITY_DISTRICT);
-    communityDto.setCommunityId(TEST_TEST_ID);
+    communityDto.setCommunityId(TEST_COMMUNITY_ID);
     return communityDto;
   }
 
   private Community getMockCommunity(Set<User> admins) {
     Community community =
-        new Community(admins, new HashSet<>(), TEST_COMMUNITY_NAME, TEST_TEST_ID,
+        new Community(admins, new HashSet<>(), TEST_COMMUNITY_NAME, TEST_COMMUNITY_ID,
             TEST_COMMUNITY_DISTRICT, new HashSet<>());
     User admin = new User(COMMUNITY_ADMIN_NAME, TEST_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, false,
         COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), new HashSet<>());
@@ -192,7 +192,7 @@ class PaymentControllerTest {
     EnrichedSchedulePaymentRequest enrichedRequest =
         new EnrichedSchedulePaymentRequest(TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING, TEST_CHARGE,
             TEST_DUE_DATE, TEST_ADMIN_ID, 1L, TEST_ADMIN_NAME, TEST_ADMIN_EMAIL,
-            TEST_ADMIN_PASSWORD, new HashSet<>(Collections.singletonList(TEST_TEST_ID)),
+            TEST_ADMIN_PASSWORD, new HashSet<>(Collections.singletonList(TEST_COMMUNITY_ID)),
             TEST_MEMBER_ID,
             2L, "", TEST_MEMBER_NAME, COMMUNITY_HOUSE_ID);
     PaymentDto paymentDto = createTestPaymentDto();
