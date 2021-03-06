@@ -20,11 +20,9 @@ import com.myhome.api.CommunitiesApi;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.controllers.mapper.CommunityApiMapper;
-import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
 import com.myhome.domain.Amenity;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
-import com.myhome.domain.Payment;
 import com.myhome.domain.User;
 import com.myhome.model.AddAmenityRequest;
 import com.myhome.model.AddAmenityResponse;
@@ -32,7 +30,6 @@ import com.myhome.model.AddCommunityAdminRequest;
 import com.myhome.model.AddCommunityAdminResponse;
 import com.myhome.model.AddCommunityHouseRequest;
 import com.myhome.model.AddCommunityHouseResponse;
-import com.myhome.model.AdminPayment;
 import com.myhome.model.CommunityHouseName;
 import com.myhome.model.CreateCommunityRequest;
 import com.myhome.model.CreateCommunityResponse;
@@ -40,22 +37,17 @@ import com.myhome.model.GetAmenityDetailsResponse;
 import com.myhome.model.GetCommunityDetailsResponse;
 import com.myhome.model.GetCommunityDetailsResponseCommunity;
 import com.myhome.model.GetHouseDetailsResponse;
-import com.myhome.model.ListAdminPaymentsResponse;
 import com.myhome.model.ListCommunityAdminsResponse;
-import com.myhome.utils.PageInfo;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
-import com.myhome.services.PaymentService;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -75,8 +67,6 @@ public class CommunityController implements CommunitiesApi {
   private final CommunityApiMapper communityApiMapper;
   private final AmenityService amenitySDJpaService;
   private final AmenityApiMapper amenityApiMapper;
-  private final SchedulePaymentApiMapper schedulePaymentApiMapper;
-  private final PaymentService paymentService;
 
   @Override
   public ResponseEntity<CreateCommunityResponse> createCommunity(@Valid @RequestBody
@@ -240,36 +230,5 @@ public class CommunityController implements CommunitiesApi {
         .map(amenityList -> new AddAmenityResponse().amenities(amenityList))
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
-  }
-
-  @Override
-  public ResponseEntity<ListAdminPaymentsResponse> listAllAdminScheduledPayments(
-      String communityId, String adminId, Pageable pageable) {
-    log.trace("Received request to list all the payments scheduled by the admin with id[{}]",
-        adminId);
-
-    final boolean isAdminInGivenCommunity = isAdminInGivenCommunity(communityId, adminId);
-
-    if (isAdminInGivenCommunity) {
-      final Page<Payment> paymentsForAdmin = paymentService.getPaymentsByAdmin(adminId, pageable);
-      final List<Payment> payments = paymentsForAdmin.getContent();
-      final Set<AdminPayment> adminPayments =
-          schedulePaymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(
-              new HashSet<>(payments));
-      final ListAdminPaymentsResponse response = new ListAdminPaymentsResponse()
-          .payments(adminPayments)
-          .pageInfo(PageInfo.of(pageable, paymentsForAdmin));
-      return ResponseEntity.ok().body(response);
-    }
-
-    return ResponseEntity.notFound().build();
-  }
-
-  private Boolean isAdminInGivenCommunity(String communityId, String adminId) {
-    return communityService.getCommunityDetailsByIdWithAdmins(communityId)
-        .map(community -> community.getAdmins())
-        .map(admins -> admins.stream().anyMatch(admin -> admin.getUserId().equals(adminId)))
-        .orElseThrow(
-            () -> new RuntimeException("Community with given id not exists: " + communityId));
   }
 }

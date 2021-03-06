@@ -20,17 +20,27 @@ import com.myhome.api.PaymentsApi;
 import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
 import com.myhome.controllers.request.EnrichedSchedulePaymentRequest;
+import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import com.myhome.domain.Payment;
 import com.myhome.domain.User;
+import com.myhome.model.AdminPayment;
+import com.myhome.model.ListAdminPaymentsResponse;
 import com.myhome.model.ListMemberPaymentsResponse;
 import com.myhome.model.SchedulePaymentRequest;
 import com.myhome.model.SchedulePaymentResponse;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
+import com.myhome.utils.PageInfo;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -99,5 +109,36 @@ public class PaymentController implements PaymentsApi {
         .map(memberPayments -> new ListMemberPaymentsResponse().payments(memberPayments))
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  @Override
+  public ResponseEntity<ListAdminPaymentsResponse> listAllAdminScheduledPayments(
+      String communityId, String adminId, Pageable pageable) {
+    log.trace("Received request to list all the payments scheduled by the admin with id[{}]",
+        adminId);
+
+    final boolean isAdminInGivenCommunity = isAdminInGivenCommunity(communityId, adminId);
+
+    if (isAdminInGivenCommunity) {
+      final Page<Payment> paymentsForAdmin = paymentService.getPaymentsByAdmin(adminId, pageable);
+      final List<Payment> payments = paymentsForAdmin.getContent();
+      final Set<AdminPayment> adminPayments =
+          schedulePaymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(
+              new HashSet<>(payments));
+      final ListAdminPaymentsResponse response = new ListAdminPaymentsResponse()
+          .payments(adminPayments)
+          .pageInfo(PageInfo.of(pageable, paymentsForAdmin));
+      return ResponseEntity.ok().body(response);
+    }
+
+    return ResponseEntity.notFound().build();
+  }
+
+  private Boolean isAdminInGivenCommunity(String communityId, String adminId) {
+    return communityService.getCommunityDetailsByIdWithAdmins(communityId)
+        .map(Community::getAdmins)
+        .map(admins -> admins.stream().anyMatch(admin -> admin.getUserId().equals(adminId)))
+        .orElseThrow(
+            () -> new RuntimeException("Community with given id not exists: " + communityId));
   }
 }
