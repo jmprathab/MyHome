@@ -18,12 +18,14 @@ package com.myhome.controllers;
 
 import com.myhome.api.AmenitiesApi;
 import com.myhome.controllers.mapper.AmenityApiMapper;
+import com.myhome.domain.Amenity;
 import com.myhome.model.AddAmenityRequest;
 import com.myhome.model.AddAmenityResponse;
-import com.myhome.domain.Amenity;
+import com.myhome.model.AmenityDto;
 import com.myhome.model.GetAmenityDetailsResponse;
-import com.myhome.model.*;
+import com.myhome.model.UpdateAmenityRequest;
 import com.myhome.services.AmenityService;
+import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +35,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Set;
 
 @RestController
 @Slf4j
@@ -55,21 +55,21 @@ public class AmenityController implements AmenitiesApi {
 
   @Override
   public ResponseEntity<Set<GetAmenityDetailsResponse>> listAllAmenities(
-          @PathVariable String communityId) {
+      @PathVariable String communityId) {
     Set<Amenity> amenities = amenitySDJpaService.listAllAmenities(communityId);
     Set<GetAmenityDetailsResponse> response =
-            amenityApiMapper.amenitiesSetToAmenityDetailsResponseSet(amenities);
+        amenityApiMapper.amenitiesSetToAmenityDetailsResponseSet(amenities);
     return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<AddAmenityResponse> addAmenityToCommunity(
-          @PathVariable String communityId,
-          @RequestBody AddAmenityRequest request) {
+      @PathVariable String communityId,
+      @RequestBody AddAmenityRequest request) {
     return amenitySDJpaService.createAmenities(request.getAmenities(), communityId)
-            .map(amenityList -> new AddAmenityResponse().amenities(amenityList))
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+        .map(amenityList -> new AddAmenityResponse().amenities(amenityList))
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
   }
 
   @Override

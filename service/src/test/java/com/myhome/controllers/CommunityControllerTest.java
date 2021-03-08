@@ -20,24 +20,21 @@ import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.CommunityApiMapper;
-import com.myhome.model.AddAmenityRequest;
-import com.myhome.model.AddAmenityResponse;
 import com.myhome.controllers.mapper.SchedulePaymentApiMapper;
+import com.myhome.domain.Community;
+import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
 import com.myhome.domain.HouseMemberDocument;
 import com.myhome.domain.Payment;
+import com.myhome.domain.User;
 import com.myhome.model.AddCommunityAdminRequest;
 import com.myhome.model.AddCommunityAdminResponse;
 import com.myhome.model.AddCommunityHouseRequest;
 import com.myhome.model.AddCommunityHouseResponse;
-import com.myhome.model.AmenityDto;
 import com.myhome.model.AdminPayment;
 import com.myhome.model.CommunityHouseName;
 import com.myhome.model.CreateCommunityRequest;
 import com.myhome.model.CreateCommunityResponse;
-import com.myhome.domain.Community;
-import com.myhome.domain.CommunityHouse;
-import com.myhome.domain.User;
 import com.myhome.model.GetCommunityDetailsResponse;
 import com.myhome.model.GetCommunityDetailsResponseCommunity;
 import com.myhome.model.GetHouseDetailsResponse;
@@ -49,7 +46,6 @@ import com.myhome.model.ListCommunityAdminsResponseCommunityAdmin;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import com.myhome.services.PaymentService;
-
 import com.myhome.utils.PageInfo;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -60,7 +56,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -72,7 +67,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -120,9 +114,6 @@ class CommunityControllerTest {
   @Mock
   private PaymentService paymentService;
 
-  @InjectMocks
-  private AmenityController amenityController;
-
   @BeforeEach
   private void init() {
     MockitoAnnotations.initMocks(this);
@@ -131,12 +122,12 @@ class CommunityControllerTest {
   private CommunityDto createTestCommunityDto() {
     Set<UserDto> communityAdminDtos = new HashSet<>();
     UserDto userDto = UserDto.builder()
-            .userId(COMMUNITY_ADMIN_ID)
-            .name(COMMUNITY_ADMIN_NAME)
-            .email(COMMUNITY_ADMIN_NAME)
-            .password(COMMUNITY_ADMIN_PASSWORD)
-            .communityIds(new HashSet<>(Arrays.asList(COMMUNITY_ID)))
-            .build();
+        .userId(COMMUNITY_ADMIN_ID)
+        .name(COMMUNITY_ADMIN_NAME)
+        .email(COMMUNITY_ADMIN_NAME)
+        .password(COMMUNITY_ADMIN_PASSWORD)
+        .communityIds(new HashSet<>(Arrays.asList(COMMUNITY_ID)))
+        .build();
 
     communityAdminDtos.add(userDto);
     CommunityDto communityDto = new CommunityDto();
@@ -150,15 +141,15 @@ class CommunityControllerTest {
 
   private CommunityHouse createTestCommunityHouse(Community community) {
     return new CommunityHouse(community, COMMUNITY_HOUSE_NAME, COMMUNITY_HOUSE_ID, new HashSet<>(),
-            new HashSet<>());
+        new HashSet<>());
   }
 
   private Community createTestCommunity() {
     Community community =
-            new Community(new HashSet<>(), new HashSet<>(), COMMUNITY_NAME, COMMUNITY_ID,
-                    COMMUNITY_DISTRICT, new HashSet<>());
+        new Community(new HashSet<>(), new HashSet<>(), COMMUNITY_NAME, COMMUNITY_ID,
+            COMMUNITY_DISTRICT, new HashSet<>());
     User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, true,
-            COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), null);
+        COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), null);
     community.getAdmins().add(admin);
     community.getHouses().add(createTestCommunityHouse(community));
     admin.getCommunities().add(community);
@@ -170,25 +161,25 @@ class CommunityControllerTest {
   void shouldCreateCommunitySuccessfully() {
     // given
     CreateCommunityRequest request =
-            new CreateCommunityRequest()
-                    .name(COMMUNITY_NAME)
-                    .district(COMMUNITY_DISTRICT);
+        new CreateCommunityRequest()
+            .name(COMMUNITY_NAME)
+            .district(COMMUNITY_DISTRICT);
     CommunityDto communityDto = createTestCommunityDto();
     CreateCommunityResponse response =
-            new CreateCommunityResponse()
-                    .communityId(COMMUNITY_ID);
+        new CreateCommunityResponse()
+            .communityId(COMMUNITY_ID);
     Community community = createTestCommunity();
 
     given(communityApiMapper.createCommunityRequestToCommunityDto(request))
-            .willReturn(communityDto);
+        .willReturn(communityDto);
     given(communityService.createCommunity(communityDto))
-            .willReturn(community);
+        .willReturn(community);
     given(communityApiMapper.communityToCreateCommunityResponse(community))
-            .willReturn(response);
+        .willReturn(response);
 
     // when
     ResponseEntity<CreateCommunityResponse> responseEntity =
-            communityController.createCommunity(request);
+        communityController.createCommunity(request);
 
     // then
     assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
@@ -206,12 +197,12 @@ class CommunityControllerTest {
     communities.add(community);
 
     Set<GetCommunityDetailsResponseCommunity> communityDetailsResponse
-            = new HashSet<>();
+        = new HashSet<>();
     communityDetailsResponse.add(
-            new GetCommunityDetailsResponseCommunity()
-                    .communityId(COMMUNITY_ID)
-                    .name(COMMUNITY_NAME)
-                    .district(COMMUNITY_DISTRICT)
+        new GetCommunityDetailsResponseCommunity()
+            .communityId(COMMUNITY_ID)
+            .name(COMMUNITY_NAME)
+            .district(COMMUNITY_DISTRICT)
     );
 
     GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
@@ -219,13 +210,13 @@ class CommunityControllerTest {
 
     Pageable pageable = PageRequest.of(0, 1);
     given(communityService.listAll(pageable))
-            .willReturn(communities);
+        .willReturn(communities);
     given(communityApiMapper.communitySetToRestApiResponseCommunitySet(communities))
-            .willReturn(communityDetailsResponse);
+        .willReturn(communityDetailsResponse);
 
     // when
     ResponseEntity<GetCommunityDetailsResponse> responseEntity =
-            communityController.listAllCommunity(pageable);
+        communityController.listAllCommunity(pageable);
 
     // then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -240,26 +231,26 @@ class CommunityControllerTest {
     Optional<Community> communityOptional = Optional.of(createTestCommunity());
     Community community = communityOptional.get();
     GetCommunityDetailsResponseCommunity communityDetails =
-            new GetCommunityDetailsResponseCommunity()
-                    .communityId(COMMUNITY_ID)
-                    .name(COMMUNITY_NAME)
-                    .district(COMMUNITY_DISTRICT);
+        new GetCommunityDetailsResponseCommunity()
+            .communityId(COMMUNITY_ID)
+            .name(COMMUNITY_NAME)
+            .district(COMMUNITY_DISTRICT);
 
     Set<GetCommunityDetailsResponseCommunity> communityDetailsResponse
-            = new HashSet<>();
+        = new HashSet<>();
     communityDetailsResponse.add(communityDetails);
 
     GetCommunityDetailsResponse response =
-            new GetCommunityDetailsResponse().communities(communityDetailsResponse);
+        new GetCommunityDetailsResponse().communities(communityDetailsResponse);
 
     given(communityService.getCommunityDetailsById(COMMUNITY_ID))
-            .willReturn(communityOptional);
+        .willReturn(communityOptional);
     given(communityApiMapper.communityToRestApiResponseCommunity(community))
-            .willReturn(communityDetails);
+        .willReturn(communityDetails);
 
     // when
     ResponseEntity<GetCommunityDetailsResponse> responseEntity =
-            communityController.listCommunityDetails(COMMUNITY_ID);
+        communityController.listCommunityDetails(COMMUNITY_ID);
 
     // then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -272,11 +263,11 @@ class CommunityControllerTest {
   void shouldGetNotFoundListCommunityDetailsSuccess() {
     // given
     given(communityService.getCommunityDetailsById(COMMUNITY_ID))
-            .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     // when
     ResponseEntity<GetCommunityDetailsResponse> responseEntity =
-            communityController.listCommunityDetails(COMMUNITY_ID);
+        communityController.listCommunityDetails(COMMUNITY_ID);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -295,25 +286,25 @@ class CommunityControllerTest {
     Pageable pageable = PageRequest.of(0, 1);
 
     given(communityService.findCommunityAdminsById(COMMUNITY_ID, pageable))
-            .willReturn(communityAdminsOptional);
+        .willReturn(communityAdminsOptional);
 
     Set<User> adminsSet = new HashSet<>(admins);
 
     Set<ListCommunityAdminsResponseCommunityAdmin> listAdminsResponses = new HashSet<>();
     listAdminsResponses.add(
-            new ListCommunityAdminsResponseCommunityAdmin()
-                    .adminId(COMMUNITY_ADMIN_ID)
+        new ListCommunityAdminsResponseCommunityAdmin()
+            .adminId(COMMUNITY_ADMIN_ID)
     );
 
     given(communityApiMapper.communityAdminSetToRestApiResponseCommunityAdminSet(adminsSet))
-            .willReturn(listAdminsResponses);
+        .willReturn(listAdminsResponses);
 
     ListCommunityAdminsResponse response =
-            new ListCommunityAdminsResponse().admins(listAdminsResponses);
+        new ListCommunityAdminsResponse().admins(listAdminsResponses);
 
     // when
     ResponseEntity<ListCommunityAdminsResponse> responseEntity =
-            communityController.listCommunityAdmins(COMMUNITY_ID, pageable);
+        communityController.listCommunityAdmins(COMMUNITY_ID, pageable);
 
     // then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -328,11 +319,11 @@ class CommunityControllerTest {
     Pageable pageable = PageRequest.of(0, 1);
 
     given(communityService.findCommunityAdminsById(COMMUNITY_ID, pageable))
-            .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     // when
     ResponseEntity<ListCommunityAdminsResponse> responseEntity =
-            communityController.listCommunityAdmins(COMMUNITY_ID, pageable);
+        communityController.listCommunityAdmins(COMMUNITY_ID, pageable);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -355,11 +346,11 @@ class CommunityControllerTest {
     AddCommunityAdminResponse response = new AddCommunityAdminResponse().admins(adminIds);
 
     given(communityService.addAdminsToCommunity(COMMUNITY_ID, adminIds))
-            .willReturn(Optional.of(community));
+        .willReturn(Optional.of(community));
 
     // when
     ResponseEntity<AddCommunityAdminResponse> responseEntity =
-            communityController.addCommunityAdmins(COMMUNITY_ID, addRequest);
+        communityController.addCommunityAdmins(COMMUNITY_ID, addRequest);
 
     // then
     assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
@@ -380,11 +371,11 @@ class CommunityControllerTest {
     Set<String> adminIds = addRequest.getAdmins();
 
     given(communityService.addAdminsToCommunity(COMMUNITY_ID, adminIds))
-            .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     // when
     ResponseEntity<AddCommunityAdminResponse> responseEntity =
-            communityController.addCommunityAdmins(COMMUNITY_ID, addRequest);
+        communityController.addCommunityAdmins(COMMUNITY_ID, addRequest);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -399,21 +390,21 @@ class CommunityControllerTest {
     Set<CommunityHouse> housesSet = new HashSet<>(houses);
     Set<GetHouseDetailsResponseCommunityHouse> getHouseDetailsSet = new HashSet<>();
     getHouseDetailsSet.add(new GetHouseDetailsResponseCommunityHouse()
-            .houseId(COMMUNITY_HOUSE_ID)
-            .name(COMMUNITY_NAME)
+        .houseId(COMMUNITY_HOUSE_ID)
+        .name(COMMUNITY_NAME)
     );
 
     GetHouseDetailsResponse response = new GetHouseDetailsResponse().houses(getHouseDetailsSet);
     Pageable pageable = PageRequest.of(0, 1);
 
     given(communityService.findCommunityHousesById(COMMUNITY_ID, pageable))
-            .willReturn(Optional.of(houses));
+        .willReturn(Optional.of(houses));
     given(communityApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(housesSet))
-            .willReturn(getHouseDetailsSet);
+        .willReturn(getHouseDetailsSet);
 
     // when
     ResponseEntity<GetHouseDetailsResponse> responseEntity =
-            communityController.listCommunityHouses(COMMUNITY_ID, pageable);
+        communityController.listCommunityHouses(COMMUNITY_ID, pageable);
 
     //then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -427,11 +418,11 @@ class CommunityControllerTest {
     // given
     Pageable pageable = PageRequest.of(0, 1);
     given(communityService.findCommunityHousesById(COMMUNITY_ID, pageable))
-            .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     // when
     ResponseEntity<GetHouseDetailsResponse> responseEntity =
-            communityController.listCommunityHouses(COMMUNITY_ID, pageable);
+        communityController.listCommunityHouses(COMMUNITY_ID, pageable);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -459,13 +450,13 @@ class CommunityControllerTest {
     AddCommunityHouseResponse response = new AddCommunityHouseResponse().houses(houseIds);
 
     given(communityApiMapper.communityHouseNamesSetToCommunityHouseSet(communityHouseNames))
-            .willReturn(communityHouses);
+        .willReturn(communityHouses);
     given(communityService.addHousesToCommunity(COMMUNITY_ID, communityHouses))
-            .willReturn(houseIds);
+        .willReturn(houseIds);
 
     // when
     ResponseEntity<AddCommunityHouseResponse> responseEntity =
-            communityController.addCommunityHouses(COMMUNITY_ID, addCommunityHouseRequest);
+        communityController.addCommunityHouses(COMMUNITY_ID, addCommunityHouseRequest);
 
     // then
     assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
@@ -480,13 +471,13 @@ class CommunityControllerTest {
     AddCommunityHouseRequest emptyRequest = new AddCommunityHouseRequest();
 
     given(communityApiMapper.communityHouseNamesSetToCommunityHouseSet(emptyRequest.getHouses()))
-            .willReturn(new HashSet<>());
+        .willReturn(new HashSet<>());
     given(communityService.addHousesToCommunity(COMMUNITY_ID, new HashSet<>()))
-            .willReturn(new HashSet<>());
+        .willReturn(new HashSet<>());
 
     // when
     ResponseEntity<AddCommunityHouseResponse> responseEntity =
-            communityController.addCommunityHouses(COMMUNITY_ID, emptyRequest);
+        communityController.addCommunityHouses(COMMUNITY_ID, emptyRequest);
 
     // then
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
@@ -501,14 +492,14 @@ class CommunityControllerTest {
     Community community = createTestCommunity();
 
     given(communityService.getCommunityDetailsById(COMMUNITY_ID))
-            .willReturn(Optional.of(community));
+        .willReturn(Optional.of(community));
     given(communityService.removeHouseFromCommunityByHouseId(createTestCommunity(),
-            COMMUNITY_HOUSE_ID))
-            .willReturn(true);
+        COMMUNITY_HOUSE_ID))
+        .willReturn(true);
 
     // when
     ResponseEntity<Void> responseEntity =
-            communityController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
+        communityController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
 
     // then
     assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
@@ -522,13 +513,13 @@ class CommunityControllerTest {
     Community community = createTestCommunity();
 
     given(communityService.getCommunityDetailsById(COMMUNITY_ID))
-            .willReturn(Optional.of(community));
+        .willReturn(Optional.of(community));
     given(communityService.removeHouseFromCommunityByHouseId(community, COMMUNITY_HOUSE_ID))
-            .willReturn(false);
+        .willReturn(false);
 
     // when
     ResponseEntity<Void> responseEntity =
-            communityController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
+        communityController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -541,28 +532,28 @@ class CommunityControllerTest {
     Community community = createTestCommunity();
 
     given(communityService.getCommunityDetailsById(COMMUNITY_ID))
-            .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     // when
     ResponseEntity<Void> responseEntity =
-            communityController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
+        communityController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(communityService).getCommunityDetailsById(COMMUNITY_ID);
     verify(communityService, never()).removeHouseFromCommunityByHouseId(community,
-            COMMUNITY_HOUSE_ID);
+        COMMUNITY_HOUSE_ID);
   }
 
   @Test
   void shouldRemoveAdminFromCommunitySuccessfully() {
     // given
     given(communityService.removeAdminFromCommunity(COMMUNITY_ID, COMMUNITY_ADMIN_ID))
-            .willReturn(true);
+        .willReturn(true);
 
     // when
     ResponseEntity<Void> responseEntity =
-            communityController.removeAdminFromCommunity(COMMUNITY_ID, COMMUNITY_ADMIN_ID);
+        communityController.removeAdminFromCommunity(COMMUNITY_ID, COMMUNITY_ADMIN_ID);
 
     // then
     assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
@@ -573,11 +564,11 @@ class CommunityControllerTest {
   void shouldNotRemoveAdminIfNotFoundSuccessfully() {
     // given
     given(communityService.removeAdminFromCommunity(COMMUNITY_ID, COMMUNITY_ADMIN_ID))
-            .willReturn(false);
+        .willReturn(false);
 
     // when
     ResponseEntity<Void> responseEntity =
-            communityController.removeAdminFromCommunity(COMMUNITY_ID, COMMUNITY_ADMIN_ID);
+        communityController.removeAdminFromCommunity(COMMUNITY_ID, COMMUNITY_ADMIN_ID);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -588,11 +579,11 @@ class CommunityControllerTest {
   void shouldDeleteCommunitySuccessfully() {
     // given
     given(communityService.deleteCommunity(COMMUNITY_ID))
-            .willReturn(true);
+        .willReturn(true);
 
     // when
     ResponseEntity<Void> responseEntity =
-            communityController.deleteCommunity(COMMUNITY_ID);
+        communityController.deleteCommunity(COMMUNITY_ID);
 
     // then
     assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
@@ -603,83 +594,41 @@ class CommunityControllerTest {
   void shouldNotDeleteCommunityNotFoundSuccessfully() {
     // given
     given(communityService.deleteCommunity(COMMUNITY_ID))
-            .willReturn(false);
+        .willReturn(false);
 
     // when
     ResponseEntity<Void> responseEntity =
-            communityController.deleteCommunity(COMMUNITY_ID);
+        communityController.deleteCommunity(COMMUNITY_ID);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(communityService).deleteCommunity(COMMUNITY_ID);
   }
 
-  @Test
-  void shouldAddAmenityToCommunity() {
-    // given
-    final String communityId = "communityId";
-    final AmenityDto amenityDto =
-            new AmenityDto().id(1L)
-                    .amenityId("amenityId")
-                    .name("name")
-                    .description("description")
-                    .price(BigDecimal.ONE)
-                    .communityId("");
-    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
-    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
-    given(amenitySDJpaService.createAmenities(amenities, communityId))
-            .willReturn(Optional.of(singletonList(amenityDto)));
-
-    // when
-    final ResponseEntity<AddAmenityResponse> response =
-            amenityController.addAmenityToCommunity(communityId, request);
-
-    // then
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-  }
-
-  @Test
-  void shouldNotAddAmenityWhenCommunityNotExists() {
-    // given
-    final String communityId = "communityId";
-    final AmenityDto amenityDto = new AmenityDto();
-    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
-    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
-    given(amenitySDJpaService.createAmenities(amenities, communityId))
-            .willReturn(Optional.empty());
-
-    // when
-    final ResponseEntity<AddAmenityResponse> response =
-            amenityController.addAmenityToCommunity(communityId, request);
-
-    // then
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-  }
-
   private PaymentDto createTestPaymentDto() {
     UserDto userDto = UserDto.builder()
-            .userId(COMMUNITY_ADMIN_ID)
-            .communityIds(new HashSet<>(Arrays.asList(COMMUNITY_ID)))
-            .id(Long.valueOf(COMMUNITY_ADMIN_ID))
-            .encryptedPassword(COMMUNITY_ADMIN_PASSWORD)
-            .name(COMMUNITY_ADMIN_NAME)
-            .email(COMMUNITY_ADMIN_EMAIL)
-            .build();
+        .userId(COMMUNITY_ADMIN_ID)
+        .communityIds(new HashSet<>(Arrays.asList(COMMUNITY_ID)))
+        .id(Long.valueOf(COMMUNITY_ADMIN_ID))
+        .encryptedPassword(COMMUNITY_ADMIN_PASSWORD)
+        .name(COMMUNITY_ADMIN_NAME)
+        .email(COMMUNITY_ADMIN_EMAIL)
+        .build();
     HouseMemberDto houseMemberDto = new HouseMemberDto()
-            .memberId(TEST_MEMBER_ID)
-            .name(TEST_MEMBER_NAME)
-            .id(Long.valueOf(TEST_MEMBER_ID));
+        .memberId(TEST_MEMBER_ID)
+        .name(TEST_MEMBER_NAME)
+        .id(Long.valueOf(TEST_MEMBER_ID));
 
     return PaymentDto.builder()
-            .paymentId(TEST_ID)
-            .type(TEST_TYPE)
-            .description(TEST_DESCRIPTION)
-            .charge(TEST_CHARGE)
-            .dueDate(TEST_DUE_DATE)
-            .recurring(TEST_RECURRING)
-            .admin(userDto)
-            .member(houseMemberDto)
-            .build();
+        .paymentId(TEST_ID)
+        .type(TEST_TYPE)
+        .description(TEST_DESCRIPTION)
+        .charge(TEST_CHARGE)
+        .dueDate(TEST_DUE_DATE)
+        .recurring(TEST_RECURRING)
+        .admin(userDto)
+        .member(houseMemberDto)
+        .build();
   }
 
   private CommunityHouse getMockCommunityHouse() {
@@ -693,10 +642,10 @@ class CommunityControllerTest {
 
   private Community getMockCommunity(Set<User> admins) {
     Community community =
-            new Community(admins, new HashSet<>(), COMMUNITY_NAME, COMMUNITY_ID,
-                    COMMUNITY_DISTRICT, new HashSet<>());
+        new Community(admins, new HashSet<>(), COMMUNITY_NAME, COMMUNITY_ID,
+            COMMUNITY_DISTRICT, new HashSet<>());
     User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, true,
-            COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), new HashSet<>());
+        COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), new HashSet<>());
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
 
@@ -709,32 +658,32 @@ class CommunityControllerTest {
 
   private Payment getMockPayment() {
     User admin = new User(COMMUNITY_ADMIN_NAME, COMMUNITY_ADMIN_ID, COMMUNITY_ADMIN_EMAIL, true,
-            COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), new HashSet<>());
+        COMMUNITY_ADMIN_PASSWORD, new HashSet<>(), new HashSet<>());
     Community community = getMockCommunity(new HashSet<>());
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
     return new Payment(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING,
-            LocalDate.parse(TEST_DUE_DATE, DateTimeFormatter.ofPattern("yyyy-MM-dd")), admin,
-            new HouseMember(TEST_MEMBER_ID, new HouseMemberDocument(), TEST_MEMBER_NAME,
-                    new CommunityHouse()));
+        LocalDate.parse(TEST_DUE_DATE, DateTimeFormatter.ofPattern("yyyy-MM-dd")), admin,
+        new HouseMember(TEST_MEMBER_ID, new HouseMemberDocument(), TEST_MEMBER_NAME,
+            new CommunityHouse()));
   }
 
   @Test
   void shouldGetAdminPaymentsSuccess() {
     // given
     com.myhome.model.SchedulePaymentRequest request =
-            new com.myhome.model.SchedulePaymentRequest()
-                    .type(TEST_TYPE)
-                    .description(TEST_DESCRIPTION)
-                    .recurring(TEST_RECURRING)
-                    .charge(TEST_CHARGE)
-                    .dueDate(TEST_DUE_DATE)
-                    .adminId(COMMUNITY_ADMIN_ID)
-                    .memberId(TEST_MEMBER_ID);
+        new com.myhome.model.SchedulePaymentRequest()
+            .type(TEST_TYPE)
+            .description(TEST_DESCRIPTION)
+            .recurring(TEST_RECURRING)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE)
+            .adminId(COMMUNITY_ADMIN_ID)
+            .memberId(TEST_MEMBER_ID);
     PaymentDto paymentDto = createTestPaymentDto();
 
     given(paymentService.schedulePayment(paymentDto))
-            .willReturn(paymentDto);
+        .willReturn(paymentDto);
 
     List<Payment> payments = new ArrayList<>();
     Payment mockPayment = getMockPayment();
@@ -750,34 +699,34 @@ class CommunityControllerTest {
     CommunityDto communityDto = createTestCommunityDto();
 
     given(communityService.createCommunity(communityDto))
-            .willReturn(community);
+        .willReturn(community);
     given(communityService.getCommunityDetailsByIdWithAdmins(COMMUNITY_ID))
-            .willReturn(Optional.of(community));
+        .willReturn(Optional.of(community));
     given(paymentService.getPaymentsByAdmin(COMMUNITY_ADMIN_ID, TEST_PAGEABLE))
-            .willReturn(new PageImpl<>(payments));
+        .willReturn(new PageImpl<>(payments));
     given(communityService.addAdminsToCommunity(COMMUNITY_ID, adminIds))
-            .willReturn(Optional.of(community));
+        .willReturn(Optional.of(community));
 
     Set<AdminPayment> responsePayments = new HashSet<>();
     responsePayments.add(
-            new AdminPayment().adminId(COMMUNITY_ADMIN_ID)
-                    .paymentId(TEST_ID)
-                    .charge(TEST_CHARGE)
-                    .dueDate(TEST_DUE_DATE)
+        new AdminPayment().adminId(COMMUNITY_ADMIN_ID)
+            .paymentId(TEST_ID)
+            .charge(TEST_CHARGE)
+            .dueDate(TEST_DUE_DATE)
     );
 
     ListAdminPaymentsResponse expectedResponse =
-            new ListAdminPaymentsResponse()
-                    .payments(responsePayments)
-                    .pageInfo(PageInfo.of(TEST_PAGEABLE, new PageImpl<>(payments)));
+        new ListAdminPaymentsResponse()
+            .payments(responsePayments)
+            .pageInfo(PageInfo.of(TEST_PAGEABLE, new PageImpl<>(payments)));
 
     given(paymentApiMapper.adminPaymentSetToRestApiResponseAdminPaymentSet(new HashSet<>(payments)))
-            .willReturn(responsePayments);
+        .willReturn(responsePayments);
 
     //when
     ResponseEntity<ListAdminPaymentsResponse> responseEntity =
-            communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID,
-                    TEST_PAGEABLE);
+        communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID,
+            TEST_PAGEABLE);
 
     //then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -785,7 +734,7 @@ class CommunityControllerTest {
     verify(communityService).getCommunityDetailsByIdWithAdmins(COMMUNITY_ID);
     verify(paymentService).getPaymentsByAdmin(COMMUNITY_ADMIN_ID, TEST_PAGEABLE);
     verify(paymentApiMapper).adminPaymentSetToRestApiResponseAdminPaymentSet(
-            new HashSet<>(payments));
+        new HashSet<>(payments));
   }
 
   @Test
@@ -794,12 +743,12 @@ class CommunityControllerTest {
     final String notAdminFromCommunity = "2";
     Community community = getMockCommunity(new HashSet<>());
     given(communityService.getCommunityDetailsByIdWithAdmins(COMMUNITY_ID))
-            .willReturn(Optional.of(community));
+        .willReturn(Optional.of(community));
 
     //when
     ResponseEntity<ListAdminPaymentsResponse> responseEntity =
-            communityController.listAllAdminScheduledPayments(COMMUNITY_ID, notAdminFromCommunity,
-                    TEST_PAGEABLE);
+        communityController.listAllAdminScheduledPayments(COMMUNITY_ID, notAdminFromCommunity,
+            TEST_PAGEABLE);
 
     //then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -814,13 +763,13 @@ class CommunityControllerTest {
     String expectedExceptionMessage = "Community with given id not exists: " + COMMUNITY_ID;
 
     given(communityService.getCommunityDetailsByIdWithAdmins(COMMUNITY_ID))
-            .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     //when
     final RuntimeException runtimeException = assertThrows(
-            RuntimeException.class,
-            () -> communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID,
-                    TEST_PAGEABLE)
+        RuntimeException.class,
+        () -> communityController.listAllAdminScheduledPayments(COMMUNITY_ID, COMMUNITY_ADMIN_ID,
+            TEST_PAGEABLE)
     );
 
     //then

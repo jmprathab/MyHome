@@ -18,13 +18,15 @@ package com.myhome.controllers;
 
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
+import com.myhome.model.AddAmenityRequest;
+import com.myhome.model.AddAmenityResponse;
 import com.myhome.model.AmenityDto;
 import com.myhome.model.GetAmenityDetailsResponse;
 import com.myhome.model.UpdateAmenityRequest;
 import com.myhome.services.AmenityService;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -33,6 +35,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,6 +60,48 @@ class AmenityControllerTest {
   @InjectMocks
   private AmenityController amenityController;
 
+  @Test
+  void shouldAddAmenityToCommunity() {
+    // given
+    final String communityId = "communityId";
+    final AmenityDto amenityDto =
+        new AmenityDto().id(1L)
+            .amenityId("amenityId")
+            .name("name")
+            .description("description")
+            .price(BigDecimal.ONE)
+            .communityId("");
+    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
+    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
+    given(amenitySDJpaService.createAmenities(amenities, communityId))
+        .willReturn(Optional.of(singletonList(amenityDto)));
+
+    // when
+    final ResponseEntity<AddAmenityResponse> response =
+        amenityController.addAmenityToCommunity(communityId, request);
+
+    // then
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  @Test
+  void shouldNotAddAmenityWhenCommunityNotExists() {
+    // given
+    final String communityId = "communityId";
+    final AmenityDto amenityDto = new AmenityDto();
+    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
+    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
+    given(amenitySDJpaService.createAmenities(amenities, communityId))
+        .willReturn(Optional.empty());
+
+    // when
+    final ResponseEntity<AddAmenityResponse> response =
+        amenityController.addAmenityToCommunity(communityId, request);
+
+    // then
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
   @BeforeEach
   private void init() {
     MockitoAnnotations.initMocks(this);
@@ -67,17 +112,17 @@ class AmenityControllerTest {
     // given
     Amenity testAmenity = getTestAmenity();
     GetAmenityDetailsResponse expectedResponseBody = new GetAmenityDetailsResponse()
-            .amenityId(testAmenity.getAmenityId())
-            .description(testAmenity.getDescription());
+        .amenityId(testAmenity.getAmenityId())
+        .description(testAmenity.getDescription());
 
     given(amenitySDJpaService.getAmenityDetails(TEST_AMENITY_ID))
-            .willReturn(Optional.of(testAmenity));
+        .willReturn(Optional.of(testAmenity));
     given(amenityApiMapper.amenityToAmenityDetailsResponse(testAmenity))
-            .willReturn(expectedResponseBody);
+        .willReturn(expectedResponseBody);
 
     // when
     ResponseEntity<GetAmenityDetailsResponse> response =
-            amenityController.getAmenityDetails(TEST_AMENITY_ID);
+        amenityController.getAmenityDetails(TEST_AMENITY_ID);
 
     // then
     assertEquals(expectedResponseBody, response.getBody());
@@ -90,11 +135,11 @@ class AmenityControllerTest {
   void getAmenityDetailsNotExists() {
     // given
     given(amenitySDJpaService.getAmenityDetails(TEST_AMENITY_ID))
-            .willReturn(Optional.empty());
+        .willReturn(Optional.empty());
 
     // when
     ResponseEntity<GetAmenityDetailsResponse> response =
-            amenityController.getAmenityDetails(TEST_AMENITY_ID);
+        amenityController.getAmenityDetails(TEST_AMENITY_ID);
 
     // then
     assertNull(response.getBody());
@@ -107,7 +152,7 @@ class AmenityControllerTest {
   void deleteAmenity() {
     // given
     given(amenitySDJpaService.deleteAmenity(TEST_AMENITY_ID))
-            .willReturn(true);
+        .willReturn(true);
 
     // when
     ResponseEntity response = amenityController.deleteAmenity(TEST_AMENITY_ID);
@@ -122,7 +167,7 @@ class AmenityControllerTest {
   void deleteAmenityNotExists() {
     // given
     given(amenitySDJpaService.deleteAmenity(TEST_AMENITY_ID))
-            .willReturn(false);
+        .willReturn(false);
 
     // when
     ResponseEntity response = amenityController.deleteAmenity(TEST_AMENITY_ID);
@@ -140,13 +185,13 @@ class AmenityControllerTest {
     UpdateAmenityRequest request = getUpdateAmenityRequest();
 
     given(amenityApiMapper.updateAmenityRequestToAmenityDto(request))
-            .willReturn(amenityDto);
+        .willReturn(amenityDto);
     given(amenitySDJpaService.updateAmenity(amenityDto))
-            .willReturn(true);
+        .willReturn(true);
 
     // when
     ResponseEntity<Void> responseEntity =
-            amenityController.updateAmenity(TEST_AMENITY_ID, request);
+        amenityController.updateAmenity(TEST_AMENITY_ID, request);
 
     // then
     assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
@@ -161,13 +206,13 @@ class AmenityControllerTest {
     UpdateAmenityRequest request = getUpdateAmenityRequest();
 
     given(amenityApiMapper.updateAmenityRequestToAmenityDto(request))
-            .willReturn(amenityDto);
+        .willReturn(amenityDto);
     given(amenitySDJpaService.updateAmenity(amenityDto))
-            .willReturn(false);
+        .willReturn(false);
 
     // when
     ResponseEntity<Void> responseEntity =
-            amenityController.updateAmenity(TEST_AMENITY_ID, request);
+        amenityController.updateAmenity(TEST_AMENITY_ID, request);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -179,7 +224,7 @@ class AmenityControllerTest {
   void deleteBooking() {
     // given
     given(amenitySDJpaService.deleteBooking(TEST_BOOKING_ID))
-            .willReturn(true);
+        .willReturn(true);
 
     // when
     ResponseEntity response = amenityController.deleteBooking(TEST_BOOKING_ID);
@@ -189,11 +234,12 @@ class AmenityControllerTest {
     assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     verify(amenitySDJpaService).deleteBooking(TEST_BOOKING_ID);
   }
+
   @Test
   void deleteBookingNotExists() {
     // given
     given(amenitySDJpaService.deleteBooking(TEST_BOOKING_ID))
-            .willReturn(false);
+        .willReturn(false);
 
     // when
     ResponseEntity response = amenityController.deleteBooking(TEST_BOOKING_ID);
@@ -206,25 +252,25 @@ class AmenityControllerTest {
 
   private Amenity getTestAmenity() {
     return new Amenity()
-            .withAmenityId(TEST_AMENITY_ID)
-            .withDescription(TEST_AMENITY_DESCRIPTION);
+        .withAmenityId(TEST_AMENITY_ID)
+        .withDescription(TEST_AMENITY_DESCRIPTION);
   }
 
   private AmenityDto getTestAmenityDto() {
     return new AmenityDto()
-            .id(1L)
-            .amenityId(TEST_AMENITY_ID)
-            .name(TEST_AMENITY_NAME)
-            .description(TEST_AMENITY_DESCRIPTION)
-            .price(TEST_AMENITY_PRICE)
-            .communityId(TEST_COMMUNITY_ID);
+        .id(1L)
+        .amenityId(TEST_AMENITY_ID)
+        .name(TEST_AMENITY_NAME)
+        .description(TEST_AMENITY_DESCRIPTION)
+        .price(TEST_AMENITY_PRICE)
+        .communityId(TEST_COMMUNITY_ID);
   }
 
   private UpdateAmenityRequest getUpdateAmenityRequest() {
     return new UpdateAmenityRequest()
-            .name(TEST_AMENITY_NAME)
-            .description(TEST_AMENITY_DESCRIPTION)
-            .price(1L)
-            .communityId(TEST_COMMUNITY_ID);
+        .name(TEST_AMENITY_NAME)
+        .description(TEST_AMENITY_DESCRIPTION)
+        .price(1L)
+        .communityId(TEST_COMMUNITY_ID);
   }
 }
