@@ -70,10 +70,13 @@ public class AmenitySDJpaService implements AmenityService {
 
   @Override
   public boolean deleteAmenity(String amenityId) {
-    return amenityRepository.findByAmenityIdWithCommunity(amenityId)
+    return amenityRepository.findByAmenityIdWithCommunityAndHouse(amenityId)
         .map(amenity -> {
-          Community community = amenity.getCommunity();
-          community.getAmenities().remove(amenity);
+          amenityBookingService.removeAllAmenityBookings(amenity.getAmenityId());
+          if(amenity.getCommunityHouse() != null) {
+            houseService.removeAmenityFromHouse(amenity.getCommunityHouse(),
+                amenity.getAmenityId());
+          }
           amenityRepository.delete(amenity);
           return true;
         })
