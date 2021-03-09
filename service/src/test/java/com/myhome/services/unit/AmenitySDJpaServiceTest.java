@@ -68,6 +68,8 @@ class AmenitySDJpaServiceTest {
   @Mock
   private AmenityApiMapper amenityApiMapper;
   @Mock
+  private AmenityBookingService amenityBookingService;
+  @Mock
   private AmenityBookingItemRepository bookingItemRepository;
 
   @InjectMocks
@@ -84,7 +86,7 @@ class AmenitySDJpaServiceTest {
     Amenity testAmenity =
         TestUtils.AmenityHelpers.getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION);
 
-    given(amenityRepository.findByAmenityIdWithCommunity(TEST_AMENITY_ID))
+    given(amenityRepository.findByAmenityIdWithCommunityAndHouse(TEST_AMENITY_ID))
         .willReturn(Optional.of(testAmenity));
 
     // when
@@ -92,14 +94,15 @@ class AmenitySDJpaServiceTest {
 
     // then
     assertTrue(amenityDeleted);
-    verify(amenityRepository).findByAmenityIdWithCommunity(TEST_AMENITY_ID);
+    verify(amenityRepository).findByAmenityIdWithCommunityAndHouse(TEST_AMENITY_ID);
+    verify(amenityBookingService).removeAllAmenityBookings(TEST_AMENITY_ID);
     verify(amenityRepository).delete(testAmenity);
   }
 
   @Test
   void deleteAmenityNotExists() {
     // given
-    given(amenityRepository.findByAmenityIdWithCommunity(TEST_AMENITY_ID))
+    given(amenityRepository.findByAmenityIdWithCommunityAndHouse(TEST_AMENITY_ID))
         .willReturn(Optional.empty());
 
     // when
@@ -107,7 +110,7 @@ class AmenitySDJpaServiceTest {
 
     // then
     assertFalse(amenityDeleted);
-    verify(amenityRepository).findByAmenityIdWithCommunity(TEST_AMENITY_ID);
+    verify(amenityRepository).findByAmenityIdWithCommunityAndHouse(TEST_AMENITY_ID);
     verify(amenityRepository, never()).delete(any());
   }
 
