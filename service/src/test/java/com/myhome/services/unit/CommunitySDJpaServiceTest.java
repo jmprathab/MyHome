@@ -16,6 +16,7 @@
 
 package com.myhome.services.unit;
 
+import com.myhome.domain.Amenity;
 import helpers.TestUtils;
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.mapper.CommunityMapper;
@@ -64,6 +65,7 @@ public class CommunitySDJpaServiceTest {
   private final int TEST_HOUSES_COUNT = 2;
   private final int TEST_HOUSE_MEMBERS_COUNT = 2;
   private final int TEST_COMMUNITIES_COUNT = 2;
+  private final int TEST_AMENITIES_COUNT = 2;
 
   private final String TEST_ADMIN_ID = "test-admin-id";
   private final String TEST_ADMIN_NAME = "test-user-name";
@@ -563,6 +565,38 @@ public class CommunitySDJpaServiceTest {
     verify(communityHouseRepository).findByHouseIdWithHouseMembers(TEST_HOUSE_ID);
     verifyNoInteractions(houseService);
     verify(communityRepository, never()).save(testCommunity);
+  }
+
+  @Test
+  void listAllAmenities() {
+    // given
+    Set<Amenity> testAmenities = TestUtils.AmenityHelpers.getTestAmenities(TEST_AMENITIES_COUNT);
+    Community testCommunity = TestUtils.CommunityHelpers.getTestCommunity();
+    testCommunity.setAmenities(testAmenities);
+
+    given(communityRepository.findByCommunityIdWithAmenities(TEST_COMMUNITY_ID))
+        .willReturn(Optional.of(testCommunity));
+
+    // when
+    Set<Amenity> resultAmenities = communitySDJpaService.listAllAmenities(TEST_COMMUNITY_ID);
+
+    // then
+    assertEquals(testAmenities, resultAmenities);
+    verify(communityRepository).findByCommunityIdWithAmenities(TEST_COMMUNITY_ID);
+  }
+
+  @Test
+  void listAllAmenitiesNotExists() {
+    // given
+    given(communityRepository.findByCommunityIdWithAmenities(TEST_COMMUNITY_ID))
+        .willReturn(Optional.empty());
+
+    // when
+    Set<Amenity> resultAmenities = communitySDJpaService.listAllAmenities(TEST_COMMUNITY_ID);
+
+    // then
+    assertEquals(new HashSet<>(), resultAmenities);
+    verify(communityRepository).findByCommunityIdWithAmenities(TEST_COMMUNITY_ID);
   }
 
   private CommunityDto getTestCommunityDto() {

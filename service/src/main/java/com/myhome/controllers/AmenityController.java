@@ -24,9 +24,12 @@ import com.myhome.model.AddAmenityResponse;
 import com.myhome.model.AmenityDto;
 import com.myhome.model.GetAmenityDetailsResponse;
 import com.myhome.model.UpdateAmenityRequest;
+import com.myhome.services.AmenityBookingService;
 import com.myhome.services.AmenityService;
 import java.util.Set;
 import javax.validation.Valid;
+
+import com.myhome.services.CommunityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -43,6 +46,8 @@ public class AmenityController implements AmenitiesApi {
 
   private final AmenityService amenitySDJpaService;
   private final AmenityApiMapper amenityApiMapper;
+  private final AmenityBookingService amenityBookingService;
+  private final CommunityService communityService;
 
   @Override
   public ResponseEntity<GetAmenityDetailsResponse> getAmenityDetails(
@@ -56,7 +61,7 @@ public class AmenityController implements AmenitiesApi {
   @Override
   public ResponseEntity<Set<GetAmenityDetailsResponse>> listAllAmenities(
       @PathVariable String communityId) {
-    Set<Amenity> amenities = amenitySDJpaService.listAllAmenities(communityId);
+    Set<Amenity> amenities = communityService.listAllAmenities(communityId);
     Set<GetAmenityDetailsResponse> response =
         amenityApiMapper.amenitiesSetToAmenityDetailsResponseSet(amenities);
     return ResponseEntity.ok(response);
@@ -98,7 +103,7 @@ public class AmenityController implements AmenitiesApi {
   // TODO: Move to api.yaml
   @DeleteMapping(path = "/bookings/{bookingId}")
   public ResponseEntity deleteBooking(@PathVariable String bookingId) {
-    boolean isBookingDeleted = amenitySDJpaService.deleteBooking(bookingId);
+    boolean isBookingDeleted = amenityBookingService.deleteBooking(bookingId);
     if (isBookingDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {

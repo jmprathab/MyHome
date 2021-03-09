@@ -17,6 +17,7 @@
 package com.myhome.services;
 
 import com.myhome.controllers.dto.CommunityDto;
+import com.myhome.domain.Amenity;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.User;
@@ -33,6 +34,8 @@ public interface CommunityService {
   Set<Community> listAll(Pageable pageable);
 
   Optional<Community> getCommunityDetailsById(String communityId);
+
+  Set<Amenity> listAllAmenities(String communityId);
 
   Optional<List<CommunityHouse>> findCommunityHousesById(String communityId, Pageable pageable);
 

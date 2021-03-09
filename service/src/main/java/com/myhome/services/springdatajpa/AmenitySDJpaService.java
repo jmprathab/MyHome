@@ -20,16 +20,17 @@ import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
 import com.myhome.domain.Community;
 import com.myhome.model.AmenityDto;
-import com.myhome.repositories.AmenityBookingItemRepository;
 import com.myhome.repositories.AmenityRepository;
-import com.myhome.repositories.CommunityRepository;
+import com.myhome.services.AmenityBookingService;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
-import java.util.HashSet;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.myhome.services.HouseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,10 +39,10 @@ import org.springframework.stereotype.Service;
 public class AmenitySDJpaService implements AmenityService {
 
   private final AmenityRepository amenityRepository;
-  private final CommunityRepository communityRepository;
   private final CommunityService communityService;
   private final AmenityApiMapper amenityApiMapper;
-  private final AmenityBookingItemRepository bookingRepository;
+  private final AmenityBookingService amenityBookingService;
+  private final HouseService houseService;
 
   @Override
   public Optional<List<AmenityDto>> createAmenities(Set<AmenityDto> amenities, String communityId) {
@@ -84,18 +85,10 @@ public class AmenitySDJpaService implements AmenityService {
   }
 
   @Override
-  public Set<Amenity> listAllAmenities(String communityId) {
-    return communityRepository.findByCommunityIdWithAmenities(communityId)
-        .map(Community::getAmenities)
-        .orElse(new HashSet<>());
-  }
-
-  @Override
   public boolean updateAmenity(AmenityDto updatedAmenity) {
     String amenityId = updatedAmenity.getAmenityId();
     return amenityRepository.findByAmenityId(amenityId)
-        .map(amenity -> communityRepository.findByCommunityId(updatedAmenity.getCommunityId())
-            .map(community -> {
+        .map(amenity ->  {
               Amenity updated = new Amenity();
               updated.setName(updatedAmenity.getName());
               updated.setPrice(updatedAmenity.getPrice());
@@ -104,17 +97,6 @@ public class AmenitySDJpaService implements AmenityService {
               updated.setDescription(updatedAmenity.getDescription());
               return updated;
             })
-            .orElse(null))
         .map(amenityRepository::save).isPresent();
-  }
-
-  @Override
-  public boolean deleteBooking(String bookingId) {
-    return bookingRepository.findByAmenityBookingItemId(bookingId)
-        .map(bookingItem -> {
-          bookingRepository.delete(bookingItem);
-          return true;
-        })
-        .orElse(false);
   }
 }
