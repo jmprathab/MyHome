@@ -22,13 +22,10 @@ import com.myhome.controllers.mapper.CommunityApiMapper;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.User;
-import com.myhome.model.AddAmenityRequest;
-import com.myhome.model.AddAmenityResponse;
 import com.myhome.model.AddCommunityAdminRequest;
 import com.myhome.model.AddCommunityAdminResponse;
 import com.myhome.model.AddCommunityHouseRequest;
 import com.myhome.model.AddCommunityHouseResponse;
-import com.myhome.model.AmenityDto;
 import com.myhome.model.CommunityHouseName;
 import com.myhome.model.CreateCommunityRequest;
 import com.myhome.model.CreateCommunityResponse;
@@ -38,9 +35,7 @@ import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
 import com.myhome.model.ListCommunityAdminsResponse;
 import com.myhome.model.ListCommunityAdminsResponseCommunityAdmin;
-import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -80,9 +75,6 @@ class CommunityControllerTest {
 
   @Mock
   private CommunityApiMapper communityApiMapper;
-
-  @Mock
-  private AmenityService amenitySDJpaService;
 
   @InjectMocks
   private CommunityController communityController;
@@ -576,48 +568,6 @@ class CommunityControllerTest {
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(communityService).deleteCommunity(COMMUNITY_ID);
-  }
-
-  @Test
-  void shouldAddAmenityToCommunity() {
-    // given
-    final String communityId = "communityId";
-    final AmenityDto amenityDto =
-        new AmenityDto().id(1L)
-            .amenityId("amenityId")
-            .name("name")
-            .description("description")
-            .price(BigDecimal.ONE)
-            .communityId("");
-    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
-    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
-    given(amenitySDJpaService.createAmenities(amenities, communityId))
-        .willReturn(Optional.of(singletonList(amenityDto)));
-
-    // when
-    final ResponseEntity<AddAmenityResponse> response =
-        communityController.addAmenityToCommunity(communityId, request);
-
-    // then
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-  }
-
-  @Test
-  void shouldNotAddAmenityWhenCommunityNotExists() {
-    // given
-    final String communityId = "communityId";
-    final AmenityDto amenityDto = new AmenityDto();
-    final HashSet<AmenityDto> amenities = new HashSet<>(singletonList(amenityDto));
-    final AddAmenityRequest request = new AddAmenityRequest().amenities(amenities);
-    given(amenitySDJpaService.createAmenities(amenities, communityId))
-        .willReturn(Optional.empty());
-
-    // when
-    final ResponseEntity<AddAmenityResponse> response =
-        communityController.addAmenityToCommunity(communityId, request);
-
-    // then
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
   }
 
   private CommunityHouse getMockCommunityHouse() {

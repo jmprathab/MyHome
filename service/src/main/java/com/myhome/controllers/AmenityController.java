@@ -18,11 +18,14 @@ package com.myhome.controllers;
 
 import com.myhome.api.AmenitiesApi;
 import com.myhome.controllers.mapper.AmenityApiMapper;
+import com.myhome.domain.Amenity;
+import com.myhome.model.AddAmenityRequest;
+import com.myhome.model.AddAmenityResponse;
 import com.myhome.model.AmenityDto;
 import com.myhome.model.GetAmenityDetailsResponse;
 import com.myhome.model.UpdateAmenityRequest;
 import com.myhome.services.AmenityService;
-import com.myhome.services.CommunityService;
+import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +43,6 @@ public class AmenityController implements AmenitiesApi {
 
   private final AmenityService amenitySDJpaService;
   private final AmenityApiMapper amenityApiMapper;
-  private final CommunityService communityService;
 
   @Override
   public ResponseEntity<GetAmenityDetailsResponse> getAmenityDetails(
@@ -49,6 +51,25 @@ public class AmenityController implements AmenitiesApi {
         .map(amenityApiMapper::amenityToAmenityDetailsResponse)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+  }
+
+  @Override
+  public ResponseEntity<Set<GetAmenityDetailsResponse>> listAllAmenities(
+      @PathVariable String communityId) {
+    Set<Amenity> amenities = amenitySDJpaService.listAllAmenities(communityId);
+    Set<GetAmenityDetailsResponse> response =
+        amenityApiMapper.amenitiesSetToAmenityDetailsResponseSet(amenities);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<AddAmenityResponse> addAmenityToCommunity(
+      @PathVariable String communityId,
+      @RequestBody AddAmenityRequest request) {
+    return amenitySDJpaService.createAmenities(request.getAmenities(), communityId)
+        .map(amenityList -> new AddAmenityResponse().amenities(amenityList))
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
   }
 
   @Override
