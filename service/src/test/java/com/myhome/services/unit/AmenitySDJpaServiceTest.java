@@ -18,7 +18,6 @@ package com.myhome.services.unit;
 
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
-import com.myhome.domain.AmenityBookingItem;
 import com.myhome.domain.Community;
 import com.myhome.model.AmenityDto;
 import com.myhome.repositories.AmenityBookingItemRepository;
@@ -32,7 +31,6 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -49,16 +47,15 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class AmenitySDJpaServiceTest {
 
   private static final String TEST_AMENITY_NAME = "test-amenity-name";
   private static final BigDecimal TEST_AMENITY_PRICE = BigDecimal.valueOf(1);
-  private static final String TEST_BOOKING_ID = "test-booking-id";
   private final String TEST_AMENITY_ID = "test-amenity-id";
   private final String TEST_AMENITY_DESCRIPTION = "test-amenity-description";
   private final String TEST_COMMUNITY_ID = "test-community-id";
+
   @Mock
   private AmenityRepository amenityRepository;
   @Mock
@@ -69,8 +66,6 @@ class AmenitySDJpaServiceTest {
   private AmenityApiMapper amenityApiMapper;
   @Mock
   private AmenityBookingService amenityBookingService;
-  @Mock
-  private AmenityBookingItemRepository bookingItemRepository;
 
   @InjectMocks
   private AmenitySDJpaService amenitySDJpaService;

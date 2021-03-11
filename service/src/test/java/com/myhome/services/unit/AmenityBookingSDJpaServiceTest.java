@@ -2,7 +2,6 @@ package com.myhome.services.unit;
 
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.repositories.AmenityBookingItemRepository;
-import com.myhome.services.AmenityBookingService;
 import com.myhome.services.springdatajpa.AmenityBookingSDJpaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +21,7 @@ import static org.mockito.Mockito.verify;
 public class AmenityBookingSDJpaServiceTest {
 
   private static final String TEST_BOOKING_ID = "test-booking-id";
+
   @Mock
   private AmenityBookingItemRepository bookingItemRepository;
 
