@@ -34,7 +34,7 @@ public class AmenityBookingSDJpaServiceTest {
   }
 
   @Test
-  void deleteBookingItem() {
+  void shouldDeleteBookingItem() {
     // given
     AmenityBookingItem testBookingItem = getTestBookingItem();
 
@@ -51,7 +51,7 @@ public class AmenityBookingSDJpaServiceTest {
   }
 
   @Test
-  void deleteBookingNotExists() {
+  void shouldNotDeleteBookingItemIfNotExists() {
     // given
     given(bookingItemRepository.findByAmenityBookingItemId(TEST_BOOKING_ID))
         .willReturn(Optional.empty());

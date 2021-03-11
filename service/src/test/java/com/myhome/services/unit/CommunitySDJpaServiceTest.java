@@ -568,7 +568,7 @@ public class CommunitySDJpaServiceTest {
   }
 
   @Test
-  void listAllAmenities() {
+  void shouldListAllAmenities() {
     // given
     Set<Amenity> testAmenities = TestUtils.AmenityHelpers.getTestAmenities(TEST_AMENITIES_COUNT);
     Community testCommunity = TestUtils.CommunityHelpers.getTestCommunity();
@@ -586,7 +586,7 @@ public class CommunitySDJpaServiceTest {
   }
 
   @Test
-  void listAllAmenitiesNotExists() {
+  void shouldReturnZeroResultsIfNoAmenitiesPresent() {
     // given
     given(communityRepository.findByCommunityIdWithAmenities(TEST_COMMUNITY_ID))
         .willReturn(Optional.empty());
