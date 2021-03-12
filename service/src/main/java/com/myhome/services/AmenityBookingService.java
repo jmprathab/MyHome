@@ -10,5 +10,5 @@ public interface AmenityBookingService {
 
   boolean deleteBooking(String bookingId);
 
-  boolean removeAllAmenityBookings(String amenityID);
+  void removeAllAmenityBookings(String amenityID);
 }

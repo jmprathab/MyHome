@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.verify;
 public class AmenityBookingSDJpaServiceTest {
 
   private static final String TEST_BOOKING_ID = "test-booking-id";
+  private static final String TEST_AMENITY_ID = "test-amenity-id";
 
   @Mock
   private AmenityBookingItemRepository bookingItemRepository;
@@ -65,9 +67,45 @@ public class AmenityBookingSDJpaServiceTest {
     verify(bookingItemRepository, never()).delete(any());
   }
 
+  @Test
+  void shouldRemoveAllAmenityBookings() {
+    // given
+    HashSet<AmenityBookingItem> testAmenityBookings = new HashSet<AmenityBookingItem>() {{
+      add(getTestBookingItem("test-amenity-1"));
+      add(getTestBookingItem("test-amenity-2"));
+    }};
+    given(bookingItemRepository.findAllByAmenity_AmenityId(TEST_AMENITY_ID))
+        .willReturn(testAmenityBookings);
+
+    // when
+    amenityBookingService.removeAllAmenityBookings(TEST_AMENITY_ID);
+
+    // then
+    verify(bookingItemRepository).findAllByAmenity_AmenityId(TEST_AMENITY_ID);
+    verify(bookingItemRepository).deleteAll(testAmenityBookings);
+  }
+
+  @Test
+  void ShouldNotRemoveAllAmenityBookingsIfAmenityNotExists() {
+    // given
+    given(bookingItemRepository.findAllByAmenity_AmenityId(TEST_AMENITY_ID))
+        .willReturn(new HashSet<>());
+
+    // when
+    amenityBookingService.removeAllAmenityBookings(TEST_AMENITY_ID);
+
+    // then
+    verify(bookingItemRepository).findAllByAmenity_AmenityId(TEST_AMENITY_ID);
+    verify(bookingItemRepository, never()).deleteAll(any());
+  }
+
   private AmenityBookingItem getTestBookingItem() {
+    return getTestBookingItem(TEST_BOOKING_ID);
+  }
+
+  private AmenityBookingItem getTestBookingItem(String bookingID) {
     return new AmenityBookingItem()
-        .withAmenityBookingItemId(TEST_BOOKING_ID);
+        .withAmenityBookingItemId(bookingID);
   }
 
 }

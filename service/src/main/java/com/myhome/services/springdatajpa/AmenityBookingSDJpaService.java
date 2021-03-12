@@ -34,9 +34,10 @@ public class AmenityBookingSDJpaService implements AmenityBookingService {
   }
 
   @Override
-  public boolean removeAllAmenityBookings(String amenityId) {
+  public void removeAllAmenityBookings(String amenityId) {
     HashSet<AmenityBookingItem> bookings = bookingItemRepository.findAllByAmenity_AmenityId(amenityId);
-    bookingItemRepository.deleteAll(bookings);
-    return false;
+    if(!bookings.isEmpty()) {
+      bookingItemRepository.deleteAll(bookings);
+    }
   }
 }
