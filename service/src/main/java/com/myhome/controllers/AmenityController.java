@@ -31,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -89,17 +88,6 @@ public class AmenityController implements AmenitiesApi {
     amenityDto.setAmenityId(amenityId);
     boolean isUpdated = amenitySDJpaService.updateAmenity(amenityDto);
     if (isUpdated) {
-      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    } else {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-  }
-
-  // TODO: Move to api.yaml
-  @DeleteMapping(path = "/bookings/{bookingId}")
-  public ResponseEntity deleteBooking(@PathVariable String bookingId) {
-    boolean isBookingDeleted = amenitySDJpaService.deleteBooking(bookingId);
-    if (isBookingDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

@@ -134,6 +134,30 @@ paths:
           description: If updated successfully
         '400':
           description: If amenity is not found
+  /amenities/{amenityId}/bookings/{bookingId}:
+    delete:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Bookings
+      description: Remove booking
+      operationId: deleteBooking
+      parameters:
+        - in: path
+          name: amenityId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: bookingId
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: If booking deleted
+        '404':
+          description: If params are invalid
   /communities/{communityId}/amenities:
     get:
       security:

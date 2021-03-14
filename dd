@@ -1,0 +1,1605 @@
+[33mcommit c123298cca0f583728136bb75510c4830ac7702e[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31mupstream/master[m[33m)[m
+Merge: 4a2d165 4b5a837
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Wed Mar 10 09:48:12 2021 +0100
+
+    Merge pull request #256 from jmprathab/feature/issue-233--fix-community-tag
+    
+    Issue #233: Move endpoints related to amenities from community tag
+
+[33mcommit 4b5a83746704d1a486e395c47922a4209dcc1c6d[m
+Author: JanneSickert <janne.sickert@gmx.de>
+Date:   Wed Mar 3 18:34:20 2021 +0100
+
+    Issue #233: Move endpoints related to amenities from community tag
+
+[33mcommit 4a2d165ad84619ce6f693429fae3e4ea944da215[m
+Merge: bbaf696 ab64171
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Mar 6 20:49:18 2021 +0100
+
+    Merge pull request #254 from hsergiu/feature/issue-231--move-payment-endpoint-from-communities
+    
+    Issue #231: Move endpoint related to payments from communities tag to payments
+
+[33mcommit ab64171763311644068e3c0f2e72311d43e75b29[m[33m ([m[1;31morigin/feature/issue-231--move-payment-endpoint-from-communities[m[33m, [m[1;32mfeature/issue-231--move-payment-endpoint-from-communities[m[33m)[m
+Author: hsergiu <57728877+hsergiu@users.noreply.github.com>
+Date:   Sat Mar 6 15:49:34 2021 +0200
+
+    Issue #231: renamed test variable
+
+[33mcommit 5eb81e03123be767917829c9883b5b67ac9032cc[m
+Author: hsergiu <57728877+hsergiu@users.noreply.github.com>
+Date:   Sat Mar 6 15:36:02 2021 +0200
+
+    Issue #231: Move endpoint related to payments from communities to payments
+
+[33mcommit bbaf69626ad1f07c2ae8174710beb8cb6fd3e972[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 9fed2c5 4a1a2e4
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Mar 5 15:40:55 2021 +0100
+
+    Merge pull request #216 from DDmit04/feature/196--Email-templates
+    
+    Issue #196:  email templates
+
+[33mcommit 9fed2c58dac7f476520c318e5fbc8ec508d74703[m
+Merge: f7ec6a4 b7adca1
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Wed Mar 3 22:01:44 2021 +0100
+
+    Merge pull request #251 from hsergiu/feature/issue-243--unit-tests-for-login-endpoint
+
+[33mcommit b7adca17f6904db93e40fb390182644a72b6faa7[m[33m ([m[1;31morigin/feature/issue-243--unit-tests-for-login-endpoint[m[33m)[m
+Author: hsergiu <>
+Date:   Wed Mar 3 22:53:00 2021 +0200
+
+    Issue #243: adjust fields in AuthenticationSDJpaService
+
+[33mcommit 17f9028a1490938c3b1072c6832e3fb3a0bde7b4[m
+Author: hsergiu <>
+Date:   Wed Mar 3 11:47:53 2021 +0200
+
+    Issue #243: build fix
+
+[33mcommit 9ea4c19692561edba676c939c9497da663e0d83d[m
+Merge: 11b192e f7ec6a4
+Author: hsergiu <>
+Date:   Wed Mar 3 11:05:28 2021 +0200
+
+    Merge update
+
+[33mcommit 11b192e1124348daefa4b3d1d0d55c74f6c77f99[m
+Author: hsergiu <>
+Date:   Wed Mar 3 10:53:54 2021 +0200
+
+    Issue #243: improve code
+
+[33mcommit f7ec6a40e40ea8056915faf7fcb1b009f5dd6483[m
+Merge: d4b1ba3 62ac7b3
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Tue Mar 2 16:10:51 2021 +0100
+
+    Merge pull request #252 from rrohak/patch-1
+    
+    Update README.md: Added table of contents & links
+
+[33mcommit 62ac7b3a76db0c03e1ab1cc98d98416d0311928c[m
+Author: rrohak <43389183+rrohak@users.noreply.github.com>
+Date:   Tue Mar 2 02:24:34 2021 -0500
+
+    Update README.md: Added table of contents & links
+    
+    Previously the readme did not have a table of contents to easily move through the page, or to easily link a heading. Also, the readme did not include a link to contributing.md, only that people should read it.
+
+[33mcommit 962b5b692493d21dfa7fcb1395da548812de1086[m
+Author: hsergiu <>
+Date:   Mon Mar 1 14:47:10 2021 +0200
+
+    Issue #243: add unit tests for AuthenticationController, AuthenticationSDJpaService, UserSDJpaService (method findUserByEmail)
+
+[33mcommit d4b1ba354b2058371b5c91a0d85c85fff90b5cf6[m
+Merge: f530767 862c62a
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sun Feb 28 10:41:02 2021 +0100
+
+    Merge pull request #250 from JanneSickert/master
+    
+    Issue #221: Update OpenApi to 5.0.1
+
+[33mcommit 862c62a04365f973e8bec322db6f2fc30c1375a5[m
+Author: JanneSickert <janne.sickert@gmx.de>
+Date:   Sat Feb 27 19:46:19 2021 +0100
+
+    Issue #221: Update OpenApi to 5.0.1
+
+[33mcommit 4a1a2e4aa1f79ab315ba2567a7c96e737a2855bf[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Thu Feb 25 01:45:40 2021 +0300
+
+    Issue #196 fix test
+
+[33mcommit cc793f09c6f0d884672e9b6fe9067ee9f8bf476c[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Thu Feb 25 01:45:25 2021 +0300
+
+    Issue #196 clean up
+
+[33mcommit 9c0f6926ae9e7bea18ccdcf3e23b331da180b232[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Thu Feb 25 01:35:41 2021 +0300
+
+    Issue #196 restore locales and templates
+
+[33mcommit 0a034f25633a10a969243626b5be9053a91f334d[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Thu Feb 25 01:21:35 2021 +0300
+
+    Issue #196 little fixes
+
+[33mcommit f0eeb7fab5205cc45b08210a5e10c727f10837a3[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Thu Feb 25 01:20:28 2021 +0300
+
+    Issue #196 fix email templates names
+
+[33mcommit b2a0461e182aa1f425e99311c7986dd791e716a1[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Feb 24 23:32:15 2021 +0300
+
+    Issue #196 fix error
+
+[33mcommit 63b84d0208647a45baff29a7de2d413b07e32107[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Feb 24 21:31:52 2021 +0300
+
+    Issue #196 rename mail prop
+
+[33mcommit 4f6bfc636b4701cd864805b6bd643861b088a476[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Feb 24 21:30:16 2021 +0300
+
+    Issue #196 fix tests
+
+[33mcommit 3f5fabaf97172c13c9cdc0c6922e0f4451fe2c2f[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Feb 24 21:28:33 2021 +0300
+
+    Issue #196 separate Email properties to several classes
+
+[33mcommit 3872ea44cdbebb2e44832e783bed8d3ab74d5d79[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Feb 24 21:27:19 2021 +0300
+
+    Issue #196 turn `templateNames` from props to Enum
+
+[33mcommit 8d8d930380d890649ef36e049c61694bd2745f70[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Feb 24 21:26:27 2021 +0300
+
+    Issue #196 mov `template` and `localization` outside spring.mail
+
+[33mcommit 3b119579229b7f60254c823bb8826ae4bd23921e[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Feb 23 00:29:08 2021 +0300
+
+    Issue #196 fix integration test
+
+[33mcommit 9bdebff444608d1465fa451d7fa3f2c256c0706f[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Mon Feb 22 23:24:37 2021 +0300
+
+    Issue #196 fix reflection using in tests
+
+[33mcommit fb1e5aba704359f3cff2d3cb337ebb9f15f3dd35[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Mon Feb 22 19:30:09 2021 +0300
+
+    Issue #196 replace '@Value' with '@ConfigurationProperties' for mail props
+
+[33mcommit 67aa4b5721286aa6dd6c15aeac71f21dad4d2b8f[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 02:51:00 2021 +0300
+
+    Issue #196 fix tests
+
+[33mcommit fd915e184e2f747ce4d42f39eb1e0a6d7f92ab59[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 01:57:17 2021 +0300
+
+    Issue #196 update MailService
+
+[33mcommit ece446c6493db8a179fa4da704a6ac3600ac5c80[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Feb 24 23:24:05 2021 +0300
+
+    Issue #196 add thymeleaf templates
+
+[33mcommit f5307676a860b60d996237e17fed50e89d379589[m
+Merge: ad8669e 9683502
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Tue Feb 23 17:32:00 2021 +0100
+
+    Merge pull request #249 from JanneSickert/master
+    
+    Issue #224: Divide postman collection into directories
+
+[33mcommit 9683502d6d434a11bc80f7cabbf7bb804ea059eb[m
+Author: JanneSickert <janne.sickert@gmx.de>
+Date:   Tue Feb 23 15:40:55 2021 +0100
+
+    Issue #224: Divide postman collection into directories
+
+[33mcommit 04e5ff9c60ac38b7bb2788d1894ed9af00a1d37b[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 01:56:03 2021 +0300
+
+    Issue #196 add locales files
+
+[33mcommit 818c7594e15729ba0825fcb50326d5540f0af9c5[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 01:55:07 2021 +0300
+
+    Issue #196 add email templates configs
+
+[33mcommit ad8669ecd6fac97e07697be9a9c4874319c01e31[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sun Feb 21 20:31:15 2021 +0100
+
+    Fix integration test after #246
+
+[33mcommit c50b5ffdab1cbe5a03b41ec4b4c104df1e88ad5f[m
+Merge: b58e768 1903552
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sun Feb 21 20:08:09 2021 +0100
+
+    Merge pull request #246 from jmprathab/feature/fixSecurityMatchers
+    
+    Fix security matchers
+
+[33mcommit 190355211e693c051e24af63cc860aa1bf559693[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sun Feb 21 20:05:06 2021 +0100
+
+    Fix security matchers
+
+[33mcommit b58e768a7e3310884d2e1bbb2da7d5ae91e4c779[m
+Merge: 251450d bb449ef
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sun Feb 21 19:39:56 2021 +0100
+
+    Merge pull request #244 from jmprathab/feature/issue-234--addAuthorizationHeaderToOpenApiSpecs
+    
+    Issue #234: Add Authorization header to OpenApi specs
+
+[33mcommit 251450db7fc233950d559726a540a268ec8a385f[m
+Merge: 48235a7 63f9cf3
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sun Feb 21 19:39:45 2021 +0100
+
+    Merge pull request #245 from jmprathab/feature/apiExplorationDocumentation
+    
+    Add information about swagger and postman API usage
+
+[33mcommit 63f9cf3d1eede813176c1a2eb7685c11afcb2271[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sun Feb 21 19:39:20 2021 +0100
+
+    Add information about swagger and postman API usage
+
+[33mcommit bb449ef3b59d86fd91ac1241626be44667e216f9[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sun Feb 21 19:34:14 2021 +0100
+
+    Issue #234: Add Authorization header to OpenApi specs
+
+[33mcommit 48235a774d4b096b4fc4e4f35cd05face179086b[m
+Merge: c60b96c 2afceac
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Feb 20 22:35:44 2021 +0100
+
+    Merge pull request #210 from edwardUL99/bugfix/issue-206-PaymentController-Null-Exception
+
+[33mcommit 2afceac79a370ab2ebad84a5ac6e5af58fa676f0[m
+Author: Edward Lynch-Milner <eddylynch9@gmail.com>
+Date:   Sat Feb 20 20:58:56 2021 +0000
+
+    Issue #206 : Resolved pull request changes
+
+[33mcommit c60b96c99ad41e0280b5941b31a1f1d32985218e[m
+Merge: 353afa9 d938d98
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Feb 19 22:42:33 2021 +0100
+
+    Merge pull request #236 from Tobi406/fix-235/500-thrown-when-requesting-payments
+    
+    Change access level of properties in PageInfo.java.
+
+[33mcommit d938d980cf577d8adf7408ee6e0bd8690b7dd00c[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Feb 19 22:32:19 2021 +0100
+
+    Issue #235: Add getters for PageInfo class
+
+[33mcommit 353afa9cd307c5fbb754e22593ba19bbbdda2e71[m
+Merge: 17584b8 4deb940
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Feb 19 22:29:15 2021 +0100
+
+    Merge pull request #242 from jmprathab/feature/239--delete-deprecated-login-filter
+    
+    Issue #239: Delete deprecated login filter
+
+[33mcommit 4deb9400ac12590ac7ecfa1d885020b7c26d4d2f[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Feb 19 22:23:13 2021 +0100
+
+    Issue #239: Delete deprecated login filter
+
+[33mcommit 17584b888cfb1abd44010eaa75397d56c9f3d234[m
+Merge: be4f803 4528d42
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Feb 19 22:25:09 2021 +0100
+
+    Merge pull request #241 from jmprathab/feature/addLocalhostServerAndNewLoginExposure
+    
+    Add new login endpoint exposure and localhost server to OpenAPI specs
+
+[33mcommit 4528d42427ac7fb14852d796127e9148c213bce6[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Feb 19 22:24:48 2021 +0100
+
+    Add new login endpoint exposure and localhost server to OpenAPI specs
+
+[33mcommit be4f8032bfa6914bc55f5e0e6eb3545c37aac4d7[m
+Merge: ec4ecb8 ea5bc51
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Feb 19 22:17:26 2021 +0100
+
+    Merge pull request #240 from jmprathab/feature/238--addLoginToApiSpecs
+    
+    Issue #238: Add auth/login endpoint to api specs
+
+[33mcommit ea5bc51f003a0e15e8246e96abe25cbe5c65e9a6[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Feb 19 22:06:11 2021 +0100
+
+    Issue #238: Add auth/login endpoint to api specs
+
+[33mcommit ec4ecb84946f7cf98da3c950e67ce1457feca25d[m
+Merge: a33b954 816eb84
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Thu Feb 18 20:34:10 2021 +0100
+
+    Merge pull request #230 from jmprathab/feature/225--enable-useTags-openapi-generator
+    
+    Issue #225: Enable useTags for OpenApi specs
+
+[33mcommit 816eb84b012d038589a2aacd13010214ebc18b35[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Thu Feb 18 18:32:14 2021 +0100
+
+    Issue #225: Enable useTags for OpenApi specs
+
+[33mcommit a33b9544b77b573aea74916f75e100991022a52e[m
+Merge: 6f2ef4a 1640249
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Thu Feb 18 18:04:14 2021 +0100
+
+    Merge pull request #229 from jmprathab/feature/227--fix-typos-in-specs
+    
+    Issue #227: Fix typos in specs
+
+[33mcommit 1640249dfd2465a4da0016e41ce88ca0083dd73b[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Thu Feb 18 17:59:48 2021 +0100
+
+    Issue #227: Use proper object type bigdecimal -> number
+
+[33mcommit 6b3f5660248d1b3417ad8886343d11891024610f[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Thu Feb 18 17:36:55 2021 +0100
+
+    Issue #227: Fix typos and add uppercase
+
+[33mcommit 6f2ef4a728c13bf5576c2e652aec4b6b764660c6[m
+Merge: 12eedc6 9bd6ecc
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Thu Feb 18 17:15:25 2021 +0100
+
+    Merge pull request #223 from jmprathab/feature/issue--222-add-pagination-results-for-payments
+    
+    Issue #222: Add pagination results for payments
+
+[33mcommit 9bd6eccdf0421e132374c32331afc99615cfe772[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Wed Feb 17 22:44:33 2021 +0100
+
+    Issue #222: Add lombok to api module
+
+[33mcommit 2d968f10eb7f57cf61629bac7b45a5698eee214a[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Wed Feb 17 22:40:11 2021 +0100
+
+    Issue #222: Add support for paging information in response
+
+[33mcommit 12eedc6ab959f522dfe75440f47c35be246ef63a[m
+Merge: 616e43c 3789605
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Wed Feb 17 20:39:29 2021 +0100
+
+    Merge pull request #219 from jmprathab/bugfix/214--replace-old-swaggerdocs
+    
+    Issue #214: Replace old swaggerdocs with new approach
+
+[33mcommit 3789605ca439e1191dedeb75082b4dad5632d73e[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Tue Feb 16 22:31:51 2021 +0100
+
+    Issue #214: Update docs
+
+[33mcommit 35de6cec51719a4e6dbc69d078f4e9c458bfaf8b[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Tue Feb 16 22:29:09 2021 +0100
+
+    Issue #214: Remove old swagger docs and replace with new one
+
+[33mcommit 616e43c79f930f5e5ba65fc16721d5265dee217e[m
+Merge: 5f4501d 7f53031
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Tue Feb 16 21:55:38 2021 +0100
+
+    Merge pull request #218 from jmprathab/feature/disable-smtp-healthcheck
+    
+    Disable SMTP healthcheck
+
+[33mcommit 7f53031bc07dddd0559c8207103a3009748186f4[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Tue Feb 16 21:54:08 2021 +0100
+
+    Disable SMTP healthcheck
+
+[33mcommit 5f4501d4a97f9b48095f5433a56dceb7f6749b5c[m
+Merge: 610a129 a4511b1
+Author: Prathab <jm.prathab@gmail.com>
+Date:   Wed Feb 10 18:59:11 2021 +0530
+
+    Merge pull request #215 from DDmit04/feature/221--Email-confirm-functionality
+    
+    Issue #211:  email confirm functionality
+
+[33mcommit a4511b1324d9fb59c332a6c58dee4976f28f3482[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 02:35:18 2021 +0300
+
+    Issue #211 fix tests
+
+[33mcommit d3f4f1dcc5022a127bfa23c9a29d07cad7afac69[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 02:30:27 2021 +0300
+
+    Issue #211 fix
+
+[33mcommit f003bdd7cc2b925e33205ee5c00612ca81110938[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 02:28:20 2021 +0300
+
+    Issue #211 update UserSDJpaService tests
+
+[33mcommit c88372795fb188a0dfde1bbd0086852204b51240[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 02:27:11 2021 +0300
+
+    Issue #211 fix and add SecurityToken tests
+
+[33mcommit de52ac02f029caecc3f905dd05b7256339097761[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 01:40:35 2021 +0300
+
+    Issue #211 update data.sql
+
+[33mcommit 2a91f6445c1684f12ed14555ae566d2d595a8ca4[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 01:39:54 2021 +0300
+
+    Issue #211 add email confirm mappings
+
+[33mcommit 78b0d835c7cd3bf2565fd7a2f7a6859dc65b619e[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 01:37:14 2021 +0300
+
+    Issue #211 update UserService
+
+[33mcommit 237ec59c8368990705179d3dcdc16c0214c9ae7b[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 01:30:21 2021 +0300
+
+    Issue #211 update SecurityToken and SecurityTokenService
+
+[33mcommit bf9eed43defec5ca37fae6c004ffc6a79096fd25[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Jan 6 01:26:36 2021 +0300
+
+    Issue #211 add `emailConfirmed` field to User
+
+[33mcommit 799ddd7908a212e45bdbaddf67a2fad7f57e696a[m
+Author: Edward Lynch-Milner <18222021@studentmail.ul.ie>
+Date:   Tue Dec 8 20:53:49 2020 +0000
+
+    Added AfterMapping which maps user details in enriched request to UserDto and member details to HouseMemberDto to resolve the null exceptions. Made Payment#description non-unique
+
+[33mcommit 610a1298c63df85d56c8b654e4f30c636c1d98c6[m
+Merge: 94d28e8 91ff17c
+Author: Prathab <jm.prathab@gmail.com>
+Date:   Thu Nov 19 13:38:56 2020 +0530
+
+    Merge pull request #209 from DDmit04/feature/208--MailService-bugfixes
+    
+    Issue#208  mail service bugfixes
+
+[33mcommit 91ff17c5d35f69699fd0f32a3bff3203693bae0a[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Thu Nov 12 16:39:59 2020 +0300
+
+    Issue #208 fix data sql
+
+[33mcommit 7680b57164e59a45dc1d057e3661de4a0e22e420[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Thu Nov 12 16:39:28 2020 +0300
+
+    Issue #208 fix postman config
+
+[33mcommit 94d28e8f1792a74080c95dfc043f5db7f49b6f41[m
+Merge: fc41037 f873035
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Nov 7 14:11:51 2020 +0100
+
+    Merge pull request #194 from DDmit04/feature/151--Forgot-Password-functionality
+    
+    Feature #151  Implement Forgot Password functionality
+
+[33mcommit f873035d197341dfb5ac16be5b69feb780fe6e81[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Fri Nov 6 11:07:58 2020 +0300
+
+    Issue #151 fix build
+
+[33mcommit 58ff8ff5dfe3475a540a93ee5ffb56303f9ee877[m
+Merge: d6334d5 fc41037
+Author: DDmit04 <46588421+DDmit04@users.noreply.github.com>
+Date:   Fri Nov 6 10:29:37 2020 +0300
+
+    Merge branch 'master' into feature/151--Forgot-Password-functionality
+
+[33mcommit fc410376bf2cb568e579a5ad71517d7e77a21a04[m
+Merge: a24da1c e3f882f
+Author: Prathab <jm.prathab@gmail.com>
+Date:   Thu Nov 5 19:55:38 2020 +0530
+
+    Merge pull request #195 from SergeyHydra/feature/issue-176--migration-amenityController-openApi
+    
+    Issue #176:  Migration of AmenityController to OpenApi yaml schema
+
+[33mcommit d6334d5fa0fbaf9883c94545e33b2be74cd23770[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Nov 4 11:54:28 2020 +0300
+
+    Issue #151 update tests
+
+[33mcommit e64fb75f824a7dc6264a568740009dcdbc37e1bc[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Nov 4 01:52:03 2020 +0300
+
+    Issue #151 add MailService tests
+
+[33mcommit 886ffa48d76c37b3390dee4dea25f4c9a982716f[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Nov 4 01:27:07 2020 +0300
+
+    Issue #151 fix tests
+
+[33mcommit c7b3bdc319c31ba70ba27ed61744fdf4574c710c[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Nov 4 01:26:49 2020 +0300
+
+    Issue #151 make MailService methods return boolean
+
+[33mcommit a1ae6faf377816d2486a57f54826e4a77859376f[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Nov 4 00:37:54 2020 +0300
+
+    Issue #151 extract mail texts to final vars
+
+[33mcommit 307606e82e2b9fa6c621a9b23ca1ef539cca776c[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Nov 4 00:32:11 2020 +0300
+
+    Issue #151 clean up
+
+[33mcommit e3f882fd8cffcc7bfaeac6dc8c35a9175aa7878a[m
+Author: Сердюк Сергей Владимирович <SVSerdyuk.SBT@sberbank.ru>
+Date:   Sun Nov 1 21:04:14 2020 +0300
+
+    Issue #176: fixing build
+
+[33mcommit ef84668080433bdb89f2d21c1e519a0fad63df28[m
+Author: Сердюк Сергей Владимирович <SVSerdyuk.SBT@sberbank.ru>
+Date:   Thu Oct 15 21:25:12 2020 +0300
+
+    Issue #176: fixing pr comments
+
+[33mcommit 6fc31c41d82a82c19479ee150232fdf941201918[m
+Author: Сердюк Сергей Владимирович <SVSerdyuk.SBT@sberbank.ru>
+Date:   Wed Oct 14 00:37:59 2020 +0300
+
+    Issue #176: delete unused type mapping
+
+[33mcommit d20adbf4897a6ae68c9587147ad1a945c65a3233[m
+Author: Сердюк Сергей Владимирович <SVSerdyuk.SBT@sberbank.ru>
+Date:   Wed Oct 14 00:16:09 2020 +0300
+
+    Issue #176: migrated AmenityController to open api spec
+
+[33mcommit 6fbc7950a9a89bcbc94c8e493df9a0a0b10c222d[m
+Author: Сердюк Сергей Владимирович <SVSerdyuk.SBT@sberbank.ru>
+Date:   Mon Oct 12 23:49:42 2020 +0300
+
+    Issue #176: init commit
+
+[33mcommit 09699b7449a393f961f2b96534d3f84c70148b75[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Sat Oct 31 01:00:16 2020 +0300
+
+    Issue #151 fix build
+
+[33mcommit ee820c4796a97c88d84f95aff9b9b4be84063db8[m
+Merge: 50c0ae5 a24da1c
+Author: DDmit04 <46588421+DDmit04@users.noreply.github.com>
+Date:   Sat Oct 31 00:16:11 2020 +0300
+
+    Merge branch 'master' into feature/151--Forgot-Password-functionality
+
+[33mcommit a24da1c36311fbb62248c76465949865d3e3f688[m
+Merge: be83a0f d0f6132
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 30 15:06:11 2020 +0100
+
+    Merge pull request #203 from rmgrimm/feature/issue-183--integration-tests
+    
+    Issue #183: Setup integration-tests module
+
+[33mcommit d0f613293e4ec217b1fcbdb869b9a16b061d0e6b[m
+Author: Robert Grimm <rgrimm@redhat.com>
+Date:   Fri Oct 30 08:43:31 2020 -0500
+
+    Issue #183: Switch to TestRestTemplate instead of RestAssured
+
+[33mcommit 489f89278bb9e4b450b4e38ec6bdf613ccd80fc9[m
+Author: Robert Grimm <rgrimm@redhat.com>
+Date:   Fri Oct 30 02:43:54 2020 -0500
+
+    Issue #183: Configure integration-tests module; Add sample integration test
+
+[33mcommit be83a0f1ff15848eb71e33a9066790cd54471287[m
+Merge: 8795e75 7b2b34e
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Oct 24 10:51:12 2020 +0200
+
+    Merge pull request #200 from rmgrimm/feature/issue-159--list-housemates
+    
+    Issue #159: Endpoint to get all members of all houses a user is in
+
+[33mcommit 8795e75328034e22cff42c99c5bf1a4949b2628c[m
+Merge: cdeefa5 d594fc2
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Oct 24 10:38:29 2020 +0200
+
+    Merge pull request #191 from edwin9870/feature/172--migration-of-paymentController-to-openApi-yaml-schema
+    
+    Issue #172: Migration of PaymentController to OpenApi yaml schema
+
+[33mcommit d594fc2941c46af4ed7cdb76a279c212c5612865[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Fri Oct 23 23:39:07 2020 -0400
+
+    Issue #172: Move PaymentController.listAllMemberPayments to HouseMemberDocumentController and PaymentController.listAllAdminScheduledPayments to CommunityController.
+    
+    This refactor includes move test to respective classes.
+
+[33mcommit 9804cb5534c1ad948392118bb30d78a021bd5c1e[m
+Merge: aeb9941 cdeefa5
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Fri Oct 23 23:29:41 2020 -0400
+
+    Issue #172: Merge upstream master changes
+
+[33mcommit 7b2b34ea0532609461928f32f71537af53fe6151[m
+Author: Robert Grimm <rgrimm@redhat.com>
+Date:   Thu Oct 22 01:41:46 2020 -0500
+
+    Issue #159: Add endpoint for listing members of all houses for a user
+
+[33mcommit cdeefa5ea10c3f1dc86839834e788b14a21a7aa6[m
+Merge: 7f03188 6cb5802
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Mon Oct 19 08:50:08 2020 +0200
+
+    Merge pull request #198 from edwin9870/feature/issue-174--migration-of-housecontroller-to-openapi-yaml-schema
+    
+    Issue #174: Migration of HouseController to OpenApi yaml schema
+
+[33mcommit 6cb5802c433aa32f9011a2e32a383a052758e347[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Sun Oct 18 19:43:24 2020 -0400
+
+    Issue #174: Remove 404 responseCode in api.yaml at for get /houses
+
+[33mcommit d5101921ab7d530f67acff2482f3dc7acdd23bf1[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Sun Oct 18 19:39:12 2020 -0400
+
+    Issue #174: Format HouseControllerTest to make it more readable
+
+[33mcommit 50c0ae5f5b70471810e082efc0956b1b867ad423[m
+Merge: f65957d 7f03188
+Author: DDmit04 <46588421+DDmit04@users.noreply.github.com>
+Date:   Sun Oct 18 22:11:37 2020 +0300
+
+    Merge branch 'master' into feature/151--Forgot-Password-functionality
+
+[33mcommit f65957df1c37b25f075a1d16970282ca77c53fcd[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Sun Oct 18 22:08:49 2020 +0300
+
+    Issue #151 clean up
+
+[33mcommit dbd71bf5b29f24ac7a6cf6ad5645762c39a438a1[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Sat Oct 17 21:33:03 2020 -0400
+
+    Issue #174: Remove not used import
+
+[33mcommit ce24a4907e4f2e79395f7a6695fb13ed492d0a21[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Sat Oct 17 21:23:28 2020 -0400
+
+    Issue #174: Remove ID parameter required from HouseMemberDTO
+
+[33mcommit a09955e54aa5292af2ada79fdabd40490b172024[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Sat Oct 17 21:12:27 2020 -0400
+
+    Issue #174: Migrate HouseController.deleteHouseMember to OpenApi
+
+[33mcommit 81b41ab795e2d6bda85e8aab9de53c6feb05f378[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Sat Oct 17 20:46:34 2020 -0400
+
+    Issue #174: Rename HouseMemberMapper.newHouseMemberSetToHouseMemberSet to HouseMemberMapper.houseMemberDtoSetToHouseMemberSet
+
+[33mcommit d40bb91ef5d9a073e307641ad617409d4301c655[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Sat Oct 17 20:24:02 2020 -0400
+
+    Issue #174: Migrate HouseController.listAllMembersOfHouse and HouseController.addHouseMembers to OpenAPI yaml
+
+[33mcommit 2c19a9f4353fc69a14a308bf100a63f217c57394[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Sat Oct 17 19:28:37 2020 -0400
+
+    Issue #174: Migrate HouseController.listAllHouses and HouseController.getHouseDetails to OpenAPI yaml
+
+[33mcommit 3c5bf885d19933a5f5e4ff64bd1ae4cafd70fd4c[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Sat Oct 17 22:34:08 2020 +0300
+
+    Issue #151 fix build
+
+[33mcommit 6b752271b332c3777974913a38f1919daf98dc59[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Sat Oct 17 19:03:23 2020 +0300
+
+    Issue #151 fix UserSDJpaServiceTest
+
+[33mcommit 9feb7c0da8a39ef28341a3e17fbfd45ad3b0af27[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Sat Oct 17 19:02:58 2020 +0300
+
+    Issue #151 fix SecurityTokenSDJpaServiceTest
+
+[33mcommit 9463092724d709e874046e3896b500f600c64bfe[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Sat Oct 17 19:02:28 2020 +0300
+
+    Issue #151 fix UserControllerTest
+
+[33mcommit 058e5fb1350b044069244c0725db7dcb96e8aa28[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Sat Oct 17 18:55:47 2020 +0300
+
+    Issue #151 add dev version of MailSDJpaService
+
+[33mcommit 937f6a528beb55299376cd31b925f3ede98f41c2[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Sat Oct 17 18:54:34 2020 +0300
+
+    Issue #151 turn SecurityToken - User relationsips to ManyToOne
+
+[33mcommit e5ab9bdc4c705b48b0b74ae193fe532d9c548c9b[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Fri Oct 16 10:36:12 2020 +0300
+
+    Issue #151 migrate new endpoint to 'api.yaml'
+
+[33mcommit 4f2c9876f54a3196a64ffb7392b2988de5b00a1e[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Fri Oct 16 10:35:29 2020 +0300
+
+    Issue #151 add 'isUsed' prop to SecurityToken
+
+[33mcommit 1bab0537a1ff331bf3d8a1c7caf100c3e88340e1[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Fri Oct 16 10:30:34 2020 +0300
+
+    Issue #151 turn token Dates to LocalTimes
+
+[33mcommit 516e65510a04dfcd68d964bd2e890bbe3c3d95ac[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Fri Oct 16 10:26:08 2020 +0300
+
+    Issue #151 configure SMTP with enviroment varibles
+
+[33mcommit 2444fcb90d808ef06247beb3217256fa1207a841[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Fri Oct 16 10:24:42 2020 +0300
+
+    Issue #151 fix gradle dependency
+
+[33mcommit 7f03188962cf98ed84cf8d1eb4a01af54412f3e3[m
+Merge: 13e1bea 7b5a485
+Author: Prathab <jm.prathab@gmail.com>
+Date:   Thu Oct 15 18:07:33 2020 +0530
+
+    Merge pull request #197 from tomsajuk/feature/issue-116--DeleteAmenityBooking
+    
+    Issue #116: Add Endpoint for Delete Amenity Booking
+
+[33mcommit 7b5a485f6aeda7a223d917cb657f76f5a0fc43f8[m
+Author: tomsajuk <tomsajuk@gmail.com>
+Date:   Thu Oct 15 08:35:46 2020 +0530
+
+    Issue #116: Add Endpoint for Delete Amenity Booking
+
+[33mcommit a51e01b891e15feb88c848a129e832a519e91c59[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Oct 14 14:55:12 2020 +0300
+
+    Issue #151 rename MyHomeTokenType by SecurityTokenType
+
+[33mcommit 25f2961a00515b0d7f6a6b79505c48850c72b1b0[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Oct 14 00:34:16 2020 +0300
+
+    Issue #151 change hibernate SecurityToken.tokenType enum type
+
+[33mcommit a4c90c2523e30870b9a45429a14c1a112313924b[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Oct 14 00:17:36 2020 +0300
+
+    Issue #151 clean up
+
+[33mcommit df5a9a93da49032dd2999baa616be49607f9bf7e[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Wed Oct 14 00:13:28 2020 +0300
+
+    Issue #151 try fix
+
+[33mcommit 63498542db0ea577ca11bcc5c5803ce34650e407[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 23:43:13 2020 +0300
+
+    Issue #151 Add new UserController tests
+
+[33mcommit 2ef6d0eab2192ddb60bd3d641479869c845ddbc8[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 23:42:50 2020 +0300
+
+    Issue #151 Add new UserService tests
+
+[33mcommit 06785faffa00ad5a92dfa38dc29dd239fc44c19b[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 23:35:09 2020 +0300
+
+    Issue #151 fix User service
+
+[33mcommit f25df255d3a12cc327fe88c33f1c02ddf451a840[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 23:34:32 2020 +0300
+
+    Issue #151 fix tests with new User entity constructor
+
+[33mcommit 571a0f0ddd158727cdfa632407003c32ad30f201[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 18:17:12 2020 +0300
+
+    Issue #151 Crete tests for SecurityTokenService
+
+[33mcommit 75e219dc480c974dc8ab7c8a839e197c194d6eed[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 12:33:10 2020 +0300
+
+    Issue #151 update postman configuration with new endpoint
+
+[33mcommit a35a0014882c7d31902ef04d413038df4ed1e40f[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 12:32:36 2020 +0300
+
+    Issue #151 update UserController with forgot password functionality
+
+[33mcommit 8b77473a127c5aebd4343aeae787ff36cd1b1e2c[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 12:31:50 2020 +0300
+
+    Issue #151 update UserService with forgot password functionality
+
+[33mcommit a489d3478cafc7726c85c015812b0743d05a596b[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 12:30:26 2020 +0300
+
+    Issue #151 Add SecurityTokenService
+
+[33mcommit 1a5ba624ab44ff7d982da187794ce7d8c468c696[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 12:29:27 2020 +0300
+
+    Issue #151 Add MailService
+
+[33mcommit 7d6f36c148c2be024b423f0fe6a14542a4d82235[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 12:28:20 2020 +0300
+
+    Issue #151 Add SecurityToken to data.sql
+
+[33mcommit e003ac12a3ff9980539c9f93933187b155b22708[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Tue Oct 13 12:25:21 2020 +0300
+
+    Issue #151 Add SecurityToken entity
+
+[33mcommit 13e1beac2c036c6b402d73fd00393a1659407d71[m
+Merge: d2296b5 e446e0e
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Tue Oct 13 17:58:59 2020 +0200
+
+    Merge pull request #193 from huyle1097/bugfix/issue-192--remove-unused-payment-service-method
+    
+    Issue #192: remove unused methods in PaymentService
+
+[33mcommit aeb99416b8d5a9f187026429376f1cb4b79ea26b[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Tue Oct 13 09:45:54 2020 -0400
+
+    Issue #172: Add booleanGetterPrefix is and refactor the code affected by this
+
+[33mcommit e446e0eea732b3239022ac5703462c8bd095c6d0[m
+Author: huyle1097 <huyle1097@gmail.com>
+Date:   Tue Oct 13 20:36:37 2020 +0700
+
+    Issue #192: remove unused methods in PaymentService
+
+[33mcommit 92513d4ca411bf95b562600e191a028ef8fb4d61[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Tue Oct 13 08:59:12 2020 -0400
+
+    Issue #172: Fix Communities's tag typo in apy.yaml
+
+[33mcommit d2296b5446c7535f7d19d15b87df5987642e2180[m
+Merge: 50f0213 46432fa
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Tue Oct 13 12:44:56 2020 +0200
+
+    Merge pull request #190 from huyle1097/feature/issue-175--community-controller-openapi-migration
+    
+    Issue #175: Migration of CommunityController to OpenApi yaml schema
+
+[33mcommit 46432fa89b6deba57c7f480117f302b5a3d8267d[m
+Author: huyle1097 <huy.le@axonactive.com>
+Date:   Tue Oct 13 16:22:05 2020 +0700
+
+    Issue #175: format code
+
+[33mcommit 64e5e12155ae92a29049e895d0cac35cc14f3503[m
+Author: huyle1097 <huyle1097@gmail.com>
+Date:   Tue Oct 13 07:25:55 2020 +0700
+
+    Issue #175: remove unused dto and fix test
+
+[33mcommit bf6907cf7f322f892b2dba79cd2b0d2cafcd3239[m
+Author: huyle1097 <huyle1097@gmail.com>
+Date:   Tue Oct 13 07:21:42 2020 +0700
+
+    Issue #175: Convert /communities/{communityId}/houses/{houseId} to OpenApi yaml specification
+
+[33mcommit 0d7fcfbcd0a67abeedd6af1a3663af7fef3e0e5c[m
+Author: huyle1097 <huyle1097@gmail.com>
+Date:   Tue Oct 13 07:18:54 2020 +0700
+
+    Issue #175: Convert /communities/{communityId}/houses to OpenApi yaml specification
+
+[33mcommit 318899be0e52a96fa2b4bbd5356f9ba5bafff8aa[m
+Author: huyle1097 <huyle1097@gmail.com>
+Date:   Tue Oct 13 07:11:48 2020 +0700
+
+    Issue #175: Convert /communities/{communityId}/admins/{adminId} to OpenApi yaml specification
+
+[33mcommit 21b80eded80e31f34b04db79de33dd6845c7b300[m
+Author: huyle1097 <huyle1097@gmail.com>
+Date:   Tue Oct 13 07:09:31 2020 +0700
+
+    Issue #175: Convert /communities/{communityId}/admins to OpenApi yaml specification
+
+[33mcommit 621df5f8f62731c03541c6eeaebb711884d2977a[m
+Author: huyle1097 <huyle1097@gmail.com>
+Date:   Tue Oct 13 07:03:53 2020 +0700
+
+    Issue #175: Convert /communities/{communityId} to OpenApi yaml specification
+
+[33mcommit a2adcd828ce770a86cca008d4b763c44688dae85[m
+Author: huyle1097 <huyle1097@gmail.com>
+Date:   Tue Oct 13 06:49:25 2020 +0700
+
+    Issue #175: Convert /communities to OpenApi yaml specification
+
+[33mcommit 50f0213b6c1e2690019b64ab627daad3da4726dd[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Tue Oct 13 11:48:47 2020 +0200
+
+    Fix WebSecurity after merging PR
+
+[33mcommit a2f48827b0d25e2be7c8a75782631fa4cda16a4b[m
+Author: Thomas Windt <luigi3654@gmail.com>
+Date:   Mon Oct 12 14:59:10 2020 +0200
+
+    Issue #150: Add Admin Filter
+    
+    Signed-off-by: Thomas Windt <luigi3654@gmail.com>
+    (cherry picked from commit 00c4b5f65e8d415f39b56b6bbf5dd7b72c2c6c2d)
+
+[33mcommit 81a28e25988a76b72ed1dd39847badaacee7d345[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Mon Oct 12 21:07:03 2020 -0400
+
+    Migrate PaymentController.listAllAdminScheduledPayments to OpenApi
+
+[33mcommit 43656a4603bd28a53bdb70dc024fe3abaf69bcb1[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Mon Oct 12 20:56:26 2020 -0400
+
+    Migrate PaymentController.listAllMemberPayments to OpenApi
+
+[33mcommit 7ae277df44572bfb6a00099ba7ace67ec41059d8[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Mon Oct 12 20:13:14 2020 -0400
+
+    Migrate PaymentController.listPaymentDetails to OpenApi
+
+[33mcommit a4a9e0407f1cf7ba8a2830b50521bdffb79117f0[m
+Merge: 2daa3db 085cc4e
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Mon Oct 12 19:43:22 2020 +0200
+
+    Merge pull request #165 from fx0000/feature/#125--amenity_creation_access
+    
+    Issue #152: Add authorization filter for community
+
+[33mcommit 085cc4e15184713682e203f2a55b192d4d20238b[m
+Author: myself <myself>
+Date:   Mon Oct 12 19:44:02 2020 +0200
+
+    Issue #152: apply code style for filter class
+
+[33mcommit 52d9c9a9c0836886bb88abf550c5e03aab159b2b[m
+Author: myself <myself>
+Date:   Mon Oct 12 12:38:00 2020 +0200
+
+    Issue #152: apply code style
+
+[33mcommit 083e14b38ad41764e4fde4168aa0c4d1d1b6a69f[m
+Author: myself <myself@myself.neverland>
+Date:   Fri Oct 9 22:05:40 2020 +0200
+
+    Issue #152: remove tests
+
+[33mcommit 1e80c7ea34da439d3881d35b59693778dd565eef[m
+Author: myself <myself@myself.neverland>
+Date:   Sat Oct 10 13:44:53 2020 +0200
+
+    Issue #152: review changes
+
+[33mcommit 16505c447bfc031ca0c24512e5c285fe1c431958[m
+Author: myself <myself@myself.neverland>
+Date:   Fri Oct 9 22:05:40 2020 +0200
+
+    Issue #152: code styles, code review edits
+
+[33mcommit 4d87f21edfc1a35b19960761c6e9d63bdda1510c[m
+Author: myself <myself@myself.neverland>
+Date:   Fri Oct 9 18:35:12 2020 +0200
+
+    Issue #152: modify tests, remove test profile, fix build
+
+[33mcommit 7d5c9d42bb8b382b8b88d5ae0a8c1efa8215588d[m
+Author: myself <myself@myself.neverland>
+Date:   Fri Oct 9 16:18:25 2020 +0200
+
+    Issue #152: Add tests
+
+[33mcommit a83b6826ad835f8de000c26b4616f194ef44a4bf[m
+Author: myself <myself@myself.neverland>
+Date:   Thu Oct 8 17:24:03 2020 +0200
+
+    Issue #152: Add authorization filter for community
+
+[33mcommit 2daa3dbb31ac73b184269432381d86dd4680649b[m
+Merge: 7bad375 afe0212
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Mon Oct 12 12:29:37 2020 +0200
+
+    Merge pull request #188 from huyle1097/feature/issue-173--house-member-document-controller-openapi-migration
+    
+    Issue #173: Migration of HouseMemberDocumentController to OpenApi yaml schema
+
+[33mcommit afe021238541d13b4e8d8a98f1f3f8d5b7a150aa[m
+Author: huyle1097 <huyle1097@gmail.com>
+Date:   Mon Oct 12 07:58:10 2020 +0700
+
+    Issue #173: Change tag name, fix typo
+
+[33mcommit e66da6d22a96c47d39bfc4a8c4d3b6a8f7bab10e[m
+Author: huyle1097 <huyle1097@gmail.com>
+Date:   Sun Oct 11 22:25:38 2020 +0700
+
+    Issue #173: Convert /members/{memberId}/documents to OpenApi yaml specification
+
+[33mcommit 7bad375b5599487e343d7c19f6001b9a17d6c792[m
+Merge: 80029a2 4319843
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sun Oct 11 19:32:38 2020 +0200
+
+    Merge pull request #167 from DDmit04/feature/157--Repeating-helper-methods-in-tests
+    
+    Issue #157: Repeating helper methods in tests
+
+[33mcommit 80029a28eaeb75a7efa7a9c4a40b64df8a7b73ea[m
+Merge: 202f2c0 61eca83
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sun Oct 11 19:12:29 2020 +0200
+
+    Merge pull request #189 from jmprathab/feature/adjust-contribution-guide
+    
+    Add info about commit names, features vs defects, rebase over merge
+
+[33mcommit 61eca8351041470f938abdea9ae8f1cc5725044d[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sun Oct 11 19:11:56 2020 +0200
+
+    Add info about commit names, features vs defects, rebase over merge
+
+[33mcommit 431984384f27afbcd30f05c76be4600d2b8b933e[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Thu Oct 8 23:38:38 2020 +0300
+
+    issue #157 apply new help class to test classes
+
+[33mcommit eb4ea164524696aa064e19a63ef32b89a8347b6d[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Thu Oct 8 23:37:46 2020 +0300
+
+    issue #157 remove help methods from test classes
+
+[33mcommit e99347925d0fb8d2a2aa005ac7e2a46df71f225e[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Thu Oct 8 23:34:32 2020 +0300
+
+    issue #157 add test helper class
+
+[33mcommit cd4efb9075de4a310fce790c4e75b247ffa58523[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Sat Oct 10 23:52:42 2020 -0400
+
+    Migrate PaymentController.schedulePayment to OpenApi
+
+[33mcommit 202f2c05c0495bd1ae7ed11cb037d745a3514387[m
+Merge: 2f47757 b94ad05
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Oct 10 19:33:48 2020 +0200
+
+    Merge pull request #185 from P3trur0/feature/160--add-spring-actuator
+    
+    Issue #160: Replace HealthCheckController with Spring Actuator
+
+[33mcommit b94ad05debdcf1603d3be791037de30df271471d[m
+Author: upescatore <ubaldopescatore@gmail.com>
+Date:   Thu Oct 8 20:34:34 2020 +0200
+
+    Issue #160: Add Spring Boot Actuator endpoints
+
+[33mcommit 2f47757ae00947538a71f10ca6caa9e3b02b0cb8[m
+Merge: ae4b521 0486a56
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Oct 10 18:16:29 2020 +0200
+
+    Merge pull request #184 from jmprathab/feature/issue-182--remove-integration-tests
+    
+    Issue #182: Remove integration tests
+
+[33mcommit ae4b521865b85c5ed7a12a15c531cada33feb68c[m
+Merge: d59859c 609ba5c
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Oct 10 18:15:59 2020 +0200
+
+    Merge pull request #171 from jmprathab/feature/issue-170--users-controller-openapi-migration
+    
+    Issue #170: Users controller OpenApi migration
+
+[33mcommit 0486a56abfca9671b566061450e2ed33c922b8d1[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Oct 10 18:13:15 2020 +0200
+
+    Issue #182: Fix package location for controllers unit tests
+
+[33mcommit 9124a8068614958a0177cf1178d865ff721e0abd[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Oct 10 18:12:32 2020 +0200
+
+    Issue #182: Remove integration tests
+
+[33mcommit 609ba5ce30d434852c357a643a89d3f4a9fda7ce[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Oct 10 18:11:11 2020 +0200
+
+    Issue #170: Add default server as localhost
+
+[33mcommit d59859c2927d7875f6704ad078f27b00de917772[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Oct 10 11:08:08 2020 +0200
+
+    Update CONTRIBUTING.md
+
+[33mcommit 1e841b967bdb51abea5fe58870c472249db3ad6e[m
+Merge: 6a6b1b7 7f79866
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Oct 10 10:32:00 2020 +0200
+
+    Merge pull request #177 from HemantJoshi11/168--code_style
+    
+    Issue #168: Add info about code style to CONTRIBUTING.md
+
+[33mcommit 7f798669240e5389d7b4d4a9bfe173b8bf35cf99[m
+Author: Hemant Joshi <33864446+HemantJoshi11@users.noreply.github.com>
+Date:   Sat Oct 10 13:59:08 2020 +0530
+
+    Update CONTRIBUTING.md
+
+[33mcommit c8c9249badd223df66a95dd6ee60fc2185662c5f[m
+Author: Edwin Ramirez Ventura <edwin9870@gmail.com>
+Date:   Fri Oct 9 19:34:53 2020 -0400
+
+    Add /payments post path to api.yaml
+
+[33mcommit 16f4cc53424b75e8858b6a8e768d0157d7c4e617[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 9 21:43:20 2020 +0200
+
+    Issue #170: Add name variable as required in CreateUserRequest
+
+[33mcommit b292c03615a96258e821e78cbdac27aa013f2c5f[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 9 21:41:54 2020 +0200
+
+    Issue #170: Remove unused models that were replaced by generated code
+
+[33mcommit ce36e83363a8583444ebca6aeac1333731262101[m
+Author: Hemant Joshi <Hemant.1.Joshi@nokia.com>
+Date:   Sat Oct 10 00:56:52 2020 +0530
+
+    Issue 168: Add info about code style to CONTRIBUTING.md
+
+[33mcommit 749e108b6194272b75b48295b066b90145f63ad3[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 9 21:26:18 2020 +0200
+
+    Issue #170: Fix unit tests for UsersController
+
+[33mcommit f934d53af73def51c92a9e830ebcc0a6720c36bb[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 9 21:07:21 2020 +0200
+
+    Issue #170: Convert GET /users/{userId} to yaml specification
+
+[33mcommit 7c28816069cedd2b4b824d7730c572b7bc9e70bd[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 9 20:58:46 2020 +0200
+
+    Issue #170: Add GET /users with Spring Pageable as a custom solution
+
+[33mcommit 29c7d9bb4feaebceb3fe03e1c76bdcae45f3cbf2[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 9 20:19:57 2020 +0200
+
+    Issue #170: Do not create default method implementation in generated interfaces
+
+[33mcommit 4ebba85c9c18f72a42847b6214fe742c34cd2a48[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 9 20:16:21 2020 +0200
+
+    Issue #170: Bump OpenApi version to 5.0.0-beta2 to have Set collections
+
+[33mcommit cf65150f9931b26e40cffed490fb231cfa0f43d3[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 9 19:48:26 2020 +0200
+
+    Issue #170: Convert POST /users endpoint to OpenApi yaml schema
+
+[33mcommit 9b5808bdda89d28e92085f0449768628af2da2e2[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Wed Oct 7 19:40:51 2020 +0200
+
+    Issue #170: Add interface only option to generator config
+
+[33mcommit 6a6b1b7b00558e5aab35f8ffd54295a24411ccb7[m
+Merge: d9baa06 65e3967
+Author: Prathab <jm.prathab@gmail.com>
+Date:   Thu Oct 8 11:00:57 2020 +0530
+
+    Merge pull request #163 from jufab/feature/158--DataLoader-class-does-nothing
+    
+    Issue #158: DataLoader class does nothing
+
+[33mcommit 65e3967b636ca3db27ebdaf37c2dfdf3c8a0546e[m
+Author: Julien FABRE <julien.fabre.33@gmail.com>
+Date:   Wed Oct 7 21:27:48 2020 +0200
+
+    Issue #158: DataLoader class does nothing
+
+[33mcommit d9baa0625bda08953d193fcbb0f40331265d37c3[m
+Author: Prathab Murugan <jm.prathab@gmail.com>
+Date:   Wed Oct 7 21:50:48 2020 +0530
+
+    Add Social Login to FEATURES.md
+
+[33mcommit 24c484c8450c5b3d5a3c8b2aabfb9ddcf722942a[m
+Merge: da04d54 099f02f
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Mon Oct 5 12:38:01 2020 +0200
+
+    Merge pull request #154 from tomsajuk/master
+    
+    Issue #149 : Add current user as Admin when creating a community
+
+[33mcommit 099f02f8c3c74e2d119905c449aa30e05e07e808[m
+Author: tomsajuk <tomsajuk@gmail.com>
+Date:   Mon Oct 5 08:40:25 2020 +0530
+
+    Issue #149: Add current user as Admin when creating a community
+
+[33mcommit da04d543e7f9ec1f907ce5ca4c07fb652f543dbc[m
+Author: Prathab Murugan <jm.prathab@gmail.com>
+Date:   Sun Oct 4 12:49:55 2020 +0530
+
+    Update Copyright and Features doc
+    
+    * Marked completed features in FEATURES.md
+    * Update copyright for all files
+
+[33mcommit 228b7a39e61bafa58e3814388e6ce3f732f8ea38[m
+Author: Prathab Murugan <jm.prathab@gmail.com>
+Date:   Sun Oct 4 11:37:01 2020 +0530
+
+    Code formatting
+    
+    Formatting codebase with style guide from Square
+
+[33mcommit 5914e6179540c6db93b2df437bda17eb5971feb1[m
+Merge: 3e1a3b9 0b3497b
+Author: Prathab <jm.prathab@gmail.com>
+Date:   Sat Oct 3 10:14:05 2020 +0530
+
+    Merge pull request #148 from jmprathab/feature/issue-147--openapi-specs-generation
+    
+    Issue 147: OpenApi specs generation
+
+[33mcommit 0b3497b563d34133ba9ba81f9ed1a1bd267bb000[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 2 22:19:30 2020 +0200
+
+    Issue #147: Fix test assertNotNull import
+
+[33mcommit b4cf703aff38c9a1887f4f8d0548f58932a451d7[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 2 22:19:08 2020 +0200
+
+    Issue #147: Add api module with OpenApi schema and generator part
+
+[33mcommit 3e1a3b96cfdd0c786efc338e86c5c5ce7f1358b2[m
+Merge: b3e3292 4734714
+Author: Prathab <jm.prathab@gmail.com>
+Date:   Fri Oct 2 21:34:21 2020 +0530
+
+    Merge pull request #146 from mslowiak/feature/multi-module-project
+    
+    Reorganize project to be multi module
+
+[33mcommit 4734714118c046e6d44d30acf88441cdf183ca14[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Fri Oct 2 17:58:40 2020 +0200
+
+    Update project after amenity rebranding
+
+[33mcommit 134a974a1ebc9179ca701ca1290d319641db07a3[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Thu Oct 1 22:42:08 2020 +0200
+
+    Reorganize project to be multi module
+
+[33mcommit b3e3292e5af40db29a0ab7f41e21726914701b63[m
+Merge: 22f9c82 d7f1729
+Author: Prathab <jm.prathab@gmail.com>
+Date:   Fri Oct 2 11:48:22 2020 +0530
+
+    Merge pull request #144 from edwardUL99/feature/111--Update_amenity_endpoint
+    
+    Issue 111: Endpoint for updating an amenity
+
+[33mcommit d7f1729af7f3d31c6a1e30ea60c9596131bec16f[m
+Author: Edward Lynch-Milner <18222021@studentmail.ul.ie>
+Date:   Thu Oct 1 23:43:02 2020 +0100
+
+    Fixed update amenity NULL issue
+
+[33mcommit f400ff74ac3492839c50792c8ed108f3f73d8d3e[m
+Merge: 5d98df0 22f9c82
+Author: Edward Lynch-Milner <18222021@studentmail.ul.ie>
+Date:   Thu Oct 1 23:36:47 2020 +0100
+
+    Merge branch 'master' of github.com:jmprathab/MyHome
+
+[33mcommit 22f9c82a5783fceb9f6cebe30f163c24b2184f71[m
+Merge: 2bed1cd b197906
+Author: Prathab <jm.prathab@gmail.com>
+Date:   Tue Sep 29 20:28:42 2020 +0530
+
+    Merge pull request #145 from mslowiak/feature/issue-108--add-amenity-to-community
+    
+    Issue #108: Add amenity to community
+
+[33mcommit 5d98df0af98384522a8a3611575ec906e6b94518[m
+Merge: c6972c1 7a67381
+Author: Edward Lynch-Milner <18222021@studentmail.ul.ie>
+Date:   Sun Sep 27 22:15:33 2020 +0100
+
+    Merge branch 'feature/111--Update_amenity_endpoint' of https://github.com/edwardUL99/MyHome into feature/111--Update_amenity_endpoint
+
+[33mcommit c6972c1f7892c7a1a81c800a9d1d0471e4c31892[m
+Author: Edward Lynch-Milner <18222021@studentmail.ul.ie>
+Date:   Sun Sep 27 22:15:20 2020 +0100
+
+    Code changes based on @mslowiak's reviews
+
+[33mcommit b197906dc421fbb1f0ecc567695cf664978f6353[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Sep 26 16:37:29 2020 +0200
+
+    Issue #108: Fix data.sql
+
+[33mcommit e7ef0b83185aa07bdd37749442c6102e768b344e[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Sep 26 16:27:29 2020 +0200
+
+    Issue #108: Add unit tests
+
+[33mcommit 051f4b24550ca39c1bb75706fa2b4b8bcc21865c[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Sep 26 15:39:46 2020 +0200
+
+    Issue #108: Add amenity to community
+
+[33mcommit 911b3a9f7ef7586d86c335ed848fc4a52081ba66[m
+Author: Marcin Słowiak <marcin.slowiak.007@gmail.com>
+Date:   Sat Sep 26 12:02:12 2020 +0200
+
+    Issue #108: Rename CommunityAmenity to Amenity in all places
+
+[33mcommit 2bed1cd045caed5614699abe5d3ed2723da95fbb[m
+Merge: 493ea91 ef7631f
+Author: Prathab <jm.prathab@gmail.com>
+Date:   Tue Sep 22 16:38:26 2020 +0530
+
+    Merge pull request #143 from DDmit04/feature/119--hibernate-query-perfomance
+    
+    Issue 119: Community hibernate query perfomance
+
+[33mcommit ef7631f316bbbf6e8b1bc24ddd1631a007a81c86[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Thu Sep 17 14:29:44 2020 +0300
+
+    improve tests
+
+[33mcommit 7a6738159910390b0b11482a70b11dd364c9f799[m
+Merge: 9ed1f71 493ea91
+Author: Edward Lynch-Milner <47575833+edwardUL99@users.noreply.github.com>
+Date:   Mon Sep 14 19:33:31 2020 +0100
+
+    Merge branch 'master' into feature/111--Update_amenity_endpoint
+
+[33mcommit 9ed1f719174bbc33049943f517d25c106f179a55[m
+Author: Edward Lynch-Milner <18222021@studentmail.ul.ie>
+Date:   Mon Sep 14 19:24:08 2020 +0100
+
+    Finished coding and testing for issue #111
+
+[33mcommit 039126b2aaecb8c51d178848cd36ffede54e303e[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Mon Sep 14 19:54:17 2020 +0300
+
+    fix tests
+
+[33mcommit 61ee0b6da85e70082f39193e2b17c9efe869c4bf[m
+Author: Дмитроченков Даниил Андреевич <danya.dmit1@gmail.com>
+Date:   Mon Sep 14 19:53:51 2020 +0300
+
+    fix CommunitySDJpaService
+
+[33mcommit 2151c1f4c8b5fa212b0ac40ffc979580df2f3439[m
+Merge: c2f0cff 493ea91
+Author: DDmit04 <46588421+DDmit04@users.noreply.github.com>
+Date:   Mon Sep 14 17:39:38 2020 +0300
+
+    Merge branch 'master' into feature/119--hibernate-query-perfomance
+
+[33mcommit 493ea91fb79459dfa8a543752c76fbf70a3f0241[m
+Merge: 7c7ace4 3427dcd
+Author: Prathab <jm.prathab@gmail.com>
+Date:   Mon Sep 14 18:43:49 2020 +0530
+
+    Merge pull request #141 from edwardUL99/feature/140--CommunitySDJpaServiceTest_deleteCommunity_fails
+    
+    Issue 140: CommunitySDJpaServiceTest deleteCommunity fails
+
+[33mcommit 3427dcdc701accc2b1abc2b6612de7a96d291e10[m
+Merge: 8e41750 d3d87a3
+Author: Edward Lynch-Milner <18222021@studentmail.ul.ie>
+Date:   Thu Sep 10 20:10:16 2020 +0100
+
+    Rebasing
+
+[33mcommit 8e41750a0f0daac9846eeb937f8dfe898cf5a966[m
+Author: Edward Lynch-Milner <18222021@studentmail.ul.ie>
+Date:   Thu Sep 3 08:17:09 2020 +0100
+
+    Added one more unit test for PaymentController
+
+[33mcommit de7dba9859593f64ea088e96e5154db552381bc9[m
+Author: Edward Lynch-Milner <18222021@studentmail.ul.ie>
+Date:   Wed Sep 2 23:46:04 2020 +0100
+
+    Changed communityOptional.isPresent in CommunityController.removeCommunityHouse to filer and map
+
+[33mcommit 18ebb4a4346bb21b50f4bdc67eedcb41d37956ea[m
+Author: Edward Lynch-Milner <18222021@studentmail.ul.ie>
+Date:   Mon Aug 31 20:44:23 2020 +0100
+
+    Fixed CommunitySDJpaServiceTest
+
+[33mcommit 3df0a8ce0565fc163494b9d826072f7c86143821[m
+Author: Edward Lynch-Milner <18222021@studentmail.ul.ie>
+Date:   Wed Sep 2 19:40:16 2020 +0100
+
+    Fixed all code review items and errors
+
+[33mcommit d3d87a35ec3d1abe67f0a75b49b5a27d06d1cf10[m
+Merge: ab8c270 7c7ace4
+Author: Edward Lynch-Milner <47575833+edwardUL99@users.noreply.github.com>
+Date:   Mon Sep 7 20:31:19 2020 +0100
+
+    Merge branch 'master' into feature/140--CommunitySDJpaServiceTest_deleteCommunity_fails
