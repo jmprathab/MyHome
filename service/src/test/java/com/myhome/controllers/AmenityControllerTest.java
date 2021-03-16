@@ -50,7 +50,6 @@ class AmenityControllerTest {
   private final String TEST_AMENITY_ID = "test-amenity-id";
   private final String TEST_AMENITY_DESCRIPTION = "test-amenity-description";
   private final String TEST_COMMUNITY_ID = "1";
-  private static final String TEST_BOOKING_ID = "test-booking-id";
 
   @Mock
   private AmenityService amenitySDJpaService;
@@ -218,36 +217,6 @@ class AmenityControllerTest {
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     verify(amenityApiMapper).updateAmenityRequestToAmenityDto(request);
     verify(amenitySDJpaService).updateAmenity(amenityDto);
-  }
-
-  @Test
-  void deleteBooking() {
-    // given
-    given(amenitySDJpaService.deleteBooking(TEST_BOOKING_ID))
-        .willReturn(true);
-
-    // when
-    ResponseEntity response = amenityController.deleteBooking(TEST_BOOKING_ID);
-
-    // then
-    assertNull(response.getBody());
-    assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    verify(amenitySDJpaService).deleteBooking(TEST_BOOKING_ID);
-  }
-
-  @Test
-  void deleteBookingNotExists() {
-    // given
-    given(amenitySDJpaService.deleteBooking(TEST_BOOKING_ID))
-        .willReturn(false);
-
-    // when
-    ResponseEntity response = amenityController.deleteBooking(TEST_BOOKING_ID);
-
-    // then
-    assertNull(response.getBody());
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    verify(amenitySDJpaService).deleteBooking(TEST_BOOKING_ID);
   }
 
   private Amenity getTestAmenity() {
