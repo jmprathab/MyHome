@@ -3,6 +3,7 @@ package com.myhome.services.unit;
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.repositories.AmenityBookingItemRepository;
 import com.myhome.services.springdatajpa.BookingSDJpaService;
+import helpers.TestUtils;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,8 @@ import static org.mockito.Mockito.verify;
 public class BookingSDJpaServiceTest {
 
   private static final String TEST_BOOKING_ID = "test-booking-id";
+  private static final String TEST_AMENITY_ID = "test-amenity-id";
+  private final String TEST_AMENITY_DESCRIPTION = "test-amenity-description";
 
   @Mock
   private AmenityBookingItemRepository bookingItemRepository;
@@ -39,9 +42,11 @@ public class BookingSDJpaServiceTest {
 
     given(bookingItemRepository.findByAmenityBookingItemId(TEST_BOOKING_ID))
         .willReturn(Optional.of(testBookingItem));
+    testBookingItem.setAmenity(TestUtils.AmenityHelpers
+        .getTestAmenity(TEST_AMENITY_ID, TEST_AMENITY_DESCRIPTION));
 
     // when
-    boolean bookingDeleted = bookingSDJpaService.deleteBooking(TEST_BOOKING_ID);
+    boolean bookingDeleted = bookingSDJpaService.deleteBooking(TEST_AMENITY_ID, TEST_BOOKING_ID);
 
     // then
     assertTrue(bookingDeleted);
@@ -56,7 +61,7 @@ public class BookingSDJpaServiceTest {
         .willReturn(Optional.empty());
 
     // when
-    boolean bookingDeleted = bookingSDJpaService.deleteBooking(TEST_BOOKING_ID);
+    boolean bookingDeleted = bookingSDJpaService.deleteBooking(TEST_AMENITY_ID, TEST_BOOKING_ID);
 
     // then
     assertFalse(bookingDeleted);

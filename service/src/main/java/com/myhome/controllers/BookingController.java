@@ -19,7 +19,7 @@ public class BookingController implements BookingsApi {
   @Override
   public ResponseEntity<Void> deleteBooking(@PathVariable String amenityId,
       @PathVariable String bookingId) {
-    boolean isBookingDeleted = bookingSDJpaService.deleteBooking(bookingId);
+    boolean isBookingDeleted = bookingSDJpaService.deleteBooking(amenityId, bookingId);
     if (isBookingDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } else {

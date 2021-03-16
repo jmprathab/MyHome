@@ -33,7 +33,7 @@ public class BookingControllerTest {
   @Test
   void deleteBooking() {
     // given
-    given(bookingSDJpaService.deleteBooking(TEST_BOOKING_ID))
+    given(bookingSDJpaService.deleteBooking(TEST_AMENITY_ID, TEST_BOOKING_ID))
         .willReturn(true);
 
     // when
@@ -43,13 +43,13 @@ public class BookingControllerTest {
     // then
     assertNull(response.getBody());
     assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    verify(bookingSDJpaService).deleteBooking(TEST_BOOKING_ID);
+    verify(bookingSDJpaService).deleteBooking(TEST_AMENITY_ID, TEST_BOOKING_ID);
   }
 
   @Test
   void deleteBookingNotExists() {
     // given
-    given(bookingSDJpaService.deleteBooking(TEST_BOOKING_ID))
+    given(bookingSDJpaService.deleteBooking(TEST_AMENITY_ID, TEST_BOOKING_ID))
         .willReturn(false);
 
     // when
@@ -59,6 +59,6 @@ public class BookingControllerTest {
     // then
     assertNull(response.getBody());
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    verify(bookingSDJpaService).deleteBooking(TEST_BOOKING_ID);
+    verify(bookingSDJpaService).deleteBooking(TEST_AMENITY_ID, TEST_BOOKING_ID);
   }
 }

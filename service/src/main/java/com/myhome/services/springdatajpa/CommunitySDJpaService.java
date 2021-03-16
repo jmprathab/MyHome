@@ -55,7 +55,7 @@ public class CommunitySDJpaService implements CommunityService {
     communityDto.setCommunityId(generateUniqueId());
     String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Community community = addAdminToCommunity(communityMapper.communityDtoToCommunity(communityDto),
-            userId);
+        userId);
     Community savedCommunity = communityRepository.save(community);
     log.trace("saved community with id[{}] to repository", savedCommunity.getId());
     return savedCommunity;

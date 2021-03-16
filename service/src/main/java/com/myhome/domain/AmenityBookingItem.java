@@ -29,18 +29,18 @@ import javax.persistence.*;
 @Setter
 @With
 @NamedEntityGraphs({
-        @NamedEntityGraph(
-                name="AmenityBookingItem.amenity",
-                attributeNodes = {
-                        @NamedAttributeNode("amenity"),
-                }),
-        @NamedEntityGraph(
-                name="AmenityBookingItem.bookingUser",
-                attributeNodes = {
-                        @NamedAttributeNode("bookingUser"),
-                })
-
+    @NamedEntityGraph(
+        name = "AmenityBookingItem.amenity",
+        attributeNodes = {
+            @NamedAttributeNode("amenity"),
+        }),
+    @NamedEntityGraph(
+        name = "AmenityBookingItem.bookingUser",
+        attributeNodes = {
+            @NamedAttributeNode("bookingUser"),
+        })
 })
+
 public class AmenityBookingItem extends BaseEntity {
 
   @Column(nullable = false, unique = true)
