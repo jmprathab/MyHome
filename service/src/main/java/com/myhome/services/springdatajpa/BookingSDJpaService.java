@@ -1,9 +1,7 @@
 package com.myhome.services.springdatajpa;
 
-import com.myhome.domain.Amenity;
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.repositories.AmenityBookingItemRepository;
-import com.myhome.repositories.AmenityRepository;
 import com.myhome.services.BookingService;
 import java.util.Optional;
 import javax.transaction.Transactional;

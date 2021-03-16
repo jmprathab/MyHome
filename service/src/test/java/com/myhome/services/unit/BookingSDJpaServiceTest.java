@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -22,6 +23,7 @@ public class BookingSDJpaServiceTest {
 
   private static final String TEST_BOOKING_ID = "test-booking-id";
   private static final String TEST_AMENITY_ID = "test-amenity-id";
+  private static final String TEST_AMENITY_ID_2 = "test-amenity-id-2";
   private final String TEST_AMENITY_DESCRIPTION = "test-amenity-description";
 
   @Mock
@@ -65,6 +67,25 @@ public class BookingSDJpaServiceTest {
 
     // then
     assertFalse(bookingDeleted);
+    verify(bookingItemRepository).findByAmenityBookingItemId(TEST_BOOKING_ID);
+    verify(bookingItemRepository, never()).delete(any());
+  }
+
+  @Test
+  void deleteBookingAmenityNotExists() {
+    // given
+    AmenityBookingItem testBookingItem = getTestBookingItem();
+
+    given(bookingItemRepository.findByAmenityBookingItemId(TEST_BOOKING_ID))
+        .willReturn(Optional.of(testBookingItem));
+    testBookingItem.setAmenity(TestUtils.AmenityHelpers
+        .getTestAmenity(TEST_AMENITY_ID_2, TEST_AMENITY_DESCRIPTION));
+    // when
+    boolean bookingDeleted = bookingSDJpaService.deleteBooking(TEST_AMENITY_ID, TEST_BOOKING_ID);
+
+    // then
+    assertFalse(bookingDeleted);
+    assertNotEquals(TEST_AMENITY_ID, testBookingItem.getAmenity().getAmenityId());
     verify(bookingItemRepository).findByAmenityBookingItemId(TEST_BOOKING_ID);
     verify(bookingItemRepository, never()).delete(any());
   }
