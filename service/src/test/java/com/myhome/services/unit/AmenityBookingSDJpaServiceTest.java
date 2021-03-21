@@ -86,7 +86,7 @@ public class AmenityBookingSDJpaServiceTest {
   }
 
   @Test
-  void ShouldNotRemoveAllAmenityBookingsIfAmenityNotExists() {
+  void shouldNotRemoveAllAmenityBookingsIfAmenityNotExists() {
     // given
     given(bookingItemRepository.findAllByAmenity_AmenityId(TEST_AMENITY_ID))
         .willReturn(new HashSet<>());
