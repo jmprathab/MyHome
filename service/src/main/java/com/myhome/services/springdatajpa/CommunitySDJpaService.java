@@ -18,6 +18,7 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.controllers.dto.CommunityDto;
 import com.myhome.controllers.dto.mapper.CommunityMapper;
+import com.myhome.domain.Amenity;
 import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
@@ -82,6 +83,13 @@ public class CommunitySDJpaService implements CommunityService {
     Set<Community> communities = new HashSet<>();
     communityRepository.findAll().forEach(communities::add);
     return communities;
+  }
+
+  @Override
+  public Set<Amenity> listAllAmenities(String communityId) {
+    return communityRepository.findByCommunityIdWithAmenities(communityId)
+        .map(Community::getAmenities)
+        .orElse(new HashSet<>());
   }
 
   @Override

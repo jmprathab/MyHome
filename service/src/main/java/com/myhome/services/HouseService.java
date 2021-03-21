@@ -37,4 +37,6 @@ public interface HouseService {
   Optional<List<HouseMember>> getHouseMembersById(String houseId, Pageable pageable);
 
   Optional<List<HouseMember>> listHouseMembersForHousesOfUserId(String userId, Pageable pageable);
+
+  boolean removeAmenityFromHouse(CommunityHouse house, String amenityId);
 }

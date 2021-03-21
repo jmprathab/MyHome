@@ -23,6 +23,8 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,12 +37,22 @@ import lombok.With;
 @Getter
 @Setter
 @With
-@NamedEntityGraph(
-    name = "Amenity.community",
-    attributeNodes = {
-        @NamedAttributeNode("community"),
-    }
-)
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "Amenity.community",
+        attributeNodes = {
+            @NamedAttributeNode("community"),
+        }
+    ),
+    @NamedEntityGraph(
+        name = "Amenity.community_house",
+        attributeNodes = {
+            @NamedAttributeNode("community"),
+            @NamedAttributeNode("communityHouse")
+        }
+    )
+})
+
 public class Amenity extends BaseEntity {
   @Column(nullable = false, unique = true)
   private String amenityId;
@@ -52,6 +64,6 @@ public class Amenity extends BaseEntity {
   private BigDecimal price;
   @ManyToOne(fetch = FetchType.LAZY)
   private Community community;
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   private CommunityHouse communityHouse;
 }

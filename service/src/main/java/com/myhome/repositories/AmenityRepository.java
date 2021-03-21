@@ -26,8 +26,8 @@ import org.springframework.data.repository.query.Param;
 public interface AmenityRepository extends JpaRepository<Amenity, Long> {
 
   @Query("from Amenity amenity where amenity.amenityId = :amenityId")
-  @EntityGraph(value = "Amenity.community")
-  Optional<Amenity> findByAmenityIdWithCommunity(@Param("amenityId") String amenityId);
+  @EntityGraph(value = "Amenity.community_house")
+  Optional<Amenity> findByAmenityIdWithCommunityAndHouse(@Param("amenityId") String amenityId);
 
   Optional<Amenity> findByAmenityId(String amenityId);
 }

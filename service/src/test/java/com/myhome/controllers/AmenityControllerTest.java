@@ -23,6 +23,7 @@ import com.myhome.model.AddAmenityResponse;
 import com.myhome.model.AmenityDto;
 import com.myhome.model.GetAmenityDetailsResponse;
 import com.myhome.model.UpdateAmenityRequest;
+import com.myhome.services.AmenityBookingService;
 import com.myhome.services.AmenityService;
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -56,6 +57,8 @@ class AmenityControllerTest {
   private AmenityService amenitySDJpaService;
   @Mock
   private AmenityApiMapper amenityApiMapper;
+  @Mock
+  private AmenityBookingService amenityBookingService;
 
   @InjectMocks
   private AmenityController amenityController;
@@ -223,7 +226,7 @@ class AmenityControllerTest {
   @Test
   void deleteBooking() {
     // given
-    given(amenitySDJpaService.deleteBooking(TEST_BOOKING_ID))
+    given(amenityBookingService.deleteBooking(TEST_BOOKING_ID))
         .willReturn(true);
 
     // when
@@ -232,13 +235,13 @@ class AmenityControllerTest {
     // then
     assertNull(response.getBody());
     assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    verify(amenitySDJpaService).deleteBooking(TEST_BOOKING_ID);
+    verify(amenityBookingService).deleteBooking(TEST_BOOKING_ID);
   }
 
   @Test
   void deleteBookingNotExists() {
     // given
-    given(amenitySDJpaService.deleteBooking(TEST_BOOKING_ID))
+    given(amenityBookingService.deleteBooking(TEST_BOOKING_ID))
         .willReturn(false);
 
     // when
@@ -247,7 +250,7 @@ class AmenityControllerTest {
     // then
     assertNull(response.getBody());
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    verify(amenitySDJpaService).deleteBooking(TEST_BOOKING_ID);
+    verify(amenityBookingService).deleteBooking(TEST_BOOKING_ID);
   }
 
   private Amenity getTestAmenity() {

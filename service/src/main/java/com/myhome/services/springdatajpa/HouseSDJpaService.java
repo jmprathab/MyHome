@@ -115,4 +115,13 @@ public class HouseSDJpaService implements HouseService {
         houseMemberRepository.findAllByCommunityHouse_Community_Admins_UserId(userId, pageable)
     );
   }
+
+  @Override
+  public boolean removeAmenityFromHouse(CommunityHouse house, String amenityId) {
+    boolean removed = house.getAmenities().removeIf(amenity -> amenity.getAmenityId().equals(amenityId));
+    if (removed) {
+      communityHouseRepository.save(house);
+    }
+    return removed;
+  }
 }

@@ -34,12 +34,6 @@ import com.myhome.model.GetCommunityDetailsResponseCommunity;
 import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.ListCommunityAdminsResponse;
 import com.myhome.services.CommunityService;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +44,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * REST Controller which provides endpoints for managing community
  */
@@ -57,6 +58,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 public class CommunityController implements CommunitiesApi {
+
   private final CommunityService communityService;
   private final CommunityApiMapper communityApiMapper;
 
