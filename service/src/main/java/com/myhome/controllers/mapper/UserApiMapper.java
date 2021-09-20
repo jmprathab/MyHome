@@ -23,6 +23,7 @@ import com.myhome.model.CreateUserResponse;
 import com.myhome.model.GetUserDetailsResponseUser;
 import java.util.Set;
 import org.mapstruct.Mapper;
+import org.mapstruct.Named;
 
 /**
  * Interface to automatic conversion by Mapstruct
@@ -38,4 +39,12 @@ public interface UserApiMapper {
   CreateUserResponse userDtoToCreateUserResponse(UserDto userDto);
 
   GetUserDetailsResponseUser userDtoToGetUserDetailsResponse(UserDto userDto);
+
+  @Named("userDtoToUser")
+  User userDtoToUser(UserDto dto);
+
+  @Named("userToUserDto")
+  UserDto userToUserDto(User user);
+
+
 }

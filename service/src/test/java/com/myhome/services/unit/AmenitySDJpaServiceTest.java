@@ -16,14 +16,19 @@
 
 package com.myhome.services.unit;
 
+import com.myhome.controllers.dto.AmenityBookingDto;
+import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
+import com.myhome.controllers.mapper.AmenityBookingMapper;
 import com.myhome.domain.Amenity;
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.domain.Community;
+import com.myhome.domain.User;
 import com.myhome.model.AmenityDto;
 import com.myhome.repositories.AmenityBookingItemRepository;
 import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
+import com.myhome.repositories.UserRepository;
 import com.myhome.services.CommunityService;
 import com.myhome.services.springdatajpa.AmenitySDJpaService;
 import helpers.TestUtils;
@@ -37,12 +42,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -55,6 +64,7 @@ class AmenitySDJpaServiceTest {
   private static final String TEST_AMENITY_NAME = "test-amenity-name";
   private static final BigDecimal TEST_AMENITY_PRICE = BigDecimal.valueOf(1);
   private static final String TEST_BOOKING_ID = "test-booking-id";
+  public static final String TEST_USER_ID = "u1";
   private final String TEST_AMENITY_ID = "test-amenity-id";
   private final String TEST_AMENITY_DESCRIPTION = "test-amenity-description";
   private final String TEST_COMMUNITY_ID = "test-community-id";
@@ -66,9 +76,13 @@ class AmenitySDJpaServiceTest {
   @Mock
   private CommunityService communityService;
   @Mock
-  private AmenityApiMapper amenityApiMapper;
-  @Mock
   private AmenityBookingItemRepository bookingItemRepository;
+  @Mock
+  private UserRepository userRepository;
+  @SpyBean
+  private AmenityApiMapper amenityApiMapper;
+  @SpyBean
+  private AmenityBookingMapper amenityBookingMapper;
 
   @InjectMocks
   private AmenitySDJpaService amenitySDJpaService;
@@ -328,6 +342,13 @@ class AmenitySDJpaServiceTest {
     verify(bookingItemRepository, never()).delete(any());
   }
 
+  private AmenityBookingDto getAmenityBookingDto() {
+    return AmenityBookingDto.builder()
+        .amenity(new com.myhome.controllers.dto.AmenityDto().withAmenityId(TEST_AMENITY_ID))
+        .user(new UserDto().withUserId(TEST_USER_ID))
+        .build();
+  }
+
   private AmenityDto getTestAmenityDto() {
     Long TEST_AMENITY_ENTITY_ID = 1L;
 
@@ -338,6 +359,10 @@ class AmenitySDJpaServiceTest {
         .description(TEST_AMENITY_DESCRIPTION)
         .price(TEST_AMENITY_PRICE)
         .communityId(TEST_COMMUNITY_ID);
+  }
+
+  private User getMockUser() {
+    return new User().withUserId(TEST_USER_ID).withName("User mock name").withEmail("user.mock@mail.com");
   }
 
   private Amenity getUpdatedCommunityAmenity() {
@@ -352,6 +377,8 @@ class AmenitySDJpaServiceTest {
 
   private AmenityBookingItem getTestBookingItem() {
     return new AmenityBookingItem()
-        .withAmenityBookingItemId(TEST_BOOKING_ID);
+        .withAmenityBookingItemId(TEST_BOOKING_ID)
+        .withAmenity(getUpdatedCommunityAmenity())
+        .withBookingUser(getMockUser());
   }
 }

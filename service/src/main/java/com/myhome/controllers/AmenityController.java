@@ -17,14 +17,21 @@
 package com.myhome.controllers;
 
 import com.myhome.api.AmenitiesApi;
+import com.myhome.controllers.dto.AmenityBookingDto;
+import com.myhome.controllers.dto.UserDto;
 import com.myhome.controllers.mapper.AmenityApiMapper;
+import com.myhome.controllers.mapper.AmenityBookingMapper;
 import com.myhome.domain.Amenity;
 import com.myhome.model.AddAmenityRequest;
 import com.myhome.model.AddAmenityResponse;
 import com.myhome.model.AmenityDto;
+import com.myhome.model.BookAmenityRequest;
+import com.myhome.model.BookAmenityResponse;
 import com.myhome.model.GetAmenityDetailsResponse;
 import com.myhome.model.UpdateAmenityRequest;
 import com.myhome.services.AmenityService;
+import com.myhome.services.UserService;
+import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +49,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class AmenityController implements AmenitiesApi {
 
   private final AmenityService amenitySDJpaService;
+
   private final AmenityApiMapper amenityApiMapper;
+  private final AmenityBookingMapper amenityBookingMapper;
 
   @Override
   public ResponseEntity<GetAmenityDetailsResponse> getAmenityDetails(
@@ -70,6 +79,17 @@ public class AmenityController implements AmenitiesApi {
         .map(amenityList -> new AddAmenityResponse().amenities(amenityList))
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
+  }
+
+  @Override
+  public ResponseEntity<BookAmenityResponse> addBookAnAmenity(
+      @PathVariable String amenityId,
+      @RequestBody BookAmenityRequest bookAmenityRequest) {
+    Optional<AmenityBookingDto> amenityBookingCreated = amenitySDJpaService.createAmenityBooking(
+        amenityBookingMapper.bookAmenityRequestToAmenityBookingDto(bookAmenityRequest));
+    return amenityBookingCreated
+        .map(a -> amenityBookingMapper.amenityBookingDtoToBookAmenityResponse(a))
+        .map(ResponseEntity::ok).orElse(ResponseEntity.status(HttpStatus.CONFLICT).build());
   }
 
   @Override

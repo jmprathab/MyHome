@@ -22,6 +22,7 @@ import com.myhome.model.GetAmenityDetailsResponse;
 import com.myhome.model.UpdateAmenityRequest;
 import java.util.Set;
 import org.mapstruct.Mapper;
+import org.mapstruct.Named;
 
 @Mapper
 public interface AmenityApiMapper {
@@ -30,8 +31,10 @@ public interface AmenityApiMapper {
 
   Set<GetAmenityDetailsResponse> amenitiesSetToAmenityDetailsResponseSet(Set<Amenity> amenity);
 
+  @Named("amenityDtoToAmenity")
   Amenity amenityDtoToAmenity(AmenityDto amenityDto);
 
+  @Named("amenityToAmenityDto")
   AmenityDto amenityToAmenityDto(Amenity amenity);
 
   AmenityDto updateAmenityRequestToAmenityDto(UpdateAmenityRequest request);

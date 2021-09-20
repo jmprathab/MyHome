@@ -16,19 +16,26 @@
 
 package com.myhome.services.springdatajpa;
 
+import com.myhome.controllers.dto.AmenityBookingDto;
+import com.myhome.controllers.exceptions.NotFoundException;
 import com.myhome.controllers.mapper.AmenityApiMapper;
+import com.myhome.controllers.mapper.AmenityBookingMapper;
 import com.myhome.domain.Amenity;
+import com.myhome.domain.AmenityBookingItem;
 import com.myhome.domain.Community;
+import com.myhome.domain.User;
 import com.myhome.model.AmenityDto;
 import com.myhome.repositories.AmenityBookingItemRepository;
 import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
+import com.myhome.repositories.UserRepository;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,10 +45,13 @@ import org.springframework.stereotype.Service;
 public class AmenitySDJpaService implements AmenityService {
 
   private final AmenityRepository amenityRepository;
+  private final AmenityBookingItemRepository amenityBookingItemRepository;
   private final CommunityRepository communityRepository;
+  private final UserRepository userRepository;
+  private final AmenityBookingItemRepository bookingRepository;
   private final CommunityService communityService;
   private final AmenityApiMapper amenityApiMapper;
-  private final AmenityBookingItemRepository bookingRepository;
+  private final AmenityBookingMapper amenityBookingMapper;
 
   @Override
   public Optional<List<AmenityDto>> createAmenities(Set<AmenityDto> amenities, String communityId) {
@@ -113,5 +123,40 @@ public class AmenitySDJpaService implements AmenityService {
           return true;
         })
         .orElse(false);
+  }
+
+  @Override
+  public Optional<AmenityBookingDto> createAmenityBooking(AmenityBookingDto amenityBookingDto)
+      throws NotFoundException {
+
+    Optional<Amenity> amenity =
+        amenityRepository.findByAmenityId(amenityBookingDto.getAmenity().getAmenityId());
+    Optional<User> user = userRepository.findByUserIdWithTokens(amenityBookingDto.getUser().getUserId());
+    AmenityBookingItem amenityBookingEntity = amenityBookingMapper
+        .amenityBookingDtoToAmenityBookingItem(amenityBookingDto);
+
+    if (amenity.isEmpty()) {
+      throw new NotFoundException(
+          String.format("Amenity with id %s not found",
+              amenityBookingDto.getAmenity().getAmenityId()));
+    }
+    amenity.map(a -> {
+      amenityBookingEntity.setAmenity(a);
+      return a;
+    }).orElseThrow(() -> new NotFoundException(
+        String.format("Amenity with id %s not found",
+            amenityBookingDto.getAmenity().getAmenityId())));
+
+    user.map(u -> {
+      amenityBookingEntity.setBookingUser(u);;
+      return u;
+    }).orElseThrow(
+        () -> new NotFoundException(
+        String.format("User with id %s not found",
+            amenityBookingDto.getUser().getUserId())));
+
+    amenityBookingEntity.setAmenityBookingItemId(UUID.randomUUID().toString());
+    return Optional.of(amenityBookingMapper.amenityBookingItemToAmenityBookingDto(
+        amenityBookingItemRepository.save(amenityBookingEntity)));
   }
 }

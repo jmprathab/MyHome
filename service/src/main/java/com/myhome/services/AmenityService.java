@@ -16,6 +16,8 @@
 
 package com.myhome.services;
 
+import com.myhome.controllers.dto.AmenityBookingDto;
+import com.myhome.controllers.exceptions.NotFoundException;
 import com.myhome.domain.Amenity;
 import com.myhome.model.AmenityDto;
 import java.util.List;
@@ -35,4 +37,9 @@ public interface AmenityService {
   boolean updateAmenity(AmenityDto updatedAmenityDto);
 
   boolean deleteBooking(String bookingId);
+
+  Optional<AmenityBookingDto> createAmenityBooking(AmenityBookingDto amenityBookingDto)
+      throws NotFoundException;
+
+
 }

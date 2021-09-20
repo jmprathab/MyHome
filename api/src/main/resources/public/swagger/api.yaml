@@ -61,6 +61,40 @@ paths:
           description: If password reset
         '400':
           description: If wrong password reset token
+  /amenities/{amenityId}/bookings:
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Amenities
+      description: Book an amenity
+      operationId: addBookAnAmenity
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/bookAmenityRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/bookAmenityRequest'
+      parameters:
+        - in: path
+          name: amenityId
+          required: true
+          schema:
+            type: string
+          description: Id of the amenity to book
+      responses:
+        '200':
+          description: If amenity add successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bookAmenityResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/bookAmenityResponse'
   /amenities/{amenityId}:
     get:
       security:
@@ -1040,6 +1074,38 @@ components:
           type: number
         communityId:
           type: string
+    bookAmenityRequest:
+      type: object
+      properties:
+        amenityId:
+          type: string
+        userId:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+          example: '2021-10-01T18:30:00Z'
+        endDate:
+          type: string
+          format: date-time
+          example: '2021-10-01T19:30:00Z'
+    bookAmenityResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        amenityId:
+          type: string
+        userId:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+          example: '2021-10-01T18:30:00Z'
+        endDate:
+          type: string
+          format: date-time
+          example: '2021-10-01T19:30:00Z'
     AddAmenityRequest:
       type: object
       properties:
