@@ -15,6 +15,8 @@ import helpers.TestUtils;
 import io.jsonwebtoken.lang.Assert;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,11 +29,13 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyIterable;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -69,52 +73,57 @@ class PaymentSDJpaServiceTest {
   @Test
   void schedulePayment() {
     //given
-    PaymentDto testPaymentDto = TestUtils.PaymentHelpers.getTestPaymentDto(TEST_PAYMENT_CHARGE,TEST_PAYMENT_TYPE,TEST_PAYMENT_DESCRIPTION,TEST_PAYMENT_RECURRING,TEST_PAYMENT_DUEDATE,TEST_PAYMENT_USER,TEST_PAYMENT_MEMBER);
+    PaymentDto basePaymentDto = TestUtils.PaymentHelpers.getTestPaymentDto(TEST_PAYMENT_CHARGE,TEST_PAYMENT_TYPE,TEST_PAYMENT_DESCRIPTION,TEST_PAYMENT_RECURRING,TEST_PAYMENT_DUEDATE,TEST_PAYMENT_USER,TEST_PAYMENT_MEMBER);
     Payment basePayment = new Payment();
 
     given(paymentMapper.paymentDtoToPayment(any(PaymentDto.class))).willReturn(basePayment);
-    given(paymentMapper.paymentToPaymentDto(any(Payment.class))).willReturn(testPaymentDto);
+    given(paymentMapper.paymentToPaymentDto(any(Payment.class))).willReturn(basePaymentDto);
 
     //when
-    PaymentDto paymentScheduled = paymentSDJpaService.schedulePayment(testPaymentDto);
+    PaymentDto testPaymentScheduled = paymentSDJpaService.schedulePayment(basePaymentDto);
 
     //then
-    verify(adminRepository).save(any()); //User gets associated with payment
-    verify(paymentRepository).save(any(Payment.class)); //Payment is persisted
-    Assert.notNull(paymentScheduled.getPaymentId()); //generation of payment ID
+    verify(adminRepository).save(any()); //Logic: User gets associated with payment and persisted
+    verify(paymentRepository).save(any(Payment.class)); //Logic: Payment is persisted
+    Assert.notNull(testPaymentScheduled.getPaymentId()); //Logic: generation of payment ID
+    assertEquals(basePaymentDto,testPaymentScheduled); //Completion: method returns what is expected
   }
 
   @Test
   void getPaymentDetails() {
     //when
-    PaymentDto testPaymentDto = TestUtils.PaymentHelpers.getTestPaymentDto(TEST_PAYMENT_CHARGE,TEST_PAYMENT_TYPE,TEST_PAYMENT_DESCRIPTION,TEST_PAYMENT_RECURRING,TEST_PAYMENT_DUEDATE,TEST_PAYMENT_USER,TEST_PAYMENT_MEMBER);
+    PaymentDto basePaymentDto = TestUtils.PaymentHelpers.getTestPaymentDto(TEST_PAYMENT_CHARGE,TEST_PAYMENT_TYPE,TEST_PAYMENT_DESCRIPTION,TEST_PAYMENT_RECURRING,TEST_PAYMENT_DUEDATE,TEST_PAYMENT_USER,TEST_PAYMENT_MEMBER);
+    Optional<PaymentDto> optionalOfTestPaymentDto = Optional.of(basePaymentDto);
     Payment basePayment = new Payment();
 
     given(paymentRepository.findByPaymentId(anyString())).willReturn(Optional.of(basePayment));
-    given(paymentMapper.paymentToPaymentDto(any(Payment.class))).willReturn(testPaymentDto);
+    given(paymentMapper.paymentToPaymentDto(any(Payment.class))).willReturn(basePaymentDto);
 
     //when
-    Optional<PaymentDto> paymentDetails = paymentSDJpaService.getPaymentDetails("any-id");
+    Optional<PaymentDto> testPaymentDetails = paymentSDJpaService.getPaymentDetails("any-id");
 
     //then
-    verify(paymentRepository).findByPaymentId(anyString()); //fetching data
-    assertTrue(paymentDetails.isPresent()); //element is present
+    verify(paymentRepository).findByPaymentId(anyString()); //Logic: fetching data
+    assertTrue(testPaymentDetails.isPresent()); //Logic: element is present
+    assertEquals(optionalOfTestPaymentDto,testPaymentDetails); //Completion: method returns what is expected
   }
 
   @Test
   void getHouseMember() {
     //given
-    HouseMember houseMember = TestUtils.HouseMemberHelpers.getTestHouseMember();
+    HouseMember baseHouseMember = TestUtils.HouseMemberHelpers.getTestHouseMember();
+    Optional<HouseMember> baseHouseMemberOptional = Optional.of(baseHouseMember);
 
     given(houseMemberRepository.findByMemberId(anyString())).willReturn(
-        Optional.of(houseMember));
+        Optional.of(baseHouseMember));
 
     //when
-    Optional<HouseMember> houseMemberOptional = paymentSDJpaService.getHouseMember("any-id");
+    Optional<HouseMember> testHouseMember = paymentSDJpaService.getHouseMember("any-id");
 
     //then
-    verify(houseMemberRepository).findByMemberId(anyString()); //fetching data
-    assertTrue(houseMemberOptional.isPresent()); //element is present
+    verify(houseMemberRepository).findByMemberId(anyString()); //Logic: fetching data
+    assertTrue(testHouseMember.isPresent()); //Completion: element is present
+    assertEquals(baseHouseMemberOptional,testHouseMember); //Completion: method returns what is expected
   }
 
   @Test
@@ -127,23 +136,27 @@ class PaymentSDJpaServiceTest {
     Payment paymentExample2 = TestUtils.PaymentHelpers.getTestPaymentNullFields();
     paymentExample2.setMember(new HouseMember().withMemberId(memberId2));
 
+    Set<Payment> expectedReturn1 = new HashSet<>(); expectedReturn1.add(paymentExample1);
+    given(paymentRepository.findAll(any(Example.class))).willReturn(Collections.singletonList((paymentExample1)));
+
     //when
-    Set<Payment> paymentExecution1 = paymentSDJpaService.getPaymentsByMember(memberId1);
+    Set<Payment> testPaymentByMember1 = paymentSDJpaService.getPaymentsByMember(memberId1);
     verify(paymentRepository).findAll(exampleCaptor.capture()); //verify and capture first execution
     Example<Payment> capturedParameter1 = exampleCaptor.getValue(); //Capturing the 'paymentExample' created by the method
     Payment capturedPaymentExample1 = capturedParameter1.getProbe();
 
-    Set<Payment> paymentExecution2 = paymentSDJpaService.getPaymentsByMember(memberId2);
+    Set<Payment> testPaymentByMember2 = paymentSDJpaService.getPaymentsByMember(memberId2);
     verify(paymentRepository,times(2)).findAll(exampleCaptor.capture()); //verify and capture second execution
     Example<Payment> capturedParameter2 = exampleCaptor.getValue(); // Capturing the 'paymentExample' created by the method
     Payment capturedPaymentExample2 = capturedParameter2.getProbe();
 
     //then
-    verify(paymentRepository,times(2)).findAll(any(Example.class)); //two executions of method
-    assertEquals(memberId1,capturedPaymentExample1.getMember().getMemberId()); //memberId from captured element is the same passed on as parameter in method
-    assertEquals(memberId2,capturedPaymentExample2.getMember().getMemberId()); //memberId from captured element is the same passed on as parameter in method
-    assertEquals(paymentExample1,capturedPaymentExample1); //fields in captured element should be as expected
-    assertEquals(paymentExample2,capturedPaymentExample2); //fields in captured element should be as expected
+    verify(paymentRepository,times(2)).findAll(any(Example.class)); //Logic: two executions of method
+    assertEquals(memberId1,capturedPaymentExample1.getMember().getMemberId()); //Logic: memberId from captured element is the same passed on as parameter in method
+    assertEquals(memberId2,capturedPaymentExample2.getMember().getMemberId()); //Logic: memberId from captured element is the same passed on as parameter in method
+    assertEquals(paymentExample1,capturedPaymentExample1); //Logic: fields in captured element should be as expected
+    assertEquals(paymentExample2,capturedPaymentExample2); //Logic: fields in captured element should be as expected
+    assertEquals(expectedReturn1,testPaymentByMember1); //Completion: method returns what is expected
   }
 
   @Test
@@ -158,22 +171,26 @@ class PaymentSDJpaServiceTest {
 
     Pageable pageable = Mockito.mock(Pageable.class);
 
+    Page<Payment> expectedReturn1 = new PageImpl<Payment>(Collections.singletonList(paymentExample1));
+    given(paymentRepository.findAll(any(Example.class),any(Pageable.class))).willReturn(expectedReturn1);
+
     //when
-    Page<Payment> paymentExecution1 = paymentSDJpaService.getPaymentsByAdmin(userId1,pageable);
+    Page<Payment> testPaymentByAdmin1 = paymentSDJpaService.getPaymentsByAdmin(userId1,pageable);
     verify(paymentRepository).findAll((Example<Payment>) exampleCaptor.capture(), any(Pageable.class)); //verify and capture first execution
     Example<Payment> capturedParameter1 = exampleCaptor.getValue(); //Capturing the 'paymentExample' created by method
     Payment capturedPaymentExample1 = capturedParameter1.getProbe();
 
-    Page<Payment> paymentExecution2 = paymentSDJpaService.getPaymentsByAdmin(userId2,pageable);
+    Page<Payment> testPaymentByAdmin2 = paymentSDJpaService.getPaymentsByAdmin(userId2,pageable);
     verify(paymentRepository,times(2)).findAll((Example<Payment>) exampleCaptor.capture(), any(Pageable.class)); //verify and capture first execution
     Example<Payment> capturedParameter2 = exampleCaptor.getValue(); // Capturing the 'paymentExample' created by method
     Payment capturedPaymentExample2 = capturedParameter2.getProbe();
 
     //then
-    verify(paymentRepository,times(2)).findAll(any(Example.class),any(Pageable.class)); //assert two executions of method
-    assertEquals(userId1,capturedPaymentExample1.getAdmin().getUserId()); //userId from captured element is the same passed on as parameter in method
-    assertEquals(userId2,capturedPaymentExample2.getAdmin().getUserId()); //userId from captured element is the same passed on as parameter in method
-    assertEquals(paymentExample1,capturedPaymentExample1); //fields in captured element should be as expected
-    assertEquals(paymentExample2,capturedPaymentExample2); //fields in captured element should be as expected
+    verify(paymentRepository,times(2)).findAll(any(Example.class),any(Pageable.class)); //Logic: two executions of method
+    assertEquals(userId1,capturedPaymentExample1.getAdmin().getUserId()); //Logic: userId from captured element is the same passed on as parameter in method
+    assertEquals(userId2,capturedPaymentExample2.getAdmin().getUserId()); //Logic: userId from captured element is the same passed on as parameter in method
+    assertEquals(paymentExample1,capturedPaymentExample1); //Logic: fields in captured element should be as expected
+    assertEquals(paymentExample2,capturedPaymentExample2); //Logic: fields in captured element should be as expected
+    assertEquals(expectedReturn1,testPaymentByAdmin1); //Completion: method returns what is expected
   }
 }
