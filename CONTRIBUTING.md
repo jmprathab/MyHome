@@ -1,6 +1,6 @@
 # Contributing
 
-Firstly, thanks for taking time to contribute to this reporitory! People like you power this open source community.
+Firstly, thanks for taking time to contribute to this repository! People like you power this open source community.
 
 Please note we have a [code of conduct](CODE_OF_CONDUCT.md), please follow it in all your interactions with the project.
 
