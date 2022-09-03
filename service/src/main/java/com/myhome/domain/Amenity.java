@@ -17,16 +17,21 @@
 package com.myhome.domain;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.With;
 
 @Entity
@@ -35,12 +40,21 @@ import lombok.With;
 @Getter
 @Setter
 @With
-@NamedEntityGraph(
-    name = "Amenity.community",
-    attributeNodes = {
-        @NamedAttributeNode("community"),
-    }
-)
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "Amenity.community",
+        attributeNodes = {
+            @NamedAttributeNode("community"),
+        }
+    ),
+    @NamedEntityGraph(
+        name = "Amenity.bookingItems",
+        attributeNodes = {
+            @NamedAttributeNode("bookingItems"),
+        }
+    )
+})
+
 public class Amenity extends BaseEntity {
   @Column(nullable = false, unique = true)
   private String amenityId;
@@ -54,4 +68,7 @@ public class Amenity extends BaseEntity {
   private Community community;
   @ManyToOne
   private CommunityHouse communityHouse;
+  @ToString.Exclude
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "amenity")
+  private Set<AmenityBookingItem> bookingItems = new HashSet<>();
 }
