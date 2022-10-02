@@ -55,6 +55,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -68,6 +69,7 @@ class PaymentControllerTest {
   private static final String TEST_DESCRIPTION = "This is your excess water bill";
   private static final boolean TEST_RECURRING = false;
   private static final BigDecimal TEST_CHARGE = BigDecimal.valueOf(50.00);
+  private static final boolean TEST_PAID = false;
   private static final String TEST_DUE_DATE = "2020-08-15";
   private static final String TEST_MEMBER_NAME = "Test Name";
   private static final String TEST_COMMUNITY_NAME = "Test Community";
@@ -100,7 +102,7 @@ class PaymentControllerTest {
   private PaymentController paymentController;
 
   @BeforeEach
-  private void init() {
+  public void init() {
     MockitoAnnotations.initMocks(this);
   }
 
@@ -171,7 +173,7 @@ class PaymentControllerTest {
     community.getAdmins().add(admin);
     admin.getCommunities().add(community);
     return new Payment(TEST_ID, TEST_CHARGE, TEST_TYPE, TEST_DESCRIPTION, TEST_RECURRING,
-        LocalDate.parse(TEST_DUE_DATE, DateTimeFormatter.ofPattern("yyyy-MM-dd")), admin,
+        LocalDate.parse(TEST_DUE_DATE, DateTimeFormatter.ofPattern("yyyy-MM-dd")), TEST_PAID, admin,
         new HouseMember(TEST_MEMBER_ID, new HouseMemberDocument(), TEST_MEMBER_NAME,
             new CommunityHouse()));
   }
@@ -594,5 +596,32 @@ class PaymentControllerTest {
     verify(communityService).getCommunityDetailsByIdWithAdmins(TEST_ID);
     verifyNoInteractions(paymentService);
     verifyNoInteractions(paymentApiMapper);
+  }
+
+  @Test
+  void shouldMarkPaymentAsPaidSuccessfull() {
+    //given
+    PaymentDto paymentDto = createTestPaymentDto();
+    given(paymentService.getPaymentDetails(TEST_ID)).willReturn(Optional.of(paymentDto));
+
+    //when
+    ResponseEntity<Void> responseEntity =
+        paymentController.markPaymentAsPaid(paymentDto.getPaymentId());
+
+    //then
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+  }
+
+  @Test
+  void shouldNotMarkPaymentAsPaidAndThrowExceptionIfPaymentIdNotExists() {
+    //given
+    given(paymentService.getPaymentDetails(TEST_ID)).willReturn(Optional.empty());
+
+    //when
+    Exception exception =
+        assertThrows(RuntimeException.class, () -> paymentController.markPaymentAsPaid(TEST_ID));
+
+    //then
+    assertThat(exception.getMessage()).isEqualTo("The paymentId provided is invalid");
   }
 }

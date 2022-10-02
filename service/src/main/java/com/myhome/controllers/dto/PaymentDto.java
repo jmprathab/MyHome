@@ -26,12 +26,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PaymentDto {
+  private Long id;
   private String paymentId;
   private BigDecimal charge;
   private String type;
   private String description;
   private boolean recurring;
   private String dueDate;
+  private boolean paid;
   private UserDto admin;
   private HouseMemberDto member;
 }

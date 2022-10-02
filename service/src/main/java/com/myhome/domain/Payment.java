@@ -50,6 +50,8 @@ public class Payment extends BaseEntity {
   private boolean recurring;
   @JsonFormat(pattern = "yyyy-MM-dd")
   private LocalDate dueDate;
+  @Column(nullable=false)
+  private boolean paid;
   @ManyToOne(fetch = FetchType.LAZY)
   private User admin;
   @ManyToOne(fetch = FetchType.LAZY)

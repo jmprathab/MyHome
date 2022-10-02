@@ -921,6 +921,26 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/SchedulePaymentResponse'
+  /payments/{paymentId}/paid:
+    patch:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Payments
+      description: Mark payment as paid
+      operationId: markPaymentAsPaid
+      parameters:
+        - in: path
+          name: paymentId
+          schema:
+            type: string
+          required: true
+          description: Payment ID
+      responses:
+        '201':
+          description: Is payment is marked as paid
+        '400':
+          description: Bad Request. Payment ID is invalid.
   /payments/{paymentId}:
     get:
       security:
@@ -1365,6 +1385,9 @@ components:
           type: number
         dueDate:
           type: string
+        paid:
+          type: boolean
+          description: Indicates if the payment has been paid or not.
     ListMemberPaymentsResponse:
       type: object
       properties:
@@ -1384,6 +1407,9 @@ components:
           type: number
         dueDate:
           type: string
+        paid:
+          type: boolean
+          description: Indicates if the payment has been paid or not.
     ListAdminPaymentsResponse:
       type: object
       properties:
