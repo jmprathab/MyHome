@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -83,10 +82,11 @@ public class TestUtils {
           .limit(count)
           .collect(Collectors.toSet());
     }
+
     public static HouseMember getTestHouseMember() {
       return new HouseMember()
-              .withMemberId(generateUniqueId())
-              .withName("default-house-member-name");
+          .withMemberId(generateUniqueId())
+          .withName("default-house-member-name");
     }
   }
 
@@ -119,7 +119,8 @@ public class TestUtils {
       return testCommunity;
     }
 
-    public static Community getTestCommunity(String communityId, String communityName, String communityDistrict, int adminsCount, int housesCount) {
+    public static Community getTestCommunity(String communityId, String communityName,
+        String communityDistrict, int adminsCount, int housesCount) {
       Community testCommunity = new Community(
           new HashSet<>(),
           new HashSet<>(),
@@ -158,7 +159,6 @@ public class TestUtils {
           .limit(count)
           .collect(Collectors.toSet());
     }
-
   }
 
   public static class UserHelpers {
@@ -203,7 +203,8 @@ public class TestUtils {
     }
 
     public static EmailTemplateLocalizationProperties getTestLocalizationMailProperties() {
-      EmailTemplateLocalizationProperties testTemplatesLocalization = new EmailTemplateLocalizationProperties();
+      EmailTemplateLocalizationProperties testTemplatesLocalization =
+          new EmailTemplateLocalizationProperties();
       testTemplatesLocalization.setPath("test path");
       testTemplatesLocalization.setEncoding("test encodig");
       testTemplatesLocalization.setCacheSeconds(0);
@@ -213,7 +214,8 @@ public class TestUtils {
 
   public static class PaymentHelpers {
 
-    public static PaymentDto getTestPaymentDto(BigDecimal charge, String type, String description, boolean recurring, LocalDate dueDate, UserDto admin, HouseMemberDto member) {
+    public static PaymentDto getTestPaymentDto(BigDecimal charge, String type, String description,
+        boolean recurring, LocalDate dueDate, UserDto admin, HouseMemberDto member) {
 
       return PaymentDto.builder()
           .charge(charge)
@@ -225,6 +227,20 @@ public class TestUtils {
           .member(member)
           .build();
     }
+
+    public static Payment getTestPayment(BigDecimal charge, String type, String description,
+        boolean recurring, LocalDate dueDate, User admin, HouseMember member) {
+      Payment payment = new Payment();
+      payment.setCharge(charge);
+      payment.setType(type);
+      payment.setDescription(description);
+      payment.setRecurring(recurring);
+      payment.setDueDate(dueDate);
+      payment.setAdmin(admin);
+      payment.setMember(member);
+      return payment;
+    }
+
     public static Payment getTestPaymentNullFields() {
       //Only 'recurring' field will be not null, but false
       return new Payment(
@@ -234,6 +250,7 @@ public class TestUtils {
           null,
           false,
           null,
+          false,
           null,
           null);
     }

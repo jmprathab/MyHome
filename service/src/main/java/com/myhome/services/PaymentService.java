@@ -37,4 +37,6 @@ public interface PaymentService {
   Page<Payment> getPaymentsByAdmin(String adminId, Pageable pageable);
 
   Optional<HouseMember> getHouseMember(String memberId);
+
+  void markPaymentAsPaid(PaymentDto paymentDto);
 }

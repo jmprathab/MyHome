@@ -58,7 +58,7 @@ public class PaymentController implements PaymentsApi {
 
   @Override
   public ResponseEntity<SchedulePaymentResponse> schedulePayment(@Valid
-      SchedulePaymentRequest request) {
+  SchedulePaymentRequest request) {
     log.trace("Received schedule payment request");
 
     HouseMember houseMember = paymentService.getHouseMember(request.getMemberId())
@@ -96,6 +96,14 @@ public class PaymentController implements PaymentsApi {
         .map(schedulePaymentApiMapper::paymentToSchedulePaymentResponse)
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  @Override
+  public ResponseEntity<Void> markPaymentAsPaid(String paymentId) {
+    PaymentDto paymentDto = paymentService.getPaymentDetails(paymentId)
+        .orElseThrow(() -> new RuntimeException("The paymentId provided is invalid"));
+    paymentService.markPaymentAsPaid(paymentDto);
+    return ResponseEntity.ok().build();
   }
 
   @Override

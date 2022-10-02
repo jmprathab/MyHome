@@ -34,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +67,13 @@ public class PaymentSDJpaService implements PaymentService {
   }
 
   @Override
+  public void markPaymentAsPaid(PaymentDto paymentDto) {
+    paymentDto.setPaid(true);
+    Payment payment = paymentMapper.paymentDtoToPayment(paymentDto);
+    paymentRepository.save(payment);
+  }
+
+  @Override
   public Set<Payment> getPaymentsByMember(String memberId) {
     ExampleMatcher ignoringMatcher = ExampleMatcher.matchingAll()
         .withMatcher("memberId",
@@ -76,7 +82,7 @@ public class PaymentSDJpaService implements PaymentService {
             "admin");
 
     Example<Payment> paymentExample =
-        Example.of(new Payment(null, null, null, null, false, null, null,
+        Example.of(new Payment(null, null, null, null, false, null, false, null,
                 new HouseMember().withMemberId(memberId)),
             ignoringMatcher);
 
@@ -93,7 +99,8 @@ public class PaymentSDJpaService implements PaymentService {
 
     Example<Payment> paymentExample =
         Example.of(
-            new Payment(null, null, null, null, false, null, new User().withUserId(adminId), null),
+            new Payment(null, null, null, null, false, null, false, new User().withUserId(adminId),
+                null),
             ignoringMatcher);
 
     return paymentRepository.findAll(paymentExample, pageable);

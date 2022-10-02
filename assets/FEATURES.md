@@ -1,19 +1,19 @@
 # MyHome Requirements Elicitation
 
 - [MyHome Requirements Elicitation](#myhome-requirements-elicitation)
-  * [Description](#description)
-  * [User Management](#user-management)
-  * [Community Management ✅](#community-management)
-  * [House Management ✅](#house-management)
-  * [Payment Management](#payment-management)
-  * [Amenity Management ✅](#amenity-management)
-  * [Amenity Booking Management](#amenity-booking-management)
-  * [House Member Document Management ✅](#house-member-document-management)
-  * [Application Deployment](#application-deployment)
-  * [Report Generation](#report-generation)
-  * [Troubleshooting/Prepare for Release](#troubleshooting-prepare-for-release)
-  * [Frontend](#frontend)
-  * [Future Plans](#future-plans)
+    * [Description](#description)
+    * [User Management](#user-management)
+    * [Community Management ✅](#community-management)
+    * [House Management ✅](#house-management)
+    * [Payment Management](#payment-management)
+    * [Amenity Management ✅](#amenity-management)
+    * [Amenity Booking Management](#amenity-booking-management)
+    * [House Member Document Management ✅](#house-member-document-management)
+    * [Application Deployment](#application-deployment)
+    * [Report Generation](#report-generation)
+    * [Troubleshooting/Prepare for Release](#troubleshooting-prepare-for-release)
+    * [Frontend](#frontend)
+    * [Future Plans](#future-plans)
 
 ## Description
 
@@ -49,7 +49,7 @@ MyHome is an application which helps people to manage their apartment.
 | ---------------------------------- | ------------------------------------------------------------ | ----- |
 | Schedule payment for house members | Community admins should be able to schedule payments for a house |       |
 | Schedule recurring payments        | Community admins should be able to schedule recurring payments for a house |       |
-| Marking payments as complete       | House members should be able to mark payments as paid.       |       |
+| Marking payments as complete       | House members should be able to mark payments as paid.       |     ✅  |
 
 ## Amenity Management ✅
 
