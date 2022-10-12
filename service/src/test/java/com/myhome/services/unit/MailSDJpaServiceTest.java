@@ -7,7 +7,6 @@ import com.myhome.services.springdatajpa.MailSDJpaService;
 import helpers.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -24,7 +23,6 @@ import javax.mail.internet.MimeMessage;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 
@@ -59,7 +57,7 @@ class MailSDJpaServiceTest {
     // given
     MimeMessage mimeMessage = new MimeMessage((Session)null);
     User user = getTestUser();
-    given(emailTemplateEngine.process(eq(""), any(Context.class)))
+    given(emailTemplateEngine.process(any(String.class), any(Context.class)))
         .willReturn("HTML");
     given(mailSender.createMimeMessage())
         .willReturn(mimeMessage);
@@ -77,7 +75,7 @@ class MailSDJpaServiceTest {
     // given
     MimeMessage mimeMessage = new MimeMessage((Session)null);
     User user = getTestUser();
-    given(emailTemplateEngine.process(eq(""), any(Context.class)))
+    given(emailTemplateEngine.process(any(String.class), any(Context.class)))
         .willReturn("HTML");
     given(mailSender.createMimeMessage())
         .willReturn(mimeMessage);
@@ -95,7 +93,7 @@ class MailSDJpaServiceTest {
     // given
     MimeMessage mimeMessage = new MimeMessage((Session)null);
     User user = getTestUser();
-    given(emailTemplateEngine.process(eq(""), any(Context.class)))
+    given(emailTemplateEngine.process(any(String.class), any(Context.class)))
         .willReturn("HTML");
     given(mailSender.createMimeMessage())
         .willReturn(mimeMessage);
@@ -115,7 +113,7 @@ class MailSDJpaServiceTest {
     token.setToken("token");
     MimeMessage mimeMessage = new MimeMessage((Session)null);
     User user = getTestUser();
-    given(emailTemplateEngine.process(eq(""), any(Context.class)))
+    given(emailTemplateEngine.process(any(String.class), any(Context.class)))
         .willReturn("HTML");
     given(mailSender.createMimeMessage())
         .willReturn(mimeMessage);
