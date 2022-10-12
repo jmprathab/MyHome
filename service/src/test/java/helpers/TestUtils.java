@@ -1,7 +1,5 @@
 package helpers;
 
-import com.myhome.configuration.properties.mail.EmailTemplateLocalizationProperties;
-import com.myhome.configuration.properties.mail.EmailTemplateProperties;
 import com.myhome.configuration.properties.mail.MailProperties;
 import com.myhome.controllers.dto.PaymentDto;
 import com.myhome.controllers.dto.UserDto;
@@ -19,7 +17,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -184,7 +181,7 @@ public class TestUtils {
     public static MailProperties getTestMailProperties() {
       MailProperties testMailProperties = new MailProperties();
       testMailProperties.setHost("test host");
-      testMailProperties.setUsername("test username");
+      testMailProperties.setUsername("testUsername");
       testMailProperties.setPassword("test password");
       testMailProperties.setPort(0);
       testMailProperties.setProtocol("test protocol");
@@ -193,22 +190,6 @@ public class TestUtils {
       return testMailProperties;
     }
 
-    public static EmailTemplateProperties getTestMailTemplateProperties() {
-      EmailTemplateProperties testMailTemplate = new EmailTemplateProperties();
-      testMailTemplate.setPath("test path");
-      testMailTemplate.setEncoding("test encoding");
-      testMailTemplate.setMode("test mode");
-      testMailTemplate.setCache(false);
-      return testMailTemplate;
-    }
-
-    public static EmailTemplateLocalizationProperties getTestLocalizationMailProperties() {
-      EmailTemplateLocalizationProperties testTemplatesLocalization = new EmailTemplateLocalizationProperties();
-      testTemplatesLocalization.setPath("test path");
-      testTemplatesLocalization.setEncoding("test encodig");
-      testTemplatesLocalization.setCacheSeconds(0);
-      return testTemplatesLocalization;
-    }
   }
 
   public static class PaymentHelpers {
