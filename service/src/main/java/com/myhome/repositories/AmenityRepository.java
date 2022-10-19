@@ -17,7 +17,10 @@
 package com.myhome.repositories;
 
 import com.myhome.domain.Amenity;
+
+import java.util.List;
 import java.util.Optional;
+
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +33,8 @@ public interface AmenityRepository extends JpaRepository<Amenity, Long> {
   Optional<Amenity> findByAmenityIdWithCommunity(@Param("amenityId") String amenityId);
 
   Optional<Amenity> findByAmenityId(String amenityId);
+
+//  List<Amenity> findAmenitiesByAmenityIdAAndB
+
+
 }

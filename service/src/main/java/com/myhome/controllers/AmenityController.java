@@ -18,30 +18,39 @@ package com.myhome.controllers;
 
 import com.myhome.api.AmenitiesApi;
 import com.myhome.controllers.mapper.AmenityApiMapper;
+import com.myhome.controllers.mapper.BookingApiMapper;
 import com.myhome.domain.Amenity;
-import com.myhome.model.AddAmenityRequest;
-import com.myhome.model.AddAmenityResponse;
-import com.myhome.model.AmenityDto;
-import com.myhome.model.GetAmenityDetailsResponse;
-import com.myhome.model.UpdateAmenityRequest;
+import com.myhome.domain.AmenityBookingItem;
+import com.myhome.model.*;
 import com.myhome.services.AmenityService;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.HashSet;
 import java.util.Set;
 import javax.validation.Valid;
+
+import com.myhome.services.BookingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 public class AmenityController implements AmenitiesApi {
 
+
+
   private final AmenityService amenitySDJpaService;
   private final AmenityApiMapper amenityApiMapper;
+
 
   @Override
   public ResponseEntity<GetAmenityDetailsResponse> getAmenityDetails(
@@ -51,6 +60,7 @@ public class AmenityController implements AmenitiesApi {
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
+
 
   @Override
   public ResponseEntity<Set<GetAmenityDetailsResponse>> listAllAmenities(
@@ -83,7 +93,7 @@ public class AmenityController implements AmenitiesApi {
 
   @Override
   public ResponseEntity<Void> updateAmenity(@PathVariable String amenityId,
-      @Valid @RequestBody UpdateAmenityRequest request) {
+                                            @Valid @RequestBody UpdateAmenityRequest request) {
     AmenityDto amenityDto = amenityApiMapper.updateAmenityRequestToAmenityDto(request);
     amenityDto.setAmenityId(amenityId);
     boolean isUpdated = amenitySDJpaService.updateAmenity(amenityDto);
@@ -93,4 +103,6 @@ public class AmenityController implements AmenitiesApi {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
   }
+
+
 }

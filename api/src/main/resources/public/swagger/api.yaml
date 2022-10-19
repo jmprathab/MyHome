@@ -158,6 +158,44 @@ paths:
           description: If booking deleted
         '404':
           description: If params are invalid
+
+  /amenities/{amenityId}/bookings:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Bookings
+      description: Get all bookings for an amenity with an optional time range
+      operationId: getBookingsForAmenityWithOptionalTimeRange
+      parameters:
+        - in: path
+          name: amenityId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: start
+          required: true
+          description: Start time
+          schema:
+            type: string
+        - in: query
+          name: end
+          required: true
+          description: End time
+          schema:
+            type: string
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: if bookings are returned
+        '404':
+          description: if params are invalid
+
   /communities/{communityId}/amenities:
     get:
       security:
@@ -1079,6 +1117,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AmenityDto'
+    GetBookingDetailsResponse:
+      type: object
+      properties:
+        amenityBookingItemId:
+          type: string
+        bookingStartDate:
+          type: object
+        bookingEndDate:
+          type: object
+#        amenity:
+#          type: string
+
     CreateUserRequest:
       type: object
       required:

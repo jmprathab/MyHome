@@ -2,10 +2,16 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.repositories.AmenityBookingItemRepository;
+import com.myhome.repositories.AmenityRepository;
 import com.myhome.services.BookingService;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,4 +36,11 @@ public class BookingSDJpaService implements BookingService {
       }
     }).orElse(false);
   }
+
+  @Override
+  public Set<AmenityBookingItem> getAllBookingForAmenityBetween(String amenityId, LocalDateTime start, LocalDateTime end,
+                                                                Pageable pageable) {
+    return new HashSet<>(bookingRepository.findAllByAmenityIdAndTimeRangeBetween(amenityId, start, end, pageable));
+  }
+
 }
