@@ -18,12 +18,16 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.controllers.mapper.AmenityApiMapper;
 import com.myhome.domain.Amenity;
+import com.myhome.domain.AmenityBookingItem;
 import com.myhome.domain.Community;
 import com.myhome.model.AmenityDto;
 import com.myhome.repositories.AmenityRepository;
 import com.myhome.repositories.CommunityRepository;
 import com.myhome.services.AmenityService;
 import com.myhome.services.CommunityService;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -102,4 +106,6 @@ public class AmenitySDJpaService implements AmenityService {
             .orElse(null))
         .map(amenityRepository::save).isPresent();
   }
+
+
 }

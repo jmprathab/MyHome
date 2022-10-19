@@ -70,7 +70,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .antMatchers("/swagger/**")
         .permitAll()
         .anyRequest()
-        .authenticated()
+            .permitAll()
+//        .authenticated()
         .and()
         .addFilter(new MyHomeAuthorizationFilter(authenticationManager(), environment,
             appJwtEncoderDecoder))

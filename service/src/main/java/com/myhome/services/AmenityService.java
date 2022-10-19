@@ -17,7 +17,10 @@
 package com.myhome.services;
 
 import com.myhome.domain.Amenity;
+import com.myhome.domain.AmenityBookingItem;
 import com.myhome.model.AmenityDto;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -33,4 +36,6 @@ public interface AmenityService {
   Set<Amenity> listAllAmenities(String communityId);
 
   boolean updateAmenity(AmenityDto updatedAmenityDto);
+
+
 }

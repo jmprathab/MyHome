@@ -158,6 +158,58 @@ paths:
           description: If booking deleted
         '404':
           description: If params are invalid
+
+  /amenities/{amenityId}/bookings:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Bookings
+      description: Get all bookings for an amenity with an optional time range
+      operationId: getBookingsForAmenityWithOptionalTimeRange
+      parameters:
+        - in: path
+          name: amenityId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: start
+          required: false
+          description: Start time
+          schema:
+            type: string
+        - in: query
+          name: end
+          required: false
+          description: End time
+          schema:
+            type: string
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: return list of an amenity's bookings within a time range
+          content:
+            application/json:
+              schema:
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/GetBookingDetailsResponse'
+            application/xml:
+              schema:
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/GetBookingDetailsResponse'
+        '404':
+          description: if params are invalid
+
+
   /communities/{communityId}/amenities:
     get:
       security:
@@ -1079,6 +1131,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AmenityDto'
+    GetBookingDetailsResponse:
+      type: object
+      properties:
+        amenityBookingItemId:
+          type: string
+        bookingStartDate:
+          type: string
+        bookingEndDate:
+          type: string
+
     CreateUserRequest:
       type: object
       required:
