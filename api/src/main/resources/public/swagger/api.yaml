@@ -192,7 +192,20 @@ paths:
             $ref: '#/components/schemas/Pageable'
       responses:
         '200':
-          description: if bookings are returned
+          description: return list of an amenity's bookings within a time range
+          content:
+            application/json:
+              schema:
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/GetBookingDetailsResponse'
+            application/xml:
+              schema:
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/GetBookingDetailsResponse'
         '404':
           description: if params are invalid
 

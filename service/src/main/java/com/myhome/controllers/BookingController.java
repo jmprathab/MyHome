@@ -2,7 +2,7 @@ package com.myhome.controllers;
 
 import com.myhome.api.BookingsApi;
 import com.myhome.controllers.mapper.BookingApiMapper;
-import com.myhome.controllers.utils.StringTimeFormatConverter;
+import com.myhome.utils.StringTimeFormatConverter;
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.model.GetBookingDetailsResponse;
 import com.myhome.services.BookingService;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAccessor;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,7 +42,7 @@ public class BookingController implements BookingsApi {
 
 
   @Override
-  public ResponseEntity getBookingsForAmenityWithOptionalTimeRange(@PathVariable(name = "amenityId") String amenityId,
+  public ResponseEntity<Set<GetBookingDetailsResponse>> getBookingsForAmenityWithOptionalTimeRange(@PathVariable(name = "amenityId") String amenityId,
                                                                       @RequestParam String start, @RequestParam String end,
                                                                       @PageableDefault Pageable pageable) {
     Set<GetBookingDetailsResponse> result = new HashSet<>();

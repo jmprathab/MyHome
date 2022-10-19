@@ -1,4 +1,4 @@
-package com.myhome.controllers.utils;
+package com.myhome.utils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
