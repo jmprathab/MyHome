@@ -19,4 +19,6 @@ public interface AmenityBookingItemRepository extends JpaRepository<AmenityBooki
         "and  (b.bookingStartDate <= :end  or b.bookingEndDate <= :end ))")
   List<AmenityBookingItem> findAllByAmenityIdAndTimeRangeBetween(@Param("id")String id, @Param("start")LocalDateTime start,
                                                                  @Param("end")LocalDateTime end, Pageable pageable);
+
+  List<AmenityBookingItem> findAmenityBookingItemsByAmenity_AmenityId(String amenityId, Pageable pageable);
 }

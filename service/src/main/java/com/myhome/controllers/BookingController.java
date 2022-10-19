@@ -43,20 +43,22 @@ public class BookingController implements BookingsApi {
 
   @Override
   public ResponseEntity<Set<GetBookingDetailsResponse>> getBookingsForAmenityWithOptionalTimeRange(@PathVariable(name = "amenityId") String amenityId,
-                                                                      @RequestParam String start, @RequestParam String end,
+                                                                      @RequestParam(defaultValue = " ") String start,
+                                                                      @RequestParam(defaultValue = " ") String end,
                                                                       @PageableDefault Pageable pageable) {
     Set<GetBookingDetailsResponse> result = new HashSet<>();
+    Set<AmenityBookingItem> items;
 
-    LocalDateTime startDate = StringTimeFormatConverter.stringToLocalDateTime(start);
-    LocalDateTime endDate = StringTimeFormatConverter.stringToLocalDateTime(end);
-
-    Set<AmenityBookingItem> items = bookingSDJpaService.getAllBookingForAmenityBetween(amenityId, startDate, endDate, pageable);
-    if (items.isEmpty()){
-      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    if(start.isBlank() || end.isBlank()){
+      items = bookingSDJpaService.getAllBookingForAmenity(amenityId, pageable);
+    }else {
+      LocalDateTime startDate = StringTimeFormatConverter.stringToLocalDateTime(start);
+      LocalDateTime endDate = StringTimeFormatConverter.stringToLocalDateTime(end);
+      items = bookingSDJpaService.getAllBookingForAmenityBetween(amenityId, startDate, endDate, pageable);
     }
     for(AmenityBookingItem item: items){
       result.add(bookingApiMapper.bookingToBookingDetailsResponse(item));
     }
-    return ResponseEntity.ok(result);
+    return items.isEmpty()? ResponseEntity.status(HttpStatus.NO_CONTENT).build() : ResponseEntity.ok(result);
   }
 }

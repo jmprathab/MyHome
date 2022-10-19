@@ -2,7 +2,6 @@ package com.myhome.services.springdatajpa;
 
 import com.myhome.domain.AmenityBookingItem;
 import com.myhome.repositories.AmenityBookingItemRepository;
-import com.myhome.repositories.AmenityRepository;
 import com.myhome.services.BookingService;
 
 import java.time.LocalDateTime;
@@ -41,6 +40,11 @@ public class BookingSDJpaService implements BookingService {
   public Set<AmenityBookingItem> getAllBookingForAmenityBetween(String amenityId, LocalDateTime start, LocalDateTime end,
                                                                 Pageable pageable) {
     return new HashSet<>(bookingRepository.findAllByAmenityIdAndTimeRangeBetween(amenityId, start, end, pageable));
+  }
+
+  @Override
+  public Set<AmenityBookingItem> getAllBookingForAmenity(String amenityId, Pageable pageable) {
+    return new HashSet<>(bookingRepository.findAmenityBookingItemsByAmenity_AmenityId(amenityId, pageable));
   }
 
 }

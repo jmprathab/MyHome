@@ -175,13 +175,13 @@ paths:
             type: string
         - in: query
           name: start
-          required: true
+          required: false
           description: Start time
           schema:
             type: string
         - in: query
           name: end
-          required: true
+          required: false
           description: End time
           schema:
             type: string
@@ -208,6 +208,7 @@ paths:
                   $ref: '#/components/schemas/GetBookingDetailsResponse'
         '404':
           description: if params are invalid
+
 
   /communities/{communityId}/amenities:
     get:
@@ -1136,11 +1137,9 @@ components:
         amenityBookingItemId:
           type: string
         bookingStartDate:
-          type: object
+          type: string
         bookingEndDate:
-          type: object
-#        amenity:
-#          type: string
+          type: string
 
     CreateUserRequest:
       type: object
