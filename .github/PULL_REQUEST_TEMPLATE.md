@@ -12,7 +12,7 @@ parameters and also adding a default email and password variable.
 <!-- Why is this change required? What problem does it solve? -->
 <!-- If it fixes an open issue, please link to the issue here. -->
 This change was required to fix the open issue of the MyHome repository, and it resolved the 
-issue of incompleteness and incorrectness of the postman collection.
+issue of incompleteness and incorrectness of the postman collection. https://github.com/jmprathab/MyHome/issues/260
 
 ## 🧪 How Has This Been Tested?
 
