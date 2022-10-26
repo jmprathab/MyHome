@@ -125,7 +125,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\" : \"testuser@myhome.com\",\n\t\"password\" : \"testpassword\"\n}",
+							"raw": "{\n\t\"email\" : \"test@test.com\",\n\t\"password\" : \"testtest\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -527,8 +527,30 @@
 						{
 							"name": "List all amenities in a particular community",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{AUTH_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
-								"header": []
+								"header": [],
+								"url": {
+									"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/amenities",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"communities",
+										"{{COMMUNITY_ID}}",
+										"amenities"
+									]
+								}
 							},
 							"response": []
 						}
