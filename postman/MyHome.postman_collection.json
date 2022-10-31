@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "f6220240-de74-4e4f-9916-6aa1cf6ad5d8",
+		"_postman_id": "3c85fc87-412a-4093-b9da-41a3f439e7d0",
 		"name": "MyHome",
-		"description": "# MyHome API Guide\r\n\r\n## Usage\r\n\r\nTo use any API except **Create User and Login User**, you'll need to obtain Authentication Token.\r\n\r\nTo get Authentication Token.\r\n\r\n1. First Create New User with **Create User API**.\r\n2. Login with New user with **New User API**. Login will obtain New Token for user.\r\n\r\nNow you can use other APIs.\r\n\r\n\r\n## Variables\r\n\r\nAll APIs are configured with Postman variables to keep consistensy for static and dynamic values.\r\n\r\n1. **ENV_URL**: This variable hold value for Enviroment URL. e.g. 127.0.0.1:8080 (Default to local environment, with 8080 port), or example.com.\r\n2. **AUTH_TOKEN**: This variable hold authentication token obtained by Login User API, which is used in request header. This is stored each time you use Login User API.\r\n3. **COMMUNITY_ID**: This variable hold default community id created for testing Community related APIs.\r\n4. **HOUSE_ID**: This variable hold default house id created for testing House related APIs.\r\n5. **USER_ID**: This variable hold userId obtained by Login User API. This is stored each tiem you use Login User API.\r\n6. **ADMIN_ID**: This variable hold default admin id created for testing related APIs.\r\n7. **MEMBER_ID**: This variable hold default member id created for testing related APIs.\r\n\r\n\r\nYou can configure your own values for these either by editing in *MyHome > ... (View more actions) > Edit > Variables Tab* or you can create your environment and add variable there. [How to create Environment in Postman] (https://learning.postman.com/docs/postman/variables-and-environments/managing-environments/#creating-environments)",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"description": "# MyHome API Guide\n\n## Usage\n\nTo use any API except **Create User and Login User**, you'll need to obtain Authentication Token.\n\nTo get Authentication Token.\n\n1. First Create New User with **Create User API**.\n2. Login with New user with **New User API**. Login will obtain New Token for user.\n    \n\nNow you can use other APIs.\n\n## Variables\n\nAll APIs are configured with Postman variables to keep consistensy for static and dynamic values.\n\n1. **ENV_URL**: This variable hold value for Enviroment URL. e.g. 127.0.0.1:8080 (Default to local environment, with 8080 port), or example.com.\n2. **AUTH_TOKEN**: This variable hold authentication token obtained by Login User API, which is used in request header. This is stored each time you use Login User API.\n3. **COMMUNITY_ID**: This variable hold default community id created for testing Community related APIs.\n4. **HOUSE_ID**: This variable hold default house id created for testing House related APIs.\n5. **USER_ID**: This variable hold userId obtained by Login User API. This is stored each tiem you use Login User API.\n6. **ADMIN_ID**: This variable hold default admin id created for testing related APIs.\n7. **MEMBER_ID**: This variable hold default member id created for testing related APIs.\n8. **DEFAULT_EMAIL**: This variable hold default value for user login email.\n9. **DEFAULT_PASSWORD**: This variable hold default value for user login password.\n    \n\nYou can configure your own values for these either by editing in _MyHome > ... (View more actions) > Edit > Variables Tab_ or you can create your environment and add variable there. \\[How to create Environment in Postman\\] ([https://learning.postman.com/docs/postman/variables-and-environments/managing-environments/#creating-environments](https://learning.postman.com/docs/postman/variables-and-environments/managing-environments/#creating-environments))",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9986052"
 	},
 	"item": [
 		{
@@ -124,7 +125,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\" : \"testuser@myhome.com\",\n\t\"password\" : \"testpassword\"\n}",
+							"raw": "{\n\t\"email\" : \"test@test.com\",\n\t\"password\" : \"testtest\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -522,6 +523,36 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "List all amenities in a particular community",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{AUTH_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{ENV_URL}}/communities/{{COMMUNITY_ID}}/amenities",
+									"protocol": "http",
+									"host": [
+										"{{ENV_URL}}"
+									],
+									"path": [
+										"communities",
+										"{{COMMUNITY_ID}}",
+										"amenities"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -581,7 +612,7 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
