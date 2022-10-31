@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -76,6 +77,11 @@ public class CommunitySDJpaService implements CommunityService {
     Set<Community> communityListSet = new HashSet<>();
     communityRepository.findAll(pageable).forEach(communityListSet::add);
     return communityListSet;
+  }
+
+  @Override
+  public Page<Community> listAllInPages(Pageable pageable) {
+    return communityRepository.findAll(pageable);
   }
 
   @Override public Set<Community> listAll() {

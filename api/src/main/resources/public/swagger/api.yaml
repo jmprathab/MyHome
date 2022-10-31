@@ -1175,6 +1175,8 @@ components:
           uniqueItems: true
           items:
             $ref: '#/components/schemas/GetCommunityDetailsResponseCommunity'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
     GetCommunityDetailsResponseCommunity:
       type: object
       properties:

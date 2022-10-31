@@ -41,11 +41,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import com.myhome.utils.PageInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -161,6 +165,7 @@ class CommunityControllerTest {
     Community community = createTestCommunity();
     communities.add(community);
 
+
     Set<GetCommunityDetailsResponseCommunity> communityDetailsResponse
         = new HashSet<>();
     communityDetailsResponse.add(
@@ -170,14 +175,26 @@ class CommunityControllerTest {
             .district(COMMUNITY_DISTRICT)
     );
 
-    GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
-    response.getCommunities().addAll(communityDetailsResponse);
+    List<Community> communityList = new ArrayList<>();
+    communityList.add(community);
+
+    Page<Community> communityPage = new PageImpl<>(communityList) ;
 
     Pageable pageable = PageRequest.of(0, 1);
+    PageInfo pageInfo = PageInfo.of(pageable, communityPage);
+
+    GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
+    response.getCommunities().addAll(communityDetailsResponse);
+    response.setPageInfo(pageInfo);
+
+
     given(communityService.listAll(pageable))
         .willReturn(communities);
     given(communityApiMapper.communitySetToRestApiResponseCommunitySet(communities))
         .willReturn(communityDetailsResponse);
+    given(communityService.listAllInPages(pageable))
+            .willReturn(communityPage);
+
 
     // when
     ResponseEntity<GetCommunityDetailsResponse> responseEntity =
@@ -187,7 +204,7 @@ class CommunityControllerTest {
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     assertEquals(response, responseEntity.getBody());
     verify(communityApiMapper).communitySetToRestApiResponseCommunitySet(communities);
-    verify(communityService).listAll(pageable);
+    verify(communityService).listAllInPages(pageable);
   }
 
   @Test

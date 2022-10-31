@@ -34,14 +34,15 @@ import com.myhome.model.GetCommunityDetailsResponseCommunity;
 import com.myhome.model.GetHouseDetailsResponse;
 import com.myhome.model.ListCommunityAdminsResponse;
 import com.myhome.services.CommunityService;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+
+import com.myhome.utils.PageInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -72,17 +73,21 @@ public class CommunityController implements CommunitiesApi {
     return ResponseEntity.status(HttpStatus.CREATED).body(createdCommunityResponse);
   }
 
+
   @Override
   public ResponseEntity<GetCommunityDetailsResponse> listAllCommunity(
       @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all community");
 
-    Set<Community> communityDetails = communityService.listAll(pageable);
+    Page<Community> communityDetails = communityService.listAllInPages(pageable);
     Set<GetCommunityDetailsResponseCommunity> communityDetailsResponse =
-        communityApiMapper.communitySetToRestApiResponseCommunitySet(communityDetails);
+        communityApiMapper.communitySetToRestApiResponseCommunitySet(communityDetails.toSet());
+
+    PageInfo pageInfo = PageInfo.of(pageable, communityDetails);
 
     GetCommunityDetailsResponse response = new GetCommunityDetailsResponse();
     response.getCommunities().addAll(communityDetailsResponse);
+    response.setPageInfo(pageInfo);
 
     return ResponseEntity.status(HttpStatus.OK).body(response);
   }

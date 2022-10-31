@@ -23,6 +23,8 @@ import com.myhome.domain.User;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CommunityService {
@@ -31,6 +33,8 @@ public interface CommunityService {
   Set<Community> listAll();
 
   Set<Community> listAll(Pageable pageable);
+
+  Page<Community> listAllInPages(Pageable pageable);
 
   Optional<Community> getCommunityDetailsById(String communityId);
 
