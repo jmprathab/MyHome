@@ -49,13 +49,13 @@ public class HouseController implements HousesApi {
 
   @Override
   public ResponseEntity<GetHouseDetailsResponse> listAllHouses(
-          @PageableDefault(size = 200) Pageable pageable) {
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all houses");
 
     Set<CommunityHouse> houseDetails =
-            houseService.listAllHouses(pageable);
+        houseService.listAllHouses(pageable);
     Set<GetHouseDetailsResponseCommunityHouse> getHouseDetailsResponseSet =
-            houseApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
+        houseApiMapper.communityHouseSetToRestApiResponseCommunityHouseSet(houseDetails);
 
     GetHouseDetailsResponse response = new GetHouseDetailsResponse();
 
@@ -68,36 +68,36 @@ public class HouseController implements HousesApi {
   public ResponseEntity<GetHouseDetailsResponse> getHouseDetails(String houseId) {
     log.trace("Received request to get details of a house with id[{}]", houseId);
     return houseService.getHouseDetailsById(houseId)
-            .map(houseApiMapper::communityHouseToRestApiResponseCommunityHouse)
-            .map(Collections::singleton)
-            .map(getHouseDetailsResponseCommunityHouses -> new GetHouseDetailsResponse().houses(getHouseDetailsResponseCommunityHouses))
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+        .map(houseApiMapper::communityHouseToRestApiResponseCommunityHouse)
+        .map(Collections::singleton)
+        .map(getHouseDetailsResponseCommunityHouses -> new GetHouseDetailsResponse().houses(getHouseDetailsResponseCommunityHouses))
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
   }
 
   @Override
   public ResponseEntity<ListHouseMembersResponse> listAllMembersOfHouse(
-          String houseId,
-          @PageableDefault(size = 200) Pageable pageable) {
+      String houseId,
+      @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list all members of the house with id[{}]", houseId);
 
     return houseService.getHouseMembersById(houseId, pageable)
-            .map(HashSet::new)
-            .map(houseMemberMapper::houseMemberSetToRestApiResponseHouseMemberSet)
-            .map(houseMembers -> new ListHouseMembersResponse().members(houseMembers))
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+        .map(HashSet::new)
+        .map(houseMemberMapper::houseMemberSetToRestApiResponseHouseMemberSet)
+        .map(houseMembers -> new ListHouseMembersResponse().members(houseMembers))
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
   }
 
   @Override
   public ResponseEntity<ListRentalsResponse> listRentalsForHouseId(String houseId, @PageableDefault(size = 200) Pageable pageable) {
     log.trace("Received request to list rentals for house with house id[{}]",
-            houseId);
+        houseId);
     Optional<List<HouseRental>> houseRentals = houseService.listHouseRentalsForHouseId(houseId, pageable);
     if(houseRentals.isPresent()){
       List<RentalDto> rentalDtos = houseRentals.get().stream()
-              .map(houseRentalMapper::HouseRentalToRentalDto)
-              .collect(Collectors.toList());
+          .map(houseRentalMapper::HouseRentalToRentalDto)
+          .collect(Collectors.toList());
       ListRentalsResponse rentalsResponse = new ListRentalsResponse();
       rentalsResponse.setRentals(rentalDtos);
       return ResponseEntity.ok().body(rentalsResponse);
@@ -108,11 +108,11 @@ public class HouseController implements HousesApi {
 
   @Override
   public ResponseEntity<AddHouseMemberResponse> addHouseMembers(
-          @PathVariable String houseId, @Valid AddHouseMemberRequest request) {
+      @PathVariable String houseId, @Valid AddHouseMemberRequest request) {
 
     log.trace("Received request to add member to the house with id[{}]", houseId);
     Set<HouseMember> members =
-            houseMemberMapper.houseMemberDtoSetToHouseMemberSet(request.getMembers());
+        houseMemberMapper.houseMemberDtoSetToHouseMemberSet(request.getMembers());
     Set<HouseMember> savedHouseMembers = houseService.addHouseMembers(houseId, members);
 
     if (savedHouseMembers.size() == 0 && request.getMembers().size() != 0) {
@@ -120,7 +120,7 @@ public class HouseController implements HousesApi {
     } else {
       AddHouseMemberResponse response = new AddHouseMemberResponse();
       response.setMembers(
-              houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
+          houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
       return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
   }
@@ -128,21 +128,21 @@ public class HouseController implements HousesApi {
   @Override
   public ResponseEntity<RentalResponse> captureStay(String houseId, RentalRequest rentalRequest) {
     log.trace("Received request to capture stay for house with house id[{}] and member id[{}]",
-            houseId, rentalRequest.getMemberId());
+        houseId, rentalRequest.getMemberId());
     Optional<HouseRental> houseRental = houseService.createRentalForHouseId(
-            houseId, rentalRequest.getMemberId(),
-            rentalRequest.getBookingFromDate(),
-            rentalRequest.getBookingToDate()
+        houseId, rentalRequest.getMemberId(),
+        rentalRequest.getBookingFromDate(),
+        rentalRequest.getBookingToDate()
     );
     return houseRental.isPresent() ?
-            ResponseEntity.ok().body(houseRentalMapper.HouseRentalToRentalResponse(houseRental.get())) :
-            ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        ResponseEntity.ok().body(houseRentalMapper.HouseRentalToRentalResponse(houseRental.get())) :
+        ResponseEntity.status(HttpStatus.NOT_FOUND).build();
   }
 
   @Override
   public ResponseEntity<Void> deleteHouseMember(String houseId, String memberId) {
     log.trace("Received request to delete a member from house with house id[{}] and member id[{}]",
-            houseId, memberId);
+        houseId, memberId);
     boolean isMemberDeleted = houseService.deleteMemberFromHouse(houseId, memberId);
     if (isMemberDeleted) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

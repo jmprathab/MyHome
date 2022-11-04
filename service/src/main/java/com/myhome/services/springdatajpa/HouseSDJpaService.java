@@ -58,7 +58,7 @@ public class HouseSDJpaService implements HouseService {
 
   @Override public Set<HouseMember> addHouseMembers(String houseId, Set<HouseMember> houseMembers) {
     Optional<CommunityHouse> communityHouseOptional =
-            communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
+       communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
     return communityHouseOptional.map(communityHouse -> {
       Set<HouseMember> savedMembers = new HashSet<>();
       houseMembers.forEach(member -> member.setMemberId(generateUniqueId()));
@@ -74,7 +74,7 @@ public class HouseSDJpaService implements HouseService {
   @Override
   public boolean deleteMemberFromHouse(String houseId, String memberId) {
     Optional<CommunityHouse> communityHouseOptional =
-            communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
+        communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
     return communityHouseOptional.map(communityHouse -> {
       boolean isMemberRemoved = false;
       if (!CollectionUtils.isEmpty(communityHouse.getHouseMembers())) {
@@ -103,15 +103,15 @@ public class HouseSDJpaService implements HouseService {
   @Override
   public Optional<List<HouseMember>> getHouseMembersById(String houseId, Pageable pageable) {
     return Optional.ofNullable(
-            houseMemberRepository.findAllByCommunityHouse_HouseId(houseId, pageable)
+        houseMemberRepository.findAllByCommunityHouse_HouseId(houseId, pageable)
     );
   }
 
   @Override
   public Optional<List<HouseMember>> listHouseMembersForHousesOfUserId(String userId,
-                                                                       Pageable pageable) {
+      Pageable pageable) {
     return Optional.ofNullable(
-            houseMemberRepository.findAllByCommunityHouse_Community_Admins_UserId(userId, pageable)
+        houseMemberRepository.findAllByCommunityHouse_Community_Admins_UserId(userId, pageable)
     );
   }
 
@@ -123,20 +123,20 @@ public class HouseSDJpaService implements HouseService {
   @Override
   public Optional<HouseRental> createRentalForHouseId(String houseId, String houseMemberId, OffsetDateTime bookingFromDate, OffsetDateTime bookingToDate) {
     Optional<CommunityHouse> communityHouseOptional =
-            communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
+        communityHouseRepository.findByHouseIdWithHouseMembers(houseId);
     Optional<HouseMember> houseMemberOptional =
-            houseMemberRepository.findByMemberId(houseMemberId);
+        houseMemberRepository.findByMemberId(houseMemberId);
     if(communityHouseOptional.isPresent() && houseMemberOptional.isPresent()){
       return Optional.of(
-              houseHistoryRepository.save(new HouseRental(
-                      houseId,
-                      houseMemberId,
-                      bookingFromDate,
-                      bookingToDate,
-                      null,
-                      null,
-                      communityHouseOptional.get(),
-                      houseMemberOptional.get()
+          houseHistoryRepository.save(new HouseRental(
+                  houseId,
+                  houseMemberId,
+                  bookingFromDate,
+                  bookingToDate,
+                  null,
+                  null,
+                  communityHouseOptional.get(),
+                  houseMemberOptional.get()
               ))
       );
     }else { return Optional.empty(); }
