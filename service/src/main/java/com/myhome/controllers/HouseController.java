@@ -18,18 +18,16 @@ package com.myhome.controllers;
 
 import com.myhome.api.HousesApi;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
+import com.myhome.controllers.dto.mapper.HouseRentalMapperImpl;
 import com.myhome.controllers.mapper.HouseApiMapper;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
-import com.myhome.model.AddHouseMemberRequest;
-import com.myhome.model.AddHouseMemberResponse;
-import com.myhome.model.GetHouseDetailsResponse;
-import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
-import com.myhome.model.ListHouseMembersResponse;
+import com.myhome.domain.HouseRental;
+import com.myhome.model.*;
 import com.myhome.services.HouseService;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class HouseController implements HousesApi {
   private final HouseMemberMapper houseMemberMapper;
+  private final HouseRentalMapperImpl houseRentalMapper;
   private final HouseService houseService;
   private final HouseApiMapper houseApiMapper;
 
@@ -91,6 +90,23 @@ public class HouseController implements HousesApi {
   }
 
   @Override
+  public ResponseEntity<ListRentalsResponse> listRentalsForHouseId(String houseId, @PageableDefault(size = 200) Pageable pageable) {
+    log.trace("Received request to list rentals for house with house id[{}]",
+        houseId);
+    Optional<List<HouseRental>> houseRentals = houseService.listHouseRentalsForHouseId(houseId, pageable);
+    if(houseRentals.isPresent()){
+      List<RentalDto> rentalDtos = houseRentals.get().stream()
+          .map(houseRentalMapper::HouseRentalToRentalDto)
+          .collect(Collectors.toList());
+      ListRentalsResponse rentalsResponse = new ListRentalsResponse();
+      rentalsResponse.setRentals(rentalDtos);
+      return ResponseEntity.ok().body(rentalsResponse);
+    }else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+  @Override
   public ResponseEntity<AddHouseMemberResponse> addHouseMembers(
       @PathVariable String houseId, @Valid AddHouseMemberRequest request) {
 
@@ -107,6 +123,20 @@ public class HouseController implements HousesApi {
           houseMemberMapper.houseMemberSetToRestApiResponseAddHouseMemberSet(savedHouseMembers));
       return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+  }
+
+  @Override
+  public ResponseEntity<RentalResponse> captureStay(String houseId, RentalRequest rentalRequest) {
+    log.trace("Received request to capture stay for house with house id[{}] and member id[{}]",
+        houseId, rentalRequest.getMemberId());
+    Optional<HouseRental> houseRental = houseService.createRentalForHouseId(
+        houseId, rentalRequest.getMemberId(),
+        rentalRequest.getBookingFromDate(),
+        rentalRequest.getBookingToDate()
+    );
+    return houseRental.isPresent() ?
+        ResponseEntity.ok().body(houseRentalMapper.HouseRentalToRentalResponse(houseRental.get())) :
+        ResponseEntity.status(HttpStatus.NOT_FOUND).build();
   }
 
   @Override

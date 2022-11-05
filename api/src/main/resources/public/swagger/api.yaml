@@ -892,7 +892,66 @@ paths:
           description: If house member was removed from house
         '400':
           description: If params are invalid
-
+  /houses/{houseId}/rentals:
+    post:
+      tags:
+        - Houses
+      description: Add the duration of stay to house history.
+      operationId: captureStay
+      parameters:
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RentalRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/RentalRequest'
+        required: true
+      responses:
+        '201':
+          description: If duration of stay was added to house history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentalResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/RentalResponse'
+        '404':
+          description: If parameters are invalid
+    get:
+      tags:
+        - Houses
+      operationId: listRentalsForHouseId
+      parameters:
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+        - in: path
+          name: houseId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: If history is present
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRentalsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ListRentalsResponse'
+        '404':
+          description: If params are invalid
   /payments:
     post:
       security:
@@ -1401,3 +1460,97 @@ components:
           type: string
         password:
           type: string
+    ListRentalsResponse:
+      type: object
+      properties:
+        rentals:
+          type: array
+          items:
+            $ref: '#/components/schemas/RentalDto'
+    RentalResponse:
+      type: object
+      required:
+        - memberId
+        - houseId
+        - stayFromDate
+        - stayToDate
+        - bookingFromDate
+        - bookingToDate
+      properties:
+        memberId:
+          type: string
+        houseId:
+          type: string
+        stayFromDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        stayToDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        bookingFromDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        bookingToDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+    RentalDto:
+      type: object
+      required:
+        - memberId
+        - houseId
+        - stayFromDate
+        - stayToDate
+        - bookingFromDate
+        - bookingToDate
+      properties:
+        memberId:
+          type: string
+        houseId:
+          type: string
+        stayFromDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        stayToDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        bookingFromDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        bookingToDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+    RentalRequest:
+      type: object
+      required:
+        - memberId
+        - bookingFromDate
+        - bookingToDate
+      properties:
+        memberId:
+          type: string
+        bookingFromDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        bookingToDate:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"

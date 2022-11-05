@@ -18,9 +18,11 @@ package com.myhome.services;
 
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import com.myhome.domain.HouseRental;
 import org.springframework.data.domain.Pageable;
 
 public interface HouseService {
@@ -37,4 +39,9 @@ public interface HouseService {
   Optional<List<HouseMember>> getHouseMembersById(String houseId, Pageable pageable);
 
   Optional<List<HouseMember>> listHouseMembersForHousesOfUserId(String userId, Pageable pageable);
+
+  Optional<List<HouseRental>> listHouseRentalsForHouseId(String houseId, Pageable pageable);
+
+  Optional<HouseRental> createRentalForHouseId(String houseId, String houseMemberId, OffsetDateTime bookingFromDate, OffsetDateTime bookingToDate);
+
 }
