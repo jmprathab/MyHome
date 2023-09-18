@@ -115,19 +115,19 @@ public class CommunityController implements CommunitiesApi {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @Override
-  public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
-      @PathVariable String communityId,
-      @PageableDefault(size = 200) Pageable pageable) {
-    log.trace("Received request to list all houses of community with id[{}]", communityId);
-
-    return communityService.findCommunityHousesById(communityId, pageable)
-        .map(HashSet::new)
-        .map(communityApiMapper::communityHouseSetToRestApiResponseCommunityHouseSet)
-        .map(houses -> new GetHouseDetailsResponse().houses(houses))
-        .map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
-  }
+//  @Override
+//  public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
+//      @PathVariable String communityId,
+//      @PageableDefault(size = 200) Pageable pageable) {
+//    log.trace("Received request to list all houses of community with id[{}]", communityId);
+//
+//    return communityService.findCommunityHousesById(communityId, pageable)
+//        .map(HashSet::new)
+//        .map(communityApiMapper::communityHouseSetToRestApiResponseCommunityHouseSet)
+//        .map(houses -> new GetHouseDetailsResponse().houses(houses))
+//        .map(ResponseEntity::ok)
+//        .orElseGet(() -> ResponseEntity.notFound().build());
+//  }
 
   @Override
   public ResponseEntity<AddCommunityAdminResponse> addCommunityAdmins(
@@ -146,39 +146,39 @@ public class CommunityController implements CommunitiesApi {
     }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
-  @Override
-  public ResponseEntity<AddCommunityHouseResponse> addCommunityHouses(
-      @PathVariable String communityId, @Valid @RequestBody
-      AddCommunityHouseRequest request) {
-    log.trace("Received request to add house to community with id[{}]", communityId);
-    Set<CommunityHouseName> houseNames = request.getHouses();
-    Set<CommunityHouse> communityHouses =
-        communityApiMapper.communityHouseNamesSetToCommunityHouseSet(houseNames);
-    Set<String> houseIds = communityService.addHousesToCommunity(communityId, communityHouses);
-    if (houseIds.size() != 0 && houseNames.size() != 0) {
-      AddCommunityHouseResponse response = new AddCommunityHouseResponse();
-      response.setHouses(houseIds);
-      return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    } else {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    }
-  }
-
-  @Override
-  public ResponseEntity<Void> removeCommunityHouse(
-      @PathVariable String communityId, @PathVariable String houseId
-  ) {
-    log.trace(
-        "Received request to delete house with id[{}] from community with id[{}]",
-        houseId, communityId);
-
-    Optional<Community> communityOptional = communityService.getCommunityDetailsById(communityId);
-
-    return communityOptional.filter(
-        community -> communityService.removeHouseFromCommunityByHouseId(community, houseId))
-        .map(removed -> ResponseEntity.noContent().<Void>build())
-        .orElseGet(() -> ResponseEntity.notFound().build());
-  }
+//  @Override
+//  public ResponseEntity<AddCommunityHouseResponse> addCommunityHouses(
+//      @PathVariable String communityId, @Valid @RequestBody
+//      AddCommunityHouseRequest request) {
+//    log.trace("Received request to add house to community with id[{}]", communityId);
+//    Set<CommunityHouseName> houseNames = request.getHouses();
+//    Set<CommunityHouse> communityHouses =
+//        communityApiMapper.communityHouseNamesSetToCommunityHouseSet(houseNames);
+//    Set<String> houseIds = communityService.addHousesToCommunity(communityId, communityHouses);
+//    if (houseIds.size() != 0 && houseNames.size() != 0) {
+//      AddCommunityHouseResponse response = new AddCommunityHouseResponse();
+//      response.setHouses(houseIds);
+//      return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    } else {
+//      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+//    }
+//  }
+//
+//  @Override
+//  public ResponseEntity<Void> removeCommunityHouse(
+//      @PathVariable String communityId, @PathVariable String houseId
+//  ) {
+//    log.trace(
+//        "Received request to delete house with id[{}] from community with id[{}]",
+//        houseId, communityId);
+//
+//    Optional<Community> communityOptional = communityService.getCommunityDetailsById(communityId);
+//
+//    return communityOptional.filter(
+//        community -> communityService.removeHouseFromCommunityByHouseId(community, houseId))
+//        .map(removed -> ResponseEntity.noContent().<Void>build())
+//        .orElseGet(() -> ResponseEntity.notFound().build());
+//  }
 
   @Override
   public ResponseEntity<Void> removeAdminFromCommunity(

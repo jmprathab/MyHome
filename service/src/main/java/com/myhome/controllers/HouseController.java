@@ -18,17 +18,17 @@ package com.myhome.controllers;
 
 import com.myhome.api.HousesApi;
 import com.myhome.controllers.dto.mapper.HouseMemberMapper;
+import com.myhome.controllers.mapper.CommunityApiMapper;
 import com.myhome.controllers.mapper.HouseApiMapper;
+import com.myhome.domain.Community;
 import com.myhome.domain.CommunityHouse;
 import com.myhome.domain.HouseMember;
-import com.myhome.model.AddHouseMemberRequest;
-import com.myhome.model.AddHouseMemberResponse;
-import com.myhome.model.GetHouseDetailsResponse;
-import com.myhome.model.GetHouseDetailsResponseCommunityHouse;
-import com.myhome.model.ListHouseMembersResponse;
+import com.myhome.model.*;
+import com.myhome.services.CommunityService;
 import com.myhome.services.HouseService;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +38,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -47,6 +48,8 @@ public class HouseController implements HousesApi {
   private final HouseMemberMapper houseMemberMapper;
   private final HouseService houseService;
   private final HouseApiMapper houseApiMapper;
+  private final CommunityService communityService;
+  private final CommunityApiMapper communityApiMapper;
 
   @Override
   public ResponseEntity<GetHouseDetailsResponse> listAllHouses(
@@ -119,5 +122,53 @@ public class HouseController implements HousesApi {
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+  }
+
+  @Override
+  public ResponseEntity<AddCommunityHouseResponse> addCommunityHouses(
+          @PathVariable String communityId, @Valid @RequestBody
+  AddCommunityHouseRequest request) {
+    log.trace("Received request to add house to community with id[{}]", communityId);
+    Set<CommunityHouseName> houseNames = request.getHouses();
+    Set<CommunityHouse> communityHouses =
+            communityApiMapper.communityHouseNamesSetToCommunityHouseSet(houseNames);
+    Set<String> houseIds = communityService.addHousesToCommunity(communityId, communityHouses);
+    if (houseIds.size() != 0 && houseNames.size() != 0) {
+      AddCommunityHouseResponse response = new AddCommunityHouseResponse();
+      response.setHouses(houseIds);
+      return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    } else {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+  }
+
+  @Override
+  public ResponseEntity<Void> removeCommunityHouse(
+          @PathVariable String communityId, @PathVariable String houseId
+  ) {
+    log.trace(
+            "Received request to delete house with id[{}] from community with id[{}]",
+            houseId, communityId);
+
+    Optional<Community> communityOptional = communityService.getCommunityDetailsById(communityId);
+
+    return communityOptional.filter(
+                    community -> communityService.removeHouseFromCommunityByHouseId(community, houseId))
+            .map(removed -> ResponseEntity.noContent().<Void>build())
+            .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  @Override
+  public ResponseEntity<GetHouseDetailsResponse> listCommunityHouses(
+          @PathVariable String communityId,
+          @PageableDefault(size = 200) Pageable pageable) {
+    log.trace("Received request to list all houses of community with id[{}]", communityId);
+
+    return communityService.findCommunityHousesById(communityId, pageable)
+            .map(HashSet::new)
+            .map(communityApiMapper::communityHouseSetToRestApiResponseCommunityHouseSet)
+            .map(houses -> new GetHouseDetailsResponse().houses(houses))
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
   }
 }
