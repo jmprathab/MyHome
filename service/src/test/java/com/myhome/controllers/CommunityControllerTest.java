@@ -79,6 +79,9 @@ class CommunityControllerTest {
   @InjectMocks
   private CommunityController communityController;
 
+  @InjectMocks
+  private HouseController houseController;
+
   @BeforeEach
   private void init() {
     MockitoAnnotations.initMocks(this);
@@ -369,7 +372,7 @@ class CommunityControllerTest {
 
     // when
     ResponseEntity<GetHouseDetailsResponse> responseEntity =
-        communityController.listCommunityHouses(COMMUNITY_ID, pageable);
+        houseController.listCommunityHouses(COMMUNITY_ID, pageable);
 
     //then
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -387,7 +390,7 @@ class CommunityControllerTest {
 
     // when
     ResponseEntity<GetHouseDetailsResponse> responseEntity =
-        communityController.listCommunityHouses(COMMUNITY_ID, pageable);
+        houseController.listCommunityHouses(COMMUNITY_ID, pageable);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -421,7 +424,7 @@ class CommunityControllerTest {
 
     // when
     ResponseEntity<AddCommunityHouseResponse> responseEntity =
-        communityController.addCommunityHouses(COMMUNITY_ID, addCommunityHouseRequest);
+        houseController.addCommunityHouses(COMMUNITY_ID, addCommunityHouseRequest);
 
     // then
     assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
@@ -442,7 +445,7 @@ class CommunityControllerTest {
 
     // when
     ResponseEntity<AddCommunityHouseResponse> responseEntity =
-        communityController.addCommunityHouses(COMMUNITY_ID, emptyRequest);
+        houseController.addCommunityHouses(COMMUNITY_ID, emptyRequest);
 
     // then
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
@@ -464,7 +467,7 @@ class CommunityControllerTest {
 
     // when
     ResponseEntity<Void> responseEntity =
-        communityController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
+        houseController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
 
     // then
     assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
@@ -484,7 +487,7 @@ class CommunityControllerTest {
 
     // when
     ResponseEntity<Void> responseEntity =
-        communityController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
+        houseController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -501,7 +504,7 @@ class CommunityControllerTest {
 
     // when
     ResponseEntity<Void> responseEntity =
-        communityController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
+        houseController.removeCommunityHouse(COMMUNITY_ID, COMMUNITY_HOUSE_ID);
 
     // then
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
