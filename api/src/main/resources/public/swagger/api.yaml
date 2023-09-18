@@ -668,7 +668,7 @@ paths:
       security:
         - bearerAuth: [ ]
       tags:
-        - Communities
+        - Houses
       description: List all houses of the community given a community id
       operationId: listCommunityHouses
       parameters:
@@ -696,7 +696,7 @@ paths:
           description: If params are invalid
     post:
       tags:
-        - Communities
+        - Houses
       description: Add a new house to the community given a community id
       operationId: addCommunityHouses
       parameters:
@@ -732,7 +732,7 @@ paths:
       security:
         - bearerAuth: [ ]
       tags:
-        - Communities
+        - Houses
       description: Remove of house from the community given a community id and a house id
       operationId: removeCommunityHouse
       parameters:

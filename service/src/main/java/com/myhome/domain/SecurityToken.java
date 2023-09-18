@@ -1,9 +1,6 @@
 package com.myhome.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import java.time.LocalDate;
 
+//@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @AllArgsConstructor
